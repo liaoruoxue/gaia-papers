@@ -43,7 +43,8 @@ mv formalized/<slug>-gaia/artifacts/<file> inbox/<file>
 rm -rf formalized/<slug>-gaia/
 git tag -d formalized/<slug>
 git push origin :refs/tags/formalized/<slug>
-git add -A && git commit -m "Re-queue <slug> for formalization"
+git add formalized/ inbox/
+git commit -m "Re-queue <slug> for formalization"
 ```
 
 ### Prerequisites

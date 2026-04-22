@@ -32,7 +32,10 @@ List eligible files in `inbox/`:
 
 ```bash
 cd /Users/risoliao/Code/gaia-lb/papers
-ls -1 inbox/ | grep -Ei '\.(pdf|md|txt|html)$' | sort
+find inbox -maxdepth 1 -type f \
+  \( -iname '*.pdf' -o -iname '*.md' -o -iname '*.txt' -o -iname '*.html' \) \
+  -not -name '.*' \
+  -exec basename {} \; | sort
 ```
 
 If the list is empty, **stop this tick**.
@@ -133,7 +136,8 @@ local. The next tick's `git pull --rebase` will reconcile and re-push.
 
 ## Failure Branch
 
-When Step 6 or Step 7 fails:
+When Step 5, Step 6, or Step 7 fails (scaffold error, formalization error,
+or compile/check failure):
 
 ```bash
 cd /Users/risoliao/Code/gaia-lb/papers
@@ -149,7 +153,9 @@ TS=$(date -u +%FT%TZ)
 } >> "_failed/$SLUG-$TS.log"
 
 # Restore the source to inbox so the next tick (or the operator) can retry.
-mv "formalized/$SLUG-gaia/artifacts/<file>" "inbox/<file>"
+if [ -f "formalized/$SLUG-gaia/artifacts/<file>" ]; then
+  mv "formalized/$SLUG-gaia/artifacts/<file>" "inbox/<file>"
+fi
 rm -rf "formalized/$SLUG-gaia/"
 ```
 
