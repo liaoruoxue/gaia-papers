@@ -1,0 +1,120 @@
+{
+  "exports": [
+    {
+      "content": "The GRPO clipping bias systematically increases the average token probability ($\\pi_\\theta$) of the model's high-prior responses under random rewards. Empirical evidence: average token probability increases monotonically during random-reward training with clipping (purple line, reaching ~0.93+), while it remains approximately constant without clipping (green line, staying near 0.85). Clipping also correlates with the observed increase in code reasoning frequency.",
+      "content_hash": "2273393bd08493599609a0d6d69e33fab87956e8541e9ef4da079ff716ac152d",
+      "label": "claim_clipping_amplifies_prior",
+      "qid": "github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior",
+      "type": "claim"
+    },
+    {
+      "content": "After RLVR training with any reward type (including spurious random and incorrect rewards), Qwen2.5-Math-7B's code reasoning frequency rapidly increases from 65% to ~90% within the first 15 training steps, and reaches as high as 95.6% for random reward. This increase in code frequency is strongly correlated with accuracy improvements across all reward types. With ground truth reward, code frequency also initially increases but then gradually decreases as natural language reasoning accuracy improves — suggesting ground truth provides genuine new learning while spurious rewards primarily amplify the existing code strategy.",
+      "content_hash": "a737e1b02233c741d5a6d9e0e7ebae17eea58e2fd5e1c2c39d2a0f0ae93f0c8b",
+      "label": "claim_code_freq_increases_rlvr",
+      "qid": "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr",
+      "type": "claim"
+    },
+    {
+      "content": "Under random rewards, the expected group-relative advantage $\\hat{A}$ is zero, so the expected gradient without clipping is also zero. However, GRPO's PPO-style clipping term introduces a nonzero gradient bias. Specifically, for token $y_t$ with old policy probability $\\pi_{\\text{old},x}(y_t)$ and importance ratio $R_\\theta = \\pi_{\\theta,x}(y_t)/\\pi_{\\text{old},x}(y_t)$, the clipping bias is proportional to $\\mu > 0$ and creates:\n- Positive gradient (increases $\\pi_{\\theta,x}(y_t)$) when $R_\\theta < 1 - \\epsilon_c$\n- Negative gradient (decreases $\\pi_{\\theta,x}(y_t)$) when $R_\\theta > 1 + \\epsilon_c$\n- Zero gradient in the clipping region $[1-\\epsilon_c, 1+\\epsilon_c]$\nThis creates an asymmetric effect: tokens with high prior probability ($\\pi_{\\text{old}} \\approx 0.85$) have upper clipping threshold $\\approx 1.02 > 1$, so they almost never receive negative gradient bias, while low-probability tokens face much more frequent penalization.",
+      "content_hash": "4edf6c01ae1af8105b540bdbbf5e5d7884fec12c0b2607561d858f9e6f50611e",
+      "label": "claim_grpo_clipping_bias",
+      "qid": "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+      "type": "claim"
+    },
+    {
+      "content": "Even corrupted or spurious supervision can enhance reasoning performance when it triggers useful pre-existing behaviors. The reward signal does not need to be semantically correct — it only needs to provide a training dynamic that concentrates probability mass on already-learned, high-performing behavioral patterns.",
+      "content_hash": "26376eca00fcc50aade97ae57fb21176cc04551d126d72a8ab61a56893a79279",
+      "label": "claim_implication_corrupted_supervision",
+      "qid": "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision",
+      "type": "claim"
+    },
+    {
+      "content": "Effects observed in one model family may not generalize to other families. Conclusions from Qwen-centric RLVR experiments — even if internally reproducible — cannot be assumed to reflect general principles of RLVR, because the Qwen2.5-Math family is uniquely susceptible to spurious training signals due to its pretraining distribution.",
+      "content_hash": "4dc0a1f2325943f4a825b7157cc2fb4367025d4dfc8dcce0f4f592c2ce753787",
+      "label": "claim_implication_no_generalization",
+      "qid": "github:2506_10947_spurious_rewards::claim_implication_no_generalization",
+      "type": "claim"
+    },
+    {
+      "content": "Base model pretraining significantly affects RLVR training outcomes: the reasoning strategies instilled during pretraining heavily impact which RLVR reward signals are effective and what performance improvements are achievable. Models with strong math-oriented pretraining (Qwen2.5-Math) respond to a wide range of rewards; models without it (OLMo2, Llama) require genuinely informative rewards.",
+      "content_hash": "404b01af445c3f4e6a6cecb6b720321eff041bed0a4df2654af729192f5f657c",
+      "label": "claim_implication_pretraining_primary",
+      "qid": "github:2506_10947_spurious_rewards::claim_implication_pretraining_primary",
+      "type": "claim"
+    },
+    {
+      "content": "For Qwen2.5-Math-7B, 58.3% of the total MATH-500 accuracy gain from RLVR (averaged across spurious reward types) comes from the Lang→Code subset: problems where the model switches from natural language to code reasoning after RLVR. For Qwen2.5-Math-1.5B, this contribution is even higher at 78.7%. This shows that the dominant mechanism of improvement is converting language-reasoning problems to code-reasoning problems, not improving within each strategy type.\n\n| Model | Avg. Total Gain | C_Code→Code | C_Code→Lang | C_Lang→Code | C_Lang→Lang |\n|-------|----------------|-------------|-------------|-------------|-------------|\n| Qwen2.5-Math-7B | 23.5% | 11.6% | 8.6% | **58.3%** | 21.4% |\n| Qwen2.5-Math-1.5B | 28.5% | 2.8% | 2.0% | **78.7%** | 16.5% |\n| Qwen2.5-7B | 30.6% | 0.2% | **93.9%** | 0.0% | 5.9% |",
+      "content_hash": "556e80844f46e38f7a356eeefbc875df2c912840d26583f44ec3645d811982a0",
+      "label": "claim_lang_to_code_contribution",
+      "qid": "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+      "type": "claim"
+    },
+    {
+      "content": "Models within the same family generally exhibit similar RLVR behavior patterns regardless of size or instruction-tuning status. For example, both Qwen2.5-Math-7B and Qwen2.5-Math-1.5B show gains from all reward types; both Llama3.1-8B and Llama3.2-3B show similar limited-gain patterns; and both OLMo2-7B and OLMo2-7B-SFT are only helped by ground truth rewards. This consistency implicates pretraining data distribution as a primary determinant.",
+      "content_hash": "571ea18d42e929911e6bbcb8dbe3490cd37668fc04f2cd17098ac8188b2143d2",
+      "label": "claim_model_family_consistency",
+      "qid": "github:2506_10947_spurious_rewards::claim_model_family_consistency",
+      "type": "claim"
+    },
+    {
+      "content": "When GRPO clipping is disabled (via direct removal, increased mini-batch size to match rollout size, or reduced rollout size to ensure $\\pi_\\theta = \\pi_{\\text{old}}$), random-reward training does NOT produce robust MATH-500 performance improvement across seeds. Average results across seeds show no meaningful gain. The standard GRPO with clipping consistently achieves ~21 pp improvement. Removing clipping from the implementation (not batch size) produces high variance — occasionally high performance due to inherent training stochasticity, but not reliably.",
+      "content_hash": "309e3c25cf21af1c8b243a23dfc2edacc8505f8d5dc70999197c5342225cf528",
+      "label": "claim_no_clipping_no_gain",
+      "qid": "github:2506_10947_spurious_rewards::claim_no_clipping_no_gain",
+      "type": "claim"
+    },
+    {
+      "content": "The hypothesis that RLVR, at the compute scales of open-source post-training pipelines, does not teach models fundamentally new reasoning capabilities, but instead surfaces latent reasoning representations learned during pretraining. The effectiveness of spurious rewards is therefore contingent on pre-existing model capabilities aligned with the task.",
+      "content_hash": "4b647adf11e521b3202f6fa6435ffb1d21aad5362187895695f617460e5b1bcd",
+      "label": "claim_pretraining_hypothesis",
+      "qid": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "After 300 steps of GRPO training on Qwen2.5-Math-7B (initial MATH-500 accuracy: 49.4%), MATH-500 accuracy gains by reward type are:\n\n| Reward Type | MATH-500 Gain (pp) |\n|-------------|--------------------|\n| Ground Truth | +29.1 |\n| Majority Vote | +27.1 |\n| Incorrect Label | +24.1 |\n| Random ($\\gamma=0.5$) | +21.4 |\n| Format | +13.8 |\n\nAll reward types produce significant improvements within the first 50 training steps.",
+      "content_hash": "fc0e96f20a17a6ec6afdeef175e4597276ce8737d6e2fc9a34c3637c4a50ec59",
+      "label": "claim_qwen7b_math500_results",
+      "qid": "github:2506_10947_spurious_rewards::claim_qwen7b_math500_results",
+      "type": "claim"
+    },
+    {
+      "content": "A significant fraction of recent RLVR research draws conclusions exclusively or primarily from gains on Qwen2.5-Math-7B — a model for which even completely spurious reward signals (random reward, incorrect label) can yield gains of 21-24 percentage points on MATH-500. This creates a risk that proposed RLVR methods appear effective primarily due to the Qwen2.5-Math model's unique properties rather than the methods themselves.",
+      "content_hash": "8d19f502e07ec784237334d3352e782cb95517f536f6985cac2b0f8e43360032",
+      "label": "claim_qwen_centric_risk",
+      "qid": "github:2506_10947_spurious_rewards::claim_qwen_centric_risk",
+      "type": "claim"
+    },
+    {
+      "content": "Random reward with Bernoulli($\\gamma$) for $\\gamma \\in \\{0.7, 0.5, 0.3, 0.001\\}$ all yield significant MATH-500 performance gains on Qwen2.5-Math-7B, converging to accuracy improvements of approximately 15–20 percentage points after some period of initial random walk. Only $\\gamma = 0$ (which analytically yields zero gradient) fails to produce gains. Convergence speed varies with $\\gamma$, but all non-zero configurations reach similar high-performance regimes.",
+      "content_hash": "d6d85aa7a6be0aa0b83a9eec187096fd01108a0ce7174fb54ad8c9560c7e3ea1",
+      "label": "claim_random_gamma_robustness",
+      "qid": "github:2506_10947_spurious_rewards::claim_random_gamma_robustness",
+      "type": "claim"
+    },
+    {
+      "content": "RLVR with spurious rewards (format reward, random reward, incorrect label reward) significantly improves MATH-500 performance on Qwen2.5-Math-7B. Specifically, absolute accuracy gains from 300 GRPO training steps are: +21.4 pp (random reward, $\\gamma=0.5$), +13.8 pp (format reward), +24.1 pp (incorrect label reward), +26.0 pp (one-shot RL), +27.1 pp (majority vote) — compared to +29.1 pp from ground-truth rewards. Starting accuracy before RLVR: 49.4% on MATH-500.",
+      "content_hash": "62293046d344e732c1b037753cc82de826997ed44588f8b3104572bd90cd8915",
+      "label": "claim_rlvr_improves_qwen",
+      "qid": "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+      "type": "claim"
+    },
+    {
+      "content": "Spurious rewards (random, incorrect label) that produce large MATH-500 gains on Qwen models generally fail to improve or actively harm performance on other model families. On Llama3.1-8B-Instruct (baseline 36.8%), random reward yields -6.4 pp, incorrect label yields -8.3 pp, format reward -2.1 pp, and only ground truth (+15.5 pp) and majority vote (+7.4/+7.2 pp) produce improvements. OLMo2-7B (baseline 9.0%) shows -6.4 pp from random, -8.3 pp from incorrect label, and only +16.7 pp from ground truth.",
+      "content_hash": "b55704438d97141b5f285464394a0f66b20e0ab065249d1b16597c7b14f98e99",
+      "label": "claim_spurious_fails_non_qwen",
+      "qid": "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen",
+      "type": "claim"
+    },
+    {
+      "content": "Two published RLVR methods — TTRL (Test-Time Reinforcement Learning, Zuo et al. 2025) and One-Shot RL (Wang et al. 2025b) — show the same pattern as the spurious rewards: strong improvements on Qwen2.5-Math or Qwen2.5 models, but the same signals often fail to yield gains on Llama3 or OLMo2 families. TTRL trains on unlabeled test prompts with online majority-vote labels; One-Shot RL uses a single training example with correct label.",
+      "content_hash": "9505283ce5bac2600e76290ef3523afe24a3fa919281d59706fce656e91d44f4",
+      "label": "claim_ttrl_one_shot_same_pattern",
+      "qid": "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:fa61760d18a3865772f34b9b64e07811de4d8ac6b9842762b5f95642b2759172",
+  "manifest_schema_version": 1,
+  "package": "2506-10947-spurious-rewards",
+  "version": "0.1.0"
+}

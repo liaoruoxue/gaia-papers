@@ -1,0 +1,2525 @@
+{
+  "ir_hash": "sha256:fa61760d18a3865772f34b9b64e07811de4d8ac6b9842762b5f95642b2759172",
+  "knowledges": [
+    {
+      "content": "Reinforcement learning with verifiable rewards (RLVR) is a post-training technique that uses binary (0/1) reward signals based on whether a model rollout produces a verifiably correct answer. GRPO (Group Relative Policy Optimization) is the specific RL algorithm used in this paper, which normalizes rewards to a group-relative advantage $\\hat{A}(x,y) = (r(x,y) - \\bar{r}_x) / \\sigma_x$, where $\\bar{r}_x$ is the group-wise mean reward and $\\sigma_x$ is the standard deviation over rollouts for prompt $x$. The KL penalty weight is set to $\\lambda = 0$ in all experiments.",
+      "content_hash": "3752857626dd4aa674d990914c761c6b90b17eb913943c55b5c86971db04e54a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::setup_rlvr",
+      "label": "setup_rlvr",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR and GRPO setup",
+      "type": "setting"
+    },
+    {
+      "content": "Experiments are conducted on Qwen2.5-Math-7B and Qwen2.5-Math-1.5B (math-specialized, Yang et al. 2024a), Qwen2.5-7B and Qwen2.5-1.5B (general-purpose, Yang et al. 2024b), OLMo2-7B and OLMo2-7B-SFT (OLMo team 2024), and Llama3.1-8B(-Instruct) and Llama3.2-3B(-Instruct) (Dubey et al. 2024). Training uses GRPO on DeepScaleR data (Luo et al. 2025b) for 300 steps with 8 A100 GPUs, learning rate 5e-7, rollout batch size 64, mini batch size 128, 16 rollouts per prompt.",
+      "content_hash": "17f308446d1849f02356b5788f8ec476c26946c3d77277951171fa22deaa1735",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::setup_models",
+      "label": "setup_models",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Models and training configuration",
+      "type": "setting"
+    },
+    {
+      "content": "Performance is evaluated on MATH-500 (pass@1; Hendrycks et al. 2021), AMC (average@8), and AIME 2024/2025 (average@8). The default official system prompt from Yang et al. (2024a) is used for Qwen2.5-Math models; no system prompt is used for other models; no user prompt is used for any model in the main experiments.",
+      "content_hash": "81e0f807975a951b71514c664762544662f61835d754ad061406a94dfd38d7f6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::setup_benchmarks",
+      "label": "setup_benchmarks",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Evaluation benchmarks and prompts",
+      "type": "setting"
+    },
+    {
+      "content": "Five reward functions are studied: (1) Ground Truth Reward: binary reward for verifiably correct answer — upper bound for supervision quality. (2) Majority Vote Reward: pseudo-labels from majority answer across 64 pre-RLVR rollouts per prompt. (3) Format Reward: reward if response contains at least one non-empty \\\\boxed{} expression, regardless of correctness. (4) Random Reward: reward of 1 assigned with fixed probability $\\gamma$ (default $\\gamma=0.5$), independent of rollout content. (5) Incorrect Reward: majority-vote labels are used but only the subset with wrong labels is kept; reward for matching these incorrect labels.",
+      "content_hash": "f3bbcac4303e715c31042f08c5077cf6f9fc83002a7392c26c25779bc512e1cd",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::setup_reward_types",
+      "label": "setup_reward_types",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reward function taxonomy: ground truth, majority vote, format, random, incorrect",
+      "type": "setting"
+    },
+    {
+      "content": "Can reinforcement learning with verifiable rewards (RLVR) improve mathematical reasoning performance using reward signals that have little, no, or even negative correlation with the correct answer?",
+      "content_hash": "b651e5cfd61bda65cace7093ee10959e91e1554703d29fe60a78e32656f2a07c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::q_spurious",
+      "label": "q_spurious",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core research question: can spurious rewards improve math reasoning?",
+      "type": "question"
+    },
+    {
+      "content": "Do the effects of weak or spurious rewards in RLVR generalize across different model families, or are they specific to particular pretraining distributions?",
+      "content_hash": "55822d36c8c9822b7805c186ceb694da3dc6bba64df3d37b8f815277af97e267",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::q_model_dependency",
+      "label": "q_model_dependency",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question: model-dependency of spurious reward effects",
+      "type": "question"
+    },
+    {
+      "content": "What mechanism explains why certain models respond to spurious rewards while others do not?",
+      "content_hash": "98e7384c02ae72d4ca2095941e3a0364051a715276728e0179df0a59066f1285",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::q_mechanism",
+      "label": "q_mechanism",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question: mechanism of spurious reward effectiveness",
+      "type": "question"
+    },
+    {
+      "content": "RLVR with spurious rewards (format reward, random reward, incorrect label reward) significantly improves MATH-500 performance on Qwen2.5-Math-7B. Specifically, absolute accuracy gains from 300 GRPO training steps are: +21.4 pp (random reward, $\\gamma=0.5$), +13.8 pp (format reward), +24.1 pp (incorrect label reward), +26.0 pp (one-shot RL), +27.1 pp (majority vote) — compared to +29.1 pp from ground-truth rewards. Starting accuracy before RLVR: 49.4% on MATH-500.",
+      "content_hash": "62293046d344e732c1b037753cc82de826997ed44588f8b3104572bd90cd8915",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+      "label": "claim_rlvr_improves_qwen",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 1 and Figure 2a",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shao2025spurious"
+            ],
+            "referenced_claims": [
+              "alt_rlvr_teaches_new",
+              "claim_pretraining_hypothesis",
+              "claim_qwen7b_math500_results",
+              "claim_rlvr_improves_qwen",
+              "setup_benchmarks",
+              "setup_models",
+              "setup_reward_types",
+              "setup_rlvr"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Spurious rewards yield significant MATH-500 gains on Qwen2.5-Math-7B",
+      "type": "claim"
+    },
+    {
+      "content": "Spurious rewards (random, incorrect label) that produce large MATH-500 gains on Qwen models generally fail to improve or actively harm performance on other model families. On Llama3.1-8B-Instruct (baseline 36.8%), random reward yields -6.4 pp, incorrect label yields -8.3 pp, format reward -2.1 pp, and only ground truth (+15.5 pp) and majority vote (+7.4/+7.2 pp) produce improvements. OLMo2-7B (baseline 9.0%) shows -6.4 pp from random, -8.3 pp from incorrect label, and only +16.7 pp from ground truth.",
+      "content_hash": "b55704438d97141b5f285464394a0f66b20e0ab065249d1b16597c7b14f98e99",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen",
+      "label": "claim_spurious_fails_non_qwen",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 1 and Figure 3",
+        "prior": 0.95,
+        "prior_justification": "Direct experimental measurement from Figure 3 of the paper. The negative and near-zero gains of spurious rewards on Llama3.1-8B-Instruct (-6.4 pp random, -8.3 pp incorrect) and OLMo2-7B (-6.4 pp random, -8.3 pp incorrect) are specific numerical values from the same experimental setup. High credence as the contrast between model families is the central empirical claim of the paper."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Spurious rewards fail or hurt non-Qwen models (Llama, OLMo2)",
+      "type": "claim"
+    },
+    {
+      "content": "The hypothesis that RLVR, at the compute scales of open-source post-training pipelines, does not teach models fundamentally new reasoning capabilities, but instead surfaces latent reasoning representations learned during pretraining. The effectiveness of spurious rewards is therefore contingent on pre-existing model capabilities aligned with the task.",
+      "content_hash": "4b647adf11e521b3202f6fa6435ffb1d21aad5362187895695f617460e5b1bcd",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "label": "claim_pretraining_hypothesis",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shao2025spurious"
+            ],
+            "referenced_claims": [
+              "claim_aime_results",
+              "claim_clipping_qwen_specificity",
+              "claim_code_accuracy_advantage",
+              "claim_grpo_clipping_bias",
+              "claim_model_family_consistency",
+              "claim_pretraining_hypothesis",
+              "claim_qwen_pretraining_code_freq",
+              "claim_rlvr_improves_qwen",
+              "claim_spurious_fails_non_qwen"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR surfaces pretrained latent capabilities rather than teaching new ones",
+      "type": "claim"
+    },
+    {
+      "content": "A significant fraction of recent RLVR research draws conclusions exclusively or primarily from gains on Qwen2.5-Math-7B — a model for which even completely spurious reward signals (random reward, incorrect label) can yield gains of 21-24 percentage points on MATH-500. This creates a risk that proposed RLVR methods appear effective primarily due to the Qwen2.5-Math model's unique properties rather than the methods themselves.",
+      "content_hash": "8d19f502e07ec784237334d3352e782cb95517f536f6985cac2b0f8e43360032",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen_centric_risk",
+      "label": "claim_qwen_centric_risk",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_pretraining_hypothesis",
+              "claim_qwen_centric_risk",
+              "claim_ttrl_one_shot_same_pattern"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Qwen-centric RLVR research may overestimate method effectiveness",
+      "type": "claim"
+    },
+    {
+      "content": "After 300 steps of GRPO training on Qwen2.5-Math-7B (initial MATH-500 accuracy: 49.4%), MATH-500 accuracy gains by reward type are:\n\n| Reward Type | MATH-500 Gain (pp) |\n|-------------|--------------------|\n| Ground Truth | +29.1 |\n| Majority Vote | +27.1 |\n| Incorrect Label | +24.1 |\n| Random ($\\gamma=0.5$) | +21.4 |\n| Format | +13.8 |\n\nAll reward types produce significant improvements within the first 50 training steps.",
+      "content_hash": "fc0e96f20a17a6ec6afdeef175e4597276ce8737d6e2fc9a34c3637c4a50ec59",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen7b_math500_results",
+      "label": "claim_qwen7b_math500_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 2a",
+        "prior": 0.97,
+        "prior_justification": "This is a direct experimental measurement read from Figure 2a of the paper. The specific numerical gains (+21.4 pp random, +13.8 pp format, +24.1 pp incorrect, +27.1 pp majority vote, +29.1 pp ground truth) are precisely reported tabular values from 300 GRPO training steps on a well-defined benchmark. Very high credence as primary experimental result — independently replicable."
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Qwen2.5-Math-7B MATH-500 gains across all reward types",
+      "type": "claim"
+    },
+    {
+      "content": "After 300 steps of GRPO training on Qwen2.5-Math-7B on AMC (average@8), gains by reward type approach those of ground truth rewards. Format, incorrect, and random rewards yield approximately 13.8%, 24.1%, and 21.4% gains respectively, approaching the ~27–29% improvement from majority vote and ground truth labels.",
+      "content_hash": "5c7bc4c21655761544e2235f9acaae67c92c6ad3f3083f772b0cf7e2b2c001b8",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen7b_amc_results",
+      "label": "claim_qwen7b_amc_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 2a"
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Qwen2.5-Math-7B AMC gains across reward types",
+      "type": "claim"
+    },
+    {
+      "content": "On Qwen2.5-Math-1.5B (a smaller math-specialized Qwen model), all reward types also yield significant improvements on MATH-500. One exception: random reward gains are slower (improvement appears after ~100 steps rather than ~50 steps) and smaller on AMC (only +4.9%). This suggests smaller models are less able to exploit random rewards, possibly due to retaining less pretraining knowledge to surface.",
+      "content_hash": "85a79076ae339800ec88f4ca5864c17a5e1943a71945b59c7971fbc08d537ce9",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen15b_results",
+      "label": "claim_qwen15b_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 2b"
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Qwen2.5-Math-1.5B also gains from spurious rewards, but random reward slower",
+      "type": "claim"
+    },
+    {
+      "content": "On AIME 2024 (harder math Olympiad benchmark, average@8), Qwen2.5-Math-7B shows significant gains from spurious rewards: format reward (+10.3%), incorrect and random rewards both (+10.2%), approaching ground truth rewards (+15.3%). However, on AIME 2025 (created after all models' knowledge cutoff), ground truth labels show a clear advantage, and spurious rewards yield only -0.4% to +4.5% — suggesting AIME25 questions are more out-of-distribution for Qwen's pretrained knowledge.",
+      "content_hash": "0783e6f6b6a742762a9b751512a47ec9f8390bdedbe6eef5e9987806fdc98cfa",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_aime_results",
+      "label": "claim_aime_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 14",
+        "prior": 0.9,
+        "prior_justification": "Direct experimental measurement from Figure 14 of the paper. The differential pattern — spurious rewards work on AIME 2024 (in-distribution) but not AIME 2025 (post-cutoff) — is a clear and internally consistent finding. Slightly lower credence than MATH-500 results because AIME has smaller sample size (average@8 across 30 problems) and stochastic variance is higher."
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "AIME results: spurious rewards effective on in-distribution (2024) but not out-of-distribution (2025)",
+      "type": "claim"
+    },
+    {
+      "content": "Random reward with Bernoulli($\\gamma$) for $\\gamma \\in \\{0.7, 0.5, 0.3, 0.001\\}$ all yield significant MATH-500 performance gains on Qwen2.5-Math-7B, converging to accuracy improvements of approximately 15–20 percentage points after some period of initial random walk. Only $\\gamma = 0$ (which analytically yields zero gradient) fails to produce gains. Convergence speed varies with $\\gamma$, but all non-zero configurations reach similar high-performance regimes.",
+      "content_hash": "d6d85aa7a6be0aa0b83a9eec187096fd01108a0ce7174fb54ad8c9560c7e3ea1",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_random_gamma_robustness",
+      "label": "claim_random_gamma_robustness",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 10"
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Random reward gains are robust across probability values gamma in {0.001, 0.3, 0.5, 0.7}",
+      "type": "claim"
+    },
+    {
+      "content": "Two hypothesized mechanisms allow incorrect labels to provide effective training signals in RLVR. First, many majority-vote-selected incorrect labels remain numerically close to the ground truth values, providing positive reinforcement for largely correct reasoning chains. Second, receiving reward requires the model to successfully extract and evaluate a generated boxed answer against the incorrect label, which implicitly requires a degree of correct format-following and answer extraction.",
+      "content_hash": "3a25d4f8ba10cda096c677f1d4a693bea19d8c44420c8ec2b661ddccbaa48043",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_incorrect_reward_mechanism",
+      "label": "claim_incorrect_reward_mechanism",
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Hypothesized mechanisms: incorrect rewards provide implicit format + near-correct signal",
+      "type": "claim"
+    },
+    {
+      "content": "Format reward (rewarding any response that contains a non-empty \\\\boxed{} expression, regardless of correctness) produces +13.8 pp gain on MATH-500 for Qwen2.5-Math-7B. This reward provides no information about mathematical correctness but incentivizes prompt-following behavior (the \\\\boxed{} format is specified in Qwen2.5-Math's system prompt).",
+      "content_hash": "4724caaf75c83f07204f267da48857128671584d181ef2a4c559d16186dbb2d5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_format_reward_effectiveness",
+      "label": "claim_format_reward_effectiveness",
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Format reward (+13.8 pp on MATH-500) provides no correctness signal, only format signal",
+      "type": "claim"
+    },
+    {
+      "content": "RLVR teaches models genuinely new reasoning capabilities through the reward signal, and any reward signal that provides some useful gradient direction will produce proportional improvements in reasoning ability.",
+      "content_hash": "47eff58f3281b14b2863a89446ec1bc65070729e4b2a7e39b8b3fb67e7b3f3a3",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::alt_rlvr_teaches_new",
+      "label": "alt_rlvr_teaches_new",
+      "metadata": {
+        "prior": 0.35,
+        "prior_justification": "The 'RLVR teaches new capabilities' hypothesis is the naive prior before seeing the paper's evidence. It is reasonable ex ante (reward gradients do provide learning signal), hence higher than 0.1. The paper's random-reward results strongly falsify this for Qwen2.5-Math models; the prior at 0.35 reflects initial plausibility before seeing those results."
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "title": "Alternative hypothesis: RLVR teaches new reasoning via reward gradient direction",
+      "type": "claim"
+    },
+    {
+      "content": "The pretraining-surfacing hypothesis predicts that: (a) random rewards with zero informativeness about correctness still yield gains; (b) gains are model-family-specific (dependent on pretraining); (c) gains are robust across different random-reward probabilities.",
+      "content_hash": "1846cf3c2a829c674f1bf4aebbf4c426baacebbac5881b73c42c96e8590da292",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::pred_pretraining",
+      "label": "pred_pretraining",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "The predictions of the pretraining-surfacing hypothesis — random rewards yield gains, family-specificity, gamma-robustness — are well-articulated and all three are confirmed by the paper's experiments. High prior as these are structurally coherent predictions from a well-defined mechanistic hypothesis."
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The 'RLVR teaches new reasoning' hypothesis predicts that: (a) reward informativeness should directly determine gain magnitude; (b) random reward with zero informativeness should yield minimal or no gain; (c) gains should generalize across model families given similar architecture.",
+      "content_hash": "9f2170be2080d81c4d4f004395ed193bc499f931d043c3a01a6d621d3db83056",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::pred_teaches",
+      "label": "pred_teaches",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "The predictions of the 'RLVR teaches new reasoning' hypothesis — reward informativeness determines gain, random reward yields no gain, gains generalize across families — are the null predictions. All three are falsified by the paper's results. Low prior reflecting initial skepticism before seeing evidence."
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(The pretraining-surfacing hypothesis predicts that: (a) random rewards with zero informativeness about correctness still yield gains; (b) gains are model-family-specific (dependent on pretraining); (c) gains are robust across different random-reward probabilities., The 'RLVR teaches new reasoning' hypothesis predicts that: (a) reward informativeness should directly determine gain magnitude; (b) random reward with zero informativeness should yield minimal or no gain; (c) gains should generalize across model families given similar architecture., RLVR with spurious rewards (format reward, random reward, incorrect label reward) significantly improves MATH-500 performance on Qwen2.5-Math-7B. Specifically, absolute accuracy gains from 300 GRPO training steps are: +21.4 pp (random reward, $\\gamma=0.5$), +13.8 pp (format reward), +24.1 pp (incorrect label reward), +26.0 pp (one-shot RL), +27.1 pp (majority vote) — compared to +29.1 pp from ground-truth rewards. Starting accuracy before RLVR: 49.4% on MATH-500.)",
+      "content_hash": "58a9c93765402b897db5b07d8d85bf33a171b521cc39b0a683cda66c5ded07ad",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_random_gamma_robustness"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s2_spurious_rewards",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "General-purpose Qwen2.5-7B (not math-specialized; initial MATH-500 ~41.6%) and Qwen2.5-1.5B also gain from weak and spurious rewards. For Qwen2.5-7B on MATH-500, all non-random rewards including the spurious incorrect reward produce clear improvements (+13.2 pp format, +27.8 pp incorrect, +16.4 pp majority vote, +31.9 pp ground truth). This generalizes the spurious-reward effect beyond math-specialized models to the general Qwen2.5 family.",
+      "content_hash": "f02a77492151ddd57c68d9670c9230390f54baaff49fae1973ba29b1eff35c05",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen_general_also_gains",
+      "label": "claim_qwen_general_also_gains",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 3b",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_pretraining_hypothesis"
+            ]
+          }
+        }
+      },
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "General-purpose Qwen2.5-7B also gains from spurious rewards, not just math-specialized",
+      "type": "claim"
+    },
+    {
+      "content": "OLMo2-7B and OLMo2-7B-SFT (instruction-finetuned from OLMo2-7B) show relatively flat performance on spurious rewards and only significant gains with ground truth rewards (+16.7 pp for OLMo2-7B on MATH-500). Spurious rewards (random, incorrect) yield -6.4 pp and -8.3 pp respectively on OLMo2-7B. This pattern is consistent across MATH-500 and AMC benchmarks.",
+      "content_hash": "36f9620f1b2bc80ce0b93a0cb5828667bb4cb182016b8acc73a18776845789ae",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_olmo_only_gt",
+      "label": "claim_olmo_only_gt",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 3c,d",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_olmo_only_gt",
+              "claim_pretraining_hypothesis"
+            ]
+          }
+        }
+      },
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "OLMo2 models show gains only from ground truth reward, spurious rewards hurt performance",
+      "type": "claim"
+    },
+    {
+      "content": "Llama3.1-8B-Instruct and Llama3.2-3B-Instruct show gains only from informative reward signals. Llama3.1-8B-Instruct (baseline 36.8%) gains +15.5 pp from ground truth but -6.4 pp (random), -8.3 pp (incorrect), -2.1 pp (format). Llama base models (non-Instruct) show minimal improvement even from ground truth, suggesting SFT instruction tuning helps but math-specific pretraining is critical.",
+      "content_hash": "a48b4a7f4893f58c5aa634f89718fb1d25976390103ef2f434e758c66e449e3b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_llama_partial",
+      "label": "claim_llama_partial",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 3e-h",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_llama_partial",
+              "claim_pretraining_hypothesis"
+            ]
+          }
+        }
+      },
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "Llama models gain only from informative signals; spurious rewards hurt or have no effect",
+      "type": "claim"
+    },
+    {
+      "content": "Models within the same family generally exhibit similar RLVR behavior patterns regardless of size or instruction-tuning status. For example, both Qwen2.5-Math-7B and Qwen2.5-Math-1.5B show gains from all reward types; both Llama3.1-8B and Llama3.2-3B show similar limited-gain patterns; and both OLMo2-7B and OLMo2-7B-SFT are only helped by ground truth rewards. This consistency implicates pretraining data distribution as a primary determinant.",
+      "content_hash": "571ea18d42e929911e6bbcb8dbe3490cd37668fc04f2cd17098ac8188b2143d2",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_model_family_consistency",
+      "label": "claim_model_family_consistency",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Inferred from the cross-model results in Figure 3 — within-family consistency is a pattern observed across multiple models (Qwen2.5-Math-7B and -1.5B both gain from all rewards; Llama3.1 and Llama3.2 both lose from spurious rewards; OLMo2-7B and OLMo2-7B-SFT both gain only from ground truth). High credence as a summary observation with consistent supporting data points."
+      },
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "Within-family consistency in RLVR behavior implicates pretraining data distribution",
+      "type": "claim"
+    },
+    {
+      "content": "Smaller models are generally less likely to benefit from spurious rewards, particularly random rewards. Qwen2.5-Math-1.5B gains from random reward are slower and smaller on AMC (+4.9%) compared to Qwen2.5-Math-7B (+21.4% on MATH-500). The conjecture is that larger models retain more pretraining knowledge that spurious rewards can surface.",
+      "content_hash": "c0eaec86820dbdbb3155a96550164877354bc24b988f77aca530eed69b833659",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_smaller_models_less_spurious",
+      "label": "claim_smaller_models_less_spurious",
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "Smaller models benefit less from spurious rewards than larger models",
+      "type": "claim"
+    },
+    {
+      "content": "Two published RLVR methods — TTRL (Test-Time Reinforcement Learning, Zuo et al. 2025) and One-Shot RL (Wang et al. 2025b) — show the same pattern as the spurious rewards: strong improvements on Qwen2.5-Math or Qwen2.5 models, but the same signals often fail to yield gains on Llama3 or OLMo2 families. TTRL trains on unlabeled test prompts with online majority-vote labels; One-Shot RL uses a single training example with correct label.",
+      "content_hash": "9505283ce5bac2600e76290ef3523afe24a3fa919281d59706fce656e91d44f4",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+      "label": "claim_ttrl_one_shot_same_pattern",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 4",
+        "prior": 0.9,
+        "prior_justification": "Based on Figure 4 of the paper, which replicates TTRL (Zuo et al. 2025) and One-Shot RL (Wang et al. 2025b) on diverse model families. The same-pattern finding — strong on Qwen, weak on Llama/OLMo2 — is the paper's own experimental replication. High credence as a controlled comparison under standardized conditions."
+      },
+      "module": "s3_cross_model",
+      "parameters": [],
+      "title": "TTRL and One-Shot RL methods also fail to generalize beyond Qwen models",
+      "type": "claim"
+    },
+    {
+      "content": "Code reasoning is defined as generating Python code as part of the reasoning chain to assist in solving a math problem — without access to a code execution environment. The model both writes the code AND predicts the output of that code autoregressively. Code reasoning frequency is measured as the percentage of MATH-500 responses containing the string 'python'.",
+      "content_hash": "29dc7ca90161a0f515fcddc84f65eb10d55457fa75ce48e997785e13467a2c38",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::setup_code_reasoning_def",
+      "label": "setup_code_reasoning_def",
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Code reasoning definition: generating Python code without execution environment",
+      "type": "setting"
+    },
+    {
+      "content": "Before any RLVR training, Qwen2.5-Math-7B generates Python code in 65.0% of MATH-500 responses, and Qwen2.5-Math-1.5B in 53.6%, despite having no access to a code execution environment. This high baseline frequency of code-assisted reasoning is not observed in other model families:\n\n| Model | Code Frequency (pre-RL) |\n|-------|-------------------------|\n| Qwen2.5-Math-7B | 65.0% |\n| Qwen2.5-Math-1.5B | 53.6% |\n| Qwen2.5-7B | 92.2% (Bad-Code) |\n| OLMo2-7B-SFT | 98.0% (Bad-Code) |\n| Qwen2.5-1.5B | 0% (No-Code) |\n| OLMo2-7B | 0% (No-Code) |\n| Llama3.1-8B-Instruct | 0% (No-Code) |\n| Llama3.2-3B-Instruct | 0% (No-Code) |",
+      "content_hash": "c6c59100c8e134a6e3cf4ae260e572630864c1f29cad4791cc3731469982414f",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_qwen_pretraining_code_freq",
+      "label": "claim_qwen_pretraining_code_freq",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Table 1",
+        "prior": 0.95,
+        "prior_justification": "Directly measured from Table 1 of the paper, counting 'python' string occurrences in pre-RL responses on MATH-500. The 65.0% frequency for Qwen2.5-Math-7B and 0% for Llama/OLMo2 models is a binary and easily verifiable measurement. High credence as a baseline measurement with no confounds."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Pre-RL code reasoning frequency: 65% for Qwen2.5-Math-7B, 0% for Llama/OLMo2",
+      "type": "claim"
+    },
+    {
+      "content": "For Qwen2.5-Math-7B, MATH-500 accuracy when using code reasoning (60.9%) is substantially higher than when using only natural language (35.0%). For Qwen2.5-Math-1.5B, the same pattern holds (code: 52.6%, language: 17.2%). This accuracy advantage does NOT hold for Bad-Code models: Qwen2.5-7B code accuracy is 39.9% versus 61.5% for language, and OLMo2-7B-SFT code accuracy is 21.0% versus 40.0% for language — code reasoning is counterproductive for these models.",
+      "content_hash": "d38151870ffe2e38ffaa5bfc29f49e111cc83ed5e1d8ca6dc9aa1578b33d2829",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_code_accuracy_advantage",
+      "label": "claim_code_accuracy_advantage",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Table 1",
+        "prior": 0.95,
+        "prior_justification": "Directly measured from Table 1 of the paper, stratifying MATH-500 responses by reasoning strategy (code vs language) before RLVR. The 60.9% vs 35.0% accuracy difference for Qwen2.5-Math-7B and 52.6% vs 17.2% for Qwen2.5-Math-1.5B are specific, independently verifiable measurements. Very high credence."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Code reasoning accuracy advantage: 60.9% (code) vs 35.0% (language) for Qwen2.5-Math-7B",
+      "type": "claim"
+    },
+    {
+      "content": "After RLVR training with any reward type (including spurious random and incorrect rewards), Qwen2.5-Math-7B's code reasoning frequency rapidly increases from 65% to ~90% within the first 15 training steps, and reaches as high as 95.6% for random reward. This increase in code frequency is strongly correlated with accuracy improvements across all reward types. With ground truth reward, code frequency also initially increases but then gradually decreases as natural language reasoning accuracy improves — suggesting ground truth provides genuine new learning while spurious rewards primarily amplify the existing code strategy.",
+      "content_hash": "a737e1b02233c741d5a6d9e0e7ebae17eea58e2fd5e1c2c39d2a0f0ae93f0c8b",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr",
+      "label": "claim_code_freq_increases_rlvr",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 6a",
+        "prior": 0.95,
+        "prior_justification": "Direct experimental observation from Figure 6a. The 65% → ~90%+ code frequency increase within 15 training steps is a robust, visually clear finding across multiple reward types. The correlation with accuracy improvement is further supported by the Lang→Code decomposition analysis. Very high credence as a central mechanistic observation."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "RLVR increases code reasoning frequency from 65% to ~90%+ regardless of reward type",
+      "type": "claim"
+    },
+    {
+      "content": "For Qwen2.5-Math-7B, 58.3% of the total MATH-500 accuracy gain from RLVR (averaged across spurious reward types) comes from the Lang→Code subset: problems where the model switches from natural language to code reasoning after RLVR. For Qwen2.5-Math-1.5B, this contribution is even higher at 78.7%. This shows that the dominant mechanism of improvement is converting language-reasoning problems to code-reasoning problems, not improving within each strategy type.\n\n| Model | Avg. Total Gain | C_Code→Code | C_Code→Lang | C_Lang→Code | C_Lang→Lang |\n|-------|----------------|-------------|-------------|-------------|-------------|\n| Qwen2.5-Math-7B | 23.5% | 11.6% | 8.6% | **58.3%** | 21.4% |\n| Qwen2.5-Math-1.5B | 28.5% | 2.8% | 2.0% | **78.7%** | 16.5% |\n| Qwen2.5-7B | 30.6% | 0.2% | **93.9%** | 0.0% | 5.9% |",
+      "content_hash": "556e80844f46e38f7a356eeefbc875df2c912840d26583f44ec3645d811982a0",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+      "label": "claim_lang_to_code_contribution",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Table 2 and Figure 7",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_code_accuracy_advantage",
+              "claim_code_freq_increases_rlvr",
+              "claim_lang_to_code_contribution"
+            ]
+          }
+        }
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Lang→Code strategy switching accounts for 58.3% (Qwen-Math-7B) and 78.7% (Qwen-Math-1.5B) of RLVR gains",
+      "type": "claim"
+    },
+    {
+      "content": "For Bad-Code models (Qwen2.5-7B and OLMo2-7B-SFT), which generate code frequently but with lower accuracy than natural language, RLVR with meaningful rewards (ground truth, majority vote) steers models away from code reasoning. For Qwen2.5-7B, 93.9% of its total 30.6% gain comes from the Code→Lang subset (problems where the model switches away from code to language reasoning). This is the inverse of the Qwen2.5-Math pattern.",
+      "content_hash": "4ea4bd6be51457c050869b19a64a8d0398e52980ec93da04bbaa971a4a811854",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_bad_code_reduction",
+      "label": "claim_bad_code_reduction",
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Bad-Code models: RLVR gains come from reducing code reasoning (Code→Lang contributes 93.9%)",
+      "type": "claim"
+    },
+    {
+      "content": "Forcing Qwen2.5-Math models to begin responses with 'Let's solve this using Python.' (code-forcing prompt) yields:\n\n| Model | Original | Prompting | Abs. Diff |\n|-------|----------|-----------|----------|\n| Qwen2.5-Math-1.5B | 36.2% | 60.4% | +24.2% |\n| Qwen2.5-Math-7B | 49.4% | 64.4% | +15.0% |\n| Qwen2.5-1.5B | 3.0% | 13.0% | +10.0% |\n| Qwen2.5-7B | 41.6% | 22.2% | -19.4% |\n| Llama3.2-3B-Instruct | 36.8% | 8.2% | -28.6% |\n| Llama3.1-8B-Instruct | 36.8% | 15.2% | -21.6% |\n| OLMo2-7B | 9.0% | 7.8% | -1.2% |\n| OLMo2-7B-SFT | 21.4% | 18.6% | -2.8% |\n\nCode forcing helps only models with effective code reasoning (Qwen-Math and Qwen2.5-1.5B) and hurts those without it.",
+      "content_hash": "8648b30a06eec30ae07e9bdccd81da06e34f01e3389393bad572e8f7f080cef7",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_code_prompting_results",
+      "label": "claim_code_prompting_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Table 3"
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Code-forcing prompt: +24.2%/+15% for Qwen-Math, -28.6%/-21.6% for Llama-Instruct",
+      "type": "claim"
+    },
+    {
+      "content": "A Python reward (rewarding responses containing the string 'python') induces Qwen2.5-Math-7B to generate code reasoning in >99% of responses within 20 training steps, and yields performance gains comparable to or exceeding code-forcing via prompting on Qwen2.5-Math models. Other models demonstrate limited improvement from the Python reward.",
+      "content_hash": "9af236d31e69331dfa57a644d56090c1d713035dca759626c24b9525d4f91813",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_python_reward_results",
+      "label": "claim_python_reward_results",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 8"
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Python reward RLVR: >99% code frequency in 20 steps, gains match or exceed code-forcing prompts",
+      "type": "claim"
+    },
+    {
+      "content": "Compound rewards that intersect the original spurious reward with a 'no Python' constraint (reward only if response satisfies the spurious condition AND does not contain 'python') test whether code reasoning is causally responsible for the spurious-reward gains. Results:\n- Format reward with no-Python: Qwen2.5-Math-7B gains cease entirely (confirming code reasoning is the mechanism for format reward).\n- Incorrect reward with no-Python: MATH-500 gains persist, but harder benchmarks (AMC, AIME) show reduced gains (other behaviors like reduced repetition may contribute).\n- Bad-Code models (Qwen2.5-7B, OLMo2-7B-SFT): compound rewards often outperform originals (OLMo2-7B-SFT gains +8.9 and +5.5 pp under format+no-Python and incorrect+no-Python vs. degradation under originals).",
+      "content_hash": "b72583b740848ba9e6e36dacf0102bf8ce1de1aa4faeb746b1606858c3ff4820",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_compound_reward_no_python",
+      "label": "claim_compound_reward_no_python",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 9"
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Compound no-Python reward: confirms code reasoning drives format reward; partially drives incorrect reward",
+      "type": "claim"
+    },
+    {
+      "content": "Under random rewards, the expected group-relative advantage $\\hat{A}$ is zero, so the expected gradient without clipping is also zero. However, GRPO's PPO-style clipping term introduces a nonzero gradient bias. Specifically, for token $y_t$ with old policy probability $\\pi_{\\text{old},x}(y_t)$ and importance ratio $R_\\theta = \\pi_{\\theta,x}(y_t)/\\pi_{\\text{old},x}(y_t)$, the clipping bias is proportional to $\\mu > 0$ and creates:\n- Positive gradient (increases $\\pi_{\\theta,x}(y_t)$) when $R_\\theta < 1 - \\epsilon_c$\n- Negative gradient (decreases $\\pi_{\\theta,x}(y_t)$) when $R_\\theta > 1 + \\epsilon_c$\n- Zero gradient in the clipping region $[1-\\epsilon_c, 1+\\epsilon_c]$\nThis creates an asymmetric effect: tokens with high prior probability ($\\pi_{\\text{old}} \\approx 0.85$) have upper clipping threshold $\\approx 1.02 > 1$, so they almost never receive negative gradient bias, while low-probability tokens face much more frequent penalization.",
+      "content_hash": "4edf6c01ae1af8105b540bdbbf5e5d7884fec12c0b2607561d858f9e6f50611e",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+      "label": "claim_grpo_clipping_bias",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Appendix B.1.2",
+        "prior": 0.92,
+        "prior_justification": "The mathematical derivation of the GRPO clipping bias under random rewards (Appendix B.1.2 of the paper) is a formal algebraic result. The derivation shows that E[gradient] ≠ 0 under clipping even when E[advantage] = 0. Very high credence as a mathematical derivation, slightly below 1.0 to account for possible errors in the derivation steps not independently verified."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "GRPO clipping bias derivation: asymmetric gradient favors high-prior token patterns",
+      "type": "claim"
+    },
+    {
+      "content": "The GRPO clipping bias systematically increases the average token probability ($\\pi_\\theta$) of the model's high-prior responses under random rewards. Empirical evidence: average token probability increases monotonically during random-reward training with clipping (purple line, reaching ~0.93+), while it remains approximately constant without clipping (green line, staying near 0.85). Clipping also correlates with the observed increase in code reasoning frequency.",
+      "content_hash": "2273393bd08493599609a0d6d69e33fab87956e8541e9ef4da079ff716ac152d",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior",
+      "label": "claim_clipping_amplifies_prior",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 12",
+        "prior": 0.88,
+        "prior_justification": "Empirical finding from Figure 12 of the paper — average token probability increases monotonically under clipping (reaching ~0.93+) but stays flat without clipping (~0.85). The correlation with code frequency increase is also shown. High credence but slightly less than direct accuracy measurements because interpretations of internal probability trajectories have additional uncertainty."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Empirical: clipping increases token probability and code frequency; no-clipping does not",
+      "type": "claim"
+    },
+    {
+      "content": "When GRPO clipping is disabled (via direct removal, increased mini-batch size to match rollout size, or reduced rollout size to ensure $\\pi_\\theta = \\pi_{\\text{old}}$), random-reward training does NOT produce robust MATH-500 performance improvement across seeds. Average results across seeds show no meaningful gain. The standard GRPO with clipping consistently achieves ~21 pp improvement. Removing clipping from the implementation (not batch size) produces high variance — occasionally high performance due to inherent training stochasticity, but not reliably.",
+      "content_hash": "309e3c25cf21af1c8b243a23dfc2edacc8505f8d5dc70999197c5342225cf528",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_no_clipping_no_gain",
+      "label": "claim_no_clipping_no_gain",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 11 and Figure 13",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_clipping_amplifies_prior",
+              "claim_grpo_clipping_bias",
+              "claim_no_clipping_no_gain"
+            ]
+          }
+        }
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Without GRPO clipping, random rewards yield no robust improvement (confirming clipping as mechanism)",
+      "type": "claim"
+    },
+    {
+      "content": "The clipping bias mechanism operates on all models, but it only improves performance when the model's high-prior behaviors are effective reasoning strategies. For Qwen2.5-Math: code reasoning occurs at 65% baseline with 64% accuracy (vs 35% without code) — so amplifying it improves performance. For No-Code models (Llama, OLMo2-7B): no code reasoning to amplify, so clipping bias has no beneficial behavioral pattern to reinforce. For Bad-Code models (OLMo2-7B-SFT): code reasoning has 21% accuracy (worse than 40% for natural language) — amplifying it hurts performance.",
+      "content_hash": "ed4b020937e196a4be74628a6cfa5e3e6d8ca5fe9ffceb57348e3df942337d2d",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity",
+      "label": "claim_clipping_qwen_specificity",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Synthesis claim combining Table 1 data (code accuracy 60.9% vs language 35.0% for Qwen-Math; code 21.0% vs language 40.0% for OLMo2-7B-SFT) with the clipping mechanism. The reasoning that amplifying high-prior behaviors helps Qwen-Math but hurts bad-code models is directly grounded in measured accuracy differences. Slightly lower credence as it integrates multiple measurements."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Clipping bias is universal but only beneficial when high-prior behaviors correlate with correctness",
+      "type": "claim"
+    },
+    {
+      "content": "A no-repetition reward (score=1 if response has no string repeated more than 10 times, else 0) also improves Qwen2.5-Math-7B and Qwen2.5-Math-1.5B on MATH-500 and AMC, but not other models. Qwen-Math models have a higher baseline tendency to produce repetitive outputs; answers using code reasoning typically do not have this issue. This demonstrates that code reasoning is not the only pretraining-instilled pattern that RLVR can surface — reduced repetition is another.",
+      "content_hash": "5227ca3f36115a3bd81333e969b9c5f37725930da1ee53a34c3d592ced802cbd",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_no_repetition_pattern",
+      "label": "claim_no_repetition_pattern",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 17"
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "No-repetition reward also improves Qwen-Math performance: second example of surfaceable pretraining pattern",
+      "type": "claim"
+    },
+    {
+      "content": "Code reasoning elicitation is achievable through prompting alone, without RLVR training — the gains attributed to RLVR might simply be prompt effects.",
+      "content_hash": "490e0b7acb291f1302209085ee7f6c2b1f4e765b3eefee659d5ff51aff5706b1",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt",
+      "label": "alt_code_elicitation_only_prompt",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The alternative that prompting alone explains the code-frequency gains has low credence because the code frequency increases during RLVR training without any prompt change. The code-forcing prompt experiments (Table 3) show gains comparable to RLVR, but cannot explain the training dynamics. Low prior as the alternative is partially falsified by the no-prompt-change training setup."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Under RLVR training with spurious rewards (format, random, incorrect), Qwen2.5-Math-7B's code reasoning frequency increases rapidly from 65% to ~90%+ within the first 15 steps, even though no prompt change is applied — the frequency increase is driven by the training dynamics, not by prompting.",
+      "content_hash": "3eb49814180a72149263526155735f077f60a643b18b7a16a7417ad731254e4b",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::obs_code_freq_gain",
+      "label": "obs_code_freq_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_code_elicitation_only_prompt",
+              "claim_code_freq_increases_rlvr",
+              "claim_lang_to_code_contribution",
+              "obs_code_freq_gain"
+            ]
+          }
+        }
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "title": "Code frequency increases during spurious-reward RLVR without any prompt change",
+      "type": "claim"
+    },
+    {
+      "content": "If RLVR causes code elicitation, it should produce behaviors beyond what prompting can induce, and compound rewards controlling code should affect performance specifically through the code channel.",
+      "content_hash": "940c64da1fcf34542f4313b7efa49a64e1b1090a87ee77cb95a753dccd66d90b",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::pred_rlvr_broader",
+      "label": "pred_rlvr_broader",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "The prediction that RLVR causes code elicitation beyond what prompting can achieve (and that compound rewards affect performance through the code channel) is supported by the compound no-Python reward experiments. Moderate-high prior as this is a directionally well-motivated prediction."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "If prompting alone is sufficient, compound no-Python rewards should not specifically affect the gains — any RLVR-induced gain should persist.",
+      "content_hash": "9e77234f4eed9e9aa0327620c3137d1f611a6bbe6297aca14ef1abf588e632fa",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::pred_prompt_same",
+      "label": "pred_prompt_same",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "The prediction that if prompting alone were sufficient, compound no-Python rewards would not specifically affect gains — this prediction is falsified by the format+no-Python result (gains cease entirely). Low prior reflecting that the 'prompting alone' alternative is likely insufficient."
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(If RLVR causes code elicitation, it should produce behaviors beyond what prompting can induce, and compound rewards controlling code should affect performance specifically through the code channel., If prompting alone is sufficient, compound no-Python rewards should not specifically affect the gains — any RLVR-induced gain should persist., Under RLVR training with spurious rewards (format, random, incorrect), Qwen2.5-Math-7B's code reasoning frequency increases rapidly from 65% to ~90%+ within the first 15 steps, even though no prompt change is applied — the frequency increase is driven by the training dynamics, not by prompting.)",
+      "content_hash": "05eccb583295acc9c9256d1fe3a28763c3ec8a5b2a3028f1dd86534e8e6f6ed8",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_compound_reward_no_python"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_code_reasoning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Base model pretraining significantly affects RLVR training outcomes: the reasoning strategies instilled during pretraining heavily impact which RLVR reward signals are effective and what performance improvements are achievable. Models with strong math-oriented pretraining (Qwen2.5-Math) respond to a wide range of rewards; models without it (OLMo2, Llama) require genuinely informative rewards.",
+      "content_hash": "404b01af445c3f4e6a6cecb6b720321eff041bed0a4df2654af729192f5f657c",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_implication_pretraining_primary",
+      "label": "claim_implication_pretraining_primary",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_clipping_qwen_specificity",
+              "claim_implication_pretraining_primary",
+              "claim_model_family_consistency",
+              "claim_pretraining_hypothesis"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Implication 1: pretraining is the primary determinant of RLVR effectiveness",
+      "type": "claim"
+    },
+    {
+      "content": "Even corrupted or spurious supervision can enhance reasoning performance when it triggers useful pre-existing behaviors. The reward signal does not need to be semantically correct — it only needs to provide a training dynamic that concentrates probability mass on already-learned, high-performing behavioral patterns.",
+      "content_hash": "26376eca00fcc50aade97ae57fb21176cc04551d126d72a8ab61a56893a79279",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision",
+      "label": "claim_implication_corrupted_supervision",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_code_freq_increases_rlvr",
+              "claim_implication_corrupted_supervision",
+              "claim_lang_to_code_contribution",
+              "claim_prompt_sensitivity",
+              "claim_rlvr_improves_qwen"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Implication 2: corrupted supervision can still improve reasoning by eliciting pretraining",
+      "type": "claim"
+    },
+    {
+      "content": "Effects observed in one model family may not generalize to other families. Conclusions from Qwen-centric RLVR experiments — even if internally reproducible — cannot be assumed to reflect general principles of RLVR, because the Qwen2.5-Math family is uniquely susceptible to spurious training signals due to its pretraining distribution.",
+      "content_hash": "4dc0a1f2325943f4a825b7157cc2fb4367025d4dfc8dcce0f4f592c2ce753787",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2506_10947_spurious_rewards::claim_implication_no_generalization",
+      "label": "claim_implication_no_generalization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_implication_no_generalization",
+              "claim_qwen_centric_risk",
+              "claim_spurious_fails_non_qwen",
+              "claim_ttrl_one_shot_same_pattern"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Implication 3: RLVR effects are model-family-specific and do not generalize",
+      "type": "claim"
+    },
+    {
+      "content": "Qwen2.5-Math-7B shows unreasonably high sensitivity to the evaluation prompt. Initial MATH-500 accuracy varies substantially across prompts: 49.4% (Qwen default), 55.8% (Math Problem prompt), 63.2% (SimpleRL-Zoo), 61.6% (Sober), 68.8% (Spurious LIPSUM prompt). The spurious LIPSUM prompt — consisting of random LaTeX placeholder text — achieves the highest initial accuracy. RLVR training trajectories also vary significantly by prompt, though models generally converge to similar performance.",
+      "content_hash": "6e835751873dbb4965224d3472342276bdc104ccac1c1b4b4be9976dfffe7cd1",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_prompt_sensitivity",
+      "label": "claim_prompt_sensitivity",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Table 5 and Figure 18",
+        "prior": 0.92,
+        "prior_justification": "Direct measurement from Table 5 and Figure 18 of the paper. The accuracy variation across prompts (49.4% Qwen default → 68.8% LIPSUM spurious prompt) is a striking but clearly documented experimental finding. High credence as a well-controlled ablation study with specific numerical values."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Qwen2.5-Math-7B prompt sensitivity: spurious LIPSUM prompt yields highest 68.8% MATH-500 accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Models that have already undergone substantial RL post-training (Qwen2.5-Math-7B-Instruct, Qwen2.5-7B-Instruct) show minimal improvement from additional RLVR with any reward type, including ground truth rewards. This suggests these models have already reached saturation in terms of surfaceable pretraining capabilities, consistent with the pretraining hypothesis — once the elicitable representations are fully activated, additional RLVR provides limited marginal gain.",
+      "content_hash": "f87ad36c744f763fc23d2283aad6cdb1852e9b849f86e1165a24dea3b0bb4a16",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_post_rl_saturation",
+      "label": "claim_post_rl_saturation",
+      "metadata": {
+        "figure": "artifacts/2506.10947-spurious-rewards.pdf, Figure 19"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Post-RL saturated models (Qwen Instruct) show minimal further improvement under RLVR",
+      "type": "claim"
+    },
+    {
+      "content": "The exact mechanism by which GRPO clipping bias concentrates probability mass on the model's pre-existing high-prior behaviors remains an open question. While the mathematical derivation shows the clipping bias is nonzero and asymmetric (favoring high-prior tokens), the precise sequence by which this gradient signal translates to increased code reasoning frequency and performance — and why it is self-reinforcing — is not fully characterized.",
+      "content_hash": "dca654dd12c190bb76a93ca27f642c5dd7b994babefc4a8f9d48de575c4b1fca",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_open_question_mechanism",
+      "label": "claim_open_question_mechanism",
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Open question: exact mechanism connecting clipping bias to code frequency and performance",
+      "type": "claim"
+    },
+    {
+      "content": "RLVR fundamentally teaches models new reasoning capabilities beyond what they have learned during pretraining — the reward signal provides gradient information that enables novel reasoning skills.",
+      "content_hash": "e7c9bebb849357845b7952d3b621e52ece4ef81e372c57bb33dcc83b39aecbf5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::claim_rlvr_teaches",
+      "label": "claim_rlvr_teaches",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The counterfactual claim that RLVR fundamentally teaches new reasoning skills is the alternative view being tested. Prior at 0.25 reflects initial reasonable doubt but acknowledges the paper's evidence (random rewards work just as well as ground truth rewards on Qwen) strongly argues against this for math-specialized Qwen models. Low but non-negligible prior."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::not_both_teach_surface",
+      "label": "not_both_teach_surface",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.92
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "1b598f8aa7e48e0ad0af295e948508555c2d34bc08d7cb53e3605795f110a0ef",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_bdce1e4f",
+      "label": "__implication_result_bdce1e4f",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_76f57c837cd988c9",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "31dcca60e5018bcfb37997d6d5695a8314bb28880b7c4be0c8aac0b9017fecd1",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_41ea8dd7",
+      "label": "__implication_result_41ea8dd7",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b828ce65696f0cd4",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+      "content_hash": "684cc5cf08c1c0ac5e64553fd3f6a32ddd01fb5cfee87b89df123924f92180c5",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_40829fa5",
+      "label": "__implication_result_40829fa5",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_91f2467847833c93",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::alt_rlvr_teaches_new,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+      "content_hash": "ff1b944a31a49c2695d4a32b69f53495c8bc518b1d977d8a70b6173c6452236e",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_daf2e6cc",
+      "label": "__implication_result_daf2e6cc",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::alt_rlvr_teaches_new,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_966be9a23c73cd2e",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2506_10947_spurious_rewards::pred_pretraining,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+      "content_hash": "6b68c64137347b6f8419b9dc3095e042a72054c6a8cace5722287aefba38f102",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__equivalence_result_853de3ff",
+      "label": "__equivalence_result_853de3ff",
+      "metadata": {
+        "canonical_name": "matches(github:2506_10947_spurious_rewards::pred_pretraining,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_365a1cb26c7635ef",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2506_10947_spurious_rewards::pred_teaches,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+      "content_hash": "3fe795e73873c8a6dd12f0bfe21ce0ec959e437e3285b89c964b328bb6786a83",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__equivalence_result_37af5ce9",
+      "label": "__equivalence_result_37af5ce9",
+      "metadata": {
+        "canonical_name": "matches(github:2506_10947_spurious_rewards::pred_teaches,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_365a1cb26c7635ef",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_qwen7b_math500_results,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+      "content_hash": "04c7260d7bf0f8aabd62b221fa78d75bbda943f5dff16594a5d14364c4940e47",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_23fc1e48",
+      "label": "__implication_result_23fc1e48",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_qwen7b_math500_results,github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cbca2eaba687e801",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_aime_results,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "ca8fe4848f0ab4fca08e4ba6d4184228d824b60525575b723a9554dff3a4a6fb",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_5ebee539",
+      "label": "__implication_result_5ebee539",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_aime_results,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_74885b606a8caff4",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_qwen_general_also_gains)",
+      "content_hash": "9ccd3bb8e033b216be029582662dd5a74c2674e5b01b7fa22cd40d3694a54d88",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_c8f4c901",
+      "label": "__implication_result_c8f4c901",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_qwen_general_also_gains)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_16a654aed057e5c5",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_olmo_only_gt)",
+      "content_hash": "b602580ca9cb07b27f0aa337ad03d2510c1efda18146ef2c4dfef2fd17ac2b38",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_85b429a7",
+      "label": "__implication_result_85b429a7",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_olmo_only_gt)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5c18710863762483",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_llama_partial)",
+      "content_hash": "8b27042235aec7791e0f7a25a3fde49f39dfb2b0ea2c5055e4e11887a6f12061",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_6aa13d6f",
+      "label": "__implication_result_6aa13d6f",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_llama_partial)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_745718334bb6de41",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "680dc5c3bab9e929da05e9ac65e6e483757ddb52bfa174c83c7dffa8e0c72054",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_c6d24381",
+      "label": "__conjunction_result_c6d24381",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b8cdcae64bb30483",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_c6d24381,github:2506_10947_spurious_rewards::claim_qwen_centric_risk)",
+      "content_hash": "38b2c1b409f736543d9134aa9d9886fa6e5bf92b5897a54bab2d4e3700b30af4",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_b3bbfa4a",
+      "label": "__implication_result_b3bbfa4a",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_c6d24381,github:2506_10947_spurious_rewards::claim_qwen_centric_risk)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8cdcae64bb30483",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_model_family_consistency,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "25550e036e53d4580aae21fac0077eba30c60bb8c9ee5b8df2ba5ad19e1d55a4",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_219da02e",
+      "label": "__implication_result_219da02e",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_model_family_consistency,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14822fb679b99121",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::claim_qwen_pretraining_code_freq,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "ffa06324487fc3e89bb6df6a20135c3e9960c9243e33705d97897c6e5640db40",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_506e50cf",
+      "label": "__implication_result_506e50cf",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::claim_qwen_pretraining_code_freq,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_45e40448fe38b32e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_code_accuracy_advantage,github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr)",
+      "content_hash": "66c858990ba889832a832f78b401410927941ee87ce195affd79a5190271773a",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_6fcdbb23",
+      "label": "__conjunction_result_6fcdbb23",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_code_accuracy_advantage,github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4a72ba9ed1b87a3e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_6fcdbb23,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution)",
+      "content_hash": "678a46c7c4201e684e1ce18c2e93a3705f0cdcfdb06b37d38894e627191f5c1b",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_cc59e26b",
+      "label": "__implication_result_cc59e26b",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_6fcdbb23,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4a72ba9ed1b87a3e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_grpo_clipping_bias,github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior)",
+      "content_hash": "50d5e53bb42c0c67be432e31911d60fadfbb3f0ca3cdde6fb0aa7922d0044f69",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_7d385e2a",
+      "label": "__conjunction_result_7d385e2a",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_grpo_clipping_bias,github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ebc22dfb8c5a0d54",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7d385e2a,github:2506_10947_spurious_rewards::claim_no_clipping_no_gain)",
+      "content_hash": "d932b3a3d058696fa1471ffc8c20701a5d0c8d608e0e6711de4d0248789cfe2d",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_c3a974ec",
+      "label": "__implication_result_c3a974ec",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7d385e2a,github:2506_10947_spurious_rewards::claim_no_clipping_no_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ebc22dfb8c5a0d54",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity,github:2506_10947_spurious_rewards::claim_grpo_clipping_bias,github:2506_10947_spurious_rewards::claim_code_accuracy_advantage)",
+      "content_hash": "70ef3d8ca36d730a02bcf597261b81496948902b9b7550b87722d9f02a7d43c0",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_a392f26b",
+      "label": "__conjunction_result_a392f26b",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity,github:2506_10947_spurious_rewards::claim_grpo_clipping_bias,github:2506_10947_spurious_rewards::claim_code_accuracy_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0f449522de17e15",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_a392f26b,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "67df0d8b26c08d1273794f24f9bb118275430c33b43905738695683425c4e4e3",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_b56b9c6f",
+      "label": "__implication_result_b56b9c6f",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_a392f26b,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0f449522de17e15",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution)",
+      "content_hash": "01afe6c4c80f786d2e00627e2dbf9e548c34396527737913d939adfea5580ab6",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_6aecdbee",
+      "label": "__conjunction_result_6aecdbee",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cf673f612130428e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_6aecdbee,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+      "content_hash": "bda1d1500570f8390269286253d617bc0d7946165a32ac2077e326763cd04bc5",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_ed462e42",
+      "label": "__implication_result_ed462e42",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_6aecdbee,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cf673f612130428e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+      "content_hash": "d619b0d90ee52048f9d21892b0af87c0f0f13df8fdce895d1951c80bbaa34c58",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_40a663f1",
+      "label": "__implication_result_40a663f1",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2562f6510b88ec4b",
+        "owning_strategy_type": "support",
+        "prior": 0.2,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2506_10947_spurious_rewards::pred_rlvr_broader,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+      "content_hash": "73425858d80962948f1dcb024b7b60b368f2fdc12206730ca2e73848b95115ea",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__equivalence_result_aa1bfc26",
+      "label": "__equivalence_result_aa1bfc26",
+      "metadata": {
+        "canonical_name": "matches(github:2506_10947_spurious_rewards::pred_rlvr_broader,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_2948f5955719d112",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2506_10947_spurious_rewards::pred_prompt_same,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+      "content_hash": "0d11d08269141dc24e9d726b6dba776f386483a7e2374da6d299bd62a4bb3385",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__equivalence_result_43ddc7e8",
+      "label": "__equivalence_result_43ddc7e8",
+      "metadata": {
+        "canonical_name": "matches(github:2506_10947_spurious_rewards::pred_prompt_same,github:2506_10947_spurious_rewards::obs_code_freq_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_2948f5955719d112",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_model_family_consistency,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity)",
+      "content_hash": "752a0acdaf220867af6063ba1b7d83dc7730da775cac5fdf2576a5472cad01db",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_7206a456",
+      "label": "__conjunction_result_7206a456",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_model_family_consistency,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis,github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6ae93f76d48f89b7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7206a456,github:2506_10947_spurious_rewards::claim_implication_pretraining_primary)",
+      "content_hash": "98c925efa27181c881f74e48fc0de401d6909893fc7bf8974d25077daab50ca3",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_51cf4ac0",
+      "label": "__implication_result_51cf4ac0",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7206a456,github:2506_10947_spurious_rewards::claim_implication_pretraining_primary)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6ae93f76d48f89b7",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution,github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr)",
+      "content_hash": "18460bdafac12a2735fade7f3ab58ad729082f742bda9e3aeb2aafbfcfa2de29",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_7642e3be",
+      "label": "__conjunction_result_7642e3be",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen,github:2506_10947_spurious_rewards::claim_lang_to_code_contribution,github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b30ab22ae92371b2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7642e3be,github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision)",
+      "content_hash": "19cd5d90f1202b5c5510d8e07cbb87ebe4ecc642d34d2519ee97d70222cd6f38",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_fc010c67",
+      "label": "__implication_result_fc010c67",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7642e3be,github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b30ab22ae92371b2",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen,github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern,github:2506_10947_spurious_rewards::claim_qwen_centric_risk)",
+      "content_hash": "a24a736f46bf1208ca561e5919713e5566aec6be4e285caa9539399f5629d184",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_7696da10",
+      "label": "__conjunction_result_7696da10",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen,github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern,github:2506_10947_spurious_rewards::claim_qwen_centric_risk)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_13ae427ec48623f9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7696da10,github:2506_10947_spurious_rewards::claim_implication_no_generalization)",
+      "content_hash": "24bfb1261afa48bf944061b92c9673acd7a644cfe7a6a3f12bfb240818f20056",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_089766cf",
+      "label": "__implication_result_089766cf",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_7696da10,github:2506_10947_spurious_rewards::claim_implication_no_generalization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_13ae427ec48623f9",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2506_10947_spurious_rewards::claim_prompt_sensitivity,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+      "content_hash": "c3342c63b34477ce0f0c768ebd48423ab905b53b54fd9fac02834b83b64a951c",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__conjunction_result_80954154",
+      "label": "__conjunction_result_80954154",
+      "metadata": {
+        "canonical_name": "all_true(github:2506_10947_spurious_rewards::claim_prompt_sensitivity,github:2506_10947_spurious_rewards::claim_pretraining_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9c82086512a0ba11",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2506_10947_spurious_rewards::__conjunction_result_80954154,github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision)",
+      "content_hash": "65e620eff7f919ebc61814e0cac734bdcc912aa71217bcad689b8a542645cf85",
+      "exported": false,
+      "id": "github:2506_10947_spurious_rewards::__implication_result_faf9e75c",
+      "label": "__implication_result_faf9e75c",
+      "metadata": {
+        "canonical_name": "implies(github:2506_10947_spurious_rewards::__conjunction_result_80954154,github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9c82086512a0ba11",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_spurious_rewards",
+    "s3_cross_model",
+    "s4_code_reasoning",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Spurious Rewards in RLVR",
+    "s2_spurious_rewards": "Section 2: Spurious Rewards Yield Significant RLVR Gains",
+    "s3_cross_model": "Section 3: (Lack of) Generalization to Other Models",
+    "s4_code_reasoning": "Section 4: What Makes RLVR with Spurious Rewards Work? — Code Reasoning",
+    "s5_discussion": "Section 5-6: Related Work and Discussion — Implications"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::not_both_teach_surface",
+      "metadata": {
+        "reason": "These two claims represent fundamentally incompatible accounts of what RLVR accomplishes. If RLVR primarily surfaces pretraining representations, then randomly-rewarded models should improve — and they do. If RLVR teaches new capabilities, then spurious rewards should not enable gains beyond what prompting achieves. The evidence from random-reward experiments falsifies @claim_rlvr_teaches for Qwen2.5-Math models. Note: these cannot both be true, though it is possible that different aspects of RLVR serve both functions for different model families or training regimes."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_4adae1dd4172072a",
+      "scope": "local",
+      "variables": [
+        "github:2506_10947_spurious_rewards::claim_rlvr_teaches",
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ]
+    }
+  ],
+  "package_name": "2506_10947_spurious_rewards",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_reward_types"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_bdce1e4f",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The observation (@claim_rlvr_improves_qwen) that even reward signals with zero or negative correlation to ground truth can yield ~21-27 pp gains on MATH-500 supports the interpretation that the reward signal itself is not the primary driver of improvement. Since the reward is uninformative about answer correctness, the optimization must be exploiting pre-existing model structure. This motivates @claim_pretraining_hypothesis that RLVR surfaces latent pretraining representations. [@Shao2025spurious]"
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_76f57c837cd988c9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_models"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_41ea8dd7",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The sharp contrast between Qwen models (large spurious-reward gains) and Llama/OLMo2 models (flat or negative results under identical reward signals, @claim_spurious_fails_non_qwen) is consistent with @claim_pretraining_hypothesis: the effectiveness depends on what the model learned during pretraining. Models from the same training family show similar trends, implicating pretraining data distribution as the key variable."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b828ce65696f0cd4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_40829fa5",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If RLVR surfaces pretraining representations (@claim_pretraining_hypothesis), then spurious rewards that provide no useful correctness signal can still trigger improvements by concentrating the model on its pre-existing high-prior behaviors. This predicts that @claim_rlvr_improves_qwen — large gains even from random and incorrect rewards — would be observed for models with strong pretrained math reasoning patterns."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_91f2467847833c93",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_daf2e6cc",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::alt_rlvr_teaches_new",
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "Under @alt_rlvr_teaches_new, even spurious rewards might provide some learning signal if by chance the reward correlates weakly with good responses. However, this hypothesis predicts that truly random rewards (zero correlation) should provide no improvement, and that improvements would scale with reward informativeness."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::alt_rlvr_teaches_new"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_966be9a23c73cd2e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__equivalence_result_853de3ff",
+            "operator": "equivalence",
+            "variables": [
+              "github:2506_10947_spurious_rewards::pred_pretraining",
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__equivalence_result_37af5ce9",
+            "operator": "equivalence",
+            "variables": [
+              "github:2506_10947_spurious_rewards::pred_teaches",
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__equivalence_result_37af5ce9",
+              "github:2506_10947_spurious_rewards::__equivalence_result_853de3ff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The observation of +21.4 pp gain from random reward ($\\gamma=0.5$) and robustness across $\\gamma \\in \\{0.001, 0.3, 0.5, 0.7\\}$ (@claim_random_gamma_robustness) directly falsifies the 'teaches new reasoning' hypothesis (which predicts random reward should not work). The pretraining hypothesis better explains all observations: gains, model-family specificity, and gamma-robustness."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::pred_pretraining",
+        "github:2506_10947_spurious_rewards::pred_teaches",
+        "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_365a1cb26c7635ef",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::_anon_000",
+      "metadata": {
+        "reason": "Both hypotheses attempt to explain why RLVR with spurious rewards improves performance. The abduction selects the explanation that better accounts for the observed pattern of gains across reward types and model families."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+        "github:2506_10947_spurious_rewards::alt_rlvr_teaches_new",
+        "github:2506_10947_spurious_rewards::pred_pretraining",
+        "github:2506_10947_spurious_rewards::pred_teaches",
+        "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1b2e2c8aed1e671d",
+      "sub_strategies": [
+        "lcs_91f2467847833c93",
+        "lcs_966be9a23c73cd2e",
+        "lcs_365a1cb26c7635ef"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_rlvr",
+        "github:2506_10947_spurious_rewards::setup_reward_types",
+        "github:2506_10947_spurious_rewards::setup_models"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_23fc1e48",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_qwen7b_math500_results",
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Following the experimental setup (@setup_rlvr, @setup_models), Qwen2.5-Math-7B was trained with GRPO for 300 steps under each of the reward types defined in @setup_reward_types. Performance was evaluated on MATH-500 (@setup_benchmarks). The numerical results in @claim_qwen7b_math500_results are directly read from Figure 2a and Figure 1 of the paper. [@Shao2025spurious]"
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_qwen7b_math500_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cbca2eaba687e801",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_benchmarks"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_5ebee539",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_aime_results",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The pattern in @claim_aime_results — spurious rewards work on AIME 2024 but not AIME 2025 — is highly consistent with @claim_pretraining_hypothesis. AIME 2025 questions (post-cutoff) cannot be solved by surfacing pretrained knowledge, so spurious rewards (which work by eliciting pretraining) lose their effectiveness. Ground truth rewards retain advantage on out-of-distribution problems because they provide genuine learning signal."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_aime_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_74885b606a8caff4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_qwen_general_also_gains",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_c8f4c901",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+              "github:2506_10947_spurious_rewards::claim_qwen_general_also_gains"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If RLVR surfaces pretrained representations (@claim_pretraining_hypothesis), then any Qwen model with strong pretraining math content should respond to spurious rewards. Qwen2.5-7B (general) gaining from spurious rewards confirms: it is not only math-specialized Qwen models, but the entire Qwen pretraining corpus that matters."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_16a654aed057e5c5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_olmo_only_gt",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_85b429a7",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+              "github:2506_10947_spurious_rewards::claim_olmo_only_gt"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If RLVR surfaces pretrained representations (@claim_pretraining_hypothesis), then OLMo2 — which lacks math-intensive pretraining or effective code reasoning in its distribution — should not respond to spurious rewards. @claim_olmo_only_gt matches this prediction: only ground truth rewards (which provide genuine learning signal) help OLMo2."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5c18710863762483",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_llama_partial",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_6aa13d6f",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+              "github:2506_10947_spurious_rewards::claim_llama_partial"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Llama models (@claim_llama_partial) show a pattern consistent with @claim_pretraining_hypothesis: spurious rewards do not help because Llama's pretraining distribution did not produce the same kind of ready-to-surface math reasoning representations as Qwen2.5-Math."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_745718334bb6de41",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "metadata": {
+        "reason": "Qwen and OLMo2 model families are trained with different data distributions and show opposite RLVR responses — this independence makes them strong joint evidence for the pretraining hypothesis."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_qwen_general_also_gains",
+        "github:2506_10947_spurious_rewards::claim_olmo_only_gt"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_309a5b155928d6c6",
+      "sub_strategies": [
+        "lcs_16a654aed057e5c5",
+        "lcs_5c18710863762483"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "metadata": {
+        "reason": "Llama (a third independent model family with different pretraining) also follows the predicted pattern, further strengthening the induction."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_qwen_general_also_gains",
+        "github:2506_10947_spurious_rewards::claim_olmo_only_gt",
+        "github:2506_10947_spurious_rewards::claim_llama_partial"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_60a05abe3a61f715",
+      "sub_strategies": [
+        "lcs_309a5b155928d6c6",
+        "lcs_745718334bb6de41"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_qwen_centric_risk",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_c6d24381",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_b3bbfa4a",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_c6d24381",
+              "github:2506_10947_spurious_rewards::claim_qwen_centric_risk"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The pattern in @claim_ttrl_one_shot_same_pattern mirrors the spurious reward results: both published methods and spurious rewards work on Qwen but not on OLMo2/Llama. @claim_pretraining_hypothesis explains why: these methods all leverage the same Qwen-specific pretrained representations. This supports the practical concern that RLVR research conclusions are model-dependent (@claim_qwen_centric_risk)."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8cdcae64bb30483",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_models"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_219da02e",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_model_family_consistency",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Within-family consistency (@claim_model_family_consistency) across model sizes and SFT variants within the same family strongly implicates pretraining data as the key variable, consistent with @claim_pretraining_hypothesis. If RLVR algorithm or architecture were the primary driver, we would expect more variation within families (different sizes use different architectures)."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_model_family_consistency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14822fb679b99121",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2506_10947_spurious_rewards::setup_code_reasoning_def"
+      ],
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_506e50cf",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_qwen_pretraining_code_freq",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The high baseline code reasoning frequency in Qwen2.5-Math-7B (65%) and Qwen2.5-Math-1.5B (53.6%) before any RLVR training (@claim_qwen_pretraining_code_freq) is direct evidence that these models have code-assisted math reasoning patterns already present from pretraining. The model has seen many code-augmented math reasoning traces during pretraining, which is the representation that RLVR (@claim_pretraining_hypothesis) is hypothesized to surface."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_qwen_pretraining_code_freq"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_45e40448fe38b32e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_6fcdbb23",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_code_accuracy_advantage",
+              "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_cc59e26b",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_6fcdbb23",
+              "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Since code reasoning achieves 60.9% accuracy vs 35.0% for language on Qwen2.5-Math-7B (@claim_code_accuracy_advantage), and RLVR systematically converts language-reasoning problems to code-reasoning ones (@claim_code_freq_increases_rlvr), the resulting accuracy improvement is quantified in @claim_lang_to_code_contribution as 58.3% of total gains from the Lang→Code subset."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_code_accuracy_advantage",
+        "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4a72ba9ed1b87a3e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_no_clipping_no_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_7d385e2a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+              "github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_c3a974ec",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_7d385e2a",
+              "github:2506_10947_spurious_rewards::claim_no_clipping_no_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The theoretical derivation (@claim_grpo_clipping_bias) shows that clipping creates an asymmetric gradient bias favoring high-prior tokens. The empirical observation (@claim_clipping_amplifies_prior) shows this bias manifests as increased average token probability and code frequency. Together these predict that removing clipping should eliminate the mechanism — confirmed by @claim_no_clipping_no_gain."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+        "github:2506_10947_spurious_rewards::claim_clipping_amplifies_prior"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ebc22dfb8c5a0d54",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_a392f26b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity",
+              "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+              "github:2506_10947_spurious_rewards::claim_code_accuracy_advantage"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_b56b9c6f",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_a392f26b",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The clipping-bias mechanism (@claim_grpo_clipping_bias) amplifies high-prior behavioral patterns, but only benefits performance if those patterns are effective (@claim_clipping_qwen_specificity). For Qwen2.5-Math, high-prior code reasoning correlates with high accuracy (@claim_code_accuracy_advantage), so clipping amplification → performance gain. This provides a concrete mechanistic account of @claim_pretraining_hypothesis."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity",
+        "github:2506_10947_spurious_rewards::claim_grpo_clipping_bias",
+        "github:2506_10947_spurious_rewards::claim_code_accuracy_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0f449522de17e15",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::obs_code_freq_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_6aecdbee",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr",
+              "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_ed462e42",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_6aecdbee",
+              "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "RLVR training (@claim_code_freq_increases_rlvr) converts language-reasoning problems to code-reasoning ones even with spurious rewards, accounting for the majority of gains (@claim_lang_to_code_contribution). Since no prompt change occurs during training, this establishes the training-time effect (@obs_code_freq_gain) as distinct from prompt effects."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr",
+        "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cf673f612130428e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::obs_code_freq_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_40a663f1",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt",
+              "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.2,
+        "reason": "Prompting alone (@alt_code_elicitation_only_prompt) also increases code frequency and improves performance on Qwen-Math. If prompting were sufficient, we might expect similar code-frequency dynamics — but prompting cannot explain why code frequency increases during spurious-reward RLVR without any prompt change."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2562f6510b88ec4b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__equivalence_result_aa1bfc26",
+            "operator": "equivalence",
+            "variables": [
+              "github:2506_10947_spurious_rewards::pred_rlvr_broader",
+              "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__equivalence_result_43ddc7e8",
+            "operator": "equivalence",
+            "variables": [
+              "github:2506_10947_spurious_rewards::pred_prompt_same",
+              "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__equivalence_result_43ddc7e8",
+              "github:2506_10947_spurious_rewards::__equivalence_result_aa1bfc26"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Compound no-Python rewards specifically eliminate format-reward gains (@claim_compound_reward_no_python), confirming that code reasoning is causally required for format-reward RLVR improvements, not just a correlation. RLVR training induces code frequency increases without prompt changes, distinguishing it from mere prompting effects."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::pred_rlvr_broader",
+        "github:2506_10947_spurious_rewards::pred_prompt_same",
+        "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2948f5955719d112",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::_anon_001",
+      "metadata": {
+        "reason": "Both RLVR-based code elicitation and prompt-based elicitation are tested. The compound reward evidence and no-prompt-change observation distinguish them."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr",
+        "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+        "github:2506_10947_spurious_rewards::alt_code_elicitation_only_prompt",
+        "github:2506_10947_spurious_rewards::pred_rlvr_broader",
+        "github:2506_10947_spurious_rewards::pred_prompt_same",
+        "github:2506_10947_spurious_rewards::obs_code_freq_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_be2c4b877492f08b",
+      "sub_strategies": [
+        "lcs_cf673f612130428e",
+        "lcs_2562f6510b88ec4b",
+        "lcs_2948f5955719d112"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_implication_pretraining_primary",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_7206a456",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_model_family_consistency",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+              "github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_51cf4ac0",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_7206a456",
+              "github:2506_10947_spurious_rewards::claim_implication_pretraining_primary"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The consistency of RLVR outcomes within model families (@claim_model_family_consistency), explained by @claim_pretraining_hypothesis and made mechanistically concrete by @claim_clipping_qwen_specificity, collectively establish that pretraining is the primary variable determining RLVR effectiveness, supporting @claim_implication_pretraining_primary."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_model_family_consistency",
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis",
+        "github:2506_10947_spurious_rewards::claim_clipping_qwen_specificity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6ae93f76d48f89b7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_7642e3be",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+              "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+              "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_fc010c67",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_7642e3be",
+              "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The fact that random and incorrect rewards yield 21-24 pp gains (@claim_rlvr_improves_qwen) via eliciting code reasoning (@claim_code_freq_increases_rlvr, @claim_lang_to_code_contribution) directly demonstrates @claim_implication_corrupted_supervision: the corrupted reward provides no correctness information but triggers a beneficial behavioral shift."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_rlvr_improves_qwen",
+        "github:2506_10947_spurious_rewards::claim_lang_to_code_contribution",
+        "github:2506_10947_spurious_rewards::claim_code_freq_increases_rlvr"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b30ab22ae92371b2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_implication_no_generalization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_7696da10",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen",
+              "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+              "github:2506_10947_spurious_rewards::claim_qwen_centric_risk"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_089766cf",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_7696da10",
+              "github:2506_10947_spurious_rewards::claim_implication_no_generalization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Both our spurious rewards (@claim_spurious_fails_non_qwen) and published RLVR methods (@claim_ttrl_one_shot_same_pattern) fail to generalize beyond Qwen models. @claim_qwen_centric_risk establishes that this is a research methodology problem. Together these establish @claim_implication_no_generalization: model-specific findings should not be treated as general principles."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_spurious_fails_non_qwen",
+        "github:2506_10947_spurious_rewards::claim_ttrl_one_shot_same_pattern",
+        "github:2506_10947_spurious_rewards::claim_qwen_centric_risk"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_13ae427ec48623f9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__conjunction_result_80954154",
+            "operator": "conjunction",
+            "variables": [
+              "github:2506_10947_spurious_rewards::claim_prompt_sensitivity",
+              "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+            ]
+          },
+          {
+            "conclusion": "github:2506_10947_spurious_rewards::__implication_result_faf9e75c",
+            "operator": "implication",
+            "variables": [
+              "github:2506_10947_spurious_rewards::__conjunction_result_80954154",
+              "github:2506_10947_spurious_rewards::claim_implication_corrupted_supervision"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Even spurious LIPSUM prompts improve Qwen2.5-Math-7B performance by +19.4 pp above the Qwen default prompt (@claim_prompt_sensitivity), without any training. This mirrors the spurious-reward phenomenon: any perturbation that activates a different pretraining distribution mode can surface better-performing reasoning patterns. This reinforces @claim_implication_corrupted_supervision — the input need not be semantically informative to unlock pretrained capabilities."
+      },
+      "premises": [
+        "github:2506_10947_spurious_rewards::claim_prompt_sensitivity",
+        "github:2506_10947_spurious_rewards::claim_pretraining_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9c82086512a0ba11",
+      "type": "support"
+    }
+  ]
+}
