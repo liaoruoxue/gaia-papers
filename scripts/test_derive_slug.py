@@ -42,5 +42,18 @@ class DeriveSlugTests(unittest.TestCase):
             derive_slug("---.pdf")
 
 
+    def test_fullwidth_letters_mapped(self):
+        # Full-width Latin letters should not silently fail.
+        self.assertEqual(derive_slug("Ｈｅｌｌｏ.pdf"), "ｈｅｌｌｏ")
+
+    def test_ligatures_preserved_not_dropped(self):
+        # PDF extraction sometimes yields ligatures; they must not be silently dropped.
+        self.assertEqual(derive_slug("ﬁle.pdf"), "ﬁle")
+
+    def test_superscripts_kept_as_numbers(self):
+        # Unicode superscripts are category No (Number, other) — keep them.
+        self.assertEqual(derive_slug("2²-bound.pdf"), "2²-bound")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,8 @@
 Rules (see spec § "Per-Tick Workflow" step 4):
   - Strip the final extension.
   - Lowercase.
-  - Replace runs of non-letter/non-digit characters with a single '-'.
+  - Keep any unicode character in general category Letter (L*) or Number (N*).
+  - Replace runs of other characters with a single '-'.
   - Trim leading and trailing '-'.
   - Raise ValueError if the result is empty.
 """
@@ -11,21 +12,28 @@ Rules (see spec § "Per-Tick Workflow" step 4):
 from __future__ import annotations
 
 import os
-import re
 import sys
-
-
-_NON_ALNUM_RUN = re.compile(r"[^0-9a-zÀ-ɏͰ-῿Ⰰ-퟿]+", re.UNICODE)
+import unicodedata
 
 
 def derive_slug(filename: str) -> str:
     stem, _ext = os.path.splitext(filename)
     lowered = stem.lower()
-    replaced = _NON_ALNUM_RUN.sub("-", lowered)
-    trimmed = replaced.strip("-")
-    if not trimmed:
+
+    out: list[str] = []
+    prev_was_sep = False
+    for ch in lowered:
+        if unicodedata.category(ch)[0] in ("L", "N"):
+            out.append(ch)
+            prev_was_sep = False
+        elif not prev_was_sep:
+            out.append("-")
+            prev_was_sep = True
+
+    slug = "".join(out).strip("-")
+    if not slug:
         raise ValueError(f"cannot derive slug from filename: {filename!r}")
-    return trimmed
+    return slug
 
 
 if __name__ == "__main__":
