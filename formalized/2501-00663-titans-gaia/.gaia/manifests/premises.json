@@ -1,0 +1,124 @@
+{
+  "ir_hash": "sha256:c9861d8733392935e0c2596d453ecf97995398fe867a44caf8b907a703b2542f",
+  "manifest_schema_version": 1,
+  "package": "2501-00663-titans",
+  "premises": [
+    {
+      "content": "Deep memory modules with $L_{\\mathcal{M}} \\geq 2$ layers are strictly more expressive than linear (matrix-valued) memory modules: matrix-valued memory $M = W \\in \\mathbb{R}^{d \\times d}$ is equivalent to optimizing an online linear regression objective $\\ell(W_{t-1}; x_t) = \\|W_{t-1} k_t - v_t\\|_2^2$, whose optimal solution assumes linear dependencies in historical data. Multi-layer perceptrons (MLPs) with at least two layers are universal approximators and can represent non-linear dependencies [@Hornik1989].",
+      "content_hash": "f1f231f30c690c3660aa3e8843e9ee343bd5069355988d75b779688990cbab8d",
+      "exported": true,
+      "interface_hash": "sha256:4f32cb96d6105d0e679c26da6f560d132839199835e50d1f4a040a9a115b139d",
+      "label": "deep_memory_expressiveness",
+      "qid": "github:2501_00663_titans::deep_memory_expressiveness",
+      "required_by": [
+        "github:2501_00663_titans::lm_results_760m",
+        "github:2501_00663_titans::niah_results"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The weight decay term $(1 - \\alpha_t)$ in the memory update rule $\\mathcal{M}_t = (1 - \\alpha_t)\\mathcal{M}_{t-1} + S_t$ implements an adaptive forgetting gate: when $\\alpha_t \\to 0$, past memory is preserved; when $\\alpha_t \\to 1$, the entire memory is cleared. This data-dependent mechanism enables the model to manage limited memory capacity by selectively forgetting irrelevant past information when context changes [@Behrouz2025].",
+      "content_hash": "af887e99eb9b93cbe31ca2d21f8d67b780c27b7d253b8a24c2e57bd0468639be",
+      "exported": false,
+      "interface_hash": "sha256:7043d40d804b45997d54454645626d104bf5415069106536a20e7776e2127dbe",
+      "label": "forgetting_mechanism_claim",
+      "qid": "github:2501_00663_titans::forgetting_mechanism_claim",
+      "required_by": [
+        "github:2501_00663_titans::babilong_results",
+        "github:2501_00663_titans::component_ablation",
+        "github:2501_00663_titans::forgetting_generalizes_rnn_gates",
+        "github:2501_00663_titans::lm_results_760m",
+        "github:2501_00663_titans::niah_results"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The Memory as a Context (MAC) architecture processes input $x \\in \\mathbb{R}^{N \\times d_{\\text{in}}}$ in segments $S^{(i)}$ of fixed size $C$. For each segment $S^{(t)}$, the model:\n1. Retrieves long-term memory: $h_t = \\mathcal{M}^*_{t-1}(q_t)$, where $q_t = S^{(t)} W_Q$\n2. Concatenates persistent memory, retrieved history, and current segment: $\\tilde{S}^{(t)} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, h_t \\,\\|\\, S^{(t)}$\n3. Applies full causal attention: $y_t = \\text{Attn}(\\tilde{S}^{(t)})$\n4. Updates memory: $\\mathcal{M}_t = \\mathcal{M}_{t-1}(y_t)$; produces output: $o_t = y_t \\otimes \\mathcal{M}^*_t(y_t)$ [@Behrouz2025].",
+      "content_hash": "7451d51f0bd0a49ba4333738dcd468cfadb8fb15cad461b7048cb6c6446bf257",
+      "exported": false,
+      "interface_hash": "sha256:49215d7d3a5c2a5f4045b56fb6eb6a360a7b605f49b5c5f684a005a72d33e5bc",
+      "label": "mac_architecture_def",
+      "qid": "github:2501_00663_titans::mac_architecture_def",
+      "required_by": [
+        "github:2501_00663_titans::mac_advantages",
+        "github:2501_00663_titans::titans_three_memory_types"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The Memory as a Gate (MAG) architecture uses two parallel branches without chunking:\n1. $\\tilde{x} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$ (prepend persistent memory)\n2. Core branch: $y = \\text{SW-Attn}^*(\\tilde{x})$ (sliding window attention with prefix)\n3. Memory branch: $\\mathcal{M}(\\tilde{x})$ (neural memory processes entire sequence)\n4. Gated combination: $o = y \\otimes \\mathcal{M}(\\tilde{x})$ where $\\otimes$ is a learned non-linear gating with normalization and $\\sigma(\\cdot)$ [@Behrouz2025].",
+      "content_hash": "dd08bdbaf21e7315649a221d7893c518e7bde2bb52347b24a51682f85cdcee6e",
+      "exported": false,
+      "interface_hash": "sha256:37bca1906c00d50b9f5c2a177799c54cd27476d0b2a641c5f65957b53e6d94af",
+      "label": "mag_architecture_def",
+      "qid": "github:2501_00663_titans::mag_architecture_def",
+      "required_by": [
+        "github:2501_00663_titans::titans_three_memory_types"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The Memory as a Layer (MAL) architecture arranges neural memory and attention sequentially:\n1. $\\tilde{x} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$\n2. Memory layer: $y = \\mathcal{M}(\\tilde{x})$\n3. Attention layer: $o = \\text{SW-Attn}(y)$ (sliding window attention)\n\nThis is the most common hybrid architecture design in the literature (e.g., Samba, Griffin, H3). The memory layer compresses past and current context before attention [@Behrouz2025].",
+      "content_hash": "faff1fcf1d295ad801c3fd24aad2a994604c6fd22fd15cc348c55712f7bbb269",
+      "exported": false,
+      "interface_hash": "sha256:85957d01abc977f408353f48b4a26dfed0fb4a4617765aa0bdf7800035f97541",
+      "label": "mal_architecture_def",
+      "qid": "github:2501_00663_titans::mal_architecture_def",
+      "required_by": [
+        "github:2501_00663_titans::titans_three_memory_types"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Training the neural long-term memory module $\\mathcal{M}$ is equivalent to meta-learning: the memory module serves as the inner-loop learner (its weights $\\mathcal{M}$ are updated via gradient descent on the associative memory loss), while the projection matrices $W_K, W_V$ are hyperparameters of the inner loop optimized in the outer loop along with the rest of the architecture. This is analogous to MAML-style meta-learning [@Behrouz2025].",
+      "content_hash": "62830e9efc55ff556f304681a570eaefd2be3fbd148696ec5f02ca6134d83480",
+      "exported": false,
+      "interface_hash": "sha256:da7e6a8f20ef78295e21c6a3371d3bf0f4ed660d3413c620207891f835d52e74",
+      "label": "online_meta_learning_equivalence",
+      "qid": "github:2501_00663_titans::online_meta_learning_equivalence",
+      "required_by": [
+        "github:2501_00663_titans::parallel_training_claim"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Persistent memory consists of $N_p \\geq 1$ learnable but input-independent parameter vectors $P = [p_1, p_2, \\ldots, p_{N_p}]$ that are prepended to the input sequence: $x_{\\text{new}} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$. These parameters are fixed at test time and encode task-level knowledge (task-abstract memory), complementing the contextual (data-dependent) neural long-term memory. They also mitigate the implicit attention bias toward initial tokens under causal masking by redistributing attention weights more uniformly [@Sukhbaatar2019; @Behrouz2025].",
+      "content_hash": "2bed4dd64c5ae67d503a26db5a4c3b88293c8f4fe854d4475f440aaed0ffd39f",
+      "exported": false,
+      "interface_hash": "sha256:d9ec95774da69156353c8bcf0916b3313e88bf592f8fc308fa998db02a426f93",
+      "label": "persistent_memory_claim",
+      "qid": "github:2501_00663_titans::persistent_memory_claim",
+      "required_by": [
+        "github:2501_00663_titans::component_ablation",
+        "github:2501_00663_titans::titans_three_memory_types"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The surprise of a token $x_t$ to the neural memory module can be quantified as the gradient $\\nabla \\ell(\\mathcal{M}_{t-1}; x_t)$ of the associative memory loss with respect to $x_t$: the larger the gradient, the more different $x_t$ is from past data stored in $\\mathcal{M}$. This operationalizes the psychological insight that surprising events are more memorable [@Mandler2014].",
+      "content_hash": "a80b3312f57323bfb969190c3e2803f352442388a96309c7a1bf018509e9267d",
+      "exported": false,
+      "interface_hash": "sha256:2d01fa668b8614b80add41dfb7475d689783d678af27b4cfad97af90e0ab7fff",
+      "label": "surprise_as_gradient",
+      "qid": "github:2501_00663_titans::surprise_as_gradient",
+      "required_by": [
+        "github:2501_00663_titans::component_ablation",
+        "github:2501_00663_titans::lm_results_760m"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Attention in Transformers functions as a short-term memory: it accurately models dependencies among all tokens within the current context window by storing all key-value pairs without compression, but is limited to a fixed-length context window due to quadratic complexity. The output of a Transformer is exclusively conditioned on tokens in the current context window [@Vaswani2017].",
+      "content_hash": "80b24871f40784fec9154d1de189ef7bd50358b370c2cd44b3b58d97037d1cb5",
+      "exported": false,
+      "interface_hash": "sha256:9b2a99b24dfbe6805a2b1d7e173233c521e398ac7ebff411cbaa9ff4375b455c",
+      "label": "transformer_short_term_memory",
+      "qid": "github:2501_00663_titans::transformer_short_term_memory",
+      "required_by": [
+        "github:2501_00663_titans::mac_advantages"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

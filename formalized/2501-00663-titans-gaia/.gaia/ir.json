@@ -1,0 +1,2805 @@
+{
+  "ir_hash": "sha256:c9861d8733392935e0c2596d453ecf97995398fe867a44caf8b907a703b2542f",
+  "knowledges": [
+    {
+      "content": "Let the input be $x \\in \\mathbb{R}^{N \\times d_{\\text{in}}}$ where $N$ is the sequence length and $d_{\\text{in}}$ is the model dimension. A sequence model maps $x$ to an output $y$ of the same shape.",
+      "content_hash": "379e7ac10819cff7b0dafeee49f9c2bbb29cf1a6fd0fd7722175787f6b46788e",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2501_00663_titans::seq_modeling_setup",
+      "label": "seq_modeling_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Sequence modeling setup",
+      "type": "setting"
+    },
+    {
+      "content": "Causal (softmax) attention, as used in Transformers [@Vaswani2017], computes output $y_i$ as a softmax-weighted sum of value vectors:\n\n$$y_i = \\sum_{j=1}^{i} \\frac{\\exp(Q_i^\\top K_j / \\sqrt{d_{\\text{in}}}) V_j}{\\sum_{\\ell=1}^{i} \\exp(Q_i^\\top K_\\ell / \\sqrt{d_{\\text{in}}})}$$\n\nwhere $Q = xW_Q$, $K = xW_K$, $V = xW_V$ are query, key, and value projections with learnable weight matrices $W_Q, W_K, W_V \\in \\mathbb{R}^{d_{\\text{in}} \\times d_{\\text{in}}}$.",
+      "content_hash": "e4cf7d6e68fcdc57b51378b278410dba91817c7f65b33694ab1cb4629f3b0542",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2501_00663_titans::attention_definition",
+      "label": "attention_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Causal attention definition",
+      "type": "setting"
+    },
+    {
+      "content": "Linear attention replaces the softmax kernel in standard attention with a factorized kernel $\\phi(x, y) = \\phi(x)\\phi(y)$, yielding:\n\n$$y_i = \\frac{\\phi(Q_i)^\\top \\sum_{j=1}^{i} \\phi(K_j) V_j}{\\phi(Q_i)^\\top \\sum_{\\ell=1}^{i} \\phi(K_\\ell)}$$\n\nWhen the identity kernel is used, this reduces to a recurrent form: $M_t = M_{t-1} + K_t^\\top V_t$, $y_t = Q_t M_t$, where $M_t \\in \\mathbb{R}^{d_{\\text{in}} \\times d_{\\text{in}}}$ is a matrix-valued memory state [@Katharopoulos2020].",
+      "content_hash": "28546f90ff033342ac38f3e85d578629f01e8005480057feba9b3b7da06b8545",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2501_00663_titans::linear_attention_definition",
+      "label": "linear_attention_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Katharopoulos2020"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear attention definition",
+      "type": "setting"
+    },
+    {
+      "content": "A recurrent neural network (RNN) can be defined via two operations on a memory unit $M \\in \\mathbb{R}^d$:\n\n- **Write**: $M_t = f(M_{t-1}, x_t)$ (update memory with new input)\n- **Read**: $y_t = g(M_t, x_t)$ (retrieve output from memory)\n\nwhere subscript $t$ denotes the state at time step $t$ [@Vaswani2017].",
+      "content_hash": "c7e2c575e9b6abb8c1ebd370392e717314db7737347f747f68253350fc326d1b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2501_00663_titans::rnn_memory_definition",
+      "label": "rnn_memory_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RNN as memory read/write system",
+      "type": "setting"
+    },
+    {
+      "content": "In neuropsychology, memory is defined as a confederation of distinct systems—including short-term, working, and long-term memory—each serving different functions with different neural structures, and each capable of operating independently [@Cowan2008].",
+      "content_hash": "0180da9f8536d92c845e3832180c62c12e9f6991bfe8730e8006a685f99c3a8b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2501_00663_titans::neuropsych_memory_definition",
+      "label": "neuropsych_memory_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Cowan2008"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Human memory systems definition",
+      "type": "setting"
+    },
+    {
+      "content": "(Q1) What constitutes a good structure for the memory module in a sequence model?",
+      "content_hash": "9ee29e8a9a96a0b3284831435c00b3f65f3e8f245dffc8331b92f0e413213754",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2501_00663_titans::q_memory_structure",
+      "label": "q_memory_structure",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q1: Memory structure",
+      "type": "question"
+    },
+    {
+      "content": "(Q2) What is a proper memory update mechanism for a neural sequence model?",
+      "content_hash": "3c44af74643b2c020482406a48af4f22fe6f956b95bd33dae1f0f692e542dc1f",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2501_00663_titans::q_memory_update",
+      "label": "q_memory_update",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q2: Memory update",
+      "type": "question"
+    },
+    {
+      "content": "(Q3) What is a good memory retrieval process for a neural sequence model?",
+      "content_hash": "1075ecfbfa49855b9db247b0848c680a4447604d354c19577c5ea1ac2447b9ff",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2501_00663_titans::q_memory_retrieval",
+      "label": "q_memory_retrieval",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q3: Memory retrieval",
+      "type": "question"
+    },
+    {
+      "content": "(Q4) How to design an efficient architecture that incorporates different interconnected memory modules, analogous to the distinct yet connected memory systems in the human brain?",
+      "content_hash": "2fcff9f6d7514db074c2efd6045f87217c23c33f8a41b6b7d3584c08118acc7c",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2501_00663_titans::q_modular_memory",
+      "label": "q_modular_memory",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q4: Modular memory architecture",
+      "type": "question"
+    },
+    {
+      "content": "(Q5) Is a deep memory module needed to effectively store and remember long past history, given that a single vector or matrix encoding data linearly may be insufficient?",
+      "content_hash": "c8e1ded155471f0fc484bacc298ce8e17b5cb6c9355876c5558d7d9fd88f6d92",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2501_00663_titans::q_deep_memory",
+      "label": "q_deep_memory",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q5: Deep memory necessity",
+      "type": "question"
+    },
+    {
+      "content": "Standard (softmax) attention in Transformers [@Vaswani2017] requires $O(N^2)$ time and memory with respect to context length $N$, because computing pairwise similarities between all queries and keys requires at least $N \\times d_{\\text{in}}$ operations. This quadratic complexity makes Transformers impractical for very long sequences (e.g., context windows of millions of tokens).",
+      "content_hash": "187983cf582b85e337a760c5b6d5ae4db342c56838966f69c9ed61c98c87aaf1",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2501_00663_titans::transformer_quadratic_cost",
+      "label": "transformer_quadratic_cost",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Transformer quadratic complexity",
+      "type": "claim"
+    },
+    {
+      "content": "Attention in Transformers functions as a short-term memory: it accurately models dependencies among all tokens within the current context window by storing all key-value pairs without compression, but is limited to a fixed-length context window due to quadratic complexity. The output of a Transformer is exclusively conditioned on tokens in the current context window [@Vaswani2017].",
+      "content_hash": "80b24871f40784fec9154d1de189ef7bd50358b370c2cd44b3b58d97037d1cb5",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2501_00663_titans::transformer_short_term_memory",
+      "label": "transformer_short_term_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The characterization of attention as short-term memory (bounded context window, no compression, accurate in-window modeling) is the paper's framing but mathematically accurate: attention KV cache stores all tokens without compression, and context window is fixed. Very well-supported by established transformer literature.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Attention as short-term memory",
+      "type": "claim"
+    },
+    {
+      "content": "Linear Transformers and linear recurrent models (including state space models) exhibit a fundamental contradiction: they are designed to scale to long contexts via linear complexity, but their matrix-valued hidden state $M_t \\in \\mathbb{R}^{d \\times d}$ is too small to faithfully compress very long context information. As sequence length grows, the additive memory update rule causes memory overflow, significantly damaging model performance [@Katharopoulos2020].",
+      "content_hash": "f2643f59a50242431241b4831573133b72eb3649900156275f7fefff3146ddad",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2501_00663_titans::linear_recurrent_compression_problem",
+      "label": "linear_recurrent_compression_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Katharopoulos2020"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear recurrent compression contradiction",
+      "type": "claim"
+    },
+    {
+      "content": "Existing architectures—ranging from Hopfield Networks to LSTMs and Transformers—each miss one or more of the following crucial components of effective learning: (1) distinct memory systems (short-term, long-term, meta-memory); (2) interconnected yet independently operable modules; (3) the ability to actively learn and memorize the abstraction of past history at test time. None of these architectures fully incorporate all aspects of human-brain-like memory systems [@Cowan2008].",
+      "content_hash": "9e73679c77734614a05c276c943e43fae627041d2575d20a45ada5190ae3d063",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2501_00663_titans::existing_architectures_missing_components",
+      "label": "existing_architectures_missing_components",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Cowan2008"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Missing memory components in existing architectures",
+      "type": "claim"
+    },
+    {
+      "content": "Attention modules in Transformers function as associative memory blocks: they store key-value associations and retrieve information by computing pairwise similarity between queries (search signals) and keys (stored contexts). The key-value matrices together constitute the model's memory, which grows by appending new entries without compression [@Vaswani2017].",
+      "content_hash": "b0d93e4eaf53ae7110cf39546f1b816d92f174b9581bf2fe6f000ba3baf4c1f5",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2501_00663_titans::attention_as_associative_memory",
+      "label": "attention_as_associative_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Attention as associative memory block",
+      "type": "claim"
+    },
+    {
+      "content": "Linear Transformers compress historical key-value pairs additively into a fixed-size matrix-valued memory state $M_t \\in \\mathbb{R}^{d_{\\text{in}} \\times d_{\\text{in}}}$, whereas linear RNNs (including state space models) use vector-valued memory states. The memory update is: $M_t = M_{t-1} + K_t^\\top V_t$, which is an online linear regression objective—this means the optimal solution assumes linear dependencies in historical data [@Katharopoulos2020].",
+      "content_hash": "cddc27fdef882d49efcced8b93ed0959a3e038531c88e62b88732ea9841b89e7",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2501_00663_titans::linear_transformer_matrix_memory",
+      "label": "linear_transformer_matrix_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Katharopoulos2020"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear Transformer matrix-valued memory",
+      "type": "claim"
+    },
+    {
+      "content": "Deep memory modules with $L_{\\mathcal{M}} \\geq 2$ layers are strictly more expressive than linear (matrix-valued) memory modules: matrix-valued memory $M = W \\in \\mathbb{R}^{d \\times d}$ is equivalent to optimizing an online linear regression objective $\\ell(W_{t-1}; x_t) = \\|W_{t-1} k_t - v_t\\|_2^2$, whose optimal solution assumes linear dependencies in historical data. Multi-layer perceptrons (MLPs) with at least two layers are universal approximators and can represent non-linear dependencies [@Hornik1989].",
+      "content_hash": "f1f231f30c690c3660aa3e8843e9ee343bd5069355988d75b779688990cbab8d",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2501_00663_titans::deep_memory_expressiveness",
+      "label": "deep_memory_expressiveness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hornik1989"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "The claim that deep MLP memory (L>=2) is strictly more expressive than linear matrix memory is backed by the universal approximation theorem (Hornik 1989). The specific analogy to online linear regression is mathematically sound (from meta-learning perspective). High prior based on established theory.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Deep memory modules more expressive than linear memory",
+      "type": "claim"
+    },
+    {
+      "content": "The associative memory loss for the neural long-term memory module $\\mathcal{M}$ is defined as:\n\n$$\\ell(\\mathcal{M}_{t-1}; x_t) = \\|\\mathcal{M}_{t-1}(k_t) - v_t\\|_2^2$$\n\nwhere $k_t = x_t W_K$ and $v_t = x_t W_V$ are key and value projections ($W_K, W_V \\in \\mathbb{R}^{d_{\\text{in}} \\times d_{\\text{in}}}$) of the current token $x_t$. Minimizing this loss trains $\\mathcal{M}$ to associate keys with values [@Behrouz2025].",
+      "content_hash": "065de408fa2f3d3c30acff151f40e0f23051bc056cbbc77488db0f08dda86a9c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2501_00663_titans::assoc_memory_loss_def",
+      "label": "assoc_memory_loss_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Associative memory loss definition",
+      "type": "setting"
+    },
+    {
+      "content": "The full neural memory update rule with momentum and weight decay is:\n\n$$\\mathcal{M}_t = (1 - \\alpha_t) \\mathcal{M}_{t-1} + S_t$$\n$$S_t = \\eta_t S_{t-1} - \\theta_t \\nabla \\ell(\\mathcal{M}_{t-1}; x_t)$$\n\nwhere: $\\alpha_t \\in [0, 1]$ is the data-dependent forgetting gate (weight decay), $\\eta_t$ is the data-dependent surprise decay controlling momentum, $\\theta_t$ controls how much momentary surprise is incorporated, and $S_t$ is the momentum (accumulated past surprise) [@Behrouz2025].",
+      "content_hash": "c9eb2ed9f005e42c8e1b4fa62029a29fee24ae45ae9f96deea12ce8f9f67b565",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2501_00663_titans::memory_update_rule_def",
+      "label": "memory_update_rule_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Full memory update rule with momentum and weight decay",
+      "type": "setting"
+    },
+    {
+      "content": "Memory retrieval is performed via a forward pass without weight update: given input $x_t$, a query $q_t = x_t W_Q$ is computed, and the retrieved memory is:\n\n$$y_t = \\mathcal{M}^*(q_t)$$\n\nwhere $\\mathcal{M}^*(\\cdot)$ denotes inference (forward pass) without weight adjustment [@Behrouz2025].",
+      "content_hash": "9f3c2e8d312ad1ba2f3b9a0342dc969930c7d9ef826bbb05c56f4daaa66f2044",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2501_00663_titans::memory_retrieval_def",
+      "label": "memory_retrieval_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Memory retrieval via forward pass",
+      "type": "setting"
+    },
+    {
+      "content": "The parallel training algorithm for the neural memory module splits the input sequence into chunks of size $b \\geq 1$. Within each chunk, all gradients $u_t = \\nabla \\ell(\\mathcal{M}_{t'}; x_t)$ can be computed simultaneously. The momentum recurrence $S_t = \\eta_t S_{t-1} - \\theta_t u_t$ is a linear recurrence with $u_t$ as input, enabling parallel associative scan [@SmithWarrington2023].",
+      "content_hash": "e16a2bd678dc39957ea98d149bf94f6090be63f999e344b415d0535d65537233",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2501_00663_titans::parallel_training_setup",
+      "label": "parallel_training_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "SmithWarrington2023"
+            ]
+          }
+        }
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Parallel training via chunked associative scan",
+      "type": "setting"
+    },
+    {
+      "content": "The surprise of a token $x_t$ to the neural memory module can be quantified as the gradient $\\nabla \\ell(\\mathcal{M}_{t-1}; x_t)$ of the associative memory loss with respect to $x_t$: the larger the gradient, the more different $x_t$ is from past data stored in $\\mathcal{M}$. This operationalizes the psychological insight that surprising events are more memorable [@Mandler2014].",
+      "content_hash": "a80b3312f57323bfb969190c3e2803f352442388a96309c7a1bf018509e9267d",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2501_00663_titans::surprise_as_gradient",
+      "label": "surprise_as_gradient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mandler2014"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The gradient of the loss w.r.t. input as a surprise proxy is a well-motivated design choice: larger gradient = more deviation from stored patterns. The paper provides formal derivation (Eq. 8) and this is directly grounded in the loss function definition. Very high plausibility as a definitional proposition.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Gradient as surprise metric",
+      "type": "claim"
+    },
+    {
+      "content": "A purely momentary surprise metric (gradient at step $t$ only) can cause the model to miss important information following a highly surprising event, because subsequent gradients become very small after a large surprise step (the model stagnates in a flat loss region). Incorporating momentum (past accumulated surprise $S_{t-1}$) addresses this: an initially surprising event keeps affecting memory updates over subsequent tokens, analogous to how humans continue processing a memorable event over a span of time [@Behrouz2025].",
+      "content_hash": "8171b8a9a61dbeca322a06abecd4a5c36112a9014560478018fa8f0a0c623b18",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2501_00663_titans::momentum_motivation",
+      "label": "momentum_motivation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "neuropsych_memory_definition",
+              "surprise_as_gradient"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Momentum in surprise metric motivation",
+      "type": "claim"
+    },
+    {
+      "content": "The weight decay term $(1 - \\alpha_t)$ in the memory update rule $\\mathcal{M}_t = (1 - \\alpha_t)\\mathcal{M}_{t-1} + S_t$ implements an adaptive forgetting gate: when $\\alpha_t \\to 0$, past memory is preserved; when $\\alpha_t \\to 1$, the entire memory is cleared. This data-dependent mechanism enables the model to manage limited memory capacity by selectively forgetting irrelevant past information when context changes [@Behrouz2025].",
+      "content_hash": "af887e99eb9b93cbe31ca2d21f8d67b780c27b7d253b8a24c2e57bd0468639be",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2501_00663_titans::forgetting_mechanism_claim",
+      "label": "forgetting_mechanism_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "The weight decay forgetting gate (Eq. 13) is directly derived from the update rule; its semantic interpretation as a forgetting gate with boundary cases alpha->0 (preserve) and alpha->1 (clear) is mathematically transparent. Well-established analogy to gating in LSTMs and Mamba.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Adaptive forgetting mechanism via weight decay",
+      "type": "claim"
+    },
+    {
+      "content": "The weight decay forgetting mechanism in the neural long-term memory module is a generalization of the gating mechanisms in modern linear recurrent models. Specifically, setting the momentum coefficient $\\eta_t = 0$ in the LMM update rule recovers the Gated DeltaNet update, and further simplifications recover Mamba2 and other gated linear recurrent models (Mamba [@GuDao2024], Mamba2 [@DaoGu2024], Gated DeltaNet [@YangGatedDelta2024]). LMM generalizes these by adding (1) momentum-based surprise accumulation, (2) deep non-linear memory, and (3) inter-chunk non-linear recurrence.",
+      "content_hash": "32156b629154a1b3992596f637609266f8938c79ac743b591d0d0b4e755e72a9",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2501_00663_titans::forgetting_generalizes_rnn_gates",
+      "label": "forgetting_generalizes_rnn_gates",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DaoGu2024",
+              "GuDao2024",
+              "YangGatedDelta2024"
+            ],
+            "referenced_claims": [
+              "forgetting_mechanism_claim",
+              "memory_update_rule_def"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1, Appendix C"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "LMM forgetting gate generalizes modern RNN gates",
+      "type": "claim"
+    },
+    {
+      "content": "The neural long-term memory training algorithm is parallelizable and uses only matrix multiplications (matmuls) plus summation. The key insight is that with mini-batch gradient descent with chunk size $b$, the weight update within a chunk can be written as $\\Theta_b \\mathbf{B}_b (W_0 X - X) X^\\top$ using only matmuls, where $\\Theta_b$ and $\\mathbf{B}_b$ are diagonal matrices of learning rates and decay products. The momentum recurrence $S_t = \\eta_t S_{t-1} - \\theta_t u_t$ is computed in parallel via parallel associative scan [@SmithWarrington2023], achieving $O(N)$ FLOPs overall [@Behrouz2025].",
+      "content_hash": "c60d7f3309f3b9d01e0adf501ac5187cac004d7e73515cd45dc6bc3fc7e3085d",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2501_00663_titans::parallel_training_claim",
+      "label": "parallel_training_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025",
+              "SmithWarrington2023"
+            ],
+            "referenced_claims": [
+              "assoc_memory_loss_def",
+              "memory_update_rule_def",
+              "online_meta_learning_equivalence",
+              "parallel_training_setup"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.2, Fig. 1"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Parallelizable training via matmuls and associative scan",
+      "type": "claim"
+    },
+    {
+      "content": "Training the neural long-term memory module $\\mathcal{M}$ is equivalent to meta-learning: the memory module serves as the inner-loop learner (its weights $\\mathcal{M}$ are updated via gradient descent on the associative memory loss), while the projection matrices $W_K, W_V$ are hyperparameters of the inner loop optimized in the outer loop along with the rest of the architecture. This is analogous to MAML-style meta-learning [@Behrouz2025].",
+      "content_hash": "62830e9efc55ff556f304681a570eaefd2be3fbd148696ec5f02ca6134d83480",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2501_00663_titans::online_meta_learning_equivalence",
+      "label": "online_meta_learning_equivalence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "The equivalence between inner-loop gradient descent on associative memory loss and meta-learning (MAML-style) is mathematically natural. The paper explicitly notes this (Section 3.1) and it follows from the inner/outer loop decomposition. High plausibility but meta-learning framing is an interpretation, not proof.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Memory training as meta-learning inner loop",
+      "type": "claim"
+    },
+    {
+      "content": "Persistent memory consists of $N_p \\geq 1$ learnable but input-independent parameter vectors $P = [p_1, p_2, \\ldots, p_{N_p}]$ that are prepended to the input sequence: $x_{\\text{new}} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$. These parameters are fixed at test time and encode task-level knowledge (task-abstract memory), complementing the contextual (data-dependent) neural long-term memory. They also mitigate the implicit attention bias toward initial tokens under causal masking by redistributing attention weights more uniformly [@Sukhbaatar2019; @Behrouz2025].",
+      "content_hash": "2bed4dd64c5ae67d503a26db5a4c3b88293c8f4fe854d4475f440aaed0ffd39f",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2501_00663_titans::persistent_memory_claim",
+      "label": "persistent_memory_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025",
+              "Sukhbaatar2019"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Persistent memory (prepended learnable tokens) is an established technique (Sukhbaatar 2019). The claim about test-time behavior (fixed weights) and attention bias mitigation (Han et al. 2024) is well-supported by prior work. High prior as this is a design choice with known prior art.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.3"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Persistent (task) memory module",
+      "type": "claim"
+    },
+    {
+      "content": "Persistent memory weights are functionally equivalent to the feed-forward network (FFN) layers in standard Transformers. Sukhbaatar et al. [@Sukhbaatar2019] showed that replacing ReLU in FFN layers with Softmax yields data-independent attention-like weights: $\\text{FFN}(x) = W_V \\, \\text{Softmax}(W_K x)$, where $W_K$ and $W_V$ play the role of data-independent $K$ and $V$ matrices. Persistent memory tokens prepended to the sequence achieve the same effect through the attention mechanism.",
+      "content_hash": "7b358cbc4445ac14b6e1e6d257bb3e89a7cab820eb15e2015ef5970e73a85cfd",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2501_00663_titans::persistent_memory_ffn_equivalence",
+      "label": "persistent_memory_ffn_equivalence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sukhbaatar2019"
+            ],
+            "referenced_claims": [
+              "persistent_memory_claim"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.3"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Persistent memory as data-independent FFN equivalent",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative approach: using only the momentary gradient $-\\theta_t \\nabla \\ell(\\mathcal{M}_{t-1}; x_t)$ as the surprise metric (no momentum term $\\eta_t S_{t-1}$), as in TTT-layer [@YuSun2024] and DeltaNet [@YangDeltaNet2024]. This approach misses the token flow/information continuity across surprising events in a sequence.",
+      "content_hash": "f08bb73bdeba6cdb1d0bd72525fc634098be2f86d8ebcba7b704b35335bb7a59",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2501_00663_titans::alt_momentary_surprise",
+      "label": "alt_momentary_surprise",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "YangDeltaNet2024",
+              "YuSun2024"
+            ]
+          }
+        },
+        "prior": 0.4,
+        "prior_justification": "The alternative (momentary-only surprise, as in TTT/DeltaNet) can explain some observations but pi(Alt) reflects whether it alone can explain the observed performance gap without momentum. Given that TTT shows systematic degradation at 16K context (NIAH: 4.4% vs Titans 80%+), the alternative has low explanatory power.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 3.1, Appendix C"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Alternative: momentary-only surprise (no momentum)",
+      "type": "claim"
+    },
+    {
+      "content": "In ablation experiments, removing the momentum term from the neural memory module (w/o Momentum variant) increases perplexity from 27.01 to 28.98 and reduces commonsense reasoning accuracy from 47.83% to 45.49%, with long-context accuracy dropping from 92.68% to 87.12% (Table 5). This demonstrates that momentum contributes meaningfully to performance across all task types [@Behrouz2025].",
+      "content_hash": "e0aeb94a0e74f13df87e44fe9715ee14b50cb4866f71c297662ba1f08ab031eb",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2501_00663_titans::obs_momentum_benefit",
+      "label": "obs_momentum_benefit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "alt_momentary_surprise",
+              "momentum_motivation"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 5"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Observed momentum contribution (ablation)",
+      "type": "claim"
+    },
+    {
+      "content": "The momentum-augmented surprise rule predicts that model performance on tasks requiring coherent long-range information processing will be better than the momentary-only baseline, because momentum propagates the informational echo of surprising events over subsequent tokens.",
+      "content_hash": "2e2981811766e206b781917eaf42b74be86c90e5d38ab5b6ad9d3309890ad488",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2501_00663_titans::pred_momentum",
+      "label": "pred_momentum",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "The prediction that momentum improves long-range coherence is theoretically well-motivated by the gradient saturation problem. Moderate-high prior based on the conceptual argument; the ablation study confirms this (prior set before seeing results)."
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Prediction: momentum improves long-range coherence",
+      "type": "claim"
+    },
+    {
+      "content": "The momentary-only surprise alternative (TTT-style) predicts comparable performance on short contexts but degraded performance on tasks requiring information continuity over longer sequences, since context-change signals cannot sustain attention across token boundaries.",
+      "content_hash": "bbb6a4c40f2a0f7576fae3c03d46e3c1c99d414b48946fbcd7019681177c6e40",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2501_00663_titans::pred_no_momentum",
+      "label": "pred_no_momentum",
+      "metadata": {
+        "prior": 0.45,
+        "prior_justification": "The prediction that momentary-only surprise is less effective is the null alternative. Prior reflects that TTT and similar models (which use momentary surprise) do show competitive but not leading performance, suggesting some limitation."
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "title": "Prediction: no-momentum baseline degrades on long contexts",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The momentum-augmented surprise rule predicts that model performance on tasks requiring coherent long-range information processing will be better than the momentary-only baseline, because momentum propagates the informational echo of surprising events over subsequent tokens., The momentary-only surprise alternative (TTT-style) predicts comparable performance on short contexts but degraded performance on tasks requiring information continuity over longer sequences, since context-change signals cannot sustain attention across token boundaries., In ablation experiments, removing the momentum term from the neural memory module (w/o Momentum variant) increases perplexity from 27.01 to 28.98 and reduces commonsense reasoning accuracy from 47.83% to 45.49%, with long-context accuracy dropping from 92.68% to 87.12% (Table 5). This demonstrates that momentum contributes meaningfully to performance across all task types [@Behrouz2025].)",
+      "content_hash": "93cf52530f95b118999c098dbd0dcac41c96ebd03cec0ba40c4564d98e2aa0ce",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2501_00663_titans::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_neural_memory",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The Memory as a Context (MAC) architecture processes input $x \\in \\mathbb{R}^{N \\times d_{\\text{in}}}$ in segments $S^{(i)}$ of fixed size $C$. For each segment $S^{(t)}$, the model:\n1. Retrieves long-term memory: $h_t = \\mathcal{M}^*_{t-1}(q_t)$, where $q_t = S^{(t)} W_Q$\n2. Concatenates persistent memory, retrieved history, and current segment: $\\tilde{S}^{(t)} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, h_t \\,\\|\\, S^{(t)}$\n3. Applies full causal attention: $y_t = \\text{Attn}(\\tilde{S}^{(t)})$\n4. Updates memory: $\\mathcal{M}_t = \\mathcal{M}_{t-1}(y_t)$; produces output: $o_t = y_t \\otimes \\mathcal{M}^*_t(y_t)$ [@Behrouz2025].",
+      "content_hash": "7451d51f0bd0a49ba4333738dcd468cfadb8fb15cad461b7048cb6c6446bf257",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2501_00663_titans::mac_architecture_def",
+      "label": "mac_architecture_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "MAC architecture specification is a factual description of the paper's design (Equations 21-25, Fig. 2). Very high prior as this is an architectural definition verifiable by reading the paper.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.1, Fig. 2"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "MAC architecture specification",
+      "type": "claim"
+    },
+    {
+      "content": "The Memory as a Gate (MAG) architecture uses two parallel branches without chunking:\n1. $\\tilde{x} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$ (prepend persistent memory)\n2. Core branch: $y = \\text{SW-Attn}^*(\\tilde{x})$ (sliding window attention with prefix)\n3. Memory branch: $\\mathcal{M}(\\tilde{x})$ (neural memory processes entire sequence)\n4. Gated combination: $o = y \\otimes \\mathcal{M}(\\tilde{x})$ where $\\otimes$ is a learned non-linear gating with normalization and $\\sigma(\\cdot)$ [@Behrouz2025].",
+      "content_hash": "dd08bdbaf21e7315649a221d7893c518e7bde2bb52347b24a51682f85cdcee6e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2501_00663_titans::mag_architecture_def",
+      "label": "mag_architecture_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "MAG architecture specification is a factual description of the paper's design (Equations 26-28, Fig. 3b, 4). Very high prior as this is an architectural definition.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.2, Fig. 4"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "MAG architecture specification",
+      "type": "claim"
+    },
+    {
+      "content": "The Memory as a Layer (MAL) architecture arranges neural memory and attention sequentially:\n1. $\\tilde{x} = [p_1, \\ldots, p_{N_p}] \\,\\|\\, x$\n2. Memory layer: $y = \\mathcal{M}(\\tilde{x})$\n3. Attention layer: $o = \\text{SW-Attn}(y)$ (sliding window attention)\n\nThis is the most common hybrid architecture design in the literature (e.g., Samba, Griffin, H3). The memory layer compresses past and current context before attention [@Behrouz2025].",
+      "content_hash": "faff1fcf1d295ad801c3fd24aad2a994604c6fd22fd15cc348c55712f7bbb269",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2501_00663_titans::mal_architecture_def",
+      "label": "mal_architecture_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "MAL architecture specification is a factual description of the paper's design (Equations 29-31, Fig. 5). Very high prior as this is an architectural definition.",
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.3, Fig. 5"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "MAL architecture specification",
+      "type": "claim"
+    },
+    {
+      "content": "The Titans family of architectures organizes memory into three types:\n\n| Memory Type | Component | Behavior at Test Time |\n|-------------|-----------|----------------------|\n| Short-term | Attention (full or sliding-window) | In-context learner, weights fixed |\n| Long-term (contextual) | Neural memory module $\\mathcal{M}$ | Continues learning/updating weights |\n| Persistent (task) | Learnable data-independent params $P$ | Fixed; encodes task knowledge |\n\nThe three types operate jointly yet each can function independently [@Behrouz2025].",
+      "content_hash": "8206f706229095586a561a5b7e68ea1715f6dfd74fe336b8c729aa1a10726514",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2501_00663_titans::titans_three_memory_types",
+      "label": "titans_three_memory_types",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "mac_architecture_def",
+              "mag_architecture_def",
+              "mal_architecture_def",
+              "persistent_memory_claim"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 4"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "Titans three-type memory taxonomy",
+      "type": "claim"
+    },
+    {
+      "content": "The MAC (Memory as a Context) architecture has two key advantages over MAG and MAL:\n(1) Attention has access to both historical context (retrieved from long-term memory) and current context, enabling the model to decide dynamically whether long-term memory information is relevant. (2) The attention module guides the long-term memory to store only useful information from the current segment, preventing memory overflow from uninformative tokens. At test time, only long-term memory weights update; attention weights perform in-context learning; persistent memory is fixed [@Behrouz2025].",
+      "content_hash": "1d0f391c83ebf458414105bf02ecb823114b68bc2ee535c2761e8b07c8c3e023",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2501_00663_titans::mac_advantages",
+      "label": "mac_advantages",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "mac_architecture_def",
+              "transformer_short_term_memory"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.1"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "MAC architecture design advantages",
+      "type": "claim"
+    },
+    {
+      "content": "The MAL (Memory as a Layer) architecture has a key drawback: because memory and attention are applied sequentially (memory first, then attention), neither module can exploit the complementary information processing of the other during the same pass. The power of the overall model is limited by the weakest component in the sequential chain. MAG and MAC, by contrast, allow parallel/joint processing of short- and long-term memory [@Behrouz2025].",
+      "content_hash": "b2f4068214ea5f2bb7c26d80e8f06f4fdd3a4580dfdbcd53348f96ab36b11e79",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2501_00663_titans::mal_limitation",
+      "label": "mal_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "mal_architecture_def"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.3"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "MAL architecture sequential limitation",
+      "type": "claim"
+    },
+    {
+      "content": "**Theorem 4.1 (Titans Expressiveness):** Contrary to Transformers, diagonal linear recurrent models, and DeltaNet—all of which are limited to the circuit complexity class TC$^0$ [@Merrill2024]—Titans are capable of solving problems beyond TC$^0$. This means Titans are theoretically more expressive than Transformers and most modern linear recurrent models in state tracking tasks [@Behrouz2025].",
+      "content_hash": "ff42e4175d0b5be96effcb501b6b23c830c0561e2635bf84fe88fb5853bc81ac",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2501_00663_titans::titans_expressiveness_theorem",
+      "label": "titans_expressiveness_theorem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025",
+              "Merrill2024"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Section 4.4"
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "title": "Titans expressiveness beyond TC0",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2501_00663_titans::mac_vs_mal_tradeoff",
+      "label": "mac_vs_mal_tradeoff",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.85
+      },
+      "module": "s4_architecture",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Experimental setup for Titans: four model scales are evaluated — 170M, 340M, 400M, and 760M parameters. The first three are trained on 15B tokens from FineWeb-Edu dataset; the 760M model on 30B tokens. Training uses AdamW optimizer with learning rate 4e-4, cosine annealing, batch size 0.5M tokens, weight decay 0.1, and LLaMA 2 tokenizer with 32K vocabulary. Training context length is 4K tokens [@Behrouz2025].",
+      "content_hash": "3fb2a0eeae7fee3e36774ac0ea7d2ce3149add31f659609d86bbc14d7c4e72a2",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2501_00663_titans::experimental_setup",
+      "label": "experimental_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Training setup",
+      "type": "setting"
+    },
+    {
+      "content": "The Single Needle-in-a-Haystack (S-NIAH) task from the RULER benchmark [@Hsieh2024] evaluates the effective context length of models. A model must retrieve a specific piece of information (the needle) from long distractor text (the haystack) at sequence lengths of 2K, 4K, 8K, and 16K tokens. Three subtasks: S-NIAH-PK (passkey retrieval), S-NIAH-N (number retrieval), S-NIAH-W (word retrieval).",
+      "content_hash": "fab23fb64d08ad61d086ff704747100c0caf1088bda4c261761408ff9ba35414",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2501_00663_titans::niah_task_def",
+      "label": "niah_task_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hsieh2024"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "S-NIAH task definition",
+      "type": "setting"
+    },
+    {
+      "content": "The BABILong benchmark [@Kuratov2024] evaluates reasoning across facts distributed in extremely long documents, requiring multi-hop inference over sequences that may span millions of tokens. Two settings: (1) few-shot (large pre-trained models), (2) fine-tuning (small models fine-tuned).",
+      "content_hash": "e20c785cedcb578dd06e53fcf1d919c7986d0167102c612b15f1b2e5c7d41e05",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2501_00663_titans::babilong_task_def",
+      "label": "babilong_task_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuratov2024"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "BABILong benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "At 340M parameters / 15B tokens, Titans (LMM alone) achieves WikiText perplexity 26.18 and LambadA perplexity 29.97, outperforming all non-hybrid baselines including Gated DeltaNet (27.01 / 30.94) and TTT (27.44 / 34.19). Titans (MAC) achieves 25.43 / 28.13 and Titans (MAG) achieves 25.07 / 28.72, with both hybrid Titans variants outperforming non-hybrid baselines on all metrics. Avg. commonsense reasoning accuracy: Titans (MAG) 47.54%, Titans (MAC) 47.36%, vs. Gated DeltaNet 45.42% (best non-hybrid) (Table 1) [@Behrouz2025].",
+      "content_hash": "48c22f1a621eb29d17e3b96b209b3f3c719955933f678bfa2ed35e4970d2dcea",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2501_00663_titans::lm_results_340m",
+      "label": "lm_results_340m",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Language modeling results at 340M params",
+      "type": "claim"
+    },
+    {
+      "content": "At 760M parameters / 30B tokens, Titans (MAG) achieves WikiText perplexity 18.61 and LambadA perplexity 19.86, Titans (MAC) achieves 19.93 / 20.12, both outperforming all baselines including Gated DeltaNet-H2 (19.88 / 20.83, hybrid) and Samba (20.63 / 22.71, hybrid). Avg. commonsense accuracy: Titans (MAC) 52.51%, Titans (MAG) 52.50%, vs. Gated DeltaNet-H2 51.49%, Samba 51.08% (Table 1) [@Behrouz2025].",
+      "content_hash": "9cd519094479e1484752169fd85406713a039f27b764a6ec15360bb58c305d5c",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2501_00663_titans::lm_results_760m",
+      "label": "lm_results_760m",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "deep_memory_expressiveness",
+              "forgetting_mechanism_claim",
+              "momentum_motivation"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Language modeling results at 760M params",
+      "type": "claim"
+    },
+    {
+      "content": "Best competing baseline results (760M): Gated DeltaNet-H2 (hybrid) achieves WikiText perplexity 19.88, LambadA perplexity 20.83, avg. commonsense accuracy 51.49%; Samba (hybrid) achieves 20.63 / 22.71 / 51.08%. Among non-hybrid baselines at 760M, Gated DeltaNet achieves WikiText 21.18, avg. accuracy 49.69% (Table 1) [@Behrouz2025].",
+      "content_hash": "a627ac0c94e88e5a95de1271ed7a69b935849e0d9931dfe5817c0144532e9c56",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2501_00663_titans::lm_baseline_results",
+      "label": "lm_baseline_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Baseline language modeling results (760M)",
+      "type": "claim"
+    },
+    {
+      "content": "On the S-NIAH task from RULER at context lengths 2K–16K tokens (Table 2), Titans (LMM) achieves S-NIAH-N: 100.0/99.8/93.4/80.2 and S-NIAH-W: 90.4/89.4/85.8/80.6, dramatically outperforming TTT (S-NIAH-N: 60.2/36.6/10.2/4.4) and Mamba2 (98.4/55.8/14.2/0.0). Titans (MAC) achieves S-NIAH-W: 98.2/98.2/95.6/95.2 at 2K/4K/8K/16K contexts, maintaining near-perfect accuracy even at 16K tokens [@Behrouz2025].",
+      "content_hash": "a19863a1eb639bba4a3a00aea58f96c332f9ae0d6dd74abc953148edf467f95c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2501_00663_titans::niah_results",
+      "label": "niah_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "deep_memory_expressiveness",
+              "forgetting_mechanism_claim",
+              "mac_advantages"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "S-NIAH benchmark results",
+      "type": "claim"
+    },
+    {
+      "content": "On the BABILong benchmark in the few-shot setting, Titans (MAC) outperforms all baselines including Mamba2.8B, RWKV-6-7B, RecurrentGemma-9B, Gemma-9B, Llama3.1-8B, GPT-4, and GPT-4o-mini, while having significantly fewer parameters. In the fine-tuning setting, a small fine-tuned Titans (MAC) outperforms GPT-4, Qwen2.5-72B, Llama3.1-70B, and Llama3.1-8B with RAG (approx. 70x more parameters for the RAG baseline) (Figure 6) [@Behrouz2025; @Kuratov2024].",
+      "content_hash": "249d67f915573695535004ac2986695937dd693bbfe062471d64bc84eedebee9",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2501_00663_titans::babilong_results",
+      "label": "babilong_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025",
+              "Kuratov2024"
+            ],
+            "referenced_claims": [
+              "forgetting_mechanism_claim",
+              "mac_advantages",
+              "parallel_training_claim"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Figure 6"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "BABILong benchmark results",
+      "type": "claim"
+    },
+    {
+      "content": "On long-term time series forecasting benchmarks (ETTm1, ETTm2, ETTh1, ETTh2, ECL, Traffic, Weather), the Neural Memory Module achieves the best Mean Squared Error (MSE) and Mean Absolute Error (MAE) across all 7 datasets compared to Simba, iTransformer, RLinear, PatchTST, Crossformer, TiDE, TimesNet, and DLinear (Table 3). Selected results: ETTm1 MSE 0.358 (vs. Simba 0.383), Traffic MSE 0.415 (vs. Simba 0.493), Weather MSE 0.231 (vs. Simba 0.255) [@Behrouz2025].",
+      "content_hash": "db84cf191b455851869c460fcc81dc6a054a9eb58841e5961e63c4e38252b5e0",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2501_00663_titans::time_series_results",
+      "label": "time_series_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Time series forecasting results",
+      "type": "claim"
+    },
+    {
+      "content": "On GenomicsBenchmarks DNA modeling tasks (Table 4), the Neural Memory Module (Titans LMM) achieves competitive or best-in-class accuracy across 5 tasks: Enhancer Cohn 75.2% (vs. HyenaDNA 74.2%), Enhancer Ens 89.6% (vs. Based 89.5%), Human Reg. 89.3% (vs. HyenaDNA 93.8%, slightly lower), Non-TATA Promoters 96.6% (tied with HyenaDNA/Mamba), Human OCR Ens. 79.9% (vs. HyenaDNA 80.9%, slightly lower) [@Behrouz2025].",
+      "content_hash": "e8f2c28900b3bab80eef4481d6b25561261e4656c8e1ae2a6662c76cc16432c7",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2501_00663_titans::dna_results",
+      "label": "dna_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 4"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DNA modeling results on GenomicsBenchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation on memory depth $L_{\\mathcal{M}} \\in \\{1, 2, 3, 4\\}$ (Figure 7) shows: (1) deeper memory consistently achieves lower perplexity at all sequence lengths and model sizes (170M, 360M, 760M parameters); (2) deeper memory is more robust to longer sequences, especially at smaller model sizes; (3) training throughput degrades linearly with depth (Figure 8): all depth variants scale linearly with context length (constant tokens/second), but deeper models produce fewer tokens/second (approx. 40K for $L=1$, approx. 27K for $L=4$ at 16K context length). This reveals a depth-efficiency tradeoff [@Behrouz2025].",
+      "content_hash": "7b2c2b731d55a30da301d5bbaec51331229b4847739f10f2de9ca3aa949943f7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2501_00663_titans::deep_memory_ablation",
+      "label": "deep_memory_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "deep_memory_expressiveness"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Figures 7-8"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Deep memory ablation results (depth vs. performance vs. throughput)",
+      "type": "claim"
+    },
+    {
+      "content": "Full ablation study (Table 5, 400M LMM base model) shows all components positively contribute:\n\n| Model variant | Lang. ppl | Reasoning acc | Long-ctx acc |\n|---------------|-----------|---------------|---------------|\n| LMM (full) | 27.01 | 47.83% | 92.68% |\n| Linear Memory | 28.49 | 46.97% | 85.34% |\n| w/o Convolution | 28.73 | 45.82% | 90.28% |\n| w/o Momentum | 28.98 | 45.49% | 87.12% |\n| w/o Weight Decay | 29.04 | 45.11% | 85.60% |\n| w/o Persistent Memory | 27.63 | 46.35% | 92.49% |\n\nGreatest contributions (perplexity degradation): weight decay (+2.03), momentum (+1.97), convolution (+1.72), persistent memory (+0.62) [@Behrouz2025].",
+      "content_hash": "bf9f5345fe5f3bfb8bc307233d5f90d83bbe6b824af340a8632964e98dcfaabb",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2501_00663_titans::component_ablation",
+      "label": "component_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "forgetting_mechanism_claim",
+              "momentum_motivation",
+              "persistent_memory_claim"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Full component ablation results",
+      "type": "claim"
+    },
+    {
+      "content": "Comparing Titans architectural variants (Table 5, 400M scale):\n\n| Variant | Lang. ppl | Reasoning acc | Long-ctx (BABILong) acc |\n|---------|-----------|---------------|-------------------------|\n| LMM (no attn) | 27.01 | 47.83% | 92.68% |\n| +Attn (MAC) | 26.67 | 48.65% | 97.95% |\n| +Attn (MAG) | 25.70 | 48.60% | 96.70% |\n| +Attn (MAL) | 25.91 | 47.87% | 96.91% |\n\nMAC achieves the best long-context performance (97.95% vs MAG 96.70%); MAG achieves the best language modeling perplexity (25.70 vs MAC 26.67); MAG and MAC outperform MAL on all metrics [@Behrouz2025].",
+      "content_hash": "99796d5a9a2cfc4fd7b66fc00bca6945f8615ae7c4ec1593b890f9442e1f78e2",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2501_00663_titans::architecture_design_ablation",
+      "label": "architecture_design_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Table 5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Architecture variant ablation (MAC vs MAG vs MAL)",
+      "type": "claim"
+    },
+    {
+      "content": "Training throughput comparison (Figure 9, tokens per second vs. sequence length × batch size): Neural Memory module is slightly slower than Mamba2 and Gated DeltaNet due to deeper memory and less optimized kernels. Titans (MAL) is faster than both the memory module alone and all baselines, attributed to the highly optimized FlashAttention [@DaoGu2024] kernel used for implementing sliding window attention. All models (recurrent variants) scale linearly with context length in training throughput [@Behrouz2025].",
+      "content_hash": "bc8a84db3b48ffc0541fcaa8c94d69793095a3f3c35e52887610100253e285ad",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2501_00663_titans::efficiency_results",
+      "label": "efficiency_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025",
+              "DaoGu2024"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Figure 9"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Training efficiency and throughput results",
+      "type": "claim"
+    },
+    {
+      "content": "Titans (LMM and its variants MAC, MAG, MAL) are more effective than Transformers and modern linear recurrent models across diverse sequence modeling tasks, and can effectively scale to context windows larger than 2M tokens with maintained accuracy [@Behrouz2025].",
+      "content_hash": "18df1d26283813e2f15917f59cbbbb2d8d476f0448ca227f5df73bd5a3eb23ff",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2501_00663_titans::law_titans_effective",
+      "label": "law_titans_effective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Core claim: Titans effectiveness across tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical observation: Titans outperform all non-hybrid and hybrid baselines on language modeling perplexity and commonsense reasoning accuracy at 340M, 400M, and 760M parameter scales (Table 1) [@Behrouz2025].",
+      "content_hash": "25dff5b69e72ce35f3fe21be548451e48334cff063a257a08fbca601de4928ee",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2501_00663_titans::obs_lm_effective",
+      "label": "obs_lm_effective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "law_titans_effective"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Observation: Titans LM superiority",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical observation: Titans maintain near-perfect S-NIAH accuracy (>80% on all subtasks) at context lengths up to 16K tokens, while baselines (TTT, Mamba2, DeltaNet) degrade to near-zero at 16K (Table 2) [@Behrouz2025].",
+      "content_hash": "babcdf600208697e294c3d901ee73e5de0e450bde90f881b733fe3343aa88a64",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2501_00663_titans::obs_niah_effective",
+      "label": "obs_niah_effective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "law_titans_effective"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Observation: Titans NIAH superiority",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical observation: Neural Memory Module achieves best-in-class MSE and MAE on all 7 time series forecasting benchmark datasets (Table 3) [@Behrouz2025].",
+      "content_hash": "21614f921dcf07f2f8e90f3f28a9d3fb2faa2479a3f73077b0cd548c2e486509",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2501_00663_titans::obs_ts_effective",
+      "label": "obs_ts_effective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "law_titans_effective"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Observation: Titans time series superiority",
+      "type": "claim"
+    },
+    {
+      "content": "MAC architecture predicts better performance on long-context tasks than MAG, because MAC provides attention full access to retrieved long-term memory context, enabling more accurate multi-hop reasoning across segments [@Behrouz2025].",
+      "content_hash": "54645b63149c8e4ce8870b05e5d4a5fc7da13bcc8a3562d135d134fe5bbfbcaf",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2501_00663_titans::pred_mac_long_context",
+      "label": "pred_mac_long_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.75,
+        "prior_justification": "The prediction that MAC outperforms MAG on long-context tasks is theoretically grounded in MAC's retrieval+attention joint processing. Moderate-high prior based on architectural analysis; confirms predictions from ablation study."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Prediction: MAC better for long contexts",
+      "type": "claim"
+    },
+    {
+      "content": "MAG architecture predicts competitive performance with MAC on language modeling and short-context tasks, but potentially weaker performance on very long-context tasks since it combines memory and attention outputs via gating rather than joint attention [@Behrouz2025].",
+      "content_hash": "bb9eb7c535043b0272b891bffa64e4f7cc9a4b353eb4408ca28be17e5789931d",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2501_00663_titans::pred_mag_short_context",
+      "label": "pred_mag_short_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "prior": 0.7,
+        "prior_justification": "The prediction that MAG is competitive on language modeling is plausible because parallel gating avoids chunking overhead. Moderate prior as gating-based fusion is well-established in hybrid architectures."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Prediction: MAG competitive on short contexts",
+      "type": "claim"
+    },
+    {
+      "content": "Observed: MAC achieves significantly better BABILong long-context accuracy (97.95%) than MAG (96.70%) and MAL (96.91%); MAG achieves slightly better language modeling perplexity (25.70) than MAC (26.67) at 400M scale (Table 5). At 760M scale, MAC and MAG achieve comparable commonsense accuracy (52.51% vs. 52.50%) but MAC has higher LambadA accuracy (20.12 vs. 19.86) while MAG has lower WikiText perplexity (18.61 vs. 19.93) [@Behrouz2025].",
+      "content_hash": "4fc154d58c17ae54351ad149070451560faaac6a01d64440137192438fac5952",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2501_00663_titans::obs_architecture_comparison",
+      "label": "obs_architecture_comparison",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ],
+            "referenced_claims": [
+              "mac_advantages",
+              "mag_architecture_def"
+            ]
+          }
+        },
+        "source": "artifacts/2501.00663-titans.pdf, Tables 1, 5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Observation: MAC vs. MAG performance",
+      "type": "claim"
+    },
+    {
+      "content": "compare(MAC architecture predicts better performance on long-context tasks than MAG, because MAC provides attention full access to retrieved long-term memory context, enabling more accurate multi-hop reasoning across segments [@Behrouz2025]., MAG architecture predicts competitive performance with MAC on language modeling and short-context tasks, but potentially weaker performance on very long-context tasks since it combines memory and attention outputs via gating rather than joint attention [@Behrouz2025]., Observed: MAC achieves significantly better BABILong long-context accuracy (97.95%) than MAG (96.70%) and MAL (96.91%); MAG achieves slightly better language modeling perplexity (25.70) than MAC (26.67) at 400M scale (Table 5). At 760M scale, MAC and MAG achieve comparable commonsense accuracy (52.51% vs. 52.50%) but MAC has higher LambadA accuracy (20.12 vs. 19.86) while MAG has lower WikiText perplexity (18.61 vs. 19.93) [@Behrouz2025].)",
+      "content_hash": "a6ea9bd9dccd7d0b681ffd5923679586f830ab4f65f505daea3ccf303f9336f9",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2501_00663_titans::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Behrouz2025"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::surprise_as_gradient,github:2501_00663_titans::momentum_motivation)",
+      "content_hash": "546969c68520945eec1ae075fcad83037dd00935acdfd549a4f3665f9de9cde5",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_c5551ad1",
+      "label": "__implication_result_c5551ad1",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::surprise_as_gradient,github:2501_00663_titans::momentum_motivation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1b78b1aab94192f2",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::online_meta_learning_equivalence,github:2501_00663_titans::parallel_training_claim)",
+      "content_hash": "44806240ebf64d8e199a80a9b2dad08614a859e8168b166322bf955687ebbbe2",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_30a1e94a",
+      "label": "__implication_result_30a1e94a",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::online_meta_learning_equivalence,github:2501_00663_titans::parallel_training_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_38a4991ea9bd9602",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::forgetting_generalizes_rnn_gates)",
+      "content_hash": "5ed96e362b901e2f689fc910b1b70680d163c53bdf2d9d93c2b41bf53dc84688",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_04ca62e5",
+      "label": "__implication_result_04ca62e5",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::forgetting_generalizes_rnn_gates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1cc3971f7bf6d0d8",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::persistent_memory_claim,github:2501_00663_titans::persistent_memory_ffn_equivalence)",
+      "content_hash": "5dc768b7867fcf44bd50ac78782f727a8ea22bbd2f82a7f6363df827cb073f8a",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_8cad8071",
+      "label": "__implication_result_8cad8071",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::persistent_memory_claim,github:2501_00663_titans::persistent_memory_ffn_equivalence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cc98c4d5f2065c63",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::obs_momentum_benefit)",
+      "content_hash": "80f168ab656d2a22bd57ecb5e56da88f787b17e243922dcd8a381ae77cfcc6cb",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_d9298954",
+      "label": "__implication_result_d9298954",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::obs_momentum_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_923124fbd49f7ab1",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::alt_momentary_surprise,github:2501_00663_titans::obs_momentum_benefit)",
+      "content_hash": "a2c20850a6254fd0221640ce077a1618865ec128e4fac2018b747d98381850ac",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_4dc5f69d",
+      "label": "__implication_result_4dc5f69d",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::alt_momentary_surprise,github:2501_00663_titans::obs_momentum_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_035392d348be4515",
+        "owning_strategy_type": "support",
+        "prior": 0.45,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2501_00663_titans::pred_momentum,github:2501_00663_titans::obs_momentum_benefit)",
+      "content_hash": "b8788521a22c7d860431e7a8884ee37406d80a3c1353a962dd06ff4cba159b85",
+      "exported": false,
+      "id": "github:2501_00663_titans::__equivalence_result_5ac7f029",
+      "label": "__equivalence_result_5ac7f029",
+      "metadata": {
+        "canonical_name": "matches(github:2501_00663_titans::pred_momentum,github:2501_00663_titans::obs_momentum_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a3570fbb148d14e1",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2501_00663_titans::pred_no_momentum,github:2501_00663_titans::obs_momentum_benefit)",
+      "content_hash": "df886597a01e9289e3549406fa99ff959a53f7b758a781240c36120757d1ebfb",
+      "exported": false,
+      "id": "github:2501_00663_titans::__equivalence_result_88d7116e",
+      "label": "__equivalence_result_88d7116e",
+      "metadata": {
+        "canonical_name": "matches(github:2501_00663_titans::pred_no_momentum,github:2501_00663_titans::obs_momentum_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a3570fbb148d14e1",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::mac_architecture_def,github:2501_00663_titans::mag_architecture_def,github:2501_00663_titans::mal_architecture_def,github:2501_00663_titans::persistent_memory_claim)",
+      "content_hash": "dd9a7381aa24fa35dbd60af734692d61a52f8d9e7c6f3be1a4548018d15b7ba0",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_d83435fd",
+      "label": "__conjunction_result_d83435fd",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::mac_architecture_def,github:2501_00663_titans::mag_architecture_def,github:2501_00663_titans::mal_architecture_def,github:2501_00663_titans::persistent_memory_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e12d16c5274311a6",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_d83435fd,github:2501_00663_titans::titans_three_memory_types)",
+      "content_hash": "6c737317058a8fbcfadca6d1418dfb5facaadb6af66baa3e94780c4c9a179979",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_ff477832",
+      "label": "__implication_result_ff477832",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_d83435fd,github:2501_00663_titans::titans_three_memory_types)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e12d16c5274311a6",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::mac_architecture_def,github:2501_00663_titans::transformer_short_term_memory)",
+      "content_hash": "78ecd3b118f733ad9acda13d9e4dfb2ff58563ed5c4de47ded68aace7178f193",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_35a7e508",
+      "label": "__conjunction_result_35a7e508",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::mac_architecture_def,github:2501_00663_titans::transformer_short_term_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_87551a26c21edccf",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_35a7e508,github:2501_00663_titans::mac_advantages)",
+      "content_hash": "dd705b6bc4b39a6f246e337a094e4ebded6222f54dc11bf2c616a55b7845e448",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_1cf99507",
+      "label": "__implication_result_1cf99507",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_35a7e508,github:2501_00663_titans::mac_advantages)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_87551a26c21edccf",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::mal_architecture_def,github:2501_00663_titans::mal_limitation)",
+      "content_hash": "e6e794c081951fc4426bdc364df427d870be268fd408b928652deb53b8bce7b3",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_a4422a00",
+      "label": "__implication_result_a4422a00",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::mal_architecture_def,github:2501_00663_titans::mal_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b65698b5c4bae97c",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::deep_memory_expressiveness)",
+      "content_hash": "4900f263f70aa28b0de7bb48bde805a128a445ed1f13b1775a50af801d2af8b6",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_7c6ea7e9",
+      "label": "__conjunction_result_7c6ea7e9",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::deep_memory_expressiveness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_caeadb472e79777a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_7c6ea7e9,github:2501_00663_titans::lm_results_760m)",
+      "content_hash": "47cca0cbb28db17951a1226724efa3f784273009bf3b101ae7e82363b098fe98",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_22e40744",
+      "label": "__implication_result_22e40744",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_7c6ea7e9,github:2501_00663_titans::lm_results_760m)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_caeadb472e79777a",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::deep_memory_expressiveness,github:2501_00663_titans::mac_advantages)",
+      "content_hash": "e62e941bc546a708239d8e0bd919f89a3d9573a30b730b6bffe91bdf1b78136b",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_fbeefe23",
+      "label": "__conjunction_result_fbeefe23",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::deep_memory_expressiveness,github:2501_00663_titans::mac_advantages)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_46b105a365dc5671",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_fbeefe23,github:2501_00663_titans::niah_results)",
+      "content_hash": "202af2645bc227ddad87fcb011c91f39f840fb66a0c35b9d5775414ac36e4a20",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_a49e7df0",
+      "label": "__implication_result_a49e7df0",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_fbeefe23,github:2501_00663_titans::niah_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_46b105a365dc5671",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::mac_advantages,github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::parallel_training_claim)",
+      "content_hash": "7bc7d107f6218afb2b770e82ec9c14e0f93930a29bc848eab428b1da8305c1e1",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_51c3d667",
+      "label": "__conjunction_result_51c3d667",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::mac_advantages,github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::parallel_training_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0da591c190ec36d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_51c3d667,github:2501_00663_titans::babilong_results)",
+      "content_hash": "34afe457a20ba418da17573c33a8e586ac4bde5f6a6bac81150604499cdf438d",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_24f982f5",
+      "label": "__implication_result_24f982f5",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_51c3d667,github:2501_00663_titans::babilong_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0da591c190ec36d",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::deep_memory_expressiveness,github:2501_00663_titans::deep_memory_ablation)",
+      "content_hash": "43048e49ef36dd8a388f5829d2b9c50f39650c7cec60f779e263367d03126234",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_caf71570",
+      "label": "__implication_result_caf71570",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::deep_memory_expressiveness,github:2501_00663_titans::deep_memory_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e4173652dd5ad7e0",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::persistent_memory_claim)",
+      "content_hash": "1ad823d77921a272cf13750cee1fa18d2b3eb1acd7caf9e73c7291aecc23e51b",
+      "exported": false,
+      "id": "github:2501_00663_titans::__conjunction_result_a6cd1f63",
+      "label": "__conjunction_result_a6cd1f63",
+      "metadata": {
+        "canonical_name": "all_true(github:2501_00663_titans::forgetting_mechanism_claim,github:2501_00663_titans::momentum_motivation,github:2501_00663_titans::persistent_memory_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_3fa6b069e18fcdc0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::__conjunction_result_a6cd1f63,github:2501_00663_titans::component_ablation)",
+      "content_hash": "6d726310a977426c66301520c2a12de4dc733ab0192676e146b120a1a8f08547",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_7ad25b5f",
+      "label": "__implication_result_7ad25b5f",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::__conjunction_result_a6cd1f63,github:2501_00663_titans::component_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3fa6b069e18fcdc0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_lm_effective)",
+      "content_hash": "17b99dc8c5d65d78271e23a4b1839dd8412cbe2015ec64bb56346307da73863d",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_f14ad31f",
+      "label": "__implication_result_f14ad31f",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_lm_effective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4997639a9614c263",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_niah_effective)",
+      "content_hash": "c41f501e5f6e7ddc7ee15137a4d0eade112a70736c5f94ef4ab0340e1d28ff91",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_ea03dd5c",
+      "label": "__implication_result_ea03dd5c",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_niah_effective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e11e21a8cc3dddb0",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_ts_effective)",
+      "content_hash": "c51113b2043e1eeb10309874f638d4480c4ccdce2be4e793704eb477b0500af5",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_fdea1dd5",
+      "label": "__implication_result_fdea1dd5",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::law_titans_effective,github:2501_00663_titans::obs_ts_effective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6abe4cfc7079bae9",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::mac_advantages,github:2501_00663_titans::obs_architecture_comparison)",
+      "content_hash": "5fc99181c88930ea78cdde3ba89179cd413954f4c8d665fba68ae59de642aa03",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_7a603da1",
+      "label": "__implication_result_7a603da1",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::mac_advantages,github:2501_00663_titans::obs_architecture_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_059ccaaa4b636bc0",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2501_00663_titans::mag_architecture_def,github:2501_00663_titans::obs_architecture_comparison)",
+      "content_hash": "38d67214f8c346652455b82cc9d01f611b8bb6eaf63f8de9dad32f727241b784",
+      "exported": false,
+      "id": "github:2501_00663_titans::__implication_result_e13d3390",
+      "label": "__implication_result_e13d3390",
+      "metadata": {
+        "canonical_name": "implies(github:2501_00663_titans::mag_architecture_def,github:2501_00663_titans::obs_architecture_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cfad98492d24182e",
+        "owning_strategy_type": "support",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2501_00663_titans::pred_mac_long_context,github:2501_00663_titans::obs_architecture_comparison)",
+      "content_hash": "f01407ba54194b6af9c2901e42cc22a7f954ad3fdfc0d3ab1e1094c1ec676937",
+      "exported": false,
+      "id": "github:2501_00663_titans::__equivalence_result_e5dbbdd2",
+      "label": "__equivalence_result_e5dbbdd2",
+      "metadata": {
+        "canonical_name": "matches(github:2501_00663_titans::pred_mac_long_context,github:2501_00663_titans::obs_architecture_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_97c2a0dcd0be6b56",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2501_00663_titans::pred_mag_short_context,github:2501_00663_titans::obs_architecture_comparison)",
+      "content_hash": "ba3b67a34906e75c37d9922d690e061435508b8f540bf4d16520d6b46822f807",
+      "exported": false,
+      "id": "github:2501_00663_titans::__equivalence_result_8f86cea2",
+      "label": "__equivalence_result_8f86cea2",
+      "metadata": {
+        "canonical_name": "matches(github:2501_00663_titans::pred_mag_short_context,github:2501_00663_titans::obs_architecture_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_97c2a0dcd0be6b56",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_neural_memory",
+    "s4_architecture",
+    "s5_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Memory Limitations of Existing Architectures",
+    "s3_neural_memory": "Section 3: Learning to Memorize at Test Time — Neural Long-Term Memory Module",
+    "s4_architecture": "Section 4: Titans Architecture Variants — How to Incorporate Memory",
+    "s5_experiments": "Section 5: Experimental Results"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2501_00663_titans::mac_vs_mal_tradeoff",
+      "metadata": {
+        "reason": "MAC and MAL represent incompatible design choices: MAC's full-context attention is more powerful but computationally heavier; MAL's sequential design is more efficient but lacks cross-module information flow."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_792c9170ab346975",
+      "scope": "local",
+      "variables": [
+        "github:2501_00663_titans::mac_advantages",
+        "github:2501_00663_titans::mal_limitation"
+      ]
+    }
+  ],
+  "package_name": "2501_00663_titans",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2501_00663_titans::neuropsych_memory_definition"
+      ],
+      "conclusion": "github:2501_00663_titans::momentum_motivation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_c5551ad1",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::surprise_as_gradient",
+              "github:2501_00663_titans::momentum_motivation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Given that @surprise_as_gradient uses the gradient $\\nabla \\ell$ as surprise, a purely momentary gradient signal is insufficient: after a highly surprising token the gradient becomes very small, causing the model to miss subsequent related tokens. The neuropsychological parallel (@neuropsych_memory_definition) — an initial surprising event keeps drawing attention over time — motivates adding a momentum term $S_t$ that accumulates past surprise, ensuring the informational \"echo\" of a surprising event persists over subsequent tokens."
+      },
+      "premises": [
+        "github:2501_00663_titans::surprise_as_gradient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1b78b1aab94192f2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2501_00663_titans::assoc_memory_loss_def",
+        "github:2501_00663_titans::memory_update_rule_def",
+        "github:2501_00663_titans::parallel_training_setup"
+      ],
+      "conclusion": "github:2501_00663_titans::parallel_training_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_30a1e94a",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::online_meta_learning_equivalence",
+              "github:2501_00663_titans::parallel_training_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The meta-learning formulation (@online_meta_learning_equivalence) enables parallel computation: by definition (@assoc_memory_loss_def), $\\mathcal{M}$ minimizes $\\ell(\\mathcal{M}_{t-1}; x_t)$ via gradient descent with the update rule (@memory_update_rule_def). The chunked structure (@parallel_training_setup) allows all gradients $u_t$ within a chunk to be computed simultaneously via matmul $\\Theta_b \\mathbf{B}_b (W_0 X - X) X^\\top$; the momentum recurrence is solvable via parallel associative scan [@SmithWarrington2023]. This is exactly the structure needed for tensorized training."
+      },
+      "premises": [
+        "github:2501_00663_titans::online_meta_learning_equivalence"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_38a4991ea9bd9602",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2501_00663_titans::memory_update_rule_def"
+      ],
+      "conclusion": "github:2501_00663_titans::forgetting_generalizes_rnn_gates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_04ca62e5",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::forgetting_mechanism_claim",
+              "github:2501_00663_titans::forgetting_generalizes_rnn_gates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The full LMM update rule (@memory_update_rule_def) includes three novelties: (1) weight decay $(1-\\alpha_t)$ as a data-dependent forget gate (@forgetting_mechanism_claim) — setting $\\eta_t=0$ recovers DeltaNet/Gated DeltaNet [@YangGatedDelta2024]; (2) momentum $\\eta_t S_{t-1}$ — setting $\\eta_t=0$ removes momentum and yields gated variants; (3) deep non-linear memory replacing linear matrix memory. Therefore LMM strictly generalizes these models from three aspects."
+      },
+      "premises": [
+        "github:2501_00663_titans::forgetting_mechanism_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1cc3971f7bf6d0d8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::persistent_memory_ffn_equivalence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_8cad8071",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::persistent_memory_claim",
+              "github:2501_00663_titans::persistent_memory_ffn_equivalence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "By the result of @Sukhbaatar2019 (cited in @persistent_memory_claim), replacing ReLU in FFN layers with Softmax yields $\\text{FFN}(x) = W_V \\text{Softmax}(W_K x)$, which is equivalent to an attention module with data-independent keys/values $W_K, W_V$. Prepending persistent memory tokens $P$ to the sequence achieves the same effect: during attention, the model learns to attend to these fixed tokens, and the attention weights become data-independent — functionally equivalent to the FFN."
+      },
+      "premises": [
+        "github:2501_00663_titans::persistent_memory_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cc98c4d5f2065c63",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_momentum_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_d9298954",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::momentum_motivation",
+              "github:2501_00663_titans::obs_momentum_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Momentum-augmented surprise (@momentum_motivation) explains why removing momentum increases perplexity and reduces accuracy: the model loses the ability to maintain informational continuity after surprising events."
+      },
+      "premises": [
+        "github:2501_00663_titans::momentum_motivation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_923124fbd49f7ab1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_momentum_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_4dc5f69d",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::alt_momentary_surprise",
+              "github:2501_00663_titans::obs_momentum_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.45,
+        "reason": "Momentary-only surprise (@alt_momentary_surprise) can partially explain the observations, but predicts less degradation on short contexts; it cannot explain the long-context accuracy drop from 92.68% to 87.12%."
+      },
+      "premises": [
+        "github:2501_00663_titans::alt_momentary_surprise"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_035392d348be4515",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__equivalence_result_5ac7f029",
+            "operator": "equivalence",
+            "variables": [
+              "github:2501_00663_titans::pred_momentum",
+              "github:2501_00663_titans::obs_momentum_benefit"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__equivalence_result_88d7116e",
+            "operator": "equivalence",
+            "variables": [
+              "github:2501_00663_titans::pred_no_momentum",
+              "github:2501_00663_titans::obs_momentum_benefit"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__equivalence_result_88d7116e",
+              "github:2501_00663_titans::__equivalence_result_5ac7f029"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The observed momentum ablation results (perplexity +1.97, long-context accuracy -5.56pp) match the momentum theory's predictions much better than the no-momentum baseline's predictions, which expected less degradation."
+      },
+      "premises": [
+        "github:2501_00663_titans::pred_momentum",
+        "github:2501_00663_titans::pred_no_momentum",
+        "github:2501_00663_titans::obs_momentum_benefit"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a3570fbb148d14e1",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::_anon_000",
+      "metadata": {
+        "reason": "Both the momentum rule and the momentary-only alternative aim to explain the same empirical observations from Table 5. The abduction asks: which better explains the observed performance gap?"
+      },
+      "premises": [
+        "github:2501_00663_titans::momentum_motivation",
+        "github:2501_00663_titans::alt_momentary_surprise",
+        "github:2501_00663_titans::pred_momentum",
+        "github:2501_00663_titans::pred_no_momentum",
+        "github:2501_00663_titans::obs_momentum_benefit"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_67447fb9c2932911",
+      "sub_strategies": [
+        "lcs_923124fbd49f7ab1",
+        "lcs_035392d348be4515",
+        "lcs_a3570fbb148d14e1"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::titans_three_memory_types",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_d83435fd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::mac_architecture_def",
+              "github:2501_00663_titans::mag_architecture_def",
+              "github:2501_00663_titans::mal_architecture_def",
+              "github:2501_00663_titans::persistent_memory_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_ff477832",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_d83435fd",
+              "github:2501_00663_titans::titans_three_memory_types"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "By the definitions of MAC (@mac_architecture_def), MAG (@mag_architecture_def), and MAL (@mal_architecture_def), all Titans variants include: (1) attention (sliding-window or full) as the short-term in-context module; (2) the neural long-term memory $\\mathcal{M}$ that continues learning at test time; (3) persistent memory tokens $P$ (@persistent_memory_claim) that are fixed at test time. The taxonomy follows directly from these architectural definitions."
+      },
+      "premises": [
+        "github:2501_00663_titans::mac_architecture_def",
+        "github:2501_00663_titans::mag_architecture_def",
+        "github:2501_00663_titans::mal_architecture_def",
+        "github:2501_00663_titans::persistent_memory_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e12d16c5274311a6",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::mac_advantages",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_35a7e508",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::mac_architecture_def",
+              "github:2501_00663_titans::transformer_short_term_memory"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_1cf99507",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_35a7e508",
+              "github:2501_00663_titans::mac_advantages"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "In MAC (@mac_architecture_def), retrieved long-term memory $h_t$ is concatenated with current segment $S^{(t)}$ before applying full attention. This gives attention access to both past (@transformer_short_term_memory models current context) and future-relevant historical context — enabling the attention to gate how much weight to give long-term memory. Further, attention output $y_t$ drives the memory update, meaning only attention-selected useful information gets memorized."
+      },
+      "premises": [
+        "github:2501_00663_titans::mac_architecture_def",
+        "github:2501_00663_titans::transformer_short_term_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_87551a26c21edccf",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::mal_limitation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_a4422a00",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::mal_architecture_def",
+              "github:2501_00663_titans::mal_limitation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "In MAL (@mal_architecture_def), memory produces output $y = \\mathcal{M}(\\tilde{x})$, which is then processed by attention. The memory module has no access to attention outputs, and attention has no access to the raw input (only memory's output). Neither module can benefit from the other's processing in the same forward pass. This is in contrast to MAC (where attention sees memory outputs and vice versa) and MAG (where both branches run in parallel on the same input)."
+      },
+      "premises": [
+        "github:2501_00663_titans::mal_architecture_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b65698b5c4bae97c",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::lm_results_760m",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_7c6ea7e9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::forgetting_mechanism_claim",
+              "github:2501_00663_titans::momentum_motivation",
+              "github:2501_00663_titans::deep_memory_expressiveness"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_22e40744",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_7c6ea7e9",
+              "github:2501_00663_titans::lm_results_760m"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Three design choices jointly explain Titans' language modeling superiority over baselines: (1) Weight decay (@forgetting_mechanism_claim) — enables selective forgetting, better memory management than TTT (no forgetting); (2) Momentum (@momentum_motivation) — maintains informational continuity, outperforming TTT; (3) Deep non-linear memory (@deep_memory_expressiveness) — can represent non-linear historical dependencies, outperforming linear models. The 760M Titans (MAG) achieves WikiText ppl 18.61 vs. Gated DeltaNet-H2 19.88 as the best competing hybrid baseline."
+      },
+      "premises": [
+        "github:2501_00663_titans::forgetting_mechanism_claim",
+        "github:2501_00663_titans::momentum_motivation",
+        "github:2501_00663_titans::deep_memory_expressiveness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_caeadb472e79777a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::niah_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_fbeefe23",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::forgetting_mechanism_claim",
+              "github:2501_00663_titans::deep_memory_expressiveness",
+              "github:2501_00663_titans::mac_advantages"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_a49e7df0",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_fbeefe23",
+              "github:2501_00663_titans::niah_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The dramatic NIAH advantage of Titans over baselines is explained by three mechanisms: (1) @forgetting_mechanism_claim allows clearing irrelevant memory as context changes, so the needle remains retrievable even after thousands of distractor tokens — unlike Mamba2 which loses S-NIAH-N accuracy from 98.4% at 2K to 0% at 16K; (2) @deep_memory_expressiveness enables more precise storage and retrieval of specific facts compared to linear matrix memory; (3) @mac_advantages — attention guides memory to store only useful information, preventing overflow of distractors."
+      },
+      "premises": [
+        "github:2501_00663_titans::forgetting_mechanism_claim",
+        "github:2501_00663_titans::deep_memory_expressiveness",
+        "github:2501_00663_titans::mac_advantages"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_46b105a365dc5671",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::babilong_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_51c3d667",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::mac_advantages",
+              "github:2501_00663_titans::forgetting_mechanism_claim",
+              "github:2501_00663_titans::parallel_training_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_24f982f5",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_51c3d667",
+              "github:2501_00663_titans::babilong_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "BABILong requires reasoning across facts in extremely long documents. @mac_advantages gives MAC access to both historical memory retrieval and current context simultaneously, enabling multi-hop reasoning across segments. @forgetting_mechanism_claim prevents memory overflow from distractor text between relevant facts. @parallel_training_claim enables efficient training on very long sequences. The result (small fine-tuned Titans outperforming GPT-4 and 70B models) validates that architectural memory design matters more than raw parameter count."
+      },
+      "premises": [
+        "github:2501_00663_titans::mac_advantages",
+        "github:2501_00663_titans::forgetting_mechanism_claim",
+        "github:2501_00663_titans::parallel_training_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0da591c190ec36d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::deep_memory_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_caf71570",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::deep_memory_expressiveness",
+              "github:2501_00663_titans::deep_memory_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@deep_memory_expressiveness (MLPs with $L \\geq 2$ are universal approximators, hence strictly more expressive than linear matrix memory) predicts that deeper memory should achieve better perplexity by capturing non-linear historical dependencies. The ablation results in Figure 7 confirm this: perplexity decreases monotonically with depth $L_{\\mathcal{M}}$ across all model sizes and sequence lengths. The linear throughput cost of depth (Figure 8) confirms this is a genuine expressiveness-efficiency tradeoff."
+      },
+      "premises": [
+        "github:2501_00663_titans::deep_memory_expressiveness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e4173652dd5ad7e0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::component_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__conjunction_result_a6cd1f63",
+            "operator": "conjunction",
+            "variables": [
+              "github:2501_00663_titans::forgetting_mechanism_claim",
+              "github:2501_00663_titans::momentum_motivation",
+              "github:2501_00663_titans::persistent_memory_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_7ad25b5f",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__conjunction_result_a6cd1f63",
+              "github:2501_00663_titans::component_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Each ablated component directly corresponds to a theoretical claim: (1) 'w/o Weight Decay' tests @forgetting_mechanism_claim — greatest perplexity increase (27.01 → 29.04); (2) 'w/o Momentum' tests @momentum_motivation — second largest increase (27.01 → 28.98); (3) 'w/o Persistent Memory' tests @persistent_memory_claim — smallest increase (27.01 → 27.63). The rank order of ablation impact matches the theoretical importance ranking."
+      },
+      "premises": [
+        "github:2501_00663_titans::forgetting_mechanism_claim",
+        "github:2501_00663_titans::momentum_motivation",
+        "github:2501_00663_titans::persistent_memory_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3fa6b069e18fcdc0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_lm_effective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_f14ad31f",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::law_titans_effective",
+              "github:2501_00663_titans::obs_lm_effective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The law (@law_titans_effective) predicts Titans should outperform baselines on language modeling — the observed results confirm this at all three model scales."
+      },
+      "premises": [
+        "github:2501_00663_titans::law_titans_effective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4997639a9614c263",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_niah_effective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_ea03dd5c",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::law_titans_effective",
+              "github:2501_00663_titans::obs_niah_effective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The law (@law_titans_effective) predicts Titans should scale to long contexts effectively — the NIAH results confirm near-perfect retrieval at 16K tokens vs. near-zero for baselines."
+      },
+      "premises": [
+        "github:2501_00663_titans::law_titans_effective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e11e21a8cc3dddb0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_ts_effective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_fdea1dd5",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::law_titans_effective",
+              "github:2501_00663_titans::obs_ts_effective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The law (@law_titans_effective) predicts generalization beyond language — time series forecasting results confirm this with best-in-class results across 7 datasets."
+      },
+      "premises": [
+        "github:2501_00663_titans::law_titans_effective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6abe4cfc7079bae9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::law_titans_effective",
+      "metadata": {
+        "reason": "Language modeling and NIAH are independent tasks with different evaluation criteria; their joint confirmation provides stronger inductive support."
+      },
+      "premises": [
+        "github:2501_00663_titans::obs_lm_effective",
+        "github:2501_00663_titans::obs_niah_effective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7f8626c2a87f0246",
+      "sub_strategies": [
+        "lcs_4997639a9614c263",
+        "lcs_e11e21a8cc3dddb0"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::law_titans_effective",
+      "metadata": {
+        "reason": "Time series forecasting provides cross-domain evidence independent of NLP tasks, strengthening the inductive case that Titans' advantages generalize across modalities."
+      },
+      "premises": [
+        "github:2501_00663_titans::obs_lm_effective",
+        "github:2501_00663_titans::obs_niah_effective",
+        "github:2501_00663_titans::obs_ts_effective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_beae73f4021189a6",
+      "sub_strategies": [
+        "lcs_7f8626c2a87f0246",
+        "lcs_6abe4cfc7079bae9"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_architecture_comparison",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_7a603da1",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::mac_advantages",
+              "github:2501_00663_titans::obs_architecture_comparison"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@mac_advantages predicts MAC's joint attention over historical + current context gives it an edge on long-context tasks — confirmed by BABILong superiority (97.95% vs. 96.70% for MAG)."
+      },
+      "premises": [
+        "github:2501_00663_titans::mac_advantages"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_059ccaaa4b636bc0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::obs_architecture_comparison",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__implication_result_e13d3390",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::mag_architecture_def",
+              "github:2501_00663_titans::obs_architecture_comparison"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "@mag_architecture_def's parallel gating (SWA + neural memory, no chunking overhead) predicts efficiency advantages — confirmed by MAG's better language modeling perplexity (25.70 vs. 26.67)."
+      },
+      "premises": [
+        "github:2501_00663_titans::mag_architecture_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cfad98492d24182e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2501_00663_titans::__equivalence_result_e5dbbdd2",
+            "operator": "equivalence",
+            "variables": [
+              "github:2501_00663_titans::pred_mac_long_context",
+              "github:2501_00663_titans::obs_architecture_comparison"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::__equivalence_result_8f86cea2",
+            "operator": "equivalence",
+            "variables": [
+              "github:2501_00663_titans::pred_mag_short_context",
+              "github:2501_00663_titans::obs_architecture_comparison"
+            ]
+          },
+          {
+            "conclusion": "github:2501_00663_titans::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2501_00663_titans::__equivalence_result_8f86cea2",
+              "github:2501_00663_titans::__equivalence_result_e5dbbdd2"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "MAC's long-context advantage (BABILong +1.25pp) is larger than MAG's language modeling advantage (perplexity -0.97), suggesting MAC's joint-attention design is the stronger architectural innovation."
+      },
+      "premises": [
+        "github:2501_00663_titans::pred_mac_long_context",
+        "github:2501_00663_titans::pred_mag_short_context",
+        "github:2501_00663_titans::obs_architecture_comparison"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_97c2a0dcd0be6b56",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2501_00663_titans::_anon_001",
+      "metadata": {
+        "reason": "Both MAC and MAG aim to explain the same experimental observations; abduction asks which architectural hypothesis better accounts for the performance patterns across task types."
+      },
+      "premises": [
+        "github:2501_00663_titans::mac_advantages",
+        "github:2501_00663_titans::mag_architecture_def",
+        "github:2501_00663_titans::pred_mac_long_context",
+        "github:2501_00663_titans::pred_mag_short_context",
+        "github:2501_00663_titans::obs_architecture_comparison"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cbf678eddfa216de",
+      "sub_strategies": [
+        "lcs_059ccaaa4b636bc0",
+        "lcs_cfad98492d24182e",
+        "lcs_97c2a0dcd0be6b56"
+      ],
+      "type": "abduction"
+    }
+  ]
+}

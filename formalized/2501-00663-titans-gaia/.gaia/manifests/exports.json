@@ -1,0 +1,92 @@
+{
+  "exports": [
+    {
+      "content": "On the BABILong benchmark in the few-shot setting, Titans (MAC) outperforms all baselines including Mamba2.8B, RWKV-6-7B, RecurrentGemma-9B, Gemma-9B, Llama3.1-8B, GPT-4, and GPT-4o-mini, while having significantly fewer parameters. In the fine-tuning setting, a small fine-tuned Titans (MAC) outperforms GPT-4, Qwen2.5-72B, Llama3.1-70B, and Llama3.1-8B with RAG (approx. 70x more parameters for the RAG baseline) (Figure 6) [@Behrouz2025; @Kuratov2024].",
+      "content_hash": "249d67f915573695535004ac2986695937dd693bbfe062471d64bc84eedebee9",
+      "label": "babilong_results",
+      "qid": "github:2501_00663_titans::babilong_results",
+      "type": "claim"
+    },
+    {
+      "content": "Full ablation study (Table 5, 400M LMM base model) shows all components positively contribute:\n\n| Model variant | Lang. ppl | Reasoning acc | Long-ctx acc |\n|---------------|-----------|---------------|---------------|\n| LMM (full) | 27.01 | 47.83% | 92.68% |\n| Linear Memory | 28.49 | 46.97% | 85.34% |\n| w/o Convolution | 28.73 | 45.82% | 90.28% |\n| w/o Momentum | 28.98 | 45.49% | 87.12% |\n| w/o Weight Decay | 29.04 | 45.11% | 85.60% |\n| w/o Persistent Memory | 27.63 | 46.35% | 92.49% |\n\nGreatest contributions (perplexity degradation): weight decay (+2.03), momentum (+1.97), convolution (+1.72), persistent memory (+0.62) [@Behrouz2025].",
+      "content_hash": "bf9f5345fe5f3bfb8bc307233d5f90d83bbe6b824af340a8632964e98dcfaabb",
+      "label": "component_ablation",
+      "qid": "github:2501_00663_titans::component_ablation",
+      "type": "claim"
+    },
+    {
+      "content": "Deep memory modules with $L_{\\mathcal{M}} \\geq 2$ layers are strictly more expressive than linear (matrix-valued) memory modules: matrix-valued memory $M = W \\in \\mathbb{R}^{d \\times d}$ is equivalent to optimizing an online linear regression objective $\\ell(W_{t-1}; x_t) = \\|W_{t-1} k_t - v_t\\|_2^2$, whose optimal solution assumes linear dependencies in historical data. Multi-layer perceptrons (MLPs) with at least two layers are universal approximators and can represent non-linear dependencies [@Hornik1989].",
+      "content_hash": "f1f231f30c690c3660aa3e8843e9ee343bd5069355988d75b779688990cbab8d",
+      "label": "deep_memory_expressiveness",
+      "qid": "github:2501_00663_titans::deep_memory_expressiveness",
+      "type": "claim"
+    },
+    {
+      "content": "The weight decay forgetting mechanism in the neural long-term memory module is a generalization of the gating mechanisms in modern linear recurrent models. Specifically, setting the momentum coefficient $\\eta_t = 0$ in the LMM update rule recovers the Gated DeltaNet update, and further simplifications recover Mamba2 and other gated linear recurrent models (Mamba [@GuDao2024], Mamba2 [@DaoGu2024], Gated DeltaNet [@YangGatedDelta2024]). LMM generalizes these by adding (1) momentum-based surprise accumulation, (2) deep non-linear memory, and (3) inter-chunk non-linear recurrence.",
+      "content_hash": "32156b629154a1b3992596f637609266f8938c79ac743b591d0d0b4e755e72a9",
+      "label": "forgetting_generalizes_rnn_gates",
+      "qid": "github:2501_00663_titans::forgetting_generalizes_rnn_gates",
+      "type": "claim"
+    },
+    {
+      "content": "Titans (LMM and its variants MAC, MAG, MAL) are more effective than Transformers and modern linear recurrent models across diverse sequence modeling tasks, and can effectively scale to context windows larger than 2M tokens with maintained accuracy [@Behrouz2025].",
+      "content_hash": "18df1d26283813e2f15917f59cbbbb2d8d476f0448ca227f5df73bd5a3eb23ff",
+      "label": "law_titans_effective",
+      "qid": "github:2501_00663_titans::law_titans_effective",
+      "type": "claim"
+    },
+    {
+      "content": "At 760M parameters / 30B tokens, Titans (MAG) achieves WikiText perplexity 18.61 and LambadA perplexity 19.86, Titans (MAC) achieves 19.93 / 20.12, both outperforming all baselines including Gated DeltaNet-H2 (19.88 / 20.83, hybrid) and Samba (20.63 / 22.71, hybrid). Avg. commonsense accuracy: Titans (MAC) 52.51%, Titans (MAG) 52.50%, vs. Gated DeltaNet-H2 51.49%, Samba 51.08% (Table 1) [@Behrouz2025].",
+      "content_hash": "9cd519094479e1484752169fd85406713a039f27b764a6ec15360bb58c305d5c",
+      "label": "lm_results_760m",
+      "qid": "github:2501_00663_titans::lm_results_760m",
+      "type": "claim"
+    },
+    {
+      "content": "The MAC (Memory as a Context) architecture has two key advantages over MAG and MAL:\n(1) Attention has access to both historical context (retrieved from long-term memory) and current context, enabling the model to decide dynamically whether long-term memory information is relevant. (2) The attention module guides the long-term memory to store only useful information from the current segment, preventing memory overflow from uninformative tokens. At test time, only long-term memory weights update; attention weights perform in-context learning; persistent memory is fixed [@Behrouz2025].",
+      "content_hash": "1d0f391c83ebf458414105bf02ecb823114b68bc2ee535c2761e8b07c8c3e023",
+      "label": "mac_advantages",
+      "qid": "github:2501_00663_titans::mac_advantages",
+      "type": "claim"
+    },
+    {
+      "content": "On the S-NIAH task from RULER at context lengths 2K–16K tokens (Table 2), Titans (LMM) achieves S-NIAH-N: 100.0/99.8/93.4/80.2 and S-NIAH-W: 90.4/89.4/85.8/80.6, dramatically outperforming TTT (S-NIAH-N: 60.2/36.6/10.2/4.4) and Mamba2 (98.4/55.8/14.2/0.0). Titans (MAC) achieves S-NIAH-W: 98.2/98.2/95.6/95.2 at 2K/4K/8K/16K contexts, maintaining near-perfect accuracy even at 16K tokens [@Behrouz2025].",
+      "content_hash": "a19863a1eb639bba4a3a00aea58f96c332f9ae0d6dd74abc953148edf467f95c",
+      "label": "niah_results",
+      "qid": "github:2501_00663_titans::niah_results",
+      "type": "claim"
+    },
+    {
+      "content": "The neural long-term memory training algorithm is parallelizable and uses only matrix multiplications (matmuls) plus summation. The key insight is that with mini-batch gradient descent with chunk size $b$, the weight update within a chunk can be written as $\\Theta_b \\mathbf{B}_b (W_0 X - X) X^\\top$ using only matmuls, where $\\Theta_b$ and $\\mathbf{B}_b$ are diagonal matrices of learning rates and decay products. The momentum recurrence $S_t = \\eta_t S_{t-1} - \\theta_t u_t$ is computed in parallel via parallel associative scan [@SmithWarrington2023], achieving $O(N)$ FLOPs overall [@Behrouz2025].",
+      "content_hash": "c60d7f3309f3b9d01e0adf501ac5187cac004d7e73515cd45dc6bc3fc7e3085d",
+      "label": "parallel_training_claim",
+      "qid": "github:2501_00663_titans::parallel_training_claim",
+      "type": "claim"
+    },
+    {
+      "content": "On long-term time series forecasting benchmarks (ETTm1, ETTm2, ETTh1, ETTh2, ECL, Traffic, Weather), the Neural Memory Module achieves the best Mean Squared Error (MSE) and Mean Absolute Error (MAE) across all 7 datasets compared to Simba, iTransformer, RLinear, PatchTST, Crossformer, TiDE, TimesNet, and DLinear (Table 3). Selected results: ETTm1 MSE 0.358 (vs. Simba 0.383), Traffic MSE 0.415 (vs. Simba 0.493), Weather MSE 0.231 (vs. Simba 0.255) [@Behrouz2025].",
+      "content_hash": "db84cf191b455851869c460fcc81dc6a054a9eb58841e5961e63c4e38252b5e0",
+      "label": "time_series_results",
+      "qid": "github:2501_00663_titans::time_series_results",
+      "type": "claim"
+    },
+    {
+      "content": "**Theorem 4.1 (Titans Expressiveness):** Contrary to Transformers, diagonal linear recurrent models, and DeltaNet—all of which are limited to the circuit complexity class TC$^0$ [@Merrill2024]—Titans are capable of solving problems beyond TC$^0$. This means Titans are theoretically more expressive than Transformers and most modern linear recurrent models in state tracking tasks [@Behrouz2025].",
+      "content_hash": "ff42e4175d0b5be96effcb501b6b23c830c0561e2635bf84fe88fb5853bc81ac",
+      "label": "titans_expressiveness_theorem",
+      "qid": "github:2501_00663_titans::titans_expressiveness_theorem",
+      "type": "claim"
+    },
+    {
+      "content": "The Titans family of architectures organizes memory into three types:\n\n| Memory Type | Component | Behavior at Test Time |\n|-------------|-----------|----------------------|\n| Short-term | Attention (full or sliding-window) | In-context learner, weights fixed |\n| Long-term (contextual) | Neural memory module $\\mathcal{M}$ | Continues learning/updating weights |\n| Persistent (task) | Learnable data-independent params $P$ | Fixed; encodes task knowledge |\n\nThe three types operate jointly yet each can function independently [@Behrouz2025].",
+      "content_hash": "8206f706229095586a561a5b7e68ea1715f6dfd74fe336b8c729aa1a10726514",
+      "label": "titans_three_memory_types",
+      "qid": "github:2501_00663_titans::titans_three_memory_types",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:c9861d8733392935e0c2596d453ecf97995398fe867a44caf8b907a703b2542f",
+  "manifest_schema_version": 1,
+  "package": "2501-00663-titans",
+  "version": "0.1.0"
+}
