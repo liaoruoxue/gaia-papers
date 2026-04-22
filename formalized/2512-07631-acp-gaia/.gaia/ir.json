@@ -1,0 +1,2226 @@
+{
+  "ir_hash": "sha256:a8182b174de73fe7feb2ad1ff4bc57b8384d02d2e7a8180f76640bc5d8a44744",
+  "knowledges": [
+    {
+      "content": "Let $\\Theta$ denote the space of candidate solutions. A subset $\\Theta_{\\text{goal}} \\subseteq \\Theta$ contains acceptable solutions. An agent observes the world by taking actions $a \\in \\mathcal{A}$, each producing an outcome $y \\in \\mathcal{Y}$ at cost $C_s(a)$.",
+      "content_hash": "d3d9c85aba9fb37e73d5228e2a339fffce4205c96e88cfb262bb9cde36be163f",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_07631_acp::setup_hypothesis_space",
+      "label": "setup_hypothesis_space",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "ACP formal setup: hypothesis space, actions, costs",
+      "type": "setting"
+    },
+    {
+      "content": "Solvability Criterion (Definition 2.1): An agent with budget $B$ can solve a problem if $B \\geq C_{\\text{effective}}$, where $C_{\\text{effective}}$ is the expected cost under an optimal information-gathering policy.",
+      "content_hash": "fbc12e10acbf2a1d53875c1b3582372ab69ac0aaaeffe8cedddf278ad7dcf363",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_07631_acp::def_solvability",
+      "label": "def_solvability",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Solvability criterion definition",
+      "type": "setting"
+    },
+    {
+      "content": "Total Information Requirement (Definition 2.2): The total information needed is $I_{\\text{total}} = H(\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}}))$, the binary entropy of the goal indicator $\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}})$ under the prior.",
+      "content_hash": "a4fb5619562e13bf922a7b8c95dfb9ba43dfc98c9ea470f3ff0f7564171fc3b5",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_07631_acp::def_itotal",
+      "label": "def_itotal",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Total information requirement definition",
+      "type": "setting"
+    },
+    {
+      "content": "Information Gain per Action (Definition 2.3): An action $a$ producing outcome $y$ provides information $I_s(a) = I(\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}}); y \\mid a)$, the mutual information between the outcome and the goal indicator.",
+      "content_hash": "8db968047254d5346c0923db36e089942ae12568fcf8647a8507567018b39c2a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_07631_acp::def_is",
+      "label": "def_is",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Information gain per action definition",
+      "type": "setting"
+    },
+    {
+      "content": "Optimal Action Selection (Definition 2.4): At each step, select $a^* = \\arg\\max_{a \\in \\mathcal{A}} \\left( \\mathbb{E}[I_s(a)] / C_s(a) \\right)$. This policy maximizes information gained per resource spent.",
+      "content_hash": "6f34dc846691fda506c5b06b9850b66b9e3a52309e2744985a89cae5653cb5f5",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_07631_acp::def_optimal_action",
+      "label": "def_optimal_action",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Optimal action selection policy",
+      "type": "setting"
+    },
+    {
+      "content": "Effective Cost (Definition 2.5): $C_{\\text{effective}} = (I_{\\text{total}} / \\bar{I}_s) \\times \\bar{C}_s$, where $\\bar{I}_s$ and $\\bar{C}_s$ are average values under the optimal policy. When actions have uniform cost, $C_{\\text{effective}}$ simplifies to the number of steps times cost per step.",
+      "content_hash": "e0f994d5b53b19553cee5247e78849b31924c36d08854746a532c788c33656c4",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_07631_acp::def_ceffective",
+      "label": "def_ceffective",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Effective cost definition",
+      "type": "setting"
+    },
+    {
+      "content": "When $\\Theta_{\\text{goal}}$ contains a fraction $p$ of all candidates, $I_{\\text{total}} = -p \\log p - (1-p) \\log(1-p)$ (binary entropy), maximized at $p = 1/2$. Problems with rare solutions (small $p$) require more information than those with abundant solutions, because the binary goal indicator $\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}})$ carries more uncertainty when $p$ is small.",
+      "content_hash": "029c86527d49ef850cf422bbd04d5b7ef4935ec3a474397b72889791d4942bb3",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_07631_acp::itotal_properties",
+      "label": "itotal_properties",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "Binary entropy formula $H(p) = -p\\log p - (1-p)\\log(1-p)$ is a mathematical fact. The behavior (maximized at p=1/2, decreasing toward endpoints) is an established property of binary entropy with no room for empirical uncertainty."
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Total information as function of solution density",
+      "type": "claim"
+    },
+    {
+      "content": "The information gain $I_s(a)$ per action ranges from $I_s \\approx 0$ for uninformative actions (the outcome reveals nothing about whether $\\theta \\in \\Theta_{\\text{goal}}$) to $I_s \\approx I_{\\text{total}}$ for decisive tests that fully resolve goal membership. Uninformative actions arise when outcome $y$ is independent of the goal indicator; decisive tests are those whose outcome perfectly determines goal membership.",
+      "content_hash": "a373d6b027944050e86cd39940a88bb3ac9007223265c1cb46a2aa3ed9c4d68d",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_07631_acp::is_range",
+      "label": "is_range",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "Mutual information is non-negative (by definition) and bounded above by the entropy of the variables (data processing inequality). This is a mathematical fact about information theory with certainty effectively 1."
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Information gain range per action",
+      "type": "claim"
+    },
+    {
+      "content": "Autonomous agents face a resource allocation challenge: an agent facing a new problem must decide whether attempting a solution is worthwhile, yet most existing frameworks lack principled methods for making this judgment before substantial resources are spent.",
+      "content_hash": "9b050536c1bc0c326fd2e2ee10242ed630f8b3b4fdbfeedfff80d74a3cf285ae",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_07631_acp::problem_resource_allocation",
+      "label": "problem_resource_allocation",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Well-documented challenge: existing agent frameworks (ReAct, AutoGPT, etc.) have no principled pre-search solvability criterion. The claim is observable empirically."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Resource allocation gap in autonomous agents",
+      "type": "claim"
+    },
+    {
+      "content": "Given a problem's structure and an agent's capabilities, can we predict whether a solution exists within a given computational budget?",
+      "content_hash": "d1b1145ba9b4296fe3d7315e156456635c0735bdd2816080e0fb21238496aadf",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_07631_acp::q_solvability",
+      "label": "q_solvability",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core ACP question",
+      "type": "question"
+    },
+    {
+      "content": "The Agent Capability Problem (ACP) frames problem-solving as information search: a solution exists somewhere in hypothesis space $\\Theta$, and each action reduces uncertainty about its location. The framework predicts resource requirements before search begins by treating problem-solving as information acquisition.",
+      "content_hash": "2f4fbadcc9a68e9a14cb4d3c26bc8d1965d451c01cd681308dd5513cf22fbdf2",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_07631_acp::acp_framing",
+      "label": "acp_framing",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "problem_resource_allocation"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ACP information-theoretic framing",
+      "type": "claim"
+    },
+    {
+      "content": "The ACP defines an effective cost $C_{\\text{effective}} = (I_{\\text{total}} / I_s) \\times C_s$, where $I_{\\text{total}}$ is the total information needed to identify a solution, $I_s$ is the information gained per action, and $C_s$ is the cost per action. This quantity serves two purposes: (1) it provides an upfront solvability estimate — if $C_{\\text{effective}}$ exceeds budget $B$, the agent should reconsider; (2) it guides action selection during search by prioritizing high information-to-cost ratios.",
+      "content_hash": "5249d32987168ab650bf9eb50f65cc7a6d991035be324d82ae1b5f3cb8fba5f0",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_07631_acp::acp_ceffective_formula",
+      "label": "acp_ceffective_formula",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acp_framing",
+              "is_range",
+              "itotal_properties"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Effective cost formula and dual purpose",
+      "type": "claim"
+    },
+    {
+      "content": "Active learning selects maximally informative labels, with Bayesian Active Learning by Disagreement (BALD) [@Houlsby2011] using exactly the mutual information between predictions and parameters as its acquisition function, and classical D-optimality [@Chaloner1995] maximizing the Fisher information matrix determinant — all instantiating the principle of maximizing information gain [@MacKay1992].",
+      "content_hash": "186b1107ed10678a97cdcd821c8f632f4bfc88335bfea2193198bc272ec5d69f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_07631_acp::active_learning_connection",
+      "label": "active_learning_connection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Chaloner1995",
+              "Houlsby2011",
+              "MacKay1992"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "MacKay (1992) and Houlsby et al. BALD (2011) are well-established results in the active learning literature; BALD's acquisition function is exactly mutual information. D-optimality is a classical criterion in experimental design. Very high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Active learning as information maximization",
+      "type": "claim"
+    },
+    {
+      "content": "Bayesian optimization methods Entropy Search (ES) [@Hennig2012] and Predictive Entropy Search (PES) [@HernandezLobato2014] directly maximize information about the optimum's location; regret bounds for Gaussian process optimization [@Srinivas2010] explicitly depend on maximum information gain, proving that efficient optimization requires efficient information acquisition.",
+      "content_hash": "bc909100e0f4d75d6542342ee0b7e903263754ebf3373f1f1ebb238757f60703",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_07631_acp::bayesian_opt_connection",
+      "label": "bayesian_opt_connection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hennig2012",
+              "HernandezLobato2014",
+              "Srinivas2010"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Entropy Search (Hennig 2012) and PES (Hernández-Lobato 2014) are peer-reviewed papers explicitly framing BO as mutual information maximization. Srinivas et al. (2010) information-gain regret bounds are well-established. Very high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Bayesian optimization as information maximization",
+      "type": "claim"
+    },
+    {
+      "content": "Curious reinforcement learning agents seek surprising observations that improve world models [@Schmidhuber2010], and Empowerment [@Klyubin2005] defines intrinsic value as channel capacity between actions and future states — both quantifying agent search efficiency information-theoretically.",
+      "content_hash": "7de5ff9004aa0bd372cbbffa603abde27343269972998489deb84510526e4bab",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_07631_acp::rl_intrinsic_connection",
+      "label": "rl_intrinsic_connection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Klyubin2005",
+              "Schmidhuber2010"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Schmidhuber curiosity (2010) and empowerment (Klyubin 2005) are peer-reviewed; the information-theoretic framing is correct though the connection to ACP is somewhat loose (curiosity uses prediction error, not mutual information directly)."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reinforcement learning intrinsic motivation as information maximization",
+      "type": "claim"
+    },
+    {
+      "content": "Active learning, Bayesian optimization, and curious reinforcement learning each independently converge on maximizing information gain relative to cost as the right principle for guiding search. The ACP makes this principle explicit and operationalizes it for solvability assessment across LLM-based and agentic workflows.",
+      "content_hash": "e481f0c8f16499bffc0d870cf890096f0cfa31adef5d68f8b996abe562a0c0b2",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_07631_acp::unified_principle",
+      "label": "unified_principle",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "active_learning_connection",
+              "bayesian_opt_connection",
+              "rl_intrinsic_connection"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Unified information-theoretic principle across learning paradigms",
+      "type": "claim"
+    },
+    {
+      "content": "Stochastic model assumptions: Let $\\{X_i\\}_{i \\geq 1}$ represent information gains from successive actions under the optimal policy. Assumptions: (1) Independence — outcomes are conditionally independent given history; (2) Bounded moments — $\\sup_i \\mathbb{E}[X_i^2] < \\infty$; (3) Diminishing returns — expected gains satisfy $\\mu_1 \\geq \\mu_2 \\geq \\cdots \\geq \\mu_{\\inf} > 0$. Stopping time: $N := \\inf\\{n \\geq 1 : \\sum_{i=1}^n X_i \\geq I_{\\text{total}}\\}$; total cost: $C := C_s N$.",
+      "content_hash": "daee13712ffed946b241e8b6e3deb154da146077d2cb0f1990c101637efea6b4",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_07631_acp::stochastic_model",
+      "label": "stochastic_model",
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Stochastic model for information accumulation",
+      "type": "setting"
+    },
+    {
+      "content": "The diminishing returns assumption ($\\mu_1 \\geq \\mu_2 \\geq \\cdots \\geq \\mu_{\\inf} > 0$) is plausible: as search proceeds, remaining uncertainty becomes harder to resolve because early actions eliminate large swaths of hypothesis space while later actions only refine estimates. The initial expected gain $I_s := \\mu_1$ is the most optimistic per-step gain value.",
+      "content_hash": "1d5c417464dcbac2684671845bbaa2c71a6f1a4834f19bf95d52320d17151ecd",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_07631_acp::diminishing_returns_rationale",
+      "label": "diminishing_returns_rationale",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "The intuition that early actions eliminate large swaths and later actions refine is plausible and commonly observed in practice, but not universally true — some search problems have increasing information gains early on, or flat profiles. Moderate confidence."
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Diminishing returns assumption rationale",
+      "type": "claim"
+    },
+    {
+      "content": "The partial sums minus their expectations, $M_n = S_n - \\sum_{i=1}^n \\mu_i$, form a martingale. Assuming finite expected stopping time, the optional stopping theorem gives $\\mathbb{E}[M_N] = 0$, hence $\\mathbb{E}[S_N] = \\mathbb{E}[\\sum_{i=1}^N \\mu_i]$.",
+      "content_hash": "baeb6e1fed33287038e56fa6762661f658f839b0c7ee9b837c63998d40baa1c2",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_07631_acp::martingale_optional_stopping",
+      "label": "martingale_optional_stopping",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "diminishing_returns_rationale"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Martingale optional stopping for information sums",
+      "type": "claim"
+    },
+    {
+      "content": "Lorden's inequality [@Lorden1970] for independent non-identically distributed variables bounds the expected overshoot $R := S_N - I_{\\text{total}}$ by $\\mathbb{E}[R] \\leq M_2/\\mu_{\\inf}$, where $M_2 = \\sup_i \\mathbb{E}[X_i^2]$ is the second moment of information gains.",
+      "content_hash": "449c319fd540c8413dd6d93843479e64074f9bf234b737a73119baf453b7acf4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_07631_acp::lorden_overshoot",
+      "label": "lorden_overshoot",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Lorden1970"
+            ]
+          }
+        },
+        "prior": 0.96,
+        "prior_justification": "Lorden's inequality (1970) is a classical result in renewal theory for independent non-identically distributed variables. The paper cites it correctly. Very high confidence in the mathematical result; slight uncertainty about applicability to this exact setting."
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Lorden's inequality bounds expected overshoot",
+      "type": "claim"
+    },
+    {
+      "content": "Under the stochastic model assumptions, $C_{\\text{effective}} \\leq \\mathbb{E}[C]$: the effective cost $C_{\\text{effective}} = (I_{\\text{total}} / I_s) \\times C_s$ (using the most optimistic initial gain $I_s = \\mu_1$) is a lower bound on expected total cost. No strategy can do better on average.",
+      "content_hash": "f39cc79fde5132c7ce3e9df03973ad6bd2b948d04b771ee58947343b200ef89c",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_07631_acp::lower_bound_ceffective",
+      "label": "lower_bound_ceffective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_acp_lower_bound",
+              "lower_bound_ceffective",
+              "martingale_optional_stopping"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Ceffective lower-bounds expected cost",
+      "type": "claim"
+    },
+    {
+      "content": "Under the stochastic model assumptions, the expected total cost satisfies $\\mathbb{E}[C] \\leq C_s \\left( I_{\\text{total}} / \\mu_{\\inf} + M_2 / \\mu_{\\inf}^2 \\right)$, where $M_2 = \\sup_i \\mathbb{E}[X_i^2]$ and $\\mu_{\\inf} = \\inf_i \\mu_i$. The gap between bounds depends on $M_2 / \\mu_{\\inf}^2$, a signal-to-noise ratio.",
+      "content_hash": "560516cc52464424c9680b52aeea14df839c289ddb590d533f72daff21d9a9b8",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_07631_acp::upper_bound_ceffective",
+      "label": "upper_bound_ceffective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "lorden_overshoot",
+              "martingale_optional_stopping"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Upper bound on expected cost",
+      "type": "claim"
+    },
+    {
+      "content": "Theorem 3.1 (Two-Sided Cost Bound): Under the stochastic model assumptions, $C_{\\text{effective}} \\leq \\mathbb{E}[C] \\leq C_s \\left( I_{\\text{total}} / \\mu_{\\inf} + M_2 / \\mu_{\\inf}^2 \\right)$. The lower bound confirms $C_{\\text{effective}}$ is realistic; the upper bound warns that if information gains deteriorate severely ($\\mu_{\\inf} \\ll I_s$), costs can exceed initial estimates substantially.",
+      "content_hash": "4d14e2eb5e99de27afa89ba5ea983f1201361e7b92683c396fea3dd175dedb49",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_07631_acp::two_sided_bound",
+      "label": "two_sided_bound",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "lower_bound_ceffective",
+              "upper_bound_ceffective"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Two-sided cost bound theorem",
+      "type": "claim"
+    },
+    {
+      "content": "High-probability cost bound (Section 3.3): When information increments are bounded, $0 \\leq X_i \\leq M$ almost surely, Hoeffding's inequality [@Hoeffding1963] gives: with probability $\\geq 1 - \\delta$, $C \\leq C_s \\left( I_{\\text{total}}/\\mu_{\\inf} + O\\left( (M^2/\\mu_{\\inf}^2) \\log(1/\\delta) \\right) \\right)$. The required step count is $n_\\delta \\geq I_{\\text{total}}/\\mu_{\\inf} + (M^2/(2\\mu_{\\inf}^2)) \\log(1/\\delta) + \\sqrt{(I_{\\text{total}} M^2 / (2\\mu_{\\inf}^3)) \\log(1/\\delta)}$. This allows setting budget reserves proportional to $\\log(1/\\delta)$ for mission-critical applications.",
+      "content_hash": "aceaa4dae241e18e62c805f713f59b67be65c9710d5502e957d269d2c30ff8ff",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_07631_acp::high_prob_bound",
+      "label": "high_prob_bound",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hoeffding1963"
+            ],
+            "referenced_claims": [
+              "lorden_overshoot"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "High-probability budget bound via Hoeffding",
+      "type": "claim"
+    },
+    {
+      "content": "The gap between the lower bound $C_{\\text{effective}}$ and the upper bound $C_s(I_{\\text{total}}/\\mu_{\\inf} + M_2/\\mu_{\\inf}^2)$ depends on $M_2/\\mu_{\\inf}^2$, which acts as a signal-to-noise ratio. When information gains deteriorate severely ($\\mu_{\\inf} \\ll I_s$), actual costs can substantially exceed $C_{\\text{effective}}$.",
+      "content_hash": "7dd44d83f022afd80090dd22ac4550c7aa37b76333d9d2a55790a166c7dd001e",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_07631_acp::bound_gap_interpretation",
+      "label": "bound_gap_interpretation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "two_sided_bound"
+            ]
+          }
+        }
+      },
+      "module": "s3_bounds",
+      "parameters": [],
+      "title": "Bound gap as signal-to-noise ratio",
+      "type": "claim"
+    },
+    {
+      "content": "Algorithm 1 (A Priori Cost Estimation): (1) Model uncertainty with GP prior $f \\sim \\mathcal{GP}(0, k(\\cdot, \\cdot))$; (2) Approximate $I_{\\text{total}} = H[p(\\theta \\in \\Theta_{\\text{goal}})]$ as entropy of the GP-induced distribution over $\\Theta_{\\text{goal}}$; (3) Estimate per-step gain $\\hat{I}_s$ by simulating outcomes $y \\sim p(y|a)$, computing posterior entropies, and averaging $\\text{IG}(a) = H[p(\\theta)] - \\mathbb{E}_{y|a}[H[p(\\theta|a,y)]]$ over near-optimal actions; (4) Predict $\\widehat{C}_{\\text{effective}} = (I_{\\text{total}} / \\hat{I}_s) \\times \\bar{C}_s$. If $\\widehat{C}_{\\text{effective}} \\leq B$, predict solvability; otherwise reconsider.",
+      "content_hash": "fc6823f48a2aab8a396db2f12b979dc1a570290c89cad5425eebf53365694266",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_07631_acp::gp_surrogate_method",
+      "label": "gp_surrogate_method",
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "GP-based cost estimation algorithm",
+      "type": "setting"
+    },
+    {
+      "content": "Under standard RKHS regularity conditions [@Srinivas2010; @Rasmussen2006]: the true function $f \\in \\mathcal{H}_k$ with $\\|f\\|_{\\mathcal{H}_k} \\leq B$ (GP kernel properly specified), GP posteriors concentrate around the truth at rate controlled by $\\beta_t = O(\\log t)$ and maximum information gain $\\gamma_t$.",
+      "content_hash": "b9f11e2a89b08765c4edaf6f653a7067cf02b183b3d4964002dd11e6d14dc3cf",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_07631_acp::rkhs_regularity",
+      "label": "rkhs_regularity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Rasmussen2006",
+              "Srinivas2010"
+            ]
+          }
+        }
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "RKHS regularity conditions for GP surrogate",
+      "type": "setting"
+    },
+    {
+      "content": "Monte Carlo Error Bound (Proposition 4.1): If $0 \\leq I_{\\text{GP}}(\\theta) \\leq L$ for all candidates and $\\hat{I}_s$ averages over $S$ samples, then with probability at least $1 - \\delta$: $|\\hat{I}_s - \\mathbb{E}_\\theta[I_{\\text{GP}}(\\theta)]| \\leq L \\sqrt{\\log(2/\\delta) / (2S)}$. For Gaussian predictive models, $L = \\frac{1}{2} \\log(1 + \\sigma^2_{\\max}/\\sigma^2_n)$ where $\\sigma^2_{\\max}$ is the maximum GP predictive variance and $\\sigma^2_n$ is noise variance.",
+      "content_hash": "ce6234aae9624e4d0d7efb0c09ab919d2f7c4ed9f99d932684b2aaab2ad8ad15",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_07631_acp::monte_carlo_error_bound",
+      "label": "monte_carlo_error_bound",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Proposition 4.1 is a direct application of Hoeffding's inequality to bounded random variables — a standard result. The expression for L in Gaussian models follows from Lipschitz continuity of log(1+x). High confidence in the mathematical derivation."
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Monte Carlo estimation error bound",
+      "type": "claim"
+    },
+    {
+      "content": "Surrogate Error Under RKHS (Theorem 4.1): Under RKHS regularity [@Srinivas2010; @Rasmussen2006], with probability $\\geq 1 - \\delta$: $|I_{\\text{true}}(\\theta) - I_{\\text{GP}}(\\theta)| \\leq \\frac{1}{2(\\sigma^2_n + \\underline{\\sigma}^2)} \\cdot \\Delta_\\sigma(\\theta)$, where $\\underline{\\sigma}^2 = \\inf_\\theta \\sigma^2_t(\\theta)$ (minimum GP posterior variance) and $\\Delta_\\sigma(\\theta) = O(\\sqrt{\\beta_t} \\sigma_t(\\theta))$ with $\\beta_t = O(\\log t)$. Mutual information $g(v) = \\frac{1}{2}\\log(1 + v/\\sigma^2_n)$ is Lipschitz in predictive variance with constant $1/(2(\\sigma^2_n + \\underline{\\sigma}^2))$, and GP concentration bounds variance errors by $\\sqrt{\\beta_t}\\sigma_t(\\theta)$.",
+      "content_hash": "1a84f16cd828f4c4b51671bc09626b6052543e229b4113950daaed021c0fb41a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_07631_acp::rkhs_surrogate_error",
+      "label": "rkhs_surrogate_error",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Rasmussen2006",
+              "Srinivas2010"
+            ]
+          }
+        },
+        "prior": 0.82,
+        "prior_justification": "Theorem 4.1 relies on GP concentration results from Srinivas et al. (2010) and the Lipschitz argument for mutual information. The sketch is plausible but the proof is only outlined; the RKHS assumption may be restrictive in practice. Moderate-high confidence in the result under the stated assumptions."
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Surrogate error bound under RKHS regularity",
+      "type": "claim"
+    },
+    {
+      "content": "Error propagation to $\\widehat{C}_{\\text{effective}}$: If surrogate estimates satisfy $|\\hat{I}_s - I_s| \\leq \\epsilon_s$ and $|\\hat{I}_{\\text{total}} - I_{\\text{total}}| \\leq \\epsilon_{\\text{tot}}$ with probability $1 - \\delta$, then with the same probability: $|\\widehat{C}_{\\text{effective}} - C_{\\text{effective}}| \\leq C_s \\left( \\epsilon_{\\text{tot}}/I_s + (I_{\\text{total}}/I_s^2) \\epsilon_s \\right) + O(\\epsilon^2)$. Practical solvability tests should include this margin.",
+      "content_hash": "2504d696b6d288a587f9c582bf73d1e3b8715e12ffe837fb7ab69976dc36598f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_07631_acp::ceffective_error_propagation",
+      "label": "ceffective_error_propagation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "monte_carlo_error_bound",
+              "rkhs_surrogate_error"
+            ]
+          }
+        }
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Error propagation from surrogate to cost estimate",
+      "type": "claim"
+    },
+    {
+      "content": "Experimental setup for LLM slope identification: An agent seeks the slope $a \\in [-2, 2]$ of a linear function $y(x) = ax + \\epsilon$ where $\\epsilon \\sim \\mathcal{N}(0, \\sigma^2)$ by querying points $x \\in [-3, 3]$. Algorithm 1 predicts required steps using a GP surrogate for noise levels $\\sigma \\in [0.1, 0.8]$. An LLM agent is then deployed, providing past observations and requesting the next query and current slope estimate at each step.",
+      "content_hash": "f2a10dc1d060f92c3b3b6fcff5a65cb3783d370f85e8d30ad187e9cd59f30ea0",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_07631_acp::exp_setup_slope",
+      "label": "exp_setup_slope",
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Experimental setup: LLM agent slope identification",
+      "type": "setting"
+    },
+    {
+      "content": "In the LLM slope identification experiment, the ACP estimate $C_{\\text{effective}}$ consistently lower-bounds actual LLM agent steps across all tested noise levels $\\sigma \\in [0.1, 0.8]$: at $\\sigma \\approx 0.1$, ACP predicts approximately 2 steps while LLM requires approximately 4 steps; at $\\sigma \\approx 0.8$, ACP predicts approximately 6 steps while LLM requires approximately 10 steps. The lower-bound condition is never violated.",
+      "content_hash": "56884c52b882a753d75258472ebb52ad0dfeb126aa18606372fbae3ef80196b4",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_07631_acp::acp_lower_bounds_llm",
+      "label": "acp_lower_bounds_llm",
+      "metadata": {
+        "caption": "Figure 1: ACP predictions versus actual LLM agent performance for noisy slope identification across noise levels.",
+        "figure": "artifacts/2512.07631-acp.pdf",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_heuristic_match",
+              "pred_lower_bound",
+              "two_sided_bound"
+            ]
+          }
+        }
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "ACP lower-bounds LLM agent steps in slope identification",
+      "type": "claim"
+    },
+    {
+      "content": "The gap between ACP predictions and actual LLM agent performance increases with noise level $\\sigma$: at low noise ($\\sigma \\approx 0.1$), gap is approximately 2 steps; at high noise ($\\sigma \\approx 0.8$), gap grows to approximately 4 steps. This is consistent with the overshoot term $M_2/\\mu_{\\inf}^2$ in the upper bound, which grows with problem difficulty (higher noise).",
+      "content_hash": "bd546b42f18b39866210f0d9a22409453d20b1f63ec2917591974d7d90157b29",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_07631_acp::gap_increases_with_noise",
+      "label": "gap_increases_with_noise",
+      "metadata": {
+        "caption": "Figure 1: ACP predictions versus actual LLM agent performance.",
+        "figure": "artifacts/2512.07631-acp.pdf",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acp_lower_bounds_llm"
+            ]
+          }
+        }
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Prediction gap grows with noise level",
+      "type": "claim"
+    },
+    {
+      "content": "If $C_{\\text{effective}}$ is a valid theoretical lower bound (as claimed by Theorem 3.1), then predicted steps should be $\\leq$ actual LLM steps in all trials across all noise levels, and the gap should grow monotonically with noise (as predicted by the overshoot term $M_2/\\mu_{\\inf}^2$).",
+      "content_hash": "f39f1cb19f19a7e1b3c975f2451141d548eab6296e6624c352265e480e49cac5",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_07631_acp::pred_lower_bound",
+      "label": "pred_lower_bound",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "This claim is the theoretical prediction from Theorem 3.1. Given that the theorem's proof follows standard martingale + optional stopping arguments, the prediction that $C_{\\text{eff}} \\leq$ actual cost should hold with high probability."
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "ACP prediction: valid lower bound implies prediction <= actual with growing gap",
+      "type": "claim"
+    },
+    {
+      "content": "If ACP predictions coincidentally track LLM performance without being a theoretically valid lower bound, predictions would sometimes exceed actual steps (random violations), and any noise-dependent gap pattern would be coincidental.",
+      "content_hash": "1d05d4e9d2ed5e07c2b0b34b4cfca3c0906740ac29f52575a455abb425b6fa8f",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_07631_acp::alt_heuristic_match",
+      "label": "alt_heuristic_match",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "The alternative — that ACP's bound holds only coincidentally without theoretical grounding — is implausible given the structured, monotonic gap pattern with noise level. Low prior reflects that coincidental consistent lower-bounding across all trials is unlikely, especially with the overshoot term predicting the gap direction."
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "title": "Alternative: coincidental match without guaranteed lower bound validity",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If $C_{\\text{effective}}$ is a valid theoretical lower bound (as claimed by Theorem 3.1), then predicted steps should be $\\leq$ actual LLM steps in all trials across all noise levels, and the gap should grow monotonically with noise (as predicted by the overshoot term $M_2/\\mu_{\\inf}^2$)., If ACP predictions coincidentally track LLM performance without being a theoretically valid lower bound, predictions would sometimes exceed actual steps (random violations), and any noise-dependent gap pattern would be coincidental., In the LLM slope identification experiment, the ACP estimate $C_{\\text{effective}}$ consistently lower-bounds actual LLM agent steps across all tested noise levels $\\sigma \\in [0.1, 0.8]$: at $\\sigma \\approx 0.1$, ACP predicts approximately 2 steps while LLM requires approximately 4 steps; at $\\sigma \\approx 0.8$, ACP predicts approximately 6 steps while LLM requires approximately 10 steps. The lower-bound condition is never violated.)",
+      "content_hash": "7270f0c384abc6a7a67b9a1b6e681a8f6e819ce61a900db5213494337090f34f",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2512_07631_acp::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_estimation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Graph coloring experiment setup (Section 4.6): k-coloring of random Erdős–Rényi graphs $G(n, p)$ with $k = 3$ colors. Graph sizes $n \\in \\{8, 10, 12, 15\\}$ and edge probabilities $p \\in \\{0.25, 0.30, 0.35, 0.41\\}$; 50–250 random instances per configuration (750 total). Non-3-colorable instances (verified via ILP) are discarded. Three agents: (i) Random — selects variables and colors uniformly; (ii) Greedy — selects highest-degree vertex, minimizes local conflicts; (iii) ACP — uses entropy-based estimate $C_{\\text{eff}} = I_{\\text{total}}/I_s$ to bias ordering. All use backtracking with forward checking. Cost metric: node expansions until valid coloring.",
+      "content_hash": "c2d0e43a8ea194670f249072415936bda8abcb34bebe476f4574dd49e4d57df9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_07631_acp::graph_coloring_setup",
+      "label": "graph_coloring_setup",
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Graph coloring experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "For each graph coloring instance, $I_{\\text{total}}$ is the entropy of the feasible coloring space and $I_s$ is the average information gain per assignment using partial constraint structure, giving $C_{\\text{eff}} = I_{\\text{total}}/I_s$ as the predicted lower bound (plus overshoot term). The ACP agent uses $C_{\\text{eff}}$ only to bias variable ordering; no ground-truth cost is provided.",
+      "content_hash": "9f19165c7342fe9a5d7b31662ae21af6e822265ff53f3fe2bc2d92c50a34d06d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_07631_acp::acp_bound_formulation",
+      "label": "acp_bound_formulation",
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "ACP bound formulation for graph coloring",
+      "type": "setting"
+    },
+    {
+      "content": "Graph coloring search cost results across 750 instances (node expansions, lower is better):\n\n| $(n, p)$ | Random | Greedy | ACP actual | ACP prediction |\n|----------|--------|--------|------------|----------------|\n| $(8, 0.25)$ | 9.16 | 8.00 | 8.00 | 8.00 |\n| $(10, 0.30)$ | 13.64 | 10.16 | 10.00 | 10.00 |\n| $(12, 0.35)$ | 27.34 | 13.10 | 13.04 | 12.00 |\n| $(15, 0.35)$ | 47.40 | 18.58 | 18.34 | 15.00 |\n| $(15, 0.41)$ | 39.46 | 18.08 | 16.46 | 15.00 |\n\nACP prediction $C_{\\text{eff}}$ is at or below ACP actual cost in every row.",
+      "content_hash": "7e71930ec12739ec918d27efeba92b75816e7b8afaf3907e051380dbec14a1c9",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_07631_acp::graph_coloring_results_table",
+      "label": "graph_coloring_results_table",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Experimental results from 750 instances reported in Table 1. The numbers are internally consistent (ACP prediction always <= ACP actual, Greedy always < Random for larger graphs). No reason to doubt the reported values; standard empirical result.",
+        "source_table": "artifacts/2512.07631-acp.pdf, Table 1"
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Graph coloring search cost results",
+      "type": "claim"
+    },
+    {
+      "content": "Across all 750 graph coloring instances, the predicted cost $C_{\\text{eff}}$ is at or below the observed ACP agent cost in every trial ($C_{\\text{eff}} \\leq C$ always), validating the theoretical lower bound of Theorem 3.1. The lower-bound condition is never violated.",
+      "content_hash": "190f08c9e276f4d03dcaa2ff76d402fd884103825bde8ee918027a25ab8774c7",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_07631_acp::acp_lower_bound_graph",
+      "label": "acp_lower_bound_graph",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acp_lower_bound_graph",
+              "graph_coloring_results_table",
+              "law_acp_lower_bound"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "ACP prediction is valid lower bound in all 750 graph coloring instances",
+      "type": "claim"
+    },
+    {
+      "content": "The ACP agent consistently reduces node expansions relative to the Random agent in graph coloring, with larger gains for larger or denser graphs: at $(n=8, p=0.25)$, both use 8.00 expansions; at $(n=15, p=0.35)$, ACP uses 18.34 vs. Random's 47.40 (61% reduction); at $(n=15, p=0.41)$, ACP uses 16.46 vs. Random's 39.46 (58% reduction).",
+      "content_hash": "747ea688f88887234ab86c866615d88773ccb7da7ad39cc9c27af2235a7191ef",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_07631_acp::acp_vs_random_graph",
+      "label": "acp_vs_random_graph",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "graph_coloring_results_table"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "ACP outperforms Random agent in graph coloring",
+      "type": "claim"
+    },
+    {
+      "content": "The ACP agent matches or outperforms the Greedy agent in graph coloring, with improvements becoming more pronounced with problem difficulty: at $(n=8, p=0.25)$, ACP and Greedy both use 8.00 expansions; at $(n=12, p=0.35)$, ACP uses 13.04 vs. Greedy's 13.10 (marginal); at $(n=15, p=0.41)$, ACP uses 16.46 vs. Greedy's 18.08 (9% reduction).",
+      "content_hash": "5a4327af6b7dc87f79af4500ed8ada24852bd19b10a351c81e6233edf6e00f2b",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_07631_acp::acp_vs_greedy_graph",
+      "label": "acp_vs_greedy_graph",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "graph_coloring_results_table"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "ACP matches or outperforms Greedy agent in graph coloring",
+      "type": "claim"
+    },
+    {
+      "content": "The overshoot (difference $C - C_{\\text{eff}}$ between actual ACP cost and prediction) increases with graph size and density: at $(n=8, p=0.25)$, overshoot is 0.00; at $(n=12, p=0.35)$, overshoot is $13.04 - 12.00 = 1.04$; at $(n=15, p=0.35)$, overshoot is $18.34 - 15.00 = 3.34$. This is consistent with the theoretical prediction that the overshoot term $M_2/\\mu_{\\inf}^2$ grows with problem difficulty.",
+      "content_hash": "a67b2b74b6105e8d4d0b2d31afee72c3472ec6d39b91bdf5cf6737feb2d512c1",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_07631_acp::overshoot_increases_with_difficulty",
+      "label": "overshoot_increases_with_difficulty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acp_lower_bound_graph",
+              "graph_coloring_results_table",
+              "two_sided_bound"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Overshoot increases with problem difficulty as theoretically predicted",
+      "type": "claim"
+    },
+    {
+      "content": "For search problems framed as information acquisition, $C_{\\text{eff}} = I_{\\text{total}}/I_s$ is a valid lower bound on expected search cost, with overshoot increasing with problem difficulty. This generalizes across LLM-based continuous estimation tasks and combinatorial NP-hard search tasks.",
+      "content_hash": "62fbc9c818f6f8dfc624930552bfd700f571eab4d0e5905b77de1c9ef86c8611",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_07631_acp::law_acp_lower_bound",
+      "label": "law_acp_lower_bound",
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "General law: ACP is valid lower bound on search cost",
+      "type": "claim"
+    },
+    {
+      "content": "Epsilon-Approximate Goal (Definition 5.1): The goal set is $\\Theta_{\\text{goal}}(\\epsilon) = \\{\\theta \\in \\Theta : f(\\theta) \\leq (1+\\epsilon) f(\\theta^*)\\}$, where $\\theta^*$ minimizes $f$ and $\\epsilon \\geq 0$ controls approximation quality. As $\\epsilon$ increases, $|\\Theta_{\\text{goal}}(\\epsilon)|$ grows and $I_{\\text{total}}(\\epsilon)$ decreases.",
+      "content_hash": "c58f63c450fef72187947605f13f2e4e39ec8b89599fb31d93d3195007d52888",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_07631_acp::epsilon_approximate_goal",
+      "label": "epsilon_approximate_goal",
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Epsilon-approximate goal set definition",
+      "type": "setting"
+    },
+    {
+      "content": "For problems admitting a Polynomial-Time Approximation Scheme (PTAS, e.g., Euclidean TSP), $I_{\\text{total}}(\\epsilon)$ is achievable in time $n^{O(1)} \\cdot 2^{O(1/\\epsilon)}$. For Fully Polynomial-Time Approximation Schemes (FPTAS, e.g., Knapsack), $I_{\\text{total}}(\\epsilon)$ is achievable in time polynomial in both $n$ and $1/\\epsilon$. These complexity bounds translate directly to $C_{\\text{effective}}(\\epsilon)$ bounds.",
+      "content_hash": "288e0d08bfd62c9e9c803be586ce6f414865eb93c974d3e916dfa7285e2bc13d",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2512_07631_acp::ptas_fptas_connection",
+      "label": "ptas_fptas_connection",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "PTAS for Euclidean TSP and FPTAS for Knapsack are well-known results in approximation algorithms. The translation to $I_{\\text{total}}(\\epsilon)$ complexity bounds is a natural interpretation but not rigorously proved in the paper. High confidence in the underlying algorithm results, moderate in the translation."
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "PTAS/FPTAS complexity through information-theoretic lens",
+      "type": "claim"
+    },
+    {
+      "content": "Relaxing the approximation quality (increasing $\\epsilon$) strictly reduces $I_{\\text{total}}(\\epsilon)$ and hence $C_{\\text{effective}}(\\epsilon)$: a larger goal set $\\Theta_{\\text{goal}}(\\epsilon)$ means a larger fraction $p$ of candidates satisfy the goal, and binary entropy $-p \\log p - (1-p) \\log(1-p)$ decreases as $p$ increases beyond $1/2$ toward 1, reducing information requirements.",
+      "content_hash": "8d6bb96b8c85e83d7b74b73f5a2381f4a95a0cb2f598545ef7f8e131265e0674",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2512_07631_acp::approximation_reduces_info",
+      "label": "approximation_reduces_info",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ptas_fptas_connection"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Relaxed approximation reduces information requirements",
+      "type": "claim"
+    },
+    {
+      "content": "Inapproximability results from the PCP theorem translate to ACP: if a problem is NP-hard to approximate within ratio $\\rho$, then $I_{\\text{total}}(\\epsilon) = \\infty$ for $\\epsilon < \\rho - 1$, making the problem unsolvable regardless of budget. This provides a principled unified framework for reasoning about both exact and approximate solvability through information requirements.",
+      "content_hash": "91a631640e82466bb1da1b7cb05f605fb4a86123b8aa3bf02da2c4a6a0c4978e",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2512_07631_acp::inapproximability_as_infinite_cost",
+      "label": "inapproximability_as_infinite_cost",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "approximation_reduces_info"
+            ]
+          }
+        }
+      },
+      "module": "s5_graph_coloring",
+      "parameters": [],
+      "title": "Inapproximability as infinite ACP cost",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::active_learning_connection,github:2512_07631_acp::bayesian_opt_connection,github:2512_07631_acp::rl_intrinsic_connection)",
+      "content_hash": "b8c13a284e124ebd4583d77b24bff0f8b38075ff24f238b04931ef14860c518d",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_681b9f40",
+      "label": "__conjunction_result_681b9f40",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::active_learning_connection,github:2512_07631_acp::bayesian_opt_connection,github:2512_07631_acp::rl_intrinsic_connection)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_388358dc4266534e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_681b9f40,github:2512_07631_acp::unified_principle)",
+      "content_hash": "8b227ffede5965ffcc5bbaa4b0b2983d4a03627db32901a1faa7b3c0eb67d8ce",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_2a843e1e",
+      "label": "__implication_result_2a843e1e",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_681b9f40,github:2512_07631_acp::unified_principle)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_388358dc4266534e",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::problem_resource_allocation,github:2512_07631_acp::acp_framing)",
+      "content_hash": "6632f7b2982266d1f8bdcd1eaa0cde5224161c24b8c603c249cc6286eb6dd631",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_37189edb",
+      "label": "__implication_result_37189edb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::problem_resource_allocation,github:2512_07631_acp::acp_framing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b54f0ac14660b9ba",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::acp_framing,github:2512_07631_acp::itotal_properties,github:2512_07631_acp::is_range)",
+      "content_hash": "9eb07de7ed57aaf024728f492f55eaabc43b2756c218b27ef9813494b062e83a",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_7e2c42db",
+      "label": "__conjunction_result_7e2c42db",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::acp_framing,github:2512_07631_acp::itotal_properties,github:2512_07631_acp::is_range)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_788fa5672957ea09",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_7e2c42db,github:2512_07631_acp::acp_ceffective_formula)",
+      "content_hash": "016125ebb2066a7707908c6175377e60cc357a7424e060c381fab0c5982d18b5",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_720aff07",
+      "label": "__implication_result_720aff07",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_7e2c42db,github:2512_07631_acp::acp_ceffective_formula)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_788fa5672957ea09",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::diminishing_returns_rationale,github:2512_07631_acp::martingale_optional_stopping)",
+      "content_hash": "5b002790cff05b87d3f7839f3d854308d7771269b286fa0c83b7ece30626fef8",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_4e5cd012",
+      "label": "__implication_result_4e5cd012",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::diminishing_returns_rationale,github:2512_07631_acp::martingale_optional_stopping)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4a3dd1f6c5490eca",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::martingale_optional_stopping,github:2512_07631_acp::lower_bound_ceffective)",
+      "content_hash": "3aa0dc6cd463b21f9c004114e97add75909a26116630a1ebb97e7fe35845d4c9",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_66e608d6",
+      "label": "__implication_result_66e608d6",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::martingale_optional_stopping,github:2512_07631_acp::lower_bound_ceffective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a616e182df972ab3",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::martingale_optional_stopping,github:2512_07631_acp::lorden_overshoot)",
+      "content_hash": "d1eda99655cb351280c5e34cecf5a6be83ef1eef003534e20477589e4bc691ca",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_711a27c0",
+      "label": "__conjunction_result_711a27c0",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::martingale_optional_stopping,github:2512_07631_acp::lorden_overshoot)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_736a06bd67afebbe",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_711a27c0,github:2512_07631_acp::upper_bound_ceffective)",
+      "content_hash": "ef0a0c10a5843e7a3980a785f7a3e41764b2df072210a0942fb024feef9e9c0b",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_78b49fe0",
+      "label": "__implication_result_78b49fe0",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_711a27c0,github:2512_07631_acp::upper_bound_ceffective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_736a06bd67afebbe",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::lower_bound_ceffective,github:2512_07631_acp::upper_bound_ceffective)",
+      "content_hash": "5f9dc8f4fb5eb91e282a5e66e79b5755ab3ae07456aa984dd0c7865df2a4d910",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_282abd51",
+      "label": "__conjunction_result_282abd51",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::lower_bound_ceffective,github:2512_07631_acp::upper_bound_ceffective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a0b02f999c779c2f",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_282abd51,github:2512_07631_acp::two_sided_bound)",
+      "content_hash": "55426a99a6e55724ac13da19c5a5f4ce5e7fa9d469fd97965d5e1896357844cb",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_a8d998fb",
+      "label": "__implication_result_a8d998fb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_282abd51,github:2512_07631_acp::two_sided_bound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a0b02f999c779c2f",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::lorden_overshoot,github:2512_07631_acp::high_prob_bound)",
+      "content_hash": "42546d35ff324a217841b7c9c29808a654c69216c4ab3129cdfbc723ca22b83f",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_2a695917",
+      "label": "__implication_result_2a695917",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::lorden_overshoot,github:2512_07631_acp::high_prob_bound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_74d195fd3e101e35",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::two_sided_bound,github:2512_07631_acp::bound_gap_interpretation)",
+      "content_hash": "4ae9939c6e8d48e04fc98faf978fe70baea3fcb7918c06f334b7618df2a7c312",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_b5fc1b06",
+      "label": "__implication_result_b5fc1b06",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::two_sided_bound,github:2512_07631_acp::bound_gap_interpretation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_442c09a5cb9243b8",
+        "owning_strategy_type": "deduction",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::monte_carlo_error_bound,github:2512_07631_acp::rkhs_surrogate_error)",
+      "content_hash": "f931eb6824a1ce3e2ffd911c14d8bf10d87606a673bc97ffb3e21f9b8be93e94",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_25dc35f5",
+      "label": "__conjunction_result_25dc35f5",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::monte_carlo_error_bound,github:2512_07631_acp::rkhs_surrogate_error)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_29ca6d9170e42b16",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_25dc35f5,github:2512_07631_acp::ceffective_error_propagation)",
+      "content_hash": "58b094a6f2fd27ad211d5354ecffd2fc5dc8a52d718c6773e1fce04654f89fcd",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_4190b04c",
+      "label": "__implication_result_4190b04c",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_25dc35f5,github:2512_07631_acp::ceffective_error_propagation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_29ca6d9170e42b16",
+        "owning_strategy_type": "deduction",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::acp_lower_bounds_llm,github:2512_07631_acp::gap_increases_with_noise)",
+      "content_hash": "097b429c1fc700b89e59120c7cf72ab2496145ebd89db7e3047395fd0bffaaa7",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_adb6bdd7",
+      "label": "__implication_result_adb6bdd7",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::acp_lower_bounds_llm,github:2512_07631_acp::gap_increases_with_noise)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_50a1e22c8e2d7066",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::pred_lower_bound,github:2512_07631_acp::acp_lower_bounds_llm)",
+      "content_hash": "90d4d4bb18f5b052f2d03da1908cd12b442f9ea31c12376af228cafd62224d84",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_c873cd05",
+      "label": "__implication_result_c873cd05",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::pred_lower_bound,github:2512_07631_acp::acp_lower_bounds_llm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_885f47cb9eab3736",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::alt_heuristic_match,github:2512_07631_acp::acp_lower_bounds_llm)",
+      "content_hash": "a5d8c8508107029892c2d1000e0375207aba3d4f62eb86ddfb07de61a2a7abe8",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_4f739239",
+      "label": "__implication_result_4f739239",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::alt_heuristic_match,github:2512_07631_acp::acp_lower_bounds_llm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9aa7711454641106",
+        "owning_strategy_type": "support",
+        "prior": 0.2,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_07631_acp::pred_lower_bound,github:2512_07631_acp::acp_lower_bounds_llm)",
+      "content_hash": "252ec216afe54638dc67f58d4c8fb31ae6a9bb25b24f312ec5f3e5bfaa5fbe08",
+      "exported": false,
+      "id": "github:2512_07631_acp::__equivalence_result_7973ec86",
+      "label": "__equivalence_result_7973ec86",
+      "metadata": {
+        "canonical_name": "matches(github:2512_07631_acp::pred_lower_bound,github:2512_07631_acp::acp_lower_bounds_llm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_cb1f29b9da0f8586",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_07631_acp::alt_heuristic_match,github:2512_07631_acp::acp_lower_bounds_llm)",
+      "content_hash": "908d6e7b3f62ccd34eb064c2955580ec25f86542b6fa22b43c5150dff9fcbe10",
+      "exported": false,
+      "id": "github:2512_07631_acp::__equivalence_result_fcf31a5b",
+      "label": "__equivalence_result_fcf31a5b",
+      "metadata": {
+        "canonical_name": "matches(github:2512_07631_acp::alt_heuristic_match,github:2512_07631_acp::acp_lower_bounds_llm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_cb1f29b9da0f8586",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_lower_bound_graph)",
+      "content_hash": "01947ee2935f30218b1009c969ee771931eadf26865b2a187c9bb059a4ba7325",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_5c3159f5",
+      "label": "__implication_result_5c3159f5",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_lower_bound_graph)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8cee75a07eeddb41",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_vs_random_graph)",
+      "content_hash": "827a1d4aff39f402c7ec545c1479ed196f41e049568bfac12e4602776957a251",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_ec663603",
+      "label": "__implication_result_ec663603",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_vs_random_graph)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_01e89aef60b44598",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_vs_greedy_graph)",
+      "content_hash": "3125528d9d30caa917cfd3d34bf3ef57b3c9ace7e1f9c862251eab43626fb941",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_a3375915",
+      "label": "__implication_result_a3375915",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::graph_coloring_results_table,github:2512_07631_acp::acp_vs_greedy_graph)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_81ada0093fdb9dbc",
+        "owning_strategy_type": "support",
+        "prior": 0.91,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_07631_acp::acp_lower_bound_graph,github:2512_07631_acp::graph_coloring_results_table)",
+      "content_hash": "ff9c9f319100e867409dac24a2d7c95d9534a4f59d30478cebdcbdd1c63b1626",
+      "exported": false,
+      "id": "github:2512_07631_acp::__conjunction_result_1eeaf2a5",
+      "label": "__conjunction_result_1eeaf2a5",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_07631_acp::acp_lower_bound_graph,github:2512_07631_acp::graph_coloring_results_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b8543396b512ce10",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::__conjunction_result_1eeaf2a5,github:2512_07631_acp::overshoot_increases_with_difficulty)",
+      "content_hash": "ad27d21262f7d459fecc738c930b66551353b45dc722cc5f4ecb48a492c0f3ac",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_f848cb99",
+      "label": "__implication_result_f848cb99",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::__conjunction_result_1eeaf2a5,github:2512_07631_acp::overshoot_increases_with_difficulty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8543396b512ce10",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::law_acp_lower_bound,github:2512_07631_acp::acp_lower_bound_graph)",
+      "content_hash": "d663752d4529b1d42f00f2034bead043fc428652c8cbf1e55fa8720a81697a05",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_b7f9a5d3",
+      "label": "__implication_result_b7f9a5d3",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::law_acp_lower_bound,github:2512_07631_acp::acp_lower_bound_graph)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f6de7107f19475a1",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::law_acp_lower_bound,github:2512_07631_acp::lower_bound_ceffective)",
+      "content_hash": "de213bdee73ba1dd9963d8f6cd096cad3a51410d58db99789981b7a1229f3563",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_0f65c7cd",
+      "label": "__implication_result_0f65c7cd",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::law_acp_lower_bound,github:2512_07631_acp::lower_bound_ceffective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_84b92eaaa49590b5",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::ptas_fptas_connection,github:2512_07631_acp::approximation_reduces_info)",
+      "content_hash": "e0724c76f9d9fab15a0010e2e8bc4386f5ea08edffcffeb1b94e449851966ed8",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_0a673b2e",
+      "label": "__implication_result_0a673b2e",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::ptas_fptas_connection,github:2512_07631_acp::approximation_reduces_info)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5f2ab6d815edab6d",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_07631_acp::approximation_reduces_info,github:2512_07631_acp::inapproximability_as_infinite_cost)",
+      "content_hash": "ff9361dcea02c84d2a922b1ec5b38c3dca26259701bc34005256421e77042d84",
+      "exported": false,
+      "id": "github:2512_07631_acp::__implication_result_d53cf7f0",
+      "label": "__implication_result_d53cf7f0",
+      "metadata": {
+        "canonical_name": "implies(github:2512_07631_acp::approximation_reduces_info,github:2512_07631_acp::inapproximability_as_infinite_cost)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_67ddda8ca32bfcf8",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "s2_framework",
+    "motivation",
+    "s3_bounds",
+    "s4_estimation",
+    "s5_graph_coloring"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: The Agent Capability Problem",
+    "s2_framework": "Section 2: Formal Framework",
+    "s3_bounds": "Section 3: Theoretical Bounds",
+    "s4_estimation": "Section 4: Connections, Estimation, and Experimental Validation",
+    "s5_graph_coloring": "Section 4.6 and Section 5: Graph Coloring Experiments and Approximation Extensions"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2512_07631_acp",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2512_07631_acp::unified_principle",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_681b9f40",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::active_learning_connection",
+              "github:2512_07631_acp::bayesian_opt_connection",
+              "github:2512_07631_acp::rl_intrinsic_connection"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_2a843e1e",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_681b9f40",
+              "github:2512_07631_acp::unified_principle"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "All three research communities independently converge on mutual information as the right measure for guiding search (@active_learning_connection via BALD/D-optimality, @bayesian_opt_connection via ES/PES, @rl_intrinsic_connection via curiosity/empowerment). Their convergence from independent starting points constitutes strong evidence that the principle is robust and domain-agnostic."
+      },
+      "premises": [
+        "github:2512_07631_acp::active_learning_connection",
+        "github:2512_07631_acp::bayesian_opt_connection",
+        "github:2512_07631_acp::rl_intrinsic_connection"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_388358dc4266534e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_framing",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_37189edb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::problem_resource_allocation",
+              "github:2512_07631_acp::acp_framing"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@problem_resource_allocation identifies the gap: agents lack principled pre-search solvability estimates. The ACP addresses this by framing problem-solving as information search where each action reduces uncertainty about the solution location."
+      },
+      "premises": [
+        "github:2512_07631_acp::problem_resource_allocation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b54f0ac14660b9ba",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_ceffective_formula",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_7e2c42db",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::acp_framing",
+              "github:2512_07631_acp::itotal_properties",
+              "github:2512_07631_acp::is_range"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_720aff07",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_7e2c42db",
+              "github:2512_07631_acp::acp_ceffective_formula"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "From @acp_framing, problem-solving is information acquisition. @itotal_properties characterizes $I_{\\text{total}}$ (binary entropy of goal indicator, higher when solutions are rare) and @is_range characterizes $I_s$ (mutual information per action, from 0 for uninformative to $I_{\\text{total}}$ for decisive). Together: $I_{\\text{total}}$ bits needed, $I_s$ bits gained per action of cost $C_s$, giving $C_{\\text{effective}} = (I_{\\text{total}}/I_s) \\times C_s$ with dual purpose (upfront estimate + action selection guide)."
+      },
+      "premises": [
+        "github:2512_07631_acp::acp_framing",
+        "github:2512_07631_acp::itotal_properties",
+        "github:2512_07631_acp::is_range"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_788fa5672957ea09",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::stochastic_model"
+      ],
+      "conclusion": "github:2512_07631_acp::martingale_optional_stopping",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_4e5cd012",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::diminishing_returns_rationale",
+              "github:2512_07631_acp::martingale_optional_stopping"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@diminishing_returns_rationale motivates the stochastic model assumption that $\\mu_1 \\geq \\mu_2 \\geq \\cdots$: early actions clear large chunks of hypothesis space. Under this assumption, partial sums minus their expectations form a martingale, enabling the optional stopping argument used in Theorem 3.1."
+      },
+      "premises": [
+        "github:2512_07631_acp::diminishing_returns_rationale"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4a3dd1f6c5490eca",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::stochastic_model",
+        "github:2512_07631_acp::def_ceffective"
+      ],
+      "conclusion": "github:2512_07631_acp::lower_bound_ceffective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_66e608d6",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::martingale_optional_stopping",
+              "github:2512_07631_acp::lower_bound_ceffective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "From @martingale_optional_stopping, $\\mathbb{E}[S_N] = \\mathbb{E}[\\sum_{i=1}^N \\mu_i]$. Since $S_N \\geq I_{\\text{total}}$ by definition of the stopping time, $\\mathbb{E}[S_N] \\geq I_{\\text{total}}$. Since $\\mu_i \\leq I_s$ for all $i$, $\\mathbb{E}[\\sum_{i=1}^N \\mu_i] \\leq I_s \\mathbb{E}[N]$. Combining: $I_{\\text{total}} \\leq I_s \\mathbb{E}[N]$, giving $\\mathbb{E}[N] \\geq I_{\\text{total}}/I_s$ and $\\mathbb{E}[C] = C_s \\mathbb{E}[N] \\geq (I_{\\text{total}}/I_s) C_s = C_{\\text{effective}}$."
+      },
+      "premises": [
+        "github:2512_07631_acp::martingale_optional_stopping"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a616e182df972ab3",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::stochastic_model"
+      ],
+      "conclusion": "github:2512_07631_acp::upper_bound_ceffective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_711a27c0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::martingale_optional_stopping",
+              "github:2512_07631_acp::lorden_overshoot"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_78b49fe0",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_711a27c0",
+              "github:2512_07631_acp::upper_bound_ceffective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "From @martingale_optional_stopping, $\\mathbb{E}[S_N] = I_{\\text{total}} + \\mathbb{E}[R]$. Since $\\mu_i \\geq \\mu_{\\inf}$, $\\mathbb{E}[\\sum_{i=1}^N \\mu_i] \\geq \\mu_{\\inf} \\mathbb{E}[N]$. By @lorden_overshoot, $\\mathbb{E}[R] \\leq M_2/\\mu_{\\inf}$, so $\\mu_{\\inf} \\mathbb{E}[N] \\leq I_{\\text{total}} + M_2/\\mu_{\\inf}$, rearranging to $\\mathbb{E}[N] \\leq (I_{\\text{total}}/\\mu_{\\inf} + M_2/\\mu_{\\inf}^2)$ and multiplying by $C_s$ gives the stated bound."
+      },
+      "premises": [
+        "github:2512_07631_acp::martingale_optional_stopping",
+        "github:2512_07631_acp::lorden_overshoot"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_736a06bd67afebbe",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::two_sided_bound",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_282abd51",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::lower_bound_ceffective",
+              "github:2512_07631_acp::upper_bound_ceffective"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_a8d998fb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_282abd51",
+              "github:2512_07631_acp::two_sided_bound"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "The two-sided bound is the conjunction of @lower_bound_ceffective and @upper_bound_ceffective. Both hold simultaneously under the stochastic model, giving $C_{\\text{effective}} \\leq \\mathbb{E}[C] \\leq C_s(I_{\\text{total}}/\\mu_{\\inf} + M_2/\\mu_{\\inf}^2)$."
+      },
+      "premises": [
+        "github:2512_07631_acp::lower_bound_ceffective",
+        "github:2512_07631_acp::upper_bound_ceffective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a0b02f999c779c2f",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::stochastic_model"
+      ],
+      "conclusion": "github:2512_07631_acp::high_prob_bound",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_2a695917",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::lorden_overshoot",
+              "github:2512_07631_acp::high_prob_bound"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "When $X_i \\in [0, M]$, Hoeffding's inequality [@Hoeffding1963] applied to $\\Pr(S_n < I_{\\text{total}})$ gives $\\exp(-2(n\\mu_{\\inf} - I_{\\text{total}})^2/(nM^2))$ as an upper bound on the probability of not reaching $I_{\\text{total}}$ in $n$ steps. Setting this to $\\delta$ and solving for $n$ yields $n_\\delta$, which combined with the overshoot analysis in @lorden_overshoot gives the stated high-confidence budget."
+      },
+      "premises": [
+        "github:2512_07631_acp::lorden_overshoot"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_74d195fd3e101e35",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::bound_gap_interpretation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_b5fc1b06",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::two_sided_bound",
+              "github:2512_07631_acp::bound_gap_interpretation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "From @two_sided_bound, the additive slack in the upper bound over the lower bound is $C_s M_2/\\mu_{\\inf}^2$. This term grows quadratically as $\\mu_{\\inf} \\to 0$ (severe deterioration), so the gap can be arbitrarily large when early gains substantially exceed late gains."
+      },
+      "premises": [
+        "github:2512_07631_acp::two_sided_bound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_442c09a5cb9243b8",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::ceffective_error_propagation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_25dc35f5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::monte_carlo_error_bound",
+              "github:2512_07631_acp::rkhs_surrogate_error"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_4190b04c",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_25dc35f5",
+              "github:2512_07631_acp::ceffective_error_propagation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Taylor expansion of $\\widehat{C}_{\\text{effective}} = I_{\\text{total}}/\\hat{I}_s \\times C_s$ around the true values $(I_{\\text{total}}, I_s)$: $\\partial C_{\\text{eff}}/\\partial I_{\\text{total}} = C_s/I_s$ and $\\partial C_{\\text{eff}}/\\partial I_s = -C_s I_{\\text{total}}/I_s^2$. Substituting the bounds from @monte_carlo_error_bound ($|\\hat{I}_s - I_s| \\leq \\epsilon_s$) and @rkhs_surrogate_error ($|I_{\\text{true}} - I_{\\text{GP}}| \\leq \\ldots$) gives the stated first-order error bound."
+      },
+      "premises": [
+        "github:2512_07631_acp::monte_carlo_error_bound",
+        "github:2512_07631_acp::rkhs_surrogate_error"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_29ca6d9170e42b16",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::gap_increases_with_noise",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_adb6bdd7",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::acp_lower_bounds_llm",
+              "github:2512_07631_acp::gap_increases_with_noise"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "From @acp_lower_bounds_llm, the gap between ACP predictions and LLM actual steps is approximately 2 steps at $\\sigma \\approx 0.1$ and grows to approximately 4 steps at $\\sigma \\approx 0.8$. This monotonic increase with noise level is directly observable from Figure 1 and consistent with the $M_2/\\mu_{\\inf}^2$ overshoot term growing with problem difficulty."
+      },
+      "premises": [
+        "github:2512_07631_acp::acp_lower_bounds_llm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_50a1e22c8e2d7066",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_lower_bounds_llm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_c873cd05",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::pred_lower_bound",
+              "github:2512_07631_acp::acp_lower_bounds_llm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@pred_lower_bound follows from Theorem 3.1 (@two_sided_bound): $C_{\\text{effective}} \\leq \\mathbb{E}[C]$ means the predicted lower bound must be $\\leq$ actual steps in expectation, and the overshoot term predicts the observed noise-dependent gap pattern."
+      },
+      "premises": [
+        "github:2512_07631_acp::pred_lower_bound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_885f47cb9eab3736",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_lower_bounds_llm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_4f739239",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::alt_heuristic_match",
+              "github:2512_07631_acp::acp_lower_bounds_llm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.2,
+        "reason": "@alt_heuristic_match: a coincidental match would only approximately bound actual steps and would fail in some trials; the observed structured gap pattern would be unlikely."
+      },
+      "premises": [
+        "github:2512_07631_acp::alt_heuristic_match"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9aa7711454641106",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__equivalence_result_7973ec86",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_07631_acp::pred_lower_bound",
+              "github:2512_07631_acp::acp_lower_bounds_llm"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__equivalence_result_fcf31a5b",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_07631_acp::alt_heuristic_match",
+              "github:2512_07631_acp::acp_lower_bounds_llm"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__equivalence_result_fcf31a5b",
+              "github:2512_07631_acp::__equivalence_result_7973ec86"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The ACP prediction is a consistent lower bound across all noise levels (never violated), and the gap monotonically increases with $\\sigma$ as predicted by the overshoot term $M_2/\\mu_{\\inf}^2$. This structured behavior strongly favors the valid lower bound interpretation over a coincidental match."
+      },
+      "premises": [
+        "github:2512_07631_acp::pred_lower_bound",
+        "github:2512_07631_acp::alt_heuristic_match",
+        "github:2512_07631_acp::acp_lower_bounds_llm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cb1f29b9da0f8586",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::_anon_000",
+      "metadata": {
+        "reason": "LLM slope experiment provides empirical test of Theorem 3.1's lower bound claim"
+      },
+      "premises": [
+        "github:2512_07631_acp::pred_lower_bound",
+        "github:2512_07631_acp::alt_heuristic_match",
+        "github:2512_07631_acp::acp_lower_bounds_llm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_adc895a816270744",
+      "sub_strategies": [
+        "lcs_885f47cb9eab3736",
+        "lcs_9aa7711454641106",
+        "lcs_cb1f29b9da0f8586"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::graph_coloring_setup",
+        "github:2512_07631_acp::acp_bound_formulation"
+      ],
+      "conclusion": "github:2512_07631_acp::acp_lower_bound_graph",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_5c3159f5",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::graph_coloring_results_table",
+              "github:2512_07631_acp::acp_lower_bound_graph"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "From @graph_coloring_results_table: in every row, ACP Prediction $\\leq$ ACP actual. The bound is tight at $(n=8, p=0.25)$ (prediction = actual = 8.00) and holds with growing slack at larger graphs. No violation of $C_{\\text{eff}} \\leq C$ is observed across all 750 instances, confirming Theorem 3.1's lower bound claim."
+      },
+      "premises": [
+        "github:2512_07631_acp::graph_coloring_results_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8cee75a07eeddb41",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_vs_random_graph",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_ec663603",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::graph_coloring_results_table",
+              "github:2512_07631_acp::acp_vs_random_graph"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "Directly reading from @graph_coloring_results_table: ACP actual cost is consistently below Random across all $(n, p)$ configurations, with the relative gap widening from 0% at $(n=8, p=0.25)$ to 61% at $(n=15, p=0.35)$, confirming ACP outperforms Random and that gains grow with problem difficulty."
+      },
+      "premises": [
+        "github:2512_07631_acp::graph_coloring_results_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_01e89aef60b44598",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_vs_greedy_graph",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_a3375915",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::graph_coloring_results_table",
+              "github:2512_07631_acp::acp_vs_greedy_graph"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.91,
+        "reason": "Directly reading from @graph_coloring_results_table: ACP actual cost is at or below Greedy across all configurations, with the relative improvement growing from 0% at $(n=8)$ to 9% at $(n=15, p=0.41)$, confirming ACP matches or outperforms Greedy with benefits scaling with problem difficulty."
+      },
+      "premises": [
+        "github:2512_07631_acp::graph_coloring_results_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_81ada0093fdb9dbc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::overshoot_increases_with_difficulty",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__conjunction_result_1eeaf2a5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_07631_acp::acp_lower_bound_graph",
+              "github:2512_07631_acp::graph_coloring_results_table"
+            ]
+          },
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_f848cb99",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::__conjunction_result_1eeaf2a5",
+              "github:2512_07631_acp::overshoot_increases_with_difficulty"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "From @graph_coloring_results_table, the absolute difference between ACP actual and ACP prediction grows from 0 at $(n=8)$ to 3.34 at $(n=15, p=0.35)$. Given that @acp_lower_bound_graph confirms the bound holds, the growing overshoot reflects increasing problem difficulty, consistent with the $M_2/\\mu_{\\inf}^2$ term from Theorem 3.1 (@two_sided_bound)."
+      },
+      "premises": [
+        "github:2512_07631_acp::acp_lower_bound_graph",
+        "github:2512_07631_acp::graph_coloring_results_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8543396b512ce10",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::acp_lower_bound_graph",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_b7f9a5d3",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::law_acp_lower_bound",
+              "github:2512_07631_acp::acp_lower_bound_graph"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@law_acp_lower_bound predicts $C_{\\text{eff}} \\leq C$ for all graph coloring instances. @acp_lower_bound_graph confirms this across all 750 instances (combinatorial domain)."
+      },
+      "premises": [
+        "github:2512_07631_acp::law_acp_lower_bound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f6de7107f19475a1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::lower_bound_ceffective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_0f65c7cd",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::law_acp_lower_bound",
+              "github:2512_07631_acp::lower_bound_ceffective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@law_acp_lower_bound predicts $C_{\\text{effective}} \\leq \\mathbb{E}[C]$ in the LLM slope identification experiment. @lower_bound_ceffective is the theoretical statement confirmed empirically across all noise levels."
+      },
+      "premises": [
+        "github:2512_07631_acp::law_acp_lower_bound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_84b92eaaa49590b5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_07631_acp::law_acp_lower_bound",
+      "metadata": {
+        "reason": "Two independent empirical validations: graph coloring (combinatorial NP-hard, 750 instances) and LLM slope identification (continuous Bayesian estimation) confirm the lower bound law. The tasks differ in domain, agent type, and search structure, strengthening generalization."
+      },
+      "premises": [
+        "github:2512_07631_acp::acp_lower_bound_graph",
+        "github:2512_07631_acp::lower_bound_ceffective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b861167d5c6ecedd",
+      "sub_strategies": [
+        "lcs_f6de7107f19475a1",
+        "lcs_84b92eaaa49590b5"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::epsilon_approximate_goal",
+        "github:2512_07631_acp::def_itotal"
+      ],
+      "conclusion": "github:2512_07631_acp::approximation_reduces_info",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_0a673b2e",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::ptas_fptas_connection",
+              "github:2512_07631_acp::approximation_reduces_info"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "From the epsilon-approximate goal definition, larger $\\epsilon$ implies larger $\\Theta_{\\text{goal}}(\\epsilon)$ (more candidates qualify). The fraction $p$ of qualifying candidates increases. Since $I_{\\text{total}} = H(\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}}))$ is binary entropy and entropy decreases as $p$ moves from $1/2$ toward 1 (for hard problems where $p < 1/2$ initially), $I_{\\text{total}}(\\epsilon)$ monotonically decreases with $\\epsilon$. @ptas_fptas_connection shows this holds across PTAS and FPTAS complexity classes."
+      },
+      "premises": [
+        "github:2512_07631_acp::ptas_fptas_connection"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5f2ab6d815edab6d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_07631_acp::epsilon_approximate_goal"
+      ],
+      "conclusion": "github:2512_07631_acp::inapproximability_as_infinite_cost",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_07631_acp::__implication_result_d53cf7f0",
+            "operator": "implication",
+            "variables": [
+              "github:2512_07631_acp::approximation_reduces_info",
+              "github:2512_07631_acp::inapproximability_as_infinite_cost"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "If no polynomial-time algorithm can approximate within ratio $\\rho$ (by PCP theorem), no agent can identify a solution in $\\Theta_{\\text{goal}}(\\epsilon < \\rho - 1)$ efficiently. Since @approximation_reduces_info shows $I_{\\text{total}}$ depends on the size of the goal set, and the PCP theorem implies the goal set is effectively empty for $\\epsilon < \\rho - 1$ under any polynomial-time constraint, $I_{\\text{total}}(\\epsilon) \\to \\infty$ for such $\\epsilon$."
+      },
+      "premises": [
+        "github:2512_07631_acp::approximation_reduces_info"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_67ddda8ca32bfcf8",
+      "type": "support"
+    }
+  ]
+}

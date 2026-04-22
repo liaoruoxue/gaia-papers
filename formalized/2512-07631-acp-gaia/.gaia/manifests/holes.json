@@ -1,0 +1,132 @@
+{
+  "holes": [
+    {
+      "content": "Active learning selects maximally informative labels, with Bayesian Active Learning by Disagreement (BALD) [@Houlsby2011] using exactly the mutual information between predictions and parameters as its acquisition function, and classical D-optimality [@Chaloner1995] maximizing the Fisher information matrix determinant — all instantiating the principle of maximizing information gain [@MacKay1992].",
+      "content_hash": "186b1107ed10678a97cdcd821c8f632f4bfc88335bfea2193198bc272ec5d69f",
+      "interface_hash": "sha256:6a6afa16c02053359163d7b4e498840516458b61421a7e2cd70e2c85cb255807",
+      "label": "active_learning_connection",
+      "qid": "github:2512_07631_acp::active_learning_connection",
+      "required_by": [
+        "github:2512_07631_acp::unified_principle"
+      ]
+    },
+    {
+      "content": "If ACP predictions coincidentally track LLM performance without being a theoretically valid lower bound, predictions would sometimes exceed actual steps (random violations), and any noise-dependent gap pattern would be coincidental.",
+      "content_hash": "1d05d4e9d2ed5e07c2b0b34b4cfca3c0906740ac29f52575a455abb425b6fa8f",
+      "interface_hash": "sha256:d5a144785536cdee566397e80b0f567ddb1d2af549d8317d21a5fc72b7e82205",
+      "label": "alt_heuristic_match",
+      "qid": "github:2512_07631_acp::alt_heuristic_match",
+      "required_by": [
+        "github:2512_07631_acp::acp_lower_bounds_llm"
+      ]
+    },
+    {
+      "content": "Bayesian optimization methods Entropy Search (ES) [@Hennig2012] and Predictive Entropy Search (PES) [@HernandezLobato2014] directly maximize information about the optimum's location; regret bounds for Gaussian process optimization [@Srinivas2010] explicitly depend on maximum information gain, proving that efficient optimization requires efficient information acquisition.",
+      "content_hash": "bc909100e0f4d75d6542342ee0b7e903263754ebf3373f1f1ebb238757f60703",
+      "interface_hash": "sha256:e10e8bbfd784942840e7be2101876266c36bcef3bc25e722cb453bd1edd005c1",
+      "label": "bayesian_opt_connection",
+      "qid": "github:2512_07631_acp::bayesian_opt_connection",
+      "required_by": [
+        "github:2512_07631_acp::unified_principle"
+      ]
+    },
+    {
+      "content": "The diminishing returns assumption ($\\mu_1 \\geq \\mu_2 \\geq \\cdots \\geq \\mu_{\\inf} > 0$) is plausible: as search proceeds, remaining uncertainty becomes harder to resolve because early actions eliminate large swaths of hypothesis space while later actions only refine estimates. The initial expected gain $I_s := \\mu_1$ is the most optimistic per-step gain value.",
+      "content_hash": "1d5c417464dcbac2684671845bbaa2c71a6f1a4834f19bf95d52320d17151ecd",
+      "interface_hash": "sha256:5c1772b76f18452653bc69c1976d9cd74afba390368c8ee8e34cb5288ac930e0",
+      "label": "diminishing_returns_rationale",
+      "qid": "github:2512_07631_acp::diminishing_returns_rationale",
+      "required_by": [
+        "github:2512_07631_acp::lower_bound_ceffective",
+        "github:2512_07631_acp::upper_bound_ceffective"
+      ]
+    },
+    {
+      "content": "Graph coloring search cost results across 750 instances (node expansions, lower is better):\n\n| $(n, p)$ | Random | Greedy | ACP actual | ACP prediction |\n|----------|--------|--------|------------|----------------|\n| $(8, 0.25)$ | 9.16 | 8.00 | 8.00 | 8.00 |\n| $(10, 0.30)$ | 13.64 | 10.16 | 10.00 | 10.00 |\n| $(12, 0.35)$ | 27.34 | 13.10 | 13.04 | 12.00 |\n| $(15, 0.35)$ | 47.40 | 18.58 | 18.34 | 15.00 |\n| $(15, 0.41)$ | 39.46 | 18.08 | 16.46 | 15.00 |\n\nACP prediction $C_{\\text{eff}}$ is at or below ACP actual cost in every row.",
+      "content_hash": "7e71930ec12739ec918d27efeba92b75816e7b8afaf3907e051380dbec14a1c9",
+      "interface_hash": "sha256:29176004dc6d15ca354aac9c741e4292e0993468d0aced189f9007702e34d4a7",
+      "label": "graph_coloring_results_table",
+      "qid": "github:2512_07631_acp::graph_coloring_results_table",
+      "required_by": [
+        "github:2512_07631_acp::acp_lower_bound_graph",
+        "github:2512_07631_acp::acp_vs_greedy_graph",
+        "github:2512_07631_acp::acp_vs_random_graph"
+      ]
+    },
+    {
+      "content": "The information gain $I_s(a)$ per action ranges from $I_s \\approx 0$ for uninformative actions (the outcome reveals nothing about whether $\\theta \\in \\Theta_{\\text{goal}}$) to $I_s \\approx I_{\\text{total}}$ for decisive tests that fully resolve goal membership. Uninformative actions arise when outcome $y$ is independent of the goal indicator; decisive tests are those whose outcome perfectly determines goal membership.",
+      "content_hash": "a373d6b027944050e86cd39940a88bb3ac9007223265c1cb46a2aa3ed9c4d68d",
+      "interface_hash": "sha256:1182b396cfc26d77236b07959dd01a042d79544e35f28ac208eadb4ef9942d76",
+      "label": "is_range",
+      "qid": "github:2512_07631_acp::is_range",
+      "required_by": [
+        "github:2512_07631_acp::acp_ceffective_formula"
+      ]
+    },
+    {
+      "content": "When $\\Theta_{\\text{goal}}$ contains a fraction $p$ of all candidates, $I_{\\text{total}} = -p \\log p - (1-p) \\log(1-p)$ (binary entropy), maximized at $p = 1/2$. Problems with rare solutions (small $p$) require more information than those with abundant solutions, because the binary goal indicator $\\mathbf{1}(\\theta \\in \\Theta_{\\text{goal}})$ carries more uncertainty when $p$ is small.",
+      "content_hash": "029c86527d49ef850cf422bbd04d5b7ef4935ec3a474397b72889791d4942bb3",
+      "interface_hash": "sha256:c8e6cb59aa058e60f2c02b45a281b2a47abca6ea25ae74107ad805b251ad856e",
+      "label": "itotal_properties",
+      "qid": "github:2512_07631_acp::itotal_properties",
+      "required_by": [
+        "github:2512_07631_acp::acp_ceffective_formula"
+      ]
+    },
+    {
+      "content": "Lorden's inequality [@Lorden1970] for independent non-identically distributed variables bounds the expected overshoot $R := S_N - I_{\\text{total}}$ by $\\mathbb{E}[R] \\leq M_2/\\mu_{\\inf}$, where $M_2 = \\sup_i \\mathbb{E}[X_i^2]$ is the second moment of information gains.",
+      "content_hash": "449c319fd540c8413dd6d93843479e64074f9bf234b737a73119baf453b7acf4",
+      "interface_hash": "sha256:8d77cab90812050734b4ef323277469c4197beca7dc24e0914e363989adb82c4",
+      "label": "lorden_overshoot",
+      "qid": "github:2512_07631_acp::lorden_overshoot",
+      "required_by": [
+        "github:2512_07631_acp::high_prob_bound",
+        "github:2512_07631_acp::upper_bound_ceffective"
+      ]
+    },
+    {
+      "content": "If $C_{\\text{effective}}$ is a valid theoretical lower bound (as claimed by Theorem 3.1), then predicted steps should be $\\leq$ actual LLM steps in all trials across all noise levels, and the gap should grow monotonically with noise (as predicted by the overshoot term $M_2/\\mu_{\\inf}^2$).",
+      "content_hash": "f39f1cb19f19a7e1b3c975f2451141d548eab6296e6624c352265e480e49cac5",
+      "interface_hash": "sha256:63880c88472632fc09bbd92d231dda2dd1937b33cb4770b847735fa154b28adb",
+      "label": "pred_lower_bound",
+      "qid": "github:2512_07631_acp::pred_lower_bound",
+      "required_by": [
+        "github:2512_07631_acp::acp_lower_bounds_llm"
+      ]
+    },
+    {
+      "content": "Autonomous agents face a resource allocation challenge: an agent facing a new problem must decide whether attempting a solution is worthwhile, yet most existing frameworks lack principled methods for making this judgment before substantial resources are spent.",
+      "content_hash": "9b050536c1bc0c326fd2e2ee10242ed630f8b3b4fdbfeedfff80d74a3cf285ae",
+      "interface_hash": "sha256:ba8c18f1270f38a78ee4e0a4a226081eb82c28329a4f69fa64da310b70e8ccdd",
+      "label": "problem_resource_allocation",
+      "qid": "github:2512_07631_acp::problem_resource_allocation",
+      "required_by": [
+        "github:2512_07631_acp::acp_ceffective_formula"
+      ]
+    },
+    {
+      "content": "For problems admitting a Polynomial-Time Approximation Scheme (PTAS, e.g., Euclidean TSP), $I_{\\text{total}}(\\epsilon)$ is achievable in time $n^{O(1)} \\cdot 2^{O(1/\\epsilon)}$. For Fully Polynomial-Time Approximation Schemes (FPTAS, e.g., Knapsack), $I_{\\text{total}}(\\epsilon)$ is achievable in time polynomial in both $n$ and $1/\\epsilon$. These complexity bounds translate directly to $C_{\\text{effective}}(\\epsilon)$ bounds.",
+      "content_hash": "288e0d08bfd62c9e9c803be586ce6f414865eb93c974d3e916dfa7285e2bc13d",
+      "interface_hash": "sha256:739afe3b621aed7a36f3a72711d65019f7931e6985f4bba5710fc87a8e05fb77",
+      "label": "ptas_fptas_connection",
+      "qid": "github:2512_07631_acp::ptas_fptas_connection",
+      "required_by": [
+        "github:2512_07631_acp::inapproximability_as_infinite_cost"
+      ]
+    },
+    {
+      "content": "Curious reinforcement learning agents seek surprising observations that improve world models [@Schmidhuber2010], and Empowerment [@Klyubin2005] defines intrinsic value as channel capacity between actions and future states — both quantifying agent search efficiency information-theoretically.",
+      "content_hash": "7de5ff9004aa0bd372cbbffa603abde27343269972998489deb84510526e4bab",
+      "interface_hash": "sha256:2abd8c9cf8f2bf6cdb8686fc4b1332952c2456e07b2e55db632402f9bbeea3ed",
+      "label": "rl_intrinsic_connection",
+      "qid": "github:2512_07631_acp::rl_intrinsic_connection",
+      "required_by": [
+        "github:2512_07631_acp::unified_principle"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:a8182b174de73fe7feb2ad1ff4bc57b8384d02d2e7a8180f76640bc5d8a44744",
+  "manifest_schema_version": 1,
+  "package": "2512-07631-acp",
+  "version": "0.1.0"
+}

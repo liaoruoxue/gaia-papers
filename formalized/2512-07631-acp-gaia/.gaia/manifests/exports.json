@@ -1,0 +1,99 @@
+{
+  "exports": [
+    {
+      "content": "The ACP defines an effective cost $C_{\\text{effective}} = (I_{\\text{total}} / I_s) \\times C_s$, where $I_{\\text{total}}$ is the total information needed to identify a solution, $I_s$ is the information gained per action, and $C_s$ is the cost per action. This quantity serves two purposes: (1) it provides an upfront solvability estimate — if $C_{\\text{effective}}$ exceeds budget $B$, the agent should reconsider; (2) it guides action selection during search by prioritizing high information-to-cost ratios.",
+      "content_hash": "5249d32987168ab650bf9eb50f65cc7a6d991035be324d82ae1b5f3cb8fba5f0",
+      "label": "acp_ceffective_formula",
+      "qid": "github:2512_07631_acp::acp_ceffective_formula",
+      "type": "claim"
+    },
+    {
+      "content": "Across all 750 graph coloring instances, the predicted cost $C_{\\text{eff}}$ is at or below the observed ACP agent cost in every trial ($C_{\\text{eff}} \\leq C$ always), validating the theoretical lower bound of Theorem 3.1. The lower-bound condition is never violated.",
+      "content_hash": "190f08c9e276f4d03dcaa2ff76d402fd884103825bde8ee918027a25ab8774c7",
+      "label": "acp_lower_bound_graph",
+      "qid": "github:2512_07631_acp::acp_lower_bound_graph",
+      "type": "claim"
+    },
+    {
+      "content": "In the LLM slope identification experiment, the ACP estimate $C_{\\text{effective}}$ consistently lower-bounds actual LLM agent steps across all tested noise levels $\\sigma \\in [0.1, 0.8]$: at $\\sigma \\approx 0.1$, ACP predicts approximately 2 steps while LLM requires approximately 4 steps; at $\\sigma \\approx 0.8$, ACP predicts approximately 6 steps while LLM requires approximately 10 steps. The lower-bound condition is never violated.",
+      "content_hash": "56884c52b882a753d75258472ebb52ad0dfeb126aa18606372fbae3ef80196b4",
+      "label": "acp_lower_bounds_llm",
+      "qid": "github:2512_07631_acp::acp_lower_bounds_llm",
+      "type": "claim"
+    },
+    {
+      "content": "The ACP agent matches or outperforms the Greedy agent in graph coloring, with improvements becoming more pronounced with problem difficulty: at $(n=8, p=0.25)$, ACP and Greedy both use 8.00 expansions; at $(n=12, p=0.35)$, ACP uses 13.04 vs. Greedy's 13.10 (marginal); at $(n=15, p=0.41)$, ACP uses 16.46 vs. Greedy's 18.08 (9% reduction).",
+      "content_hash": "5a4327af6b7dc87f79af4500ed8ada24852bd19b10a351c81e6233edf6e00f2b",
+      "label": "acp_vs_greedy_graph",
+      "qid": "github:2512_07631_acp::acp_vs_greedy_graph",
+      "type": "claim"
+    },
+    {
+      "content": "The ACP agent consistently reduces node expansions relative to the Random agent in graph coloring, with larger gains for larger or denser graphs: at $(n=8, p=0.25)$, both use 8.00 expansions; at $(n=15, p=0.35)$, ACP uses 18.34 vs. Random's 47.40 (61% reduction); at $(n=15, p=0.41)$, ACP uses 16.46 vs. Random's 39.46 (58% reduction).",
+      "content_hash": "747ea688f88887234ab86c866615d88773ccb7da7ad39cc9c27af2235a7191ef",
+      "label": "acp_vs_random_graph",
+      "qid": "github:2512_07631_acp::acp_vs_random_graph",
+      "type": "claim"
+    },
+    {
+      "content": "Graph coloring search cost results across 750 instances (node expansions, lower is better):\n\n| $(n, p)$ | Random | Greedy | ACP actual | ACP prediction |\n|----------|--------|--------|------------|----------------|\n| $(8, 0.25)$ | 9.16 | 8.00 | 8.00 | 8.00 |\n| $(10, 0.30)$ | 13.64 | 10.16 | 10.00 | 10.00 |\n| $(12, 0.35)$ | 27.34 | 13.10 | 13.04 | 12.00 |\n| $(15, 0.35)$ | 47.40 | 18.58 | 18.34 | 15.00 |\n| $(15, 0.41)$ | 39.46 | 18.08 | 16.46 | 15.00 |\n\nACP prediction $C_{\\text{eff}}$ is at or below ACP actual cost in every row.",
+      "content_hash": "7e71930ec12739ec918d27efeba92b75816e7b8afaf3907e051380dbec14a1c9",
+      "label": "graph_coloring_results_table",
+      "qid": "github:2512_07631_acp::graph_coloring_results_table",
+      "type": "claim"
+    },
+    {
+      "content": "High-probability cost bound (Section 3.3): When information increments are bounded, $0 \\leq X_i \\leq M$ almost surely, Hoeffding's inequality [@Hoeffding1963] gives: with probability $\\geq 1 - \\delta$, $C \\leq C_s \\left( I_{\\text{total}}/\\mu_{\\inf} + O\\left( (M^2/\\mu_{\\inf}^2) \\log(1/\\delta) \\right) \\right)$. The required step count is $n_\\delta \\geq I_{\\text{total}}/\\mu_{\\inf} + (M^2/(2\\mu_{\\inf}^2)) \\log(1/\\delta) + \\sqrt{(I_{\\text{total}} M^2 / (2\\mu_{\\inf}^3)) \\log(1/\\delta)}$. This allows setting budget reserves proportional to $\\log(1/\\delta)$ for mission-critical applications.",
+      "content_hash": "aceaa4dae241e18e62c805f713f59b67be65c9710d5502e957d269d2c30ff8ff",
+      "label": "high_prob_bound",
+      "qid": "github:2512_07631_acp::high_prob_bound",
+      "type": "claim"
+    },
+    {
+      "content": "Inapproximability results from the PCP theorem translate to ACP: if a problem is NP-hard to approximate within ratio $\\rho$, then $I_{\\text{total}}(\\epsilon) = \\infty$ for $\\epsilon < \\rho - 1$, making the problem unsolvable regardless of budget. This provides a principled unified framework for reasoning about both exact and approximate solvability through information requirements.",
+      "content_hash": "91a631640e82466bb1da1b7cb05f605fb4a86123b8aa3bf02da2c4a6a0c4978e",
+      "label": "inapproximability_as_infinite_cost",
+      "qid": "github:2512_07631_acp::inapproximability_as_infinite_cost",
+      "type": "claim"
+    },
+    {
+      "content": "For search problems framed as information acquisition, $C_{\\text{eff}} = I_{\\text{total}}/I_s$ is a valid lower bound on expected search cost, with overshoot increasing with problem difficulty. This generalizes across LLM-based continuous estimation tasks and combinatorial NP-hard search tasks.",
+      "content_hash": "62fbc9c818f6f8dfc624930552bfd700f571eab4d0e5905b77de1c9ef86c8611",
+      "label": "law_acp_lower_bound",
+      "qid": "github:2512_07631_acp::law_acp_lower_bound",
+      "type": "claim"
+    },
+    {
+      "content": "Under the stochastic model assumptions, $C_{\\text{effective}} \\leq \\mathbb{E}[C]$: the effective cost $C_{\\text{effective}} = (I_{\\text{total}} / I_s) \\times C_s$ (using the most optimistic initial gain $I_s = \\mu_1$) is a lower bound on expected total cost. No strategy can do better on average.",
+      "content_hash": "f39cc79fde5132c7ce3e9df03973ad6bd2b948d04b771ee58947343b200ef89c",
+      "label": "lower_bound_ceffective",
+      "qid": "github:2512_07631_acp::lower_bound_ceffective",
+      "type": "claim"
+    },
+    {
+      "content": "Theorem 3.1 (Two-Sided Cost Bound): Under the stochastic model assumptions, $C_{\\text{effective}} \\leq \\mathbb{E}[C] \\leq C_s \\left( I_{\\text{total}} / \\mu_{\\inf} + M_2 / \\mu_{\\inf}^2 \\right)$. The lower bound confirms $C_{\\text{effective}}$ is realistic; the upper bound warns that if information gains deteriorate severely ($\\mu_{\\inf} \\ll I_s$), costs can exceed initial estimates substantially.",
+      "content_hash": "4d14e2eb5e99de27afa89ba5ea983f1201361e7b92683c396fea3dd175dedb49",
+      "label": "two_sided_bound",
+      "qid": "github:2512_07631_acp::two_sided_bound",
+      "type": "claim"
+    },
+    {
+      "content": "Active learning, Bayesian optimization, and curious reinforcement learning each independently converge on maximizing information gain relative to cost as the right principle for guiding search. The ACP makes this principle explicit and operationalizes it for solvability assessment across LLM-based and agentic workflows.",
+      "content_hash": "e481f0c8f16499bffc0d870cf890096f0cfa31adef5d68f8b996abe562a0c0b2",
+      "label": "unified_principle",
+      "qid": "github:2512_07631_acp::unified_principle",
+      "type": "claim"
+    },
+    {
+      "content": "Under the stochastic model assumptions, the expected total cost satisfies $\\mathbb{E}[C] \\leq C_s \\left( I_{\\text{total}} / \\mu_{\\inf} + M_2 / \\mu_{\\inf}^2 \\right)$, where $M_2 = \\sup_i \\mathbb{E}[X_i^2]$ and $\\mu_{\\inf} = \\inf_i \\mu_i$. The gap between bounds depends on $M_2 / \\mu_{\\inf}^2$, a signal-to-noise ratio.",
+      "content_hash": "560516cc52464424c9680b52aeea14df839c289ddb590d533f72daff21d9a9b8",
+      "label": "upper_bound_ceffective",
+      "qid": "github:2512_07631_acp::upper_bound_ceffective",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:a8182b174de73fe7feb2ad1ff4bc57b8384d02d2e7a8180f76640bc5d8a44744",
+  "manifest_schema_version": 1,
+  "package": "2512-07631-acp",
+  "version": "0.1.0"
+}
