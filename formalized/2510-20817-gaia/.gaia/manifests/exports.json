@@ -1,0 +1,120 @@
+{
+  "exports": [
+    {
+      "content": "When two samples $y_1, y_2$ have BOTH different rewards AND different reference policy probabilities, a unique value of $\\beta$ exists that makes them equally probable in the solution distribution. This occurs when: $R(y_2) - R(y_1) = \\beta (\\log \\pi_{\\text{ref}}(y_1) - \\log \\pi_{\\text{ref}}(y_2))$ (Eq. 10). This is the true role of the regularization coefficient $\\beta$: it trades off between preferring higher-rewarding, low-support answers versus lower-rewarding, high-support answers. Mode coverage is determined by this interplay, not by the KL variant.",
+      "content_hash": "af61534c83ee4d98547da9dfe8e98307f26f91501830f96942f348d941273f50",
+      "label": "beta_as_mode_knob",
+      "qid": "github:2510_20817::beta_as_mode_knob",
+      "type": "claim"
+    },
+    {
+      "content": "When two samples have equal reward ($R(y_1) = R(y_2)$), their probability ratio in the optimal solution is: $G_\\beta(y_1)/G_\\beta(y_2) = \\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)$. This ratio is INDEPENDENT of the regularization strength $\\beta$. Therefore, KL-regularized RL with equal rewards never promotes a low-support answer: the solution preserves the reference policy's relative probabilities among equally rewarded samples, regardless of which KL variant or what $\\beta$ value is used. This holds for both reverse and forward KL regularization.",
+      "content_hash": "34e29b0d87f62fbb59eb9041c86ff8ecb6d17336803de179357d015dbbd40a71",
+      "label": "equal_reward_preserves_ratio",
+      "qid": "github:2510_20817::equal_reward_preserves_ratio",
+      "type": "claim"
+    },
+    {
+      "content": "When two samples have equal reference probability ($\\pi_{\\text{ref}}(y_1) = \\pi_{\\text{ref}}(y_2)$), their probability ratio in the optimal solution is: $G_\\beta(y_1)/G_\\beta(y_2) = \\exp\\bigl((R(y_1) - R(y_2))/\\beta\\bigr)$. A linear difference $\\Delta R$ in rewards produces an EXPONENTIAL difference in optimal-solution probabilities. At commonly used $\\beta = 10^{-3}$, a reward difference of $\\Delta R = 0.1$ makes the higher-reward sample $2.6 \\times 10^{43}$ times more likely in the solution distribution. This implies the solution is highly concentrated around the maximum-reward mode.",
+      "content_hash": "fddb441b68eee69920fa3cf9abba76992633825eddf8b510bf34be53ae22e921",
+      "label": "equal_support_exponential_gap",
+      "qid": "github:2510_20817::equal_support_exponential_gap",
+      "type": "claim"
+    },
+    {
+      "content": "MARA on the 1-2 task successfully preserves diversity: many runs learn to generate '1' and '2' with near-uniform probability (~0.5 each, measured by valid-answer entropy), while maintaining correctness (reward ~1.0). This holds for both reverse and forward KL regularization across all tested $\\beta$ values ($\\beta \\in \\{0.001, 0.01, 0.02, 0.03\\}$).",
+      "content_hash": "43c432cf3ac418603e034c528f4dbee6ffb6eb16f0f1daae58324518a9f77094",
+      "label": "exp_12_mara_diverse",
+      "qid": "github:2510_20817::exp_12_mara_diverse",
+      "type": "claim"
+    },
+    {
+      "content": "On the creative QA task (non-verifiable, reward model), MARA outperforms both GRPO and RLOO in terms of out-of-distribution reward and most diversity metrics. Specifically (Table 1): - MARA (fwd) achieves the highest Out-dist. Reward: $1.604 \\pm 0.113$ vs. RLOO: $1.280 \\pm 0.100$ and GRPO: $1.317 \\pm 0.102$. - MARA (fwd) achieves the highest Ngram EAD: $0.568 \\pm 0.012$ vs. RLOO: $0.514 \\pm 0.014$. - MARA (fwd) achieves the highest Mean Distinct: $4.62 \\pm 0.258$ vs. RLOO: $3.88 \\pm 0.243$. - Semantic Div is the one metric where the Base Model ($0.220$) outperforms all trained models; MARA (fwd) matches RLOO at $0.193$.",
+      "content_hash": "c1f06b5ae5a779032bc218d16cf0a1b13f8b99c021e92dad940a116edc870a52",
+      "label": "exp_creative_qa_table",
+      "qid": "github:2510_20817::exp_creative_qa_table",
+      "type": "claim"
+    },
+    {
+      "content": "On the SYNTH-ALL-AMIDE drug discovery task at threshold 0.85 (Table 2b/6), MARA achieves higher Yield than REINVENT: $1235 \\pm 130$ vs. $1098 \\pm 88$ unique molecules (statistically significant). MARA also achieves lower OB100 ($3943 \\pm 303$ vs. $4360 \\pm 257$, statistically significant). MARA also achieves slightly higher IntDiv1 ($0.733 \\pm 0.009$ vs. $0.721 \\pm 0.016$). This is the more challenging reward function (amide-only synthesis constraint).",
+      "content_hash": "adc4d395863fcb65ffa5db6450b468bcf73008c4f083eafbb12e1d40b2776cf9",
+      "label": "exp_drug_amide_yield",
+      "qid": "github:2510_20817::exp_drug_amide_yield",
+      "type": "claim"
+    },
+    {
+      "content": "On the SYNTH drug discovery task at threshold 0.80 (Table 2a/5), MARA achieves higher Yield than REINVENT: $6834 \\pm 78$ vs. $6569 \\pm 186$ unique molecules (statistically significant, one-sided t-test, $p < 0.05$). MARA also achieves lower OB100 ($1015 \\pm 55$ vs. $1042 \\pm 66$, not statistically significant). IntDiv1 and #Circles are competitive (not significantly different).",
+      "content_hash": "33e6f14568a333c2c6d4b93b84aae5a5830c810c6734fec90a293f53df2eb5bb",
+      "label": "exp_drug_synth_yield",
+      "qid": "github:2510_20817::exp_drug_synth_yield",
+      "type": "claim"
+    },
+    {
+      "content": "The gradient of the forward-KL regularized RL objective $J_{\\text{fwd}}$ is NOT a forward KL divergence gradient toward any target distribution $h$ that is defined independently of $\\pi_\\theta$. Formally, there is no $h$ independent of $\\pi_\\theta$ such that $\\nabla_\\theta D_{KL}(h \\| \\pi_\\theta) \\propto -\\nabla_\\theta J_{\\text{fwd}}(\\pi_\\theta)$. Therefore, optimizing $J_{\\text{fwd}}$ cannot be naively equated to 'forward KL optimization' with its associated intuitions.",
+      "content_hash": "65a6d51dc0db1c5b9b7df59fdffc2f5727a7eeac2853dba6974277dd36cba6c2",
+      "label": "forward_kl_gradient_not_forward_kl",
+      "qid": "github:2510_20817::forward_kl_gradient_not_forward_kl",
+      "type": "claim"
+    },
+    {
+      "content": "Under the assumption that $\\beta > 0$, rewards are finite ($R_{\\max} < \\infty$), and at least one on-support answer achieves $R(y) = R_{\\max}$ with $\\pi_{\\text{ref}}(y) > 0$, the optimal solution to the forward-KL regularized reward maximization problem is: $G_{\\text{fwd}}(y) = \\frac{\\beta \\pi_{\\text{ref}}(y)}{\\Lambda - R(y)}$, where $\\Lambda > \\max_y R(y)$ is the unique Lagrange multiplier ensuring $G_{\\text{fwd}}$ integrates to 1. This distribution does not have a closed-form expression for $\\Lambda$. It is a completely different distribution family from the reverse-KL optimal $G_\\beta$.",
+      "content_hash": "773d5f5e8077121eb6bfd5adf99fa8734285e4e51852b5704d0a01b3e719928c",
+      "label": "forward_kl_optimal_dist",
+      "qid": "github:2510_20817::forward_kl_optimal_dist",
+      "type": "claim"
+    },
+    {
+      "content": "In KL-regularized RL (where foundation models are used as flexible policies), the choice of reverse vs. forward KL regularization does not primarily determine whether the solution distribution is diverse (multimodal). Instead, mode coverage depends primarily on the regularization strength $\\beta$ and the relative scales between rewards and reference policy probabilities.",
+      "content_hash": "230a15b0ddf511a66563015501906f16c2cb9c404a82d6a7816f010b1eeb4e3d",
+      "label": "kl_type_not_primary_driver",
+      "qid": "github:2510_20817::kl_type_not_primary_driver",
+      "type": "claim"
+    },
+    {
+      "content": "The log probability ratio between any two samples $y_1, y_2$ under the optimal reverse-KL solution $G_\\beta$ is: $$\\log \\frac{G_\\beta(y_1)}{G_\\beta(y_2)} = \\log \\frac{\\pi_{\\text{ref}}(y_1)}{\\pi_{\\text{ref}}(y_2)} + \\frac{1}{\\beta}\\bigl(R(y_1) - R(y_2)\\bigr)$$. The normalizing constant $\\zeta$ cancels. This allows exact computation of relative probabilities using only $\\pi_{\\text{ref}}$ and $R$.",
+      "content_hash": "a5015bf72bc36b4b02bcf2f0ef1e501925aac7cfd7e845cac94e1ece31e83f6c",
+      "label": "log_prob_ratio_formula",
+      "qid": "github:2510_20817::log_prob_ratio_formula",
+      "type": "claim"
+    },
+    {
+      "content": "The MARA augmented reward function $\\bar{R}(y)$ is defined as: $\\bar{R}(y) = R(y)$ if $R(y) < \\tau$, and $\\bar{R}(y) = R(z) + \\beta(\\log \\pi_{\\text{ref}}(z) - \\log \\pi_{\\text{ref}}(y))$ if $R(y) \\geq \\tau$, where $z = \\arg\\max_y \\pi_{\\text{ref}}(y)$ subject to $R(y) \\geq \\tau$ is the 'anchor' sample — the most likely high-quality sample under the reference policy. The augmentation for high-reward samples offsets each sample's reward by its log probability gap from the anchor.",
+      "content_hash": "5f2270410f6604a929501187cc2cac52850214340be9852a5501e4e4f008a1d3",
+      "label": "mara_augmented_reward",
+      "qid": "github:2510_20817::mara_augmented_reward",
+      "type": "claim"
+    },
+    {
+      "content": "The Mode Anchored Reward Augmentation (MARA) algorithm is a simple, scalable, and theoretically justified modification to the standard KL-regularized RL objective. It makes minimal changes to reward magnitudes and optimizes for a target distribution that places high probability over all high-quality sampling modes simultaneously, without requiring any external signal of diversity. MARA can be used as a drop-in replacement for standard RL training (two lines of pseudocode change).",
+      "content_hash": "4b00a7891e658a52d38bd8d003a7f44cb7f397e14864b6d563755c8abd12e794",
+      "label": "mara_exists",
+      "qid": "github:2510_20817::mara_exists",
+      "type": "claim"
+    },
+    {
+      "content": "Optimizing the reverse-KL regularized RL objective with the MARA augmented reward $\\bar{R}$ yields the solution distribution: $\\bar{G}_\\beta(y) \\propto \\pi_{\\text{ref}}(y) \\exp(R(y)/\\beta)$ if $R(y) < \\tau$, and $\\bar{G}_\\beta(y) \\propto \\pi_{\\text{ref}}(z) \\exp(R(z)/\\beta)$ if $R(y) \\geq \\tau$. For all above-threshold samples the unnormalized density is IDENTICAL: $\\pi_{\\text{ref}}(z) \\exp(R(z)/\\beta)$ — a constant independent of $y$. This means the solution places EQUAL probability mass on all high-reward samples, regardless of their individual reference probabilities.",
+      "content_hash": "371d3631a09ebe881bfc2887f31b442dce71c6ba18cab431de4081dd696fde3d",
+      "label": "mara_solution_is_uniform",
+      "qid": "github:2510_20817::mara_solution_is_uniform",
+      "type": "claim"
+    },
+    {
+      "content": "The optimal solution to the reverse-KL regularized reward maximization problem $\\arg\\max_{\\pi_\\theta} J_\\beta(\\pi_\\theta)$ is the Gibbs distribution $G_\\beta(y) = \\frac{1}{\\zeta} \\pi_{\\text{ref}}(y) \\exp\\left(\\frac{R(y)}{\\beta}\\right)$, where $\\zeta = \\int \\pi_{\\text{ref}}(y) \\exp(R(y)/\\beta) \\, dy$ is the normalizing constant. This is well-known in prior work (Korbak et al., 2022; Rafailov et al., 2023; Zhang & Ranganath, 2025).",
+      "content_hash": "fc0faa0c0cfd9e0d6f9aa8a601782299db0a2130d13a77bd6b577319c6b71dfd",
+      "label": "reverse_kl_optimal_dist",
+      "qid": "github:2510_20817::reverse_kl_optimal_dist",
+      "type": "claim"
+    },
+    {
+      "content": "Under commonly used RL hyperparameter settings—specifically, (a) weak KL regularization (low $\\beta$) with varied rewards across correct answers, or (b) any regularization strength when correct answers have equal rewards but vastly different reference policy probabilities—the globally optimal solution distribution is, by construction, unimodal. This means diversity collapse is a natural consequence of correctly optimizing the RL objective, not a pathology of imperfect optimization.",
+      "content_hash": "15b918e985d2ba7b9962f713116ec8dec50d1adc8d078b667e13b46eab9c8d18",
+      "label": "typical_settings_unimodal",
+      "qid": "github:2510_20817::typical_settings_unimodal",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:b8ebcf6ca44e4f3df51ce9d2b90c5ec04deb210c89f5f52a9cd371b044444e40",
+  "manifest_schema_version": 1,
+  "package": "2510-20817",
+  "version": "0.1.0"
+}

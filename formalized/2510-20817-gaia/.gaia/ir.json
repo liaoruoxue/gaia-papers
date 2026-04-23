@@ -1,0 +1,2690 @@
+{
+  "ir_hash": "sha256:b8ebcf6ca44e4f3df51ce9d2b90c5ec04deb210c89f5f52a9cd371b044444e40",
+  "knowledges": [
+    {
+      "content": "KL-regularized reward maximization objective: $J(\\pi_\\theta) = \\mathbb{E}_{\\pi_\\theta(y)}[R(y)] - \\beta D(\\pi_\\theta, \\pi_{\\text{ref}})$, where $R: \\mathcal{Y} \\to \\mathbb{R}$ is the reward function, $\\pi_\\theta$ is the policy, $\\pi_{\\text{ref}}$ is the reference (base) distribution, $\\beta > 0$ is the regularization coefficient, and $D(\\cdot, \\cdot)$ is the KL divergence between the policy and the reference.",
+      "content_hash": "a3825afee84bbf4639828543a9102da5748d90af622aef4ac4f116695342d82e",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_20817::kl_rl_objective",
+      "label": "kl_rl_objective",
+      "module": "motivation",
+      "parameters": [],
+      "title": "KL-regularized RL objective",
+      "type": "setting"
+    },
+    {
+      "content": "The reverse KL divergence is defined as $D_{KL}(q \\| p) = \\mathbb{E}_q[\\log q(y) - \\log p(y)]$. In the variational inference (VI) literature, it is traditionally characterized as 'mode seeking': the approximating distribution $q$ avoids placing mass where $p$ is small.",
+      "content_hash": "0e9c9664494a47e92c7c5f16ba8845362129234836ecd07f650de9d39c4b3f74",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_20817::reverse_kl_def",
+      "label": "reverse_kl_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reverse KL divergence definition",
+      "type": "setting"
+    },
+    {
+      "content": "The forward KL divergence is defined as $D_{KL}(p \\| q) = \\mathbb{E}_p[\\log p(y) - \\log q(y)]$. In the variational inference (VI) literature, it is traditionally characterized as 'mass covering': the approximating distribution $q$ places mass everywhere $p$ has mass.",
+      "content_hash": "9237d932cb6733743f92ddafdad22629bc65d3064d9dfd029114fb17d076996b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_20817::forward_kl_def",
+      "label": "forward_kl_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Forward KL divergence definition",
+      "type": "setting"
+    },
+    {
+      "content": "A 'flexible' distribution family (e.g., independent categoricals, large language models) is one that is sufficiently expressive to match any target distribution to zero KL divergence in principle. This contrasts with 'restrictive' families such as two-parameter Gaussians, which are limited to a constrained set of shapes and can only approximate the target.",
+      "content_hash": "d29cea38e1cb47f27abd4e8d47a23d87f35d375408fdc980e2853e7745ea2cf3",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_20817::flexible_family_def",
+      "label": "flexible_family_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Flexible vs. restrictive distribution families",
+      "type": "setting"
+    },
+    {
+      "content": "A solution distribution for KL-regularized reward maximization is 'multimodal' (Definition 3.5) if all high-reward samples have a high probability. Formally: a solution is multimodal if for all $y$ with $R(y) \\geq \\tau$ (for some threshold $\\tau$), $\\pi^*(y)$ is high relative to $\\pi_{\\text{ref}}(y)$.",
+      "content_hash": "e120de818827b1714c428aaf072d4188c7f8ed6414b6837269fc41d2f5e73d03",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_20817::multimodal_def",
+      "label": "multimodal_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Definition of multimodal solution distribution",
+      "type": "setting"
+    },
+    {
+      "content": "Does the KL-regularized RL objective, when optimized to its global optimum, produce a solution (policy) distribution that is diverse (multimodal)?",
+      "content_hash": "06b529d345c9ae0804eeb3b6f281eef600d1f41dcf12a73897564e081da74f8c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_20817::q_diversity_collapse",
+      "label": "q_diversity_collapse",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Main research question: diversity of RL optimal solution",
+      "type": "question"
+    },
+    {
+      "content": "Does the mode-seeking / mass-covering characterization of reverse / forward KL from variational inference transfer to the setting of KL-regularized reward maximization (RL)?",
+      "content_hash": "4a0919da937e5bb0972e0917a4c8c730c7acc0d3d05ca74d031cb9d1cbba7c34",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_20817::q_mode_seeking_intuition",
+      "label": "q_mode_seeking_intuition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Applicability of KL intuitions to RL setting",
+      "type": "question"
+    },
+    {
+      "content": "Output diversity of a policy trained via RL is crucial for downstream applications. In large language models (LLMs), diversity drives engagement in creative writing and conversation. More broadly, diversity underlies discovery of novel mathematical solutions, cognitive science models, and novel algorithms. Furthermore, diversity reflects uncertainty over competing hypotheses, which is fundamental to scientific discovery. During training, diversity drives exploration that helps policies converge to better solutions.",
+      "content_hash": "af4bd848f462b6b4822d524a23196de9fcfb1b1d81ecccc7024b0b24fdd03e77",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_20817::rl_diversity_matters",
+      "label": "rl_diversity_matters",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Importance of output diversity in RL post-training",
+      "type": "claim"
+    },
+    {
+      "content": "Current empirical evidence suggests RL post-training improves quality at the cost of diversity (Kirk et al., 2023; Cui et al., 2025). Multiple works report entropy collapse after standard KL-regularized RL post-training across different tasks: format, creativity, reasoning, and exploration.",
+      "content_hash": "5208c81e972930bbc4c756ad87fcc55ade9b83988e7fc2303f9e732d79873f8b",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_20817::empirical_diversity_collapse",
+      "label": "empirical_diversity_collapse",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Extensively documented finding corroborated by Kirk et al. 2023, Cui et al. 2025, and multiple works cited in Appendix A. The phenomenon (RL reduces entropy) is consistently reported across diverse tasks (format, creativity, reasoning). High confidence in the qualitative direction; exact magnitude varies by setting.",
+        "source": "artifacts/2510.20817.pdf, Introduction and Appendix A"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Empirical observation: RL reduces diversity",
+      "type": "claim"
+    },
+    {
+      "content": "For a restrictive variational distribution family (e.g., a two-parameter Gaussian), the standard intuitions hold: reverse KL divergence minimization is 'mode seeking' (the approximation collapses onto a single mode of the target), while forward KL minimization is 'mass covering' (the approximation spreads mass over all modes). This is because with a restrictive family the KL cannot be driven to zero, and the two KL variants penalize mismatches differently.",
+      "content_hash": "20deab7535af188c679094c6ffa19e1e41a24cd0da08a7bc6b0cd3abffd84576",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_20817::vi_kl_intuition_holds_restrictive",
+      "label": "vi_kl_intuition_holds_restrictive",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 1a",
+        "prior": 0.97,
+        "prior_justification": "Standard result in variational inference (Jordan 1999, Blei 2017, Wainwright 2008). For restricted Gaussian families, reverse-KL mode-seeking vs. forward-KL mass-covering is a textbook property. No controversy; supported by decades of VI literature."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "KL intuitions hold for restrictive distribution families",
+      "type": "claim"
+    },
+    {
+      "content": "For a flexible distribution family (e.g., independent categoricals, foundational language models), the standard 'mode seeking' / 'mass covering' intuitions do NOT necessarily hold. Optimizing either reverse or forward KL to the global optimum can well-approximate a complex, multimodal target distribution. The mode-coverage behavior depends on the target distribution's shape, not on the KL variant used.",
+      "content_hash": "e88f7b5945822c6d2955eadc7ae5e19eb8b83b2d7a4b8f9164207b55fc8be5c3",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2510_20817::vi_kl_intuition_fails_flexible",
+      "label": "vi_kl_intuition_fails_flexible",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 1b",
+        "prior": 0.9,
+        "prior_justification": "The paper proves this rigorously for the case where the global optimum is achieved (Remarks 3.1-3.4, Figure 1b). The argument requires the policy family to be flexible enough to reach the optimum, which holds for modern LLMs but may fail in practice due to optimization landscape issues. Moderate-high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "KL intuitions do not hold for flexible distribution families",
+      "type": "claim"
+    },
+    {
+      "content": "In KL-regularized RL (where foundation models are used as flexible policies), the choice of reverse vs. forward KL regularization does not primarily determine whether the solution distribution is diverse (multimodal). Instead, mode coverage depends primarily on the regularization strength $\\beta$ and the relative scales between rewards and reference policy probabilities.",
+      "content_hash": "230a15b0ddf511a66563015501906f16c2cb9c404a82d6a7816f010b1eeb4e3d",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2510_20817::kl_type_not_primary_driver",
+      "label": "kl_type_not_primary_driver",
+      "module": "motivation",
+      "parameters": [],
+      "title": "KL type is not the primary driver of diversity in RL",
+      "type": "claim"
+    },
+    {
+      "content": "Under commonly used RL hyperparameter settings—specifically, (a) weak KL regularization (low $\\beta$) with varied rewards across correct answers, or (b) any regularization strength when correct answers have equal rewards but vastly different reference policy probabilities—the globally optimal solution distribution is, by construction, unimodal. This means diversity collapse is a natural consequence of correctly optimizing the RL objective, not a pathology of imperfect optimization.",
+      "content_hash": "15b918e985d2ba7b9962f713116ec8dec50d1adc8d078b667e13b46eab9c8d18",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2510_20817::typical_settings_unimodal",
+      "label": "typical_settings_unimodal",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Typical RL settings produce unimodal optimal solutions",
+      "type": "claim"
+    },
+    {
+      "content": "The Mode Anchored Reward Augmentation (MARA) algorithm is a simple, scalable, and theoretically justified modification to the standard KL-regularized RL objective. It makes minimal changes to reward magnitudes and optimizes for a target distribution that places high probability over all high-quality sampling modes simultaneously, without requiring any external signal of diversity. MARA can be used as a drop-in replacement for standard RL training (two lines of pseudocode change).",
+      "content_hash": "4b00a7891e658a52d38bd8d003a7f44cb7f397e14864b6d563755c8abd12e794",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2510_20817::mara_exists",
+      "label": "mara_exists",
+      "module": "motivation",
+      "parameters": [],
+      "title": "MARA algorithm: existence and properties",
+      "type": "claim"
+    },
+    {
+      "content": "opposite_truth(A, B)",
+      "content_hash": "faf7a1f4b55e7d7efd70f095476d9d55c2e2feae0488c157754bb3cb5bc32772",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2510_20817::comp_kl_intuitions",
+      "label": "comp_kl_intuitions",
+      "metadata": {
+        "helper_kind": "complement_result",
+        "prior": 0.95
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The reverse-KL regularized RL objective is: $J_\\beta(\\pi_\\theta) = \\mathbb{E}_{\\pi_\\theta(y)}[R(y)] - \\beta D_{KL}(\\pi_\\theta \\| \\pi_{\\text{ref}})$. This is the most common KL-regularized policy gradient objective used in practice (e.g., RLHF, DPO, GRPO variants).",
+      "content_hash": "af6a4844170d56bcb3672f1254610ca0dc0648504af149bcf757ddef4251b2d5",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_20817::reverse_kl_obj_def",
+      "label": "reverse_kl_obj_def",
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Reverse-KL regularized RL objective",
+      "type": "setting"
+    },
+    {
+      "content": "The forward-KL regularized RL objective is: $J_{\\text{fwd}}(\\pi_\\theta) = \\mathbb{E}_{\\pi_\\theta(y)}[R(y)] - \\beta D_{KL}(\\pi_{\\text{ref}} \\| \\pi_\\theta)$. Some recent works use this explicitly (motivated by 'mass covering'); others (e.g., GRPO) may estimate the forward KL incidentally while intending reverse KL.",
+      "content_hash": "d4d4a75983c19c8c60d5ea7d3f98ce4f95254ca05c4619a5909c0afeec7faa5b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_20817::forward_kl_obj_def",
+      "label": "forward_kl_obj_def",
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Forward-KL regularized RL objective",
+      "type": "setting"
+    },
+    {
+      "content": "The optimal distribution is found by functional optimization: taking the Gateaux derivative of the Lagrangian objective (reward maximization subject to the normalization constraint $\\int \\pi(y) dy = 1$) and applying the fundamental lemma of calculus of variations (Gelfand & Fomin, 1963) to find the critical point.",
+      "content_hash": "28199c9a9d9e24d6ddd7d6b0518805d1ff0c835a7f4406a049253caf6f67d6df",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_20817::gateaux_variational_method",
+      "label": "gateaux_variational_method",
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Variational calculus method for optimal distribution",
+      "type": "setting"
+    },
+    {
+      "content": "The optimal solution to the reverse-KL regularized reward maximization problem $\\arg\\max_{\\pi_\\theta} J_\\beta(\\pi_\\theta)$ is the Gibbs distribution $G_\\beta(y) = \\frac{1}{\\zeta} \\pi_{\\text{ref}}(y) \\exp\\left(\\frac{R(y)}{\\beta}\\right)$, where $\\zeta = \\int \\pi_{\\text{ref}}(y) \\exp(R(y)/\\beta) \\, dy$ is the normalizing constant. This is well-known in prior work (Korbak et al., 2022; Rafailov et al., 2023; Zhang & Ranganath, 2025).",
+      "content_hash": "fc0faa0c0cfd9e0d6f9aa8a601782299db0a2130d13a77bd6b577319c6b71dfd",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2510_20817::reverse_kl_optimal_dist",
+      "label": "reverse_kl_optimal_dist",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 3.1, Eq. (2)"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Optimal distribution for reverse-KL RL (Remark 3.1)",
+      "type": "claim"
+    },
+    {
+      "content": "Maximizing the reverse-KL regularized RL objective $J_\\beta$ (Eq. 1) is equivalent to minimizing the reverse KL divergence $D_{KL}(\\pi_\\theta \\| G_\\beta)$ toward the target distribution $G_\\beta$. Formally: $\\nabla_\\theta D_{KL}(\\pi_\\theta \\| G_\\beta) \\propto -\\nabla_\\theta J_\\beta(\\pi_\\theta)$. This means gradient ascent on $J_\\beta$ performs distribution matching toward $G_\\beta$ via reverse KL.",
+      "content_hash": "5399d6c12df160da9a05fc3308ce3b63463e833030746f2358a17400ed76c344",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_20817::reverse_kl_gradient_is_kl_toward_target",
+      "label": "reverse_kl_gradient_is_kl_toward_target",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 3.1, Eq. (3)"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Reverse-KL RL gradient is distribution matching toward G_beta (Remark 3.2)",
+      "type": "claim"
+    },
+    {
+      "content": "Under the assumption that $\\beta > 0$, rewards are finite ($R_{\\max} < \\infty$), and at least one on-support answer achieves $R(y) = R_{\\max}$ with $\\pi_{\\text{ref}}(y) > 0$, the optimal solution to the forward-KL regularized reward maximization problem is: $G_{\\text{fwd}}(y) = \\frac{\\beta \\pi_{\\text{ref}}(y)}{\\Lambda - R(y)}$, where $\\Lambda > \\max_y R(y)$ is the unique Lagrange multiplier ensuring $G_{\\text{fwd}}$ integrates to 1. This distribution does not have a closed-form expression for $\\Lambda$. It is a completely different distribution family from the reverse-KL optimal $G_\\beta$.",
+      "content_hash": "773d5f5e8077121eb6bfd5adf99fa8734285e4e51852b5704d0a01b3e719928c",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2510_20817::forward_kl_optimal_dist",
+      "label": "forward_kl_optimal_dist",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 3.2, Eq. (5)"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Optimal distribution for forward-KL RL (Remark 3.3)",
+      "type": "claim"
+    },
+    {
+      "content": "The gradient of the forward-KL regularized RL objective $J_{\\text{fwd}}$ is NOT a forward KL divergence gradient toward any target distribution $h$ that is defined independently of $\\pi_\\theta$. Formally, there is no $h$ independent of $\\pi_\\theta$ such that $\\nabla_\\theta D_{KL}(h \\| \\pi_\\theta) \\propto -\\nabla_\\theta J_{\\text{fwd}}(\\pi_\\theta)$. Therefore, optimizing $J_{\\text{fwd}}$ cannot be naively equated to 'forward KL optimization' with its associated intuitions.",
+      "content_hash": "65a6d51dc0db1c5b9b7df59fdffc2f5727a7eeac2853dba6974277dd36cba6c2",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_20817::forward_kl_gradient_not_forward_kl",
+      "label": "forward_kl_gradient_not_forward_kl",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 3.2, Eq. (6); Appendix B.4"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Forward-KL RL gradient is not a forward KL gradient (Remark 3.4)",
+      "type": "claim"
+    },
+    {
+      "content": "Both the reverse-KL optimal distribution $G_\\beta$ (Eq. 2) and the forward-KL optimal distribution $G_{\\text{fwd}}$ (Eq. 5) can be multimodal for appropriate choices of the regularization coefficient $\\beta$. Given the same bimodal reward function and reference policy, optimizing with either KL variant produces solution distributions ranging from unimodal (small $\\beta$) to multimodal (larger $\\beta$), as shown in Figure 2 of the paper.",
+      "content_hash": "eb5c8bcf24f2d9f15f40942866596b510a03cf0be1443838f15f64b76ecb3474",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_20817::both_kl_can_multimodal",
+      "label": "both_kl_can_multimodal",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 2"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Both KL regularizations can yield multimodal solutions (Section 3.3)",
+      "type": "claim"
+    },
+    {
+      "content": "When the forward-KL regularized optimal distribution $G_{\\text{fwd}}$ is used, if the highest-reward answers exist OUTSIDE the support of $\\pi_{\\text{ref}}$ (i.e., $R^{\\text{out}}_{\\max} > R^{\\text{in}}_{\\max}$), then $G_{\\text{fwd}}$ places nonzero probability mass in regions where $\\pi_{\\text{ref}}(y) = 0$. In this case $G_{\\text{fwd}}$ has no preference among the off-support high-reward samples in terms of density. If the on-support distribution normalizes to $Z(R^{\\text{out}}_{\\max}) \\geq 1$, no off-support mass is placed.",
+      "content_hash": "f6f079f4e55734aee945cb0a0edb9d20bb4c3ce5a4cff3716b86b562966d6e90",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_20817::forward_kl_off_support",
+      "label": "forward_kl_off_support",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Appendix B.3"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Forward-KL can place mass off reference support (Appendix B.3)",
+      "type": "claim"
+    },
+    {
+      "content": "The gradient of the forward KL divergence $D_{KL}(G_\\beta \\| \\pi_\\theta)$ equals $-\\mathbb{E}_{G_\\beta}[\\nabla_\\theta \\log \\pi_\\theta(y)]$, which corresponds to maximum likelihood estimation (supervised fine-tuning) on trajectories sampled from the target distribution $G_\\beta$. This is generally intractable because it requires sampling from $G_\\beta$. Algorithms like STaR and RAFT can be interpreted as approximating this via filtering high-reward trajectories.",
+      "content_hash": "d2237f5f659a74a6f8a0237a53b7930901a37d4f132f39d3a9fe0988799e429c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_20817::forward_kl_gradient_is_mle",
+      "label": "forward_kl_gradient_is_mle",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Appendix B.5"
+      },
+      "module": "s3_optimal_distributions",
+      "parameters": [],
+      "title": "Forward KL gradient is maximum likelihood on G_beta samples (Remark B.2)",
+      "type": "claim"
+    },
+    {
+      "content": "The central analytical tool in Section 4 is the probability ratio $G_\\beta(y_1)/G_\\beta(y_2)$ between any two samples under the optimal reverse-KL solution distribution. Because the normalizing constant $\\zeta$ cancels in the ratio, this ratio can be computed in closed form from only $\\pi_{\\text{ref}}$ and $R$.",
+      "content_hash": "f4a5a5f1aa8c05de8cde7d69ce0a82f2446c19ab8b9f9b512fa7b02acaf8333a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_20817::prob_ratio_tool",
+      "label": "prob_ratio_tool",
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Probability ratio as analytical tool",
+      "type": "setting"
+    },
+    {
+      "content": "The 'equal support' case: two samples $y_1, y_2$ have the same probability under the reference distribution, $\\pi_{\\text{ref}}(y_1) = \\pi_{\\text{ref}}(y_2)$.",
+      "content_hash": "8eeb43e8bac53cd01c193f432611c45753a7af91497f121ee45190d8e03d8391",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_20817::equal_support_setting",
+      "label": "equal_support_setting",
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Equal support case definition",
+      "type": "setting"
+    },
+    {
+      "content": "The 'equal reward' case: two samples $y_1, y_2$ have the same reward, $R(y_1) = R(y_2)$. This is the standard setup for RL with verifiable rewards (e.g., math): a correct answer receives reward 1, an incorrect answer receives reward 0.",
+      "content_hash": "217f980842bafef32995898da3b13c6ace50820e1b5fe0cbe3ab869eca54a9d4",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_20817::equal_reward_setting",
+      "label": "equal_reward_setting",
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Equal reward case definition",
+      "type": "setting"
+    },
+    {
+      "content": "The log probability ratio between any two samples $y_1, y_2$ under the optimal reverse-KL solution $G_\\beta$ is: $$\\log \\frac{G_\\beta(y_1)}{G_\\beta(y_2)} = \\log \\frac{\\pi_{\\text{ref}}(y_1)}{\\pi_{\\text{ref}}(y_2)} + \\frac{1}{\\beta}\\bigl(R(y_1) - R(y_2)\\bigr)$$. The normalizing constant $\\zeta$ cancels. This allows exact computation of relative probabilities using only $\\pi_{\\text{ref}}$ and $R$.",
+      "content_hash": "a5015bf72bc36b4b02bcf2f0ef1e501925aac7cfd7e845cac94e1ece31e83f6c",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2510_20817::log_prob_ratio_formula",
+      "label": "log_prob_ratio_formula",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 4, Eq. (7); Appendix B.6"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Log probability ratio under G_beta in closed form (Proposition 4.1)",
+      "type": "claim"
+    },
+    {
+      "content": "When two samples have equal reference probability ($\\pi_{\\text{ref}}(y_1) = \\pi_{\\text{ref}}(y_2)$), their probability ratio in the optimal solution is: $G_\\beta(y_1)/G_\\beta(y_2) = \\exp\\bigl((R(y_1) - R(y_2))/\\beta\\bigr)$. A linear difference $\\Delta R$ in rewards produces an EXPONENTIAL difference in optimal-solution probabilities. At commonly used $\\beta = 10^{-3}$, a reward difference of $\\Delta R = 0.1$ makes the higher-reward sample $2.6 \\times 10^{43}$ times more likely in the solution distribution. This implies the solution is highly concentrated around the maximum-reward mode.",
+      "content_hash": "fddb441b68eee69920fa3cf9abba76992633825eddf8b510bf34be53ae22e921",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2510_20817::equal_support_exponential_gap",
+      "label": "equal_support_exponential_gap",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 3"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Equal support: exponential probability gap from linear reward gap (Remark 4.2)",
+      "type": "claim"
+    },
+    {
+      "content": "When two samples have equal reward ($R(y_1) = R(y_2)$), their probability ratio in the optimal solution is: $G_\\beta(y_1)/G_\\beta(y_2) = \\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)$. This ratio is INDEPENDENT of the regularization strength $\\beta$. Therefore, KL-regularized RL with equal rewards never promotes a low-support answer: the solution preserves the reference policy's relative probabilities among equally rewarded samples, regardless of which KL variant or what $\\beta$ value is used. This holds for both reverse and forward KL regularization.",
+      "content_hash": "34e29b0d87f62fbb59eb9041c86ff8ecb6d17336803de179357d015dbbd40a71",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2510_20817::equal_reward_preserves_ratio",
+      "label": "equal_reward_preserves_ratio",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 4"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Equal reward: RL preserves reference probability ratios (Remark 4.3)",
+      "type": "claim"
+    },
+    {
+      "content": "When two samples $y_1, y_2$ have BOTH different rewards AND different reference policy probabilities, a unique value of $\\beta$ exists that makes them equally probable in the solution distribution. This occurs when: $R(y_2) - R(y_1) = \\beta (\\log \\pi_{\\text{ref}}(y_1) - \\log \\pi_{\\text{ref}}(y_2))$ (Eq. 10). This is the true role of the regularization coefficient $\\beta$: it trades off between preferring higher-rewarding, low-support answers versus lower-rewarding, high-support answers. Mode coverage is determined by this interplay, not by the KL variant.",
+      "content_hash": "af61534c83ee4d98547da9dfe8e98307f26f91501830f96942f348d941273f50",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_20817::beta_as_mode_knob",
+      "label": "beta_as_mode_knob",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 4.3, Eq. (10)"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Beta as mode-selection knob (Remark 4.4)",
+      "type": "claim"
+    },
+    {
+      "content": "Using Remark 4.4 (Eq. 10), the crossover $\\beta$ for the Figure 2 example can be predicted analytically: the two high-reward modes have rewards 0.75 and 1.0, and reference log probabilities $\\log \\pi_{\\text{ref}}(y_1) \\approx -4.05$ and $\\log \\pi_{\\text{ref}}(y_2) \\approx -5.95$. The predicted crossover is $(1 - 0.75)/(-4.05 + 5.95) \\approx 0.132$. Indeed, Figure 2 shows the reverse-KL solution switches modal preference between $\\beta=0.10$ and $\\beta=0.15$, confirming the theory.",
+      "content_hash": "5259fbb5ac692ca44a93d5097d22bfe82c7e83829025ce5e2a6780ca00d3d7d6",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_20817::beta_prediction_figure2",
+      "label": "beta_prediction_figure2",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 2; Section 4.3"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Empirical validation of beta prediction for Figure 2",
+      "type": "claim"
+    },
+    {
+      "content": "At commonly used RL hyperparameter settings (low $\\beta \\approx 10^{-3}$ to $10^{-2}$) with varied reward levels, the solution distribution is highly concentrated around a single mode: the one with the highest reward among well-supported answers. The exponential amplification factor $\\exp(\\Delta R/\\beta)$ is so large that any reward difference between correct answers causes extreme probability concentration. This means diversity collapse is not a training pathology but a consequence of correct optimization.",
+      "content_hash": "12d002a59db21fb69eb7b69432c7fe255d23cf0124273d505e9178178447c70a",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_20817::low_beta_unimodal",
+      "label": "low_beta_unimodal",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 3, 7"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Low beta with varied rewards produces unimodal solution",
+      "type": "claim"
+    },
+    {
+      "content": "With any regularization strength $\\beta$, if all correct answers have equal reward but one answer has much higher reference probability (e.g., 15x more likely under $\\pi_{\\text{ref}}$), the optimal solution ALSO assigns 15x more probability to that answer. RL cannot be used to 'discover' lower-support correct answers by adjusting $\\beta$. Figure 4 demonstrates: the final policy exactly preserves the 15x probability imbalance.",
+      "content_hash": "fef1e93a77a9513c721f8d1dd73c89c80cd73689c6f0784a9a72f06d1dcc3878",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_20817::equal_reward_unimodal",
+      "label": "equal_reward_unimodal",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 4"
+      },
+      "module": "s4_mode_coverage_analysis",
+      "parameters": [],
+      "title": "Equal reward with unequal support: RL cannot equalize probabilities",
+      "type": "claim"
+    },
+    {
+      "content": "Mode Anchored Reward Augmentation (MARA, Algorithm 1) is defined as follows: Given batch $\\{y_i\\}_{i=1}^N \\sim \\pi_\\theta$, reward threshold $\\tau \\leq \\max_y R(y)$: (1) Select anchor: $z = \\arg\\max_{y_i} \\pi_{\\text{ref}}(y_i)$ subject to $R(y_i) \\geq \\tau$; (2) For each $y_i$ in batch: if $R(y_i) \\geq \\tau$: set augmented reward $\\bar{r}_i = R(z) + \\beta(\\log \\pi_{\\text{ref}}(z) - \\log \\pi_{\\text{ref}}(y_i))$; else: keep $\\bar{r}_i = R(y_i)$; (3) Optimize $\\pi_\\theta$ using augmented rewards $\\{\\bar{r}_i\\}$. The only changes from standard RL are shown in blue (2 lines).",
+      "content_hash": "e7acb7aaeae9ef8bb7f7b9a29b01f98f3f4802f5ac077888a75158511669192c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_20817::mara_algorithm_def",
+      "label": "mara_algorithm_def",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Algorithm 1"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA algorithm definition (Algorithm 1)",
+      "type": "setting"
+    },
+    {
+      "content": "An alternative implementation of MARA (Algorithm 2): instead of augmenting the reward, for above-threshold samples replace both the reward $r_i \\leftarrow R(z)$ AND the reference probability $\\bar{p}_i \\leftarrow \\pi_{\\text{ref}}(z)$. This is gradient-equivalent to Algorithm 1 when using reverse-KL regularization (Appendix B.8, Eq. 79-81), providing an alternative implementation perspective.",
+      "content_hash": "c895c63c33a71f1c0d7b711417ce2f6b6d6322f6715928d346b6613b103c7187",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_20817::mara_alt_impl",
+      "label": "mara_alt_impl",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Algorithm 2; Appendix B.8"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "Alternative MARA implementation (Algorithm 2)",
+      "type": "setting"
+    },
+    {
+      "content": "The MARA augmented reward function $\\bar{R}(y)$ is defined as: $\\bar{R}(y) = R(y)$ if $R(y) < \\tau$, and $\\bar{R}(y) = R(z) + \\beta(\\log \\pi_{\\text{ref}}(z) - \\log \\pi_{\\text{ref}}(y))$ if $R(y) \\geq \\tau$, where $z = \\arg\\max_y \\pi_{\\text{ref}}(y)$ subject to $R(y) \\geq \\tau$ is the 'anchor' sample — the most likely high-quality sample under the reference policy. The augmentation for high-reward samples offsets each sample's reward by its log probability gap from the anchor.",
+      "content_hash": "5f2270410f6604a929501187cc2cac52850214340be9852a5501e4e4f008a1d3",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2510_20817::mara_augmented_reward",
+      "label": "mara_augmented_reward",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Definitional claim: Algorithm 1 precisely specifies R_bar(y). This is a mathematical definition, not an empirical assertion. Very high confidence since it describes exactly what the algorithm does (Eq. 11). The only uncertainty is transcription accuracy from the paper.",
+        "source": "artifacts/2510.20817.pdf, Section 5, Eq. (11)"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA augmented reward function (Eq. 11)",
+      "type": "claim"
+    },
+    {
+      "content": "Optimizing the reverse-KL regularized RL objective with the MARA augmented reward $\\bar{R}$ yields the solution distribution: $\\bar{G}_\\beta(y) \\propto \\pi_{\\text{ref}}(y) \\exp(R(y)/\\beta)$ if $R(y) < \\tau$, and $\\bar{G}_\\beta(y) \\propto \\pi_{\\text{ref}}(z) \\exp(R(z)/\\beta)$ if $R(y) \\geq \\tau$. For all above-threshold samples the unnormalized density is IDENTICAL: $\\pi_{\\text{ref}}(z) \\exp(R(z)/\\beta)$ — a constant independent of $y$. This means the solution places EQUAL probability mass on all high-reward samples, regardless of their individual reference probabilities.",
+      "content_hash": "371d3631a09ebe881bfc2887f31b442dce71c6ba18cab431de4081dd696fde3d",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2510_20817::mara_solution_is_uniform",
+      "label": "mara_solution_is_uniform",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Appendix B.7, Eq. (68)"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA solution distribution is uniform over high-reward region (Remark B.3)",
+      "type": "claim"
+    },
+    {
+      "content": "Choosing the anchor $z = \\arg\\max_y \\pi_{\\text{ref}}(y)$ subject to $R(y) \\geq \\tau$ (the highest reference-probability high-quality sample) ensures that all above-threshold samples receive the maximum possible density in the solution distribution. This is because $\\pi_{\\text{ref}}(z) \\exp(R(z)/\\beta)$ is the largest constant the uniform density can take. Choosing any other anchor still yields uniform mass but at a lower level.",
+      "content_hash": "f04d3d1d807237cd16c80dee109be34bc6027480cc49017164b1c8bc5c7a944c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_20817::mara_anchor_choice",
+      "label": "mara_anchor_choice",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 5"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "Anchor choice maximizes high-reward density",
+      "type": "claim"
+    },
+    {
+      "content": "The MARA gradient estimator for an above-threshold sample $y_i$ (i.e., $R(y_i) \\geq \\tau$) under reverse-KL regularization can be written as: $\\bar{K}_i = (R(z) - \\beta \\log \\pi_\\theta(y_i)/\\pi_{\\text{ref}}(z)) \\nabla_\\theta \\log \\pi_\\theta(y_i)$. This is equivalent to using the ANCHOR'S reference probability $\\pi_{\\text{ref}}(z)$ in the KL term, instead of the sample's own $\\pi_{\\text{ref}}(y_i)$. Since $z$ is chosen with high $\\pi_{\\text{ref}}$, this selectively reduces the KL regularization penalty for high-rewarding but low-support samples, effectively 'lifting' them in the solution.",
+      "content_hash": "acc4862fb5d34f9da65affcf7416f5886741ff98588c1936d9427f31e441f04a",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_20817::mara_gradient_interpretation",
+      "label": "mara_gradient_interpretation",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Appendix B.8, Eq. (79-81)"
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA gradient interpretation: reduced KL for low-support high-reward samples (Appendix B.8)",
+      "type": "claim"
+    },
+    {
+      "content": "MARA is empirically effective for both forward and reverse KL regularization. Figure 5 shows that vanilla reverse/forward KL RL collapses to the on-support mode, while MARA with either KL yields equal high mass over all high-reward regions. This is consistent with theory: the augmented reward addresses the same underlying probability-ratio imbalance that causes mode collapse in both KL variants.",
+      "content_hash": "7a0eddd4aa0e77fae0d54966a91b3b70f63b20de7389f74d46f9798ca9d58b5c",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_20817::mara_works_fwd_kl",
+      "label": "mara_works_fwd_kl",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 5",
+        "prior": 0.85,
+        "prior_justification": "Figure 5 shows empirical results for both KL variants. The claim is directly supported by controlled experiments in the paper. Slight uncertainty: this is a single-paper result not yet independently replicated, and the theoretical justification for forward-KL effectiveness is more informal (the paper notes the augmentation addresses the same probability-ratio imbalance)."
+      },
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA works for both forward and reverse KL",
+      "type": "claim"
+    },
+    {
+      "content": "The MARA threshold $\\tau$ can be set in two ways: (1) If the reward range is known, $\\tau$ can be a fixed constant (e.g., $\\tau = 0.8$ for verifiable rewards). (2) If the reward range is unknown (e.g., non-verifiable tasks with reward models), $\\tau$ can be set per-batch as an upper percentile of sampled rewards.",
+      "content_hash": "b2413014db9fc7d598af21291960daf7e89d33c4a9fd0d8353f29fbd6270f297",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_20817::mara_threshold_setting",
+      "label": "mara_threshold_setting",
+      "module": "s5_mara",
+      "parameters": [],
+      "title": "MARA threshold setting strategy",
+      "type": "claim"
+    },
+    {
+      "content": "The 1-2 task (Section 6.1): a language model (Qwen2.5-3B) is trained to generate a uniformly random integer that is either 1 or 2. It receives reward 1.0 for correct output (producing '1' or '2' in XML format), and reward 0.0 otherwise. Since both '1' and '2' are equally correct, an optimal diverse policy should generate them with near-equal probability (~0.5 each). The base policy has higher likelihood for '1' than '2'. Training is evaluated across multiple $\\beta$ values and random seeds.",
+      "content_hash": "4f9dacb8e322a89035a93f7a22e7b09dae826c0033333e9bc3d6a0d40ce39446",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_20817::task_1_2_def",
+      "label": "task_1_2_def",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 6.1; Appendix C.2"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "1-2 task setup (Section 6.1)",
+      "type": "setting"
+    },
+    {
+      "content": "The creative question answering task (Section 6.2): Qwen3-1.7B is trained on 10k WildChat English prompts using Skywork-Reward-V2-Qwen3-4B as the reward model. MARA is used as a drop-in in an RLOO-style algorithm. Evaluation uses a held-out NoveltyBench test set with Skywork-Reward-Gemma-2-27B-v0.2. Metrics: In-dist. Reward (training RM on training set), Out-dist. Reward (eval RM on test set), Ngram EAD (expectation-adjusted distinct n-grams, n=1..5), Semantic Div (cosine distance in all-MiniLM-L6-v2 embedding space), Mean Distinct (number of distinct concepts per Zhang et al. 2025).",
+      "content_hash": "1190d8eab4d4764c33f8d8a3d663c05812760b43c19bfdd2c1976ec4eddc4d5e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_20817::creative_qa_def",
+      "label": "creative_qa_def",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 6.2; Appendix C.3"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Creative QA task setup (Section 6.2)",
+      "type": "setting"
+    },
+    {
+      "content": "The drug discovery task (Section 6.3): Chemical language models (CLMs) generate SMILES strings optimized for two reward functions: SYNTH (binding potency + synthesizability via any reactions) and SYNTH-ALL-AMIDE (binding potency + synthesizability via only amide coupling reactions). Each reward is a product of four components: docking score (QuickVina2-GPU against ClpP protein), QED (drug-likeness), HBD constraint (< 4 hydrogen-bond donors), and Syntheseus synthesizability. MARA is applied to REINVENT (state-of-the-art RL-based CLM algorithm). Evaluation metrics: Yield (unique molecules above reward threshold), OB100 (reward evaluations to generate 100 threshold-passing molecules), IntDiv1 (intra-set structural diversity), #Circles (sphere packing diversity). Budget: 10,000 reward function evaluations.",
+      "content_hash": "124318ca414c001a71c438dd8eb07cfa725686b5f95756449ecb30504f5c541f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_20817::drug_discovery_def",
+      "label": "drug_discovery_def",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Section 6.3; Appendix C.4"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Drug discovery task setup (Section 6.3)",
+      "type": "setting"
+    },
+    {
+      "content": "On the 1-2 task, vanilla KL-regularized RL (without MARA), across a range of $\\beta$ values and random seeds, all but one run collapse into generating only a single answer. Most collapse to generating '1', which has higher likelihood under the base policy. Rewards remain high (~1.0) since both answers are valid, confirming this is a diversity collapse, not a correctness failure.",
+      "content_hash": "77576d7ccef0d73f57b7537bcda225943e92f3c2d6a7dafec9feaef87a131b2f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_20817::exp_12_vanilla_collapses",
+      "label": "exp_12_vanilla_collapses",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 6a, Figure 10",
+        "prior": 0.95,
+        "prior_justification": "Direct experimental observation from Figure 6a: all but one vanilla RL run (across reverse-KL and forward-KL, multiple beta values) collapse to generating only '1'. The result is clear and unambiguous in the figure. Very high confidence."
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Vanilla RL collapses to single answer on 1-2 task",
+      "type": "claim"
+    },
+    {
+      "content": "MARA on the 1-2 task successfully preserves diversity: many runs learn to generate '1' and '2' with near-uniform probability (~0.5 each, measured by valid-answer entropy), while maintaining correctness (reward ~1.0). This holds for both reverse and forward KL regularization across all tested $\\beta$ values ($\\beta \\in \\{0.001, 0.01, 0.02, 0.03\\}$).",
+      "content_hash": "43c432cf3ac418603e034c528f4dbee6ffb6eb16f0f1daae58324518a9f77094",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2510_20817::exp_12_mara_diverse",
+      "label": "exp_12_mara_diverse",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 6a"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA preserves diversity on 1-2 task",
+      "type": "claim"
+    },
+    {
+      "content": "The Pareto front of model checkpoints (reward vs. valid-answer entropy) on the 1-2 task shows that MARA dominates vanilla RL for both reverse and forward KL regularization: MARA achieves higher entropy (diversity) at equal or better reward (quality). Vanilla RL runs cluster at low entropy even at high reward.",
+      "content_hash": "1c9b75e32dde949707b6fbf5c3cc9d0011cf2920ff3eaa75556e941d2fcd7ee4",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_20817::exp_12_pareto",
+      "label": "exp_12_pareto",
+      "metadata": {
+        "figure": "artifacts/2510.20817.pdf, Figure 6b"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA dominates vanilla RL on quality-diversity Pareto front (1-2 task)",
+      "type": "claim"
+    },
+    {
+      "content": "On the creative QA task (non-verifiable, reward model), MARA outperforms both GRPO and RLOO in terms of out-of-distribution reward and most diversity metrics. Specifically (Table 1): - MARA (fwd) achieves the highest Out-dist. Reward: $1.604 \\pm 0.113$ vs. RLOO: $1.280 \\pm 0.100$ and GRPO: $1.317 \\pm 0.102$. - MARA (fwd) achieves the highest Ngram EAD: $0.568 \\pm 0.012$ vs. RLOO: $0.514 \\pm 0.014$. - MARA (fwd) achieves the highest Mean Distinct: $4.62 \\pm 0.258$ vs. RLOO: $3.88 \\pm 0.243$. - Semantic Div is the one metric where the Base Model ($0.220$) outperforms all trained models; MARA (fwd) matches RLOO at $0.193$.",
+      "content_hash": "c1f06b5ae5a779032bc218d16cf0a1b13f8b99c021e92dad940a116edc870a52",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_20817::exp_creative_qa_table",
+      "label": "exp_creative_qa_table",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Table 1"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA outperforms GRPO and RLOO on creative QA (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "On the SYNTH drug discovery task at threshold 0.80 (Table 2a/5), MARA achieves higher Yield than REINVENT: $6834 \\pm 78$ vs. $6569 \\pm 186$ unique molecules (statistically significant, one-sided t-test, $p < 0.05$). MARA also achieves lower OB100 ($1015 \\pm 55$ vs. $1042 \\pm 66$, not statistically significant). IntDiv1 and #Circles are competitive (not significantly different).",
+      "content_hash": "33e6f14568a333c2c6d4b93b84aae5a5830c810c6734fec90a293f53df2eb5bb",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2510_20817::exp_drug_synth_yield",
+      "label": "exp_drug_synth_yield",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Table 2a"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA improves yield on SYNTH task at threshold 0.80",
+      "type": "claim"
+    },
+    {
+      "content": "On the SYNTH-ALL-AMIDE drug discovery task at threshold 0.85 (Table 2b/6), MARA achieves higher Yield than REINVENT: $1235 \\pm 130$ vs. $1098 \\pm 88$ unique molecules (statistically significant). MARA also achieves lower OB100 ($3943 \\pm 303$ vs. $4360 \\pm 257$, statistically significant). MARA also achieves slightly higher IntDiv1 ($0.733 \\pm 0.009$ vs. $0.721 \\pm 0.016$). This is the more challenging reward function (amide-only synthesis constraint).",
+      "content_hash": "adc4d395863fcb65ffa5db6450b468bcf73008c4f083eafbb12e1d40b2776cf9",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2510_20817::exp_drug_amide_yield",
+      "label": "exp_drug_amide_yield",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Table 2b"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA improves yield and efficiency on SYNTH-ALL-AMIDE task at threshold 0.85",
+      "type": "claim"
+    },
+    {
+      "content": "On drug discovery tasks, MARA does not explicitly optimize for global structural diversity (IntDiv1, #Circles), yet it is competitive with REINVENT on these metrics. MARA focuses on ensuring all high-reward molecules are found (local diversity over threshold), while global diversity (sub-structural coverage) is not degraded.",
+      "content_hash": "ac4baf252c71d073fdf0801ed11878513e3f8ea078671b74eaa574d9c2f4ca0a",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_20817::exp_drug_global_diversity",
+      "label": "exp_drug_global_diversity",
+      "metadata": {
+        "source": "artifacts/2510.20817.pdf, Tables 2, 5, 6"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "MARA maintains global diversity on drug discovery tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Vanilla RL collapse on the 1-2 task is due to insufficient exploration or optimization budget, not an intrinsic property of the RL objective. With enough training steps or better exploration, the policy would converge to a balanced distribution.",
+      "content_hash": "54f739f72c2ff4d49c5c63303febf29197eb9465e7006a52694675ea20476d59",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2510_20817::alt_exploration",
+      "label": "alt_exploration",
+      "metadata": {
+        "prior": 0.35,
+        "prior_justification": "The exploration-failure hypothesis is a plausible alternative a priori, but it is essentially falsified by the MARA experiment: MARA (which does NOT change exploration strategy) successfully prevents collapse. The residual prior reflects the possibility that MARA works partially through exploration-adjacent mechanisms (e.g., reward shaping may implicitly alter the optimization landscape in complex ways)."
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Alternative: collapse is due to insufficient exploration",
+      "type": "claim"
+    },
+    {
+      "content": "If the RL objective has a unimodal optimal solution (theory), then a method that directly constructs a multimodal target (MARA) should prevent collapse without any exploration changes.",
+      "content_hash": "1e48f7762da161f0596fc6a1a34de53b212cb45fc2e73768ffd18e5d34a9d853",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2510_20817::pred_objective",
+      "label": "pred_objective",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Conditional prediction: IF the RL objective has a unimodal optimal solution, THEN MARA (which directly constructs a multimodal target) should prevent collapse. This follows almost definitionally from MARA's design (Section 5, Appendix B.7). The high prior reflects near-logical entailment from theory."
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Prediction: MARA prevents collapse if objective is the cause",
+      "type": "claim"
+    },
+    {
+      "content": "If collapse is due to exploration failure, then MARA (which only changes reward magnitudes, not the exploration strategy) should NOT prevent collapse.",
+      "content_hash": "da50242d42f4609802757b9714fe4ff57d074b0423d9a20f6a8ef4d0875dde98",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2510_20817::pred_exploration",
+      "label": "pred_exploration",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "Conditional prediction: IF collapse is due to exploration failure, THEN MARA (which only modifies reward magnitudes) should NOT prevent collapse. The paper empirically falsifies this prediction: MARA does prevent collapse without changing exploration. Hence prior is low but not negligible (exploration arguments could be partially true in settings the paper did not test)."
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Alt prediction: exploration-only change needed to prevent collapse",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If the RL objective has a unimodal optimal solution (theory), then a method that directly constructs a multimodal target (MARA) should prevent collapse without any exploration changes., If collapse is due to exploration failure, then MARA (which only changes reward magnitudes, not the exploration strategy) should NOT prevent collapse., MARA on the 1-2 task successfully preserves diversity: many runs learn to generate '1' and '2' with near-uniform probability (~0.5 each, measured by valid-answer entropy), while maintaining correctness (reward ~1.0). This holds for both reverse and forward KL regularization across all tested $\\beta$ values ($\\beta \\in \\{0.001, 0.01, 0.02, 0.03\\}$).)",
+      "content_hash": "c2e507dbc06626e05338c44afc1a1eebdd644eb769d586da4fe96ada1bdec28c",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2510_20817::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::empirical_diversity_collapse,github:2510_20817::reverse_kl_optimal_dist)",
+      "content_hash": "f5fb0df50f4f200911f773fe747b7fc46382f5c68d963f47015748e0f94c78e4",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_adb960ef",
+      "label": "__implication_result_adb960ef",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::empirical_diversity_collapse,github:2510_20817::reverse_kl_optimal_dist)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d98a9d8b61c272b1",
+        "owning_strategy_type": "support",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::reverse_kl_gradient_is_kl_toward_target)",
+      "content_hash": "68ce6929f3d9b1a81257d8cab50a4e93c335741ab4415373332d0e13ad9c376d",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_277eb289",
+      "label": "__implication_result_277eb289",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::reverse_kl_gradient_is_kl_toward_target)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3c2b893f83542cb5",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::empirical_diversity_collapse,github:2510_20817::forward_kl_optimal_dist)",
+      "content_hash": "90cfae88e11eaed38c6e92fec9b1127454f9f77a578eab18ded5a4d702c2fccc",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_af45b6bf",
+      "label": "__implication_result_af45b6bf",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::empirical_diversity_collapse,github:2510_20817::forward_kl_optimal_dist)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_67f0a269deee465e",
+        "owning_strategy_type": "support",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::forward_kl_optimal_dist,github:2510_20817::forward_kl_gradient_not_forward_kl)",
+      "content_hash": "6fb1f8e339df55afe4e551094209ff295539a9c441e6dc8286039113eaa0994e",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_bf31621a",
+      "label": "__implication_result_bf31621a",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::forward_kl_optimal_dist,github:2510_20817::forward_kl_gradient_not_forward_kl)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_948b1a8946415783",
+        "owning_strategy_type": "support",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::forward_kl_optimal_dist)",
+      "content_hash": "7248fe56ce040c1a52ec9b40a6f5a93285e3947b3c28bb64893469e9edc74e1e",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_1c4fa528",
+      "label": "__conjunction_result_1c4fa528",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::forward_kl_optimal_dist)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4aaff90381c54aa4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_1c4fa528,github:2510_20817::both_kl_can_multimodal)",
+      "content_hash": "cba0b5292ed38ed13674e0c23316bcc95284f77972ff8bccc0b2a82deca3183e",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_f11c929d",
+      "label": "__implication_result_f11c929d",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_1c4fa528,github:2510_20817::both_kl_can_multimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4aaff90381c54aa4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::log_prob_ratio_formula)",
+      "content_hash": "f53969f6dff595716220f6199a2bae0ac2ba828c055b8276433a8a655c2a75d2",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_57ca8391",
+      "label": "__implication_result_57ca8391",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::log_prob_ratio_formula)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_502550dfe222bd5d",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::equal_support_exponential_gap)",
+      "content_hash": "4ab5c688b63ff515f5e00686ae0307ef478d9659e21dabd8eb30f62f54b0de94",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_a613ddf4",
+      "label": "__implication_result_a613ddf4",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::equal_support_exponential_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f2ffadb50f88439a",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::equal_reward_preserves_ratio)",
+      "content_hash": "011ed1f3e44ab820e40e10929352be3b45956cd8a8fc3cbf7def95daac30c12f",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_2bde54c3",
+      "label": "__implication_result_2bde54c3",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::equal_reward_preserves_ratio)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_96df6cdb83c6a645",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::beta_as_mode_knob)",
+      "content_hash": "419d1e463dc1c61d53a36143682ced7a4e76abdd55fd8d701b746a2af600038c",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_5a7d1411",
+      "label": "__implication_result_5a7d1411",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::log_prob_ratio_formula,github:2510_20817::beta_as_mode_knob)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_69014463ac7bce3a",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::beta_as_mode_knob,github:2510_20817::both_kl_can_multimodal)",
+      "content_hash": "ffdd0b1c3b73aef4c6cb5d985c90afb8e88e6ab400fbc3a15606fc6c397ac203",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_0338ad46",
+      "label": "__conjunction_result_0338ad46",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::beta_as_mode_knob,github:2510_20817::both_kl_can_multimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_258be316de610873",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_0338ad46,github:2510_20817::beta_prediction_figure2)",
+      "content_hash": "bdf55572fa87cfa57be1c1c56250e9036073c79e5c42486ebf5719048f63ba2f",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_0e4224f9",
+      "label": "__implication_result_0e4224f9",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_0338ad46,github:2510_20817::beta_prediction_figure2)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_258be316de610873",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::equal_support_exponential_gap,github:2510_20817::beta_as_mode_knob)",
+      "content_hash": "fa62c7b3fd71259441a04a8363d5f104fc054889f9defeaf9ee71b15431c1a1f",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_19b45635",
+      "label": "__conjunction_result_19b45635",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::equal_support_exponential_gap,github:2510_20817::beta_as_mode_knob)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5440c85a4f0289bb",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_19b45635,github:2510_20817::low_beta_unimodal)",
+      "content_hash": "b419119c850a8daf55fd503d53bcd96359e8282b5a829d9757ec9ef58b0e8b79",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_b2627b39",
+      "label": "__implication_result_b2627b39",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_19b45635,github:2510_20817::low_beta_unimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5440c85a4f0289bb",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::equal_reward_preserves_ratio,github:2510_20817::equal_reward_unimodal)",
+      "content_hash": "0f217c3aae5fd35ab66622da002c9253b2e84fb473cd3ac47db83246ca2f888d",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_1b27d4c2",
+      "label": "__implication_result_1b27d4c2",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::equal_reward_preserves_ratio,github:2510_20817::equal_reward_unimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_34c95b8f79e7f4d3",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::low_beta_unimodal,github:2510_20817::equal_reward_unimodal)",
+      "content_hash": "e68f32a644e7ccd5631e99e99cdf085e35cf01989ee7995790de3ac1159f8501",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_6e66072c",
+      "label": "__conjunction_result_6e66072c",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::low_beta_unimodal,github:2510_20817::equal_reward_unimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bc3dd2e9c83aa15c",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_6e66072c,github:2510_20817::typical_settings_unimodal)",
+      "content_hash": "3e51130cae8d36925760d368f336806848c5f3f6313adfdf67c0e923c193c550",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_941578a9",
+      "label": "__implication_result_941578a9",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_6e66072c,github:2510_20817::typical_settings_unimodal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bc3dd2e9c83aa15c",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::equal_support_exponential_gap,github:2510_20817::equal_reward_preserves_ratio,github:2510_20817::beta_as_mode_knob)",
+      "content_hash": "91c70553a381de5ffca08390818bce16fdd5c975cbd600ff5133c492e954436b",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_56071ba9",
+      "label": "__conjunction_result_56071ba9",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::equal_support_exponential_gap,github:2510_20817::equal_reward_preserves_ratio,github:2510_20817::beta_as_mode_knob)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ac5d6e511843a7f3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_56071ba9,github:2510_20817::kl_type_not_primary_driver)",
+      "content_hash": "9b136a695ee61a0de4742cb11709395614d9a42d78dd652ca0fc8f8a1e44d6be",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_515bd42a",
+      "label": "__implication_result_515bd42a",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_56071ba9,github:2510_20817::kl_type_not_primary_driver)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ac5d6e511843a7f3",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::mara_augmented_reward)",
+      "content_hash": "4271dc723267c0e394b3989bd7f62f888104a1aec1269f9bd080ca01c09d1ef7",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_d4156ac6",
+      "label": "__conjunction_result_d4156ac6",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::reverse_kl_optimal_dist,github:2510_20817::mara_augmented_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ade3bcb7d0dcb074",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_d4156ac6,github:2510_20817::mara_solution_is_uniform)",
+      "content_hash": "5fdcacacb3c9871919bf84d1fd2f28bccb0bd2fa2be6b6bbab65e0e45371d1df",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_0f8db443",
+      "label": "__implication_result_0f8db443",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_d4156ac6,github:2510_20817::mara_solution_is_uniform)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ade3bcb7d0dcb074",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::beta_as_mode_knob,github:2510_20817::mara_augmented_reward)",
+      "content_hash": "312b63bdf38c7b1e56b4560c3774ad849126a6f1ef1f708bee3e1a5c4a7fba4f",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_9a19745c",
+      "label": "__conjunction_result_9a19745c",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::beta_as_mode_knob,github:2510_20817::mara_augmented_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aa37d540ec0263f6",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_9a19745c,github:2510_20817::mara_anchor_choice)",
+      "content_hash": "745365872ce25637028ec8637e79b9ae7fb34babb15c72b05b1c8d403c8aaf17",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_53781606",
+      "label": "__implication_result_53781606",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_9a19745c,github:2510_20817::mara_anchor_choice)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aa37d540ec0263f6",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::mara_solution_is_uniform,github:2510_20817::mara_works_fwd_kl)",
+      "content_hash": "8408e3d3019d49c52df8e8f126e72e560a49da5a0e7869493650f08472fbde25",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_32411f0c",
+      "label": "__conjunction_result_32411f0c",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::mara_solution_is_uniform,github:2510_20817::mara_works_fwd_kl)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cd0a280b43f83c11",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_32411f0c,github:2510_20817::mara_exists)",
+      "content_hash": "46db32a2c8c665a9e5e80020ab137e5fe267cc5dade90547670bd1436df55be0",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_e44038ef",
+      "label": "__implication_result_e44038ef",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_32411f0c,github:2510_20817::mara_exists)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cd0a280b43f83c11",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::typical_settings_unimodal,github:2510_20817::exp_12_mara_diverse)",
+      "content_hash": "f3db93c40d9e518471efcef366be049ad581dc4c235d80fbbd9bc84e312b998d",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_196d84ba",
+      "label": "__implication_result_196d84ba",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::typical_settings_unimodal,github:2510_20817::exp_12_mara_diverse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_856a25f540dbe28e",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::alt_exploration,github:2510_20817::exp_12_mara_diverse)",
+      "content_hash": "068538110fd7c1ee53ba21aee8e4a5441e39437490d8d212cd5d5cef8a6a47ff",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_75d0787d",
+      "label": "__implication_result_75d0787d",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::alt_exploration,github:2510_20817::exp_12_mara_diverse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c7a57716eada2779",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_20817::pred_objective,github:2510_20817::exp_12_mara_diverse)",
+      "content_hash": "0cdb9d3cc7e89931a7a9f45ca280b0ae0c53f135017b429840d783f50673e8cc",
+      "exported": false,
+      "id": "github:2510_20817::__equivalence_result_3758dcba",
+      "label": "__equivalence_result_3758dcba",
+      "metadata": {
+        "canonical_name": "matches(github:2510_20817::pred_objective,github:2510_20817::exp_12_mara_diverse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_c76e962d47773db4",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_20817::pred_exploration,github:2510_20817::exp_12_mara_diverse)",
+      "content_hash": "2c27e6b52f4771a8fbf6d94c5355463d1897487ffb6f8a7f4f34b4f87dec7cd6",
+      "exported": false,
+      "id": "github:2510_20817::__equivalence_result_f4dce3c9",
+      "label": "__equivalence_result_f4dce3c9",
+      "metadata": {
+        "canonical_name": "matches(github:2510_20817::pred_exploration,github:2510_20817::exp_12_mara_diverse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_c76e962d47773db4",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::exp_12_mara_diverse,github:2510_20817::exp_12_vanilla_collapses)",
+      "content_hash": "d2976580c4d704a753652d9189997379ce3703441c4d978fb54b8d167596ed7c",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_9d6bcf65",
+      "label": "__conjunction_result_9d6bcf65",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::exp_12_mara_diverse,github:2510_20817::exp_12_vanilla_collapses)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0153afe4522184be",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_9d6bcf65,github:2510_20817::exp_12_pareto)",
+      "content_hash": "6a2087b4d5176f6b52fe108aeb8d588a7176270d935375f5abcb761ff4808b43",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_5fbc47dd",
+      "label": "__implication_result_5fbc47dd",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_9d6bcf65,github:2510_20817::exp_12_pareto)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0153afe4522184be",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_20817::mara_solution_is_uniform,github:2510_20817::mara_works_fwd_kl)",
+      "content_hash": "8408e3d3019d49c52df8e8f126e72e560a49da5a0e7869493650f08472fbde25",
+      "exported": false,
+      "id": "github:2510_20817::__conjunction_result_508a97f1",
+      "label": "__conjunction_result_508a97f1",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_20817::mara_solution_is_uniform,github:2510_20817::mara_works_fwd_kl)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_83b660662680ed4e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::__conjunction_result_508a97f1,github:2510_20817::exp_creative_qa_table)",
+      "content_hash": "9d040ce0ff4185af536a544731d12dc37b960499430516a90a3c566324370349",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_2c4bf21e",
+      "label": "__implication_result_2c4bf21e",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::__conjunction_result_508a97f1,github:2510_20817::exp_creative_qa_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_83b660662680ed4e",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::mara_solution_is_uniform,github:2510_20817::exp_drug_synth_yield)",
+      "content_hash": "f1929fba7f70a71e859d1c2871e14461442f9847c28a4500c9703b977b23c4c2",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_d57b4129",
+      "label": "__implication_result_d57b4129",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::mara_solution_is_uniform,github:2510_20817::exp_drug_synth_yield)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_945a5b5ecf1b1133",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::mara_solution_is_uniform,github:2510_20817::exp_drug_amide_yield)",
+      "content_hash": "043c062b28b623777e0ced00b8ff1cf533cedec5bf9c0b91bfad80d8ea298ac9",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_2875d70b",
+      "label": "__implication_result_2875d70b",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::mara_solution_is_uniform,github:2510_20817::exp_drug_amide_yield)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b828fb3aba636bcb",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_12_mara_diverse)",
+      "content_hash": "ecfdc85551321211ff693f20b5efd354d6349335469756333b8d566631629c0a",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_b04c937f",
+      "label": "__implication_result_b04c937f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_12_mara_diverse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_719f34e1d9292b8c",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_creative_qa_table)",
+      "content_hash": "0836252f3bbd7753697df011b684bdc4d92e6a247cf84f5c611ce80c4cb9b4af",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_64c54575",
+      "label": "__implication_result_64c54575",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_creative_qa_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8e2dabb3e32a25e5",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_drug_synth_yield)",
+      "content_hash": "571d6a66b51624228e6306293276e0866e7a876811565b9ecb2bf8642a0028d3",
+      "exported": false,
+      "id": "github:2510_20817::__implication_result_1d54e850",
+      "label": "__implication_result_1d54e850",
+      "metadata": {
+        "canonical_name": "implies(github:2510_20817::mara_exists,github:2510_20817::exp_drug_synth_yield)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6fea865419b45b55",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_optimal_distributions",
+    "s4_mode_coverage_analysis",
+    "s5_mara",
+    "s6_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: KL-Regularized RL and Diversity Collapse",
+    "s3_optimal_distributions": "Section 3: KL-Regularized Reward Maximization — Optimal Solution Distributions",
+    "s4_mode_coverage_analysis": "Section 4: Analysis of KL-Regularized Optimal Distribution — Mode Coverage",
+    "s5_mara": "Section 5: Directly Optimizing a Multimodal Target — the MARA Algorithm",
+    "s6_experiments": "Section 6: Empirical Validations"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2510_20817::comp_kl_intuitions",
+      "metadata": {
+        "reason": "The two claims partition the space of distribution family expressiveness: for restrictive families the classical intuitions hold, for flexible families they do not. In the RL setting with LLMs (flexible family), only the latter applies."
+      },
+      "operator": "complement",
+      "operator_id": "lco_40ec9cc836d6dbe8",
+      "scope": "local",
+      "variables": [
+        "github:2510_20817::vi_kl_intuition_holds_restrictive",
+        "github:2510_20817::vi_kl_intuition_fails_flexible"
+      ]
+    }
+  ],
+  "package_name": "2510_20817",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2510_20817::gateaux_variational_method",
+        "github:2510_20817::reverse_kl_obj_def",
+        "github:2510_20817::kl_rl_objective"
+      ],
+      "conclusion": "github:2510_20817::reverse_kl_optimal_dist",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_adb960ef",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::empirical_diversity_collapse",
+              "github:2510_20817::reverse_kl_optimal_dist"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::empirical_diversity_collapse"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "To understand why @empirical_diversity_collapse occurs, the paper derives the optimal distribution of reverse-KL regularized RL via functional optimization (Appendix B.1, Eq. 14-18): write the reverse-KL objective $J_\\beta(\\pi_\\theta)$ as $-(\\beta+\\eta)D_{KL}(\\pi_\\theta \\| G_{\\beta,\\eta}) + \\text{const}$, which shows $J_\\beta$ is maximized when $D_{KL}(\\pi_\\theta \\| G_\\beta) = 0$. The Gibbs form $G_\\beta(y) \\propto \\pi_{\\text{ref}}(y) \\exp(R(y)/\\beta)$ is the unique maximizer (Appendix B.1). This derivation is algebraically exact."
+        }
+      ],
+      "strategy_id": "lcs_d98a9d8b61c272b1",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::gateaux_variational_method"
+      ],
+      "conclusion": "github:2510_20817::reverse_kl_gradient_is_kl_toward_target",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_277eb289",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::reverse_kl_optimal_dist",
+              "github:2510_20817::reverse_kl_gradient_is_kl_toward_target"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::reverse_kl_optimal_dist"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From Appendix B.1, the identity $-\\frac{1}{\\beta} J_\\beta(\\pi_\\theta) = D_{KL}(\\pi_\\theta \\| G_\\beta) - \\log \\zeta$ follows algebraically from the definition of $G_\\beta$ (@reverse_kl_optimal_dist). Taking gradients: $\\nabla_\\theta(-\\frac{1}{\\beta} J_\\beta) = \\nabla_\\theta D_{KL}(\\pi_\\theta \\| G_\\beta)$. Therefore $\\nabla_\\theta J_\\beta = -\\beta \\nabla_\\theta D_{KL}(\\pi_\\theta \\| G_\\beta)$, showing gradient ascent on $J_\\beta$ is exactly reverse-KL minimization toward $G_\\beta$."
+        }
+      ],
+      "strategy_id": "lcs_3c2b893f83542cb5",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_20817::gateaux_variational_method",
+        "github:2510_20817::forward_kl_obj_def",
+        "github:2510_20817::kl_rl_objective"
+      ],
+      "conclusion": "github:2510_20817::forward_kl_optimal_dist",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_af45b6bf",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::empirical_diversity_collapse",
+              "github:2510_20817::forward_kl_optimal_dist"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::empirical_diversity_collapse"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "To explain @empirical_diversity_collapse under forward-KL regularization, the optimal distribution $G_{\\text{fwd}}$ is derived via the Gateaux derivative of the Lagrangian (Appendix B.3, Eq. 33-43) using @gateaux_variational_method. Setting the functional derivative to zero and solving, subject to $\\pi(y) > 0$ on $\\text{supp}(\\pi_{\\text{ref}})$, yields $\\pi^*(y) = \\beta \\pi_{\\text{ref}}(y) / (\\Lambda - R(y))$ where $\\Lambda > R_{\\max}$. The uniqueness of $\\Lambda$ follows from the continuity and monotonicity of $Z(\\Lambda) = \\int \\beta\\pi_{\\text{ref}}(y)/(\\Lambda - R(y)) dy$ as $\\Lambda$ varies from $R_{\\max}$ to $\\infty$. This derivation is exact (Appendix B.3 proof) given finite rewards and on-support maximizers."
+        }
+      ],
+      "strategy_id": "lcs_67f0a269deee465e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::gateaux_variational_method",
+        "github:2510_20817::forward_kl_obj_def"
+      ],
+      "conclusion": "github:2510_20817::forward_kl_gradient_not_forward_kl",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_bf31621a",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::forward_kl_optimal_dist",
+              "github:2510_20817::forward_kl_gradient_not_forward_kl"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::forward_kl_optimal_dist"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Given @forward_kl_optimal_dist, proof by contradiction (Appendix B.4): Suppose there exists a target $h$ independent of $\\pi_\\theta$ such that the gradient of the forward-KL objective is proportional to the gradient of $D_{KL}(h\\|\\pi_\\theta)$. The functional derivative of $J_{\\text{fwd}}$ is $R(y) + \\beta \\pi_{\\text{ref}}(y)/\\pi(y) + \\lambda$ (Eq. 40, 50). The functional derivative of $D_{KL}(h\\|\\pi)$ is $\\lambda' - h(y)/\\pi(y)$ (Eq. 57). Setting these proportional and solving for $h(y)$ yields $h(y) = (\\lambda' - \\alpha\\lambda - \\alpha R(y))\\pi(y) - \\alpha\\beta\\pi_{\\text{ref}}(y)$, which depends on $\\pi(y)$ for non-constant $R$. Hence no $h$ independent of $\\pi_\\theta$ exists."
+        }
+      ],
+      "strategy_id": "lcs_948b1a8946415783",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::multimodal_def"
+      ],
+      "conclusion": "github:2510_20817::both_kl_can_multimodal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_1c4fa528",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::reverse_kl_optimal_dist",
+              "github:2510_20817::forward_kl_optimal_dist"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_f11c929d",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_1c4fa528",
+              "github:2510_20817::both_kl_can_multimodal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2510_20817::reverse_kl_optimal_dist",
+        "github:2510_20817::forward_kl_optimal_dist"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From the closed-form expressions for $G_\\beta$ (@reverse_kl_optimal_dist) and $G_{\\text{fwd}}$ (@forward_kl_optimal_dist), at sufficiently large $\\beta$ the regularization term dominates, forcing the policy to remain close to $\\pi_{\\text{ref}}$ everywhere, including at all high-reward modes. Figure 2 of the paper empirically demonstrates this: given a bimodal reward function, both KL variants produce multimodal policies at higher $\\beta$ values. The specific crossover $\\beta$ is predicted by the probability ratio analysis (Remark 4.4)."
+        }
+      ],
+      "strategy_id": "lcs_4aaff90381c54aa4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::prob_ratio_tool"
+      ],
+      "conclusion": "github:2510_20817::log_prob_ratio_formula",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_57ca8391",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::reverse_kl_optimal_dist",
+              "github:2510_20817::log_prob_ratio_formula"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::reverse_kl_optimal_dist"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Direct algebraic derivation from $G_\\beta$'s closed form (@reverse_kl_optimal_dist): $G_\\beta(y_1)/G_\\beta(y_2) = [\\pi_{\\text{ref}}(y_1)\\exp(R(y_1)/\\beta)/\\zeta] / [\\pi_{\\text{ref}}(y_2)\\exp(R(y_2)/\\beta)/\\zeta]$. The normalizing constants $\\zeta$ cancel exactly. Taking logs yields Eq. 7 directly (Appendix B.6, Eq. 65-67). No approximation involved."
+        }
+      ],
+      "strategy_id": "lcs_502550dfe222bd5d",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_20817::equal_support_setting"
+      ],
+      "conclusion": "github:2510_20817::equal_support_exponential_gap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_a613ddf4",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::log_prob_ratio_formula",
+              "github:2510_20817::equal_support_exponential_gap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::log_prob_ratio_formula"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Substituting $\\pi_{\\text{ref}}(y_1) = \\pi_{\\text{ref}}(y_2)$ into @log_prob_ratio_formula: the log ratio term $\\log(\\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)) = 0$, leaving $\\log(G_\\beta(y_1)/G_\\beta(y_2)) = (R(y_1)-R(y_2))/\\beta$. Exponentiating gives $G_\\beta(y_1)/G_\\beta(y_2) = \\exp(\\Delta R/\\beta)$. Plugging in $\\Delta R = 0.1$ and $\\beta = 10^{-3}$: $\\exp(0.1/0.001) = \\exp(100) \\approx 2.6 \\times 10^{43}$. This is a deterministic algebraic calculation from @equal_support_setting."
+        }
+      ],
+      "strategy_id": "lcs_f2ffadb50f88439a",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_20817::equal_reward_setting"
+      ],
+      "conclusion": "github:2510_20817::equal_reward_preserves_ratio",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_2bde54c3",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::log_prob_ratio_formula",
+              "github:2510_20817::equal_reward_preserves_ratio"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::log_prob_ratio_formula"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Substituting $R(y_1) = R(y_2)$ into @log_prob_ratio_formula: the reward difference term $(R(y_1)-R(y_2))/\\beta = 0$, leaving $\\log(G_\\beta(y_1)/G_\\beta(y_2)) = \\log(\\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2))$. Exponentiating: $G_\\beta(y_1)/G_\\beta(y_2) = \\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)$. This is $\\beta$-independent by @equal_reward_setting. The analogous result holds for forward-KL (@forward_kl_optimal_dist) — the ratio $G_{\\text{fwd}}(y_1)/G_{\\text{fwd}}(y_2) = \\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)$ when rewards are equal (Appendix B.3 footnote 1)."
+        }
+      ],
+      "strategy_id": "lcs_96df6cdb83c6a645",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2510_20817::beta_as_mode_knob",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_5a7d1411",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::log_prob_ratio_formula",
+              "github:2510_20817::beta_as_mode_knob"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::log_prob_ratio_formula"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From @log_prob_ratio_formula, setting $G_\\beta(y_1)/G_\\beta(y_2) = 1$ (equal probability in solution distribution): $0 = \\log(\\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)) + (R(y_1) - R(y_2))/\\beta$. Solving for $\\beta$: $\\beta^* = (R(y_2) - R(y_1))/(\\log \\pi_{\\text{ref}}(y_1) - \\log \\pi_{\\text{ref}}(y_2))$. This gives the unique $\\beta$ at which the two modes are equally probable. Below this $\\beta$, the reward difference dominates (high-reward mode wins); above it, the reference probability difference dominates (high-support mode wins). This is exactly Eq. 10 of the paper, derived from @log_prob_ratio_formula."
+        }
+      ],
+      "strategy_id": "lcs_69014463ac7bce3a",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2510_20817::beta_prediction_figure2",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_0338ad46",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::beta_as_mode_knob",
+              "github:2510_20817::both_kl_can_multimodal"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_0e4224f9",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_0338ad46",
+              "github:2510_20817::beta_prediction_figure2"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2510_20817::beta_as_mode_knob",
+        "github:2510_20817::both_kl_can_multimodal"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Applying the analytical formula from @beta_as_mode_knob to the specific Figure 2 setting: $\\beta^* = (1 - 0.75) / (-4.05 + 5.95) = 0.25 / 1.90 \\approx 0.132$. The Figure 2 empirical data (@both_kl_can_multimodal) shows the mode preference switches between $\\beta = 0.10$ and $\\beta = 0.15$, which brackets the predicted $\\beta^* \\approx 0.132$. The match is quantitatively close, supporting the theory."
+        }
+      ],
+      "strategy_id": "lcs_258be316de610873",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::low_beta_unimodal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_19b45635",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::equal_support_exponential_gap",
+              "github:2510_20817::beta_as_mode_knob"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_b2627b39",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_19b45635",
+              "github:2510_20817::low_beta_unimodal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::equal_support_exponential_gap",
+        "github:2510_20817::beta_as_mode_knob"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From @equal_support_exponential_gap: at $\\beta = 10^{-3}$, a reward gap of only 0.1 creates a $2.6 \\times 10^{43}$ probability ratio in the solution. Even with mild reward variation across correct answers (e.g., length differences in rewards), the solution is effectively unimodal. From @beta_as_mode_knob: the crossover $\\beta$ needed to equalize two modes depends on the log ratio of their reference probabilities divided by their reward gap. For typical LLM settings where reward differences are small (0.01-0.1) and reference probability differences are moderate (log ratio ~1-5), the crossover $\\beta$ is also small — but still much larger than the $\\beta = 10^{-3}$ commonly used in practice. Hence, in practice, the solution is unimodal."
+        }
+      ],
+      "strategy_id": "lcs_5440c85a4f0289bb",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_20817::equal_reward_setting"
+      ],
+      "conclusion": "github:2510_20817::equal_reward_unimodal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_1b27d4c2",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::equal_reward_preserves_ratio",
+              "github:2510_20817::equal_reward_unimodal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::equal_reward_preserves_ratio"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Direct consequence of @equal_reward_preserves_ratio: if $\\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2) = 15$ and $R(y_1) = R(y_2)$, then $G_\\beta(y_1)/G_\\beta(y_2) = 15$ regardless of $\\beta$. No choice of $\\beta$ can change this ratio. Figure 4 illustrates this empirically: the final trained policy maintains exactly the 15x gap between a high-support and low-support equally-correct answer."
+        }
+      ],
+      "strategy_id": "lcs_34c95b8f79e7f4d3",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2510_20817::typical_settings_unimodal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_6e66072c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::low_beta_unimodal",
+              "github:2510_20817::equal_reward_unimodal"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_941578a9",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_6e66072c",
+              "github:2510_20817::typical_settings_unimodal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::low_beta_unimodal",
+        "github:2510_20817::equal_reward_unimodal"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Two complementary failure modes (@low_beta_unimodal and @equal_reward_unimodal) together cover the most common practical RL settings: (1) When rewards vary (even slightly), the exponential amplification at small $\\beta$ collapses the distribution onto the single maximum-reward mode. (2) When rewards are equal (e.g., binary 0/1 correctness), the reference probability imbalance is exactly preserved, so the high-support mode always dominates. These two cases jointly imply that standard RL settings produce unimodal optimal solutions, and diversity collapse is by-construction, not due to optimization failure."
+        }
+      ],
+      "strategy_id": "lcs_bc3dd2e9c83aa15c",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2510_20817::kl_type_not_primary_driver",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_56071ba9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::equal_support_exponential_gap",
+              "github:2510_20817::equal_reward_preserves_ratio",
+              "github:2510_20817::beta_as_mode_knob"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_515bd42a",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_56071ba9",
+              "github:2510_20817::kl_type_not_primary_driver"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92
+      },
+      "premises": [
+        "github:2510_20817::equal_support_exponential_gap",
+        "github:2510_20817::equal_reward_preserves_ratio",
+        "github:2510_20817::beta_as_mode_knob"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "All three core results (@equal_support_exponential_gap, @equal_reward_preserves_ratio, @beta_as_mode_knob) are derived from @log_prob_ratio_formula which applies to the reverse-KL case, and the analogous results hold for forward-KL (footnote 1 in the paper). The key factors determining mode coverage are: (1) the reward difference $\\Delta R$ (Remark 4.2), (2) the reference probability ratio $\\pi_{\\text{ref}}(y_1)/\\pi_{\\text{ref}}(y_2)$ (Remark 4.3), (3) the regularization strength $\\beta$ (Remark 4.4). None of these depend on the KL variant, confirming @kl_type_not_primary_driver."
+        }
+      ],
+      "strategy_id": "lcs_ac5d6e511843a7f3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::mara_algorithm_def"
+      ],
+      "conclusion": "github:2510_20817::mara_solution_is_uniform",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_d4156ac6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::reverse_kl_optimal_dist",
+              "github:2510_20817::mara_augmented_reward"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_0f8db443",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_d4156ac6",
+              "github:2510_20817::mara_solution_is_uniform"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::reverse_kl_optimal_dist",
+        "github:2510_20817::mara_augmented_reward"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From @reverse_kl_optimal_dist: the solution distribution with augmented reward $\\bar{R}$ is $\\bar{G}_\\beta(y) \\propto \\pi_{\\text{ref}}(y)\\exp(\\bar{R}(y)/\\beta)$. Substituting @mara_augmented_reward for the case $R(y) \\geq \\tau$: $\\log \\pi_{\\text{ref}}(y) + \\bar{R}(y)/\\beta = \\log \\pi_{\\text{ref}}(y) + R(z)/\\beta + \\log \\pi_{\\text{ref}}(z) - \\log \\pi_{\\text{ref}}(y) = R(z)/\\beta + \\log \\pi_{\\text{ref}}(z)$. The $\\pi_{\\text{ref}}(y)$ terms cancel exactly, giving a constant $\\pi_{\\text{ref}}(z)\\exp(R(z)/\\beta)$ for ALL $y$ with $R(y) \\geq \\tau$. This is a deterministic algebraic derivation (Appendix B.7, Eq. 72-76)."
+        }
+      ],
+      "strategy_id": "lcs_ade3bcb7d0dcb074",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2510_20817::mara_anchor_choice",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_9a19745c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::beta_as_mode_knob",
+              "github:2510_20817::mara_augmented_reward"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_53781606",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_9a19745c",
+              "github:2510_20817::mara_anchor_choice"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99
+      },
+      "premises": [
+        "github:2510_20817::beta_as_mode_knob",
+        "github:2510_20817::mara_augmented_reward"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "From @beta_as_mode_knob (Remark 4.4, Eq. 10): two samples have equal probability in the solution distribution when $R(y_2) - R(y_1) = \\beta(\\log \\pi_{\\text{ref}}(y_1) - \\log \\pi_{\\text{ref}}(y_2))$. Rearranging: $R(y_2) + \\beta \\log \\pi_{\\text{ref}}(z) - \\beta \\log \\pi_{\\text{ref}}(y_2) = R(y_1) + \\text{const}$. This is exactly the form of @mara_augmented_reward with $z = y_1$ as anchor. Choosing $z$ as the maximum $\\pi_{\\text{ref}}$ sample among high-reward samples ensures that the uniform density level $\\pi_{\\text{ref}}(z)\\exp(R(z)/\\beta)$ is maximized per @mara_solution_is_uniform."
+        }
+      ],
+      "strategy_id": "lcs_aa37d540ec0263f6",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_20817::multimodal_def",
+        "github:2510_20817::mara_algorithm_def"
+      ],
+      "conclusion": "github:2510_20817::mara_exists",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_32411f0c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::mara_solution_is_uniform",
+              "github:2510_20817::mara_works_fwd_kl"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_e44038ef",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_32411f0c",
+              "github:2510_20817::mara_exists"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93
+      },
+      "premises": [
+        "github:2510_20817::mara_solution_is_uniform",
+        "github:2510_20817::mara_works_fwd_kl"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "MARA achieves a diverse (multimodal) solution by construction: @mara_solution_is_uniform proves the augmented-reward solution places equal probability on all high-reward samples, satisfying the multimodality definition. @mara_works_fwd_kl confirms empirically that this works in practice with both KL variants. The algorithm requires only 2 lines of pseudocode change (@mara_algorithm_def), making it a practical drop-in replacement."
+        }
+      ],
+      "strategy_id": "lcs_cd0a280b43f83c11",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::task_1_2_def"
+      ],
+      "conclusion": "github:2510_20817::exp_12_mara_diverse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_196d84ba",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::typical_settings_unimodal",
+              "github:2510_20817::exp_12_mara_diverse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88
+      },
+      "premises": [
+        "github:2510_20817::typical_settings_unimodal"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The 1-2 task uses equal rewards for correct answers (1.0 for both '1' and '2'). From @equal_reward_unimodal (a component of @typical_settings_unimodal): when rewards are equal, the optimal solution preserves the reference probability ratio. Since '1' has higher base probability than '2', the objective is the CAUSE of collapse. If the objective is the cause, then MARA (which directly targets a multimodal objective) should successfully prevent collapse — as confirmed by @exp_12_mara_diverse."
+        }
+      ],
+      "strategy_id": "lcs_856a25f540dbe28e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::task_1_2_def"
+      ],
+      "conclusion": "github:2510_20817::exp_12_mara_diverse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_75d0787d",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::alt_exploration",
+              "github:2510_20817::exp_12_mara_diverse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35
+      },
+      "premises": [
+        "github:2510_20817::alt_exploration"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "If collapse were due to insufficient exploration, MARA (which only changes reward magnitudes) should NOT be able to prevent collapse without additional exploration mechanisms. However, MARA does prevent collapse (@exp_12_mara_diverse), which is INCONSISTENT with the exploration-failure hypothesis — lowering the prior on this alternative."
+        }
+      ],
+      "strategy_id": "lcs_c7a57716eada2779",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__equivalence_result_3758dcba",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_20817::pred_objective",
+              "github:2510_20817::exp_12_mara_diverse"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__equivalence_result_f4dce3c9",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_20817::pred_exploration",
+              "github:2510_20817::exp_12_mara_diverse"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__equivalence_result_f4dce3c9",
+              "github:2510_20817::__equivalence_result_3758dcba"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.87
+      },
+      "premises": [
+        "github:2510_20817::pred_objective",
+        "github:2510_20817::pred_exploration",
+        "github:2510_20817::exp_12_mara_diverse"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "MARA succeeds empirically: Figure 6a shows MARA runs preserve diversity (high entropy) while achieving high reward, for both KL variants. The objective-based prediction @pred_objective is confirmed: only reward magnitude changes were made (no exploration changes), yet collapse is prevented. The exploration prediction @pred_exploration is falsified: MARA prevents collapse without addressing exploration."
+        }
+      ],
+      "strategy_id": "lcs_c76e962d47773db4",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2510_20817::_anon_000",
+      "premises": [
+        "github:2510_20817::typical_settings_unimodal",
+        "github:2510_20817::alt_exploration",
+        "github:2510_20817::pred_objective",
+        "github:2510_20817::pred_exploration",
+        "github:2510_20817::exp_12_mara_diverse"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Both the unimodal-objective hypothesis and the exploration-failure hypothesis attempt to explain the same observation: vanilla RL collapse on the 1-2 task. The MARA experiment serves as a natural discriminator: MARA only changes reward magnitudes (not exploration), so if it prevents collapse, the objective is the cause."
+        }
+      ],
+      "strategy_id": "lcs_43626579bb773499",
+      "sub_strategies": [
+        "lcs_856a25f540dbe28e",
+        "lcs_c7a57716eada2779",
+        "lcs_c76e962d47773db4"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2510_20817::exp_12_pareto",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_9d6bcf65",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::exp_12_mara_diverse",
+              "github:2510_20817::exp_12_vanilla_collapses"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_5fbc47dd",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_9d6bcf65",
+              "github:2510_20817::exp_12_pareto"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2510_20817::exp_12_mara_diverse",
+        "github:2510_20817::exp_12_vanilla_collapses"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The Pareto front aggregates checkpoints across training. From @exp_12_mara_diverse: MARA maintains both high entropy and high reward simultaneously. From @exp_12_vanilla_collapses: vanilla RL achieves high reward but low entropy. Therefore on the reward-entropy Pareto front, MARA checkpoints are higher entropy at all reward levels, and MARA dominates."
+        }
+      ],
+      "strategy_id": "lcs_0153afe4522184be",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::creative_qa_def",
+        "github:2510_20817::mara_threshold_setting"
+      ],
+      "conclusion": "github:2510_20817::exp_creative_qa_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__conjunction_result_508a97f1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_20817::mara_solution_is_uniform",
+              "github:2510_20817::mara_works_fwd_kl"
+            ]
+          },
+          {
+            "conclusion": "github:2510_20817::__implication_result_2c4bf21e",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::__conjunction_result_508a97f1",
+              "github:2510_20817::exp_creative_qa_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8
+      },
+      "premises": [
+        "github:2510_20817::mara_solution_is_uniform",
+        "github:2510_20817::mara_works_fwd_kl"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The creative QA task is non-verifiable: rewards come from a reward model, not ground-truth. MARA adapts by setting $\\tau$ per batch as an upper percentile of sampled rewards (@mara_threshold_setting). From @mara_solution_is_uniform: the MARA target distribution places equal mass on all above-threshold responses, encouraging the model to find diverse high-quality responses. From @mara_works_fwd_kl: MARA works for both KL variants. Table 1 shows MARA (fwd) achieves the best out-of-distribution reward and diversity."
+        }
+      ],
+      "strategy_id": "lcs_83b660662680ed4e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::drug_discovery_def",
+        "github:2510_20817::mara_algorithm_def"
+      ],
+      "conclusion": "github:2510_20817::exp_drug_synth_yield",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_d57b4129",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::mara_solution_is_uniform",
+              "github:2510_20817::exp_drug_synth_yield"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8
+      },
+      "premises": [
+        "github:2510_20817::mara_solution_is_uniform"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "In drug discovery, CLMs are evaluated on the number of UNIQUE high-reward molecules found (Yield) within a fixed budget. From @mara_solution_is_uniform: MARA's target distribution places uniform probability on all above-threshold molecules, directly encouraging exploration of the high-reward space. This matches the SYNTH task result: MARA improves Yield ($6834$ vs $6569$, +4%) at threshold 0.80."
+        }
+      ],
+      "strategy_id": "lcs_945a5b5ecf1b1133",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_20817::drug_discovery_def",
+        "github:2510_20817::mara_algorithm_def"
+      ],
+      "conclusion": "github:2510_20817::exp_drug_amide_yield",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_2875d70b",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::mara_solution_is_uniform",
+              "github:2510_20817::exp_drug_amide_yield"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82
+      },
+      "premises": [
+        "github:2510_20817::mara_solution_is_uniform"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The SYNTH-ALL-AMIDE task is more constrained (only amide reactions allowed), leading to a harder search problem with fewer high-reward molecules. From @mara_solution_is_uniform: MARA's uniform target distribution incentivizes exploring the amide-synthesis-compatible space rather than exploiting a narrow learned mode. At threshold 0.85 — the harder threshold where diversity matters most — MARA shows larger improvements: Yield +12.5% and OB100 -9.6%."
+        }
+      ],
+      "strategy_id": "lcs_b828fb3aba636bcb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::exp_12_mara_diverse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_b04c937f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::mara_exists",
+              "github:2510_20817::exp_12_mara_diverse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "MARA achieves diversity on the verifiable 1-2 LLM task"
+      },
+      "premises": [
+        "github:2510_20817::mara_exists"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_719f34e1d9292b8c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::exp_creative_qa_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_64c54575",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::mara_exists",
+              "github:2510_20817::exp_creative_qa_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "MARA improves quality and diversity on the non-verifiable creative QA LLM task"
+      },
+      "premises": [
+        "github:2510_20817::mara_exists"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8e2dabb3e32a25e5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::exp_drug_synth_yield",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_20817::__implication_result_1d54e850",
+            "operator": "implication",
+            "variables": [
+              "github:2510_20817::mara_exists",
+              "github:2510_20817::exp_drug_synth_yield"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "MARA improves drug discovery optimization in chemical language models — a completely different domain"
+      },
+      "premises": [
+        "github:2510_20817::mara_exists"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6fea865419b45b55",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_20817::mara_exists",
+      "metadata": {
+        "reason": "The 1-2 task and creative QA task are independent: different models, tasks, and reward types"
+      },
+      "premises": [
+        "github:2510_20817::exp_12_mara_diverse",
+        "github:2510_20817::exp_creative_qa_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_38f055119f752e4d",
+      "sub_strategies": [
+        "lcs_719f34e1d9292b8c",
+        "lcs_8e2dabb3e32a25e5"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2510_20817::mara_exists",
+      "metadata": {
+        "reason": "The drug discovery experiments use a different model architecture (CLM) and domain from LLM experiments"
+      },
+      "premises": [
+        "github:2510_20817::exp_12_mara_diverse",
+        "github:2510_20817::exp_creative_qa_table",
+        "github:2510_20817::exp_drug_synth_yield"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9202aeafa31f0c2d",
+      "sub_strategies": [
+        "lcs_38f055119f752e4d",
+        "lcs_6fea865419b45b55"
+      ],
+      "type": "induction"
+    }
+  ]
+}
