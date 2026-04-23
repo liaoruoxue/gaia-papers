@@ -1,0 +1,2404 @@
+{
+  "ir_hash": "sha256:9e5c3c73d1dfa226fee5e722c894d80b3acdaa0c7d99c9f4b65cc5611086f158",
+  "knowledges": [
+    {
+      "content": "Reinforcement learning (RL) post-training refers to fine-tuning a pretrained language model using RL algorithms (e.g., PPO, GRPO, Expert Iteration) with a reward signal derived from correctness of generated outputs. In mathematical reasoning, the reward is typically binary: +1 if the final answer is correct, 0 otherwise.",
+      "content_hash": "1ba9181578cfa044668697a6164387a2a8ccbe37cf690fadd428fbf6f87d51ab",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2504_07912::rl_posttraining_definition",
+      "label": "rl_posttraining_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RL post-training definition",
+      "type": "setting"
+    },
+    {
+      "content": "A pretraining mixture is a weighted combination of multiple distinct data sources, each with its own statistical properties, formatting conventions, and solution styles. For mathematical reasoning, typical sources include document corpora (e.g., FineMath, Proof-Pile) and instruction datasets (e.g., TinyGSM, OpenMathInstruct).",
+      "content_hash": "3c7777d951325b3e414b62c89ad5e249f234fa0bf8a559af2c00712d9a0e6b1c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2504_07912::pretraining_mixture_definition",
+      "label": "pretraining_mixture_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Pretraining mixture definition",
+      "type": "setting"
+    },
+    {
+      "content": "KL regularization in RL fine-tuning penalises the policy for diverging from a reference policy (typically the pretrained model) by adding $-\\beta \\cdot D_{\\text{KL}}(\\pi \\| \\pi_{\\text{ref}})$ to the RL objective, where $\\beta > 0$ is the KL coefficient. This keeps the fine-tuned policy close to the pretrained distribution.",
+      "content_hash": "3058f9f9a60fb0f0b11a6d785439805e2f47bc014eb06c73add23e6b6208440f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2504_07912::kl_regularization_definition",
+      "label": "kl_regularization_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "KL regularization definition",
+      "type": "setting"
+    },
+    {
+      "content": "This paper trains OLMo decoder-only transformer models entirely from scratch on open, documented datasets. Scales tested: 150 million (M) parameters (width 768, depth 12 layers) and 1 billion (B) parameters (width 2048, depth 16 layers), both using SwiGLU activations and Rotary Positional Encoding (RoPE). All pretraining data sources and mixing ratios are explicitly recorded, eliminating hidden pretraining confounds present when starting from externally released checkpoints.",
+      "content_hash": "5423e13e0f1ff37810d4086903978e351ad5573c83493d90d2a16a3864b84eb5",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2504_07912::controlled_pretraining_setup",
+      "label": "controlled_pretraining_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Controlled from-scratch pretraining setup",
+      "type": "setting"
+    },
+    {
+      "content": "Does RL post-training introduce genuinely new capabilities, or does it primarily amplify and refine behaviors already present in the pretrained model?",
+      "content_hash": "54813eb19aa2bc014e850a57cea1597db7c24fc34ea52b1ecb9ef1334fe18e74",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2504_07912::q_rl_mechanism",
+      "label": "q_rl_mechanism",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "How does the effect of RL post-training on distributional format and performance vary with model scale (e.g., 150M vs. 1B parameters)?",
+      "content_hash": "7a5da72ff9929d7b63e71ecc7c5d2d22a9b08bd7f6d9324860026d25629babe3",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2504_07912::q_scale_dependence",
+      "label": "q_scale_dependence",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "How sensitive are RL post-training outcomes to the choice of RL algorithm (PPO vs. GRPO vs. Expert Iteration)?",
+      "content_hash": "c7176e4c3cb45d82e89599f1b23b31683f4b3db8fee3903baaf739cc15aa0519",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2504_07912::q_algorithm_sensitivity",
+      "label": "q_algorithm_sensitivity",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "Most existing studies of RL post-training for reasoning (e.g., DeepSeek-R1 [@DeepSeek2025]) begin from large models with proprietary or undocumented pretraining data, making it impossible to isolate RL's contribution from the unknown pretraining initialization. This opacity confounds attribution of observed capability gains.",
+      "content_hash": "437b8b98167b0ba6dc8f11614b1b9e70ad12dd232de4c0fb66249487741b8b4e",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2504_07912::opacity_problem",
+      "label": "opacity_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DeepSeek2025"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The opacity of pretraining data in released LLMs (e.g., Llama, Mistral) is a widely documented fact in the NLP research community.",
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Opacity problem in existing RL studies",
+      "type": "claim"
+    },
+    {
+      "content": "Training models from scratch on fully documented, open datasets enables a controlled study of RL post-training: any behavioral change observed after RL can be attributed to the RL algorithm rather than to unknown pretraining factors. This is the methodological contribution of the present work [@Zhao2025].",
+      "content_hash": "0ba5a0155223b185415c1ec3b32c858f9d601a282401ae76c96c23a67746946d",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2504_07912::controlled_study_value",
+      "label": "controlled_study_value",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ],
+            "referenced_claims": [
+              "controlled_pretraining_setup",
+              "controlled_study_value",
+              "opacity_problem"
+            ]
+          }
+        },
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Value of controlled from-scratch study",
+      "type": "claim"
+    },
+    {
+      "content": "RL post-training acts as an 'echo chamber': it amplifies distributional modes already present in pretraining data rather than introducing new reasoning strategies or knowledge. The model's post-RL behavior reflects what was already latent in pretraining, but concentrated and refined [@Zhao2025].",
+      "content_hash": "478fac56e76c6f6baf058a178eba9e9b3250b22c8b9412b6a483ab2cd3000d6c",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2504_07912::echo_chamber_hypothesis",
+      "label": "echo_chamber_hypothesis",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ]
+          }
+        },
+        "prior": 0.6,
+        "prior_justification": "Moderate prior: the hypothesis is plausible and motivated by the theoretical model, but prior to seeing the empirical evidence it is not certain. Posterior will be updated via abduction.",
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Echo chamber hypothesis (central claim)",
+      "type": "claim"
+    },
+    {
+      "content": "OLMo is an open decoder-only transformer. Two scales are used: 150M parameters (hidden width 768, 12 layers) and 1B parameters (hidden width 2048, 16 layers). Both use SwiGLU activations and Rotary Positional Encoding (RoPE).",
+      "content_hash": "b33e3543b3568b0767b675af9d5d1e5b334963830a8c9c127d586b2dacaf797f",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2504_07912::olmo_architecture",
+      "label": "olmo_architecture",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "OLMo model architecture",
+      "type": "setting"
+    },
+    {
+      "content": "Document corpora used for pretraining: (1) FineMath-3+, a filtered web corpus of high-quality mathematical content; (2) Proof-Pile-2 (Algebraic-Stack subset), a corpus of formal and informal mathematical proofs. These provide broad mathematical background without a specific solution format.",
+      "content_hash": "c4590d9cc57ba8adeffe568208e7ea4aa0d9c6df76c92bff7fa370836f989c6f",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2504_07912::pretraining_corpus_definition",
+      "label": "pretraining_corpus_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Document corpora (FineMath, Proof-Pile)",
+      "type": "setting"
+    },
+    {
+      "content": "TinyGSM is an instruction dataset of 12.3 million math problem-solution pairs generated by GPT-3.5. Solutions are predominantly in Python code format (code-style solutions). Each solution includes a Python function that computes the answer.",
+      "content_hash": "343c72d3facf00420b08346fdd9e1842e8161d9178dc00878b192addb4b37712",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2504_07912::tinygsm_definition",
+      "label": "tinygsm_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "TinyGSM dataset definition",
+      "type": "setting"
+    },
+    {
+      "content": "OpenMathInstruct1 (OMI1) is an instruction dataset of 1.8 million math problem-solution pairs generated by Mixtral-8x7B. Solutions are predominantly in Python code format, similar to TinyGSM but at smaller scale and different generator model.",
+      "content_hash": "7283e5e687c082110b1f2f82449513680e8a81438c251bb909be522c1770805f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2504_07912::openmathinstruct1_definition",
+      "label": "openmathinstruct1_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "OpenMathInstruct1 dataset definition",
+      "type": "setting"
+    },
+    {
+      "content": "OpenMathInstruct2 (OMI2) is an instruction dataset of 14 million math problem-solution pairs generated by Llama3.1-405B. Solutions are in natural language (chain-of-thought) format rather than Python code.",
+      "content_hash": "e56ee23674328f632b40d91f6090a8c5a58e1e0eb9ee3870a7f08cfea79785b0",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2504_07912::openmathinstruct2_definition",
+      "label": "openmathinstruct2_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "OpenMathInstruct2 dataset definition",
+      "type": "setting"
+    },
+    {
+      "content": "Three RL post-training algorithms are evaluated: (1) PPO (Proximal Policy Optimization): clips the policy gradient ratio to stabilise training. (2) GRPO (Group Relative Policy Optimization): uses group-relative baseline for reward normalisation. (3) Expert Iteration (EI): iteratively filters and fine-tunes on correct generations. All use a binary reward: +1 for correct final answer, 0 otherwise. RL fine-tuning is performed on the GSM8K training set (grade-school math word problems).",
+      "content_hash": "3e7e260c31dda015da68736a2c1774054360379c942c11b8a53689d21ca49180",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2504_07912::rl_algorithms_definition",
+      "label": "rl_algorithms_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "RL algorithms and reward definition",
+      "type": "setting"
+    },
+    {
+      "content": "Three evaluation metrics are reported: (1) Pass@1: accuracy of a single greedy decoding. (2) Pass@64: probability that at least one of 64 sampled generations is correct (measures diversity + capability). (3) Majority@64: accuracy when taking the most-frequent answer across 64 samples (measures consensus reliability). Benchmarks: GSM8K (easy), MATH-500 (medium), AIME (hard).",
+      "content_hash": "e344df057eef049a8b27609ce89131980de128d7f9044eb934b36bf8c86b2750",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2504_07912::evaluation_metrics_definition",
+      "label": "evaluation_metrics_definition",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Evaluation metrics and benchmarks",
+      "type": "setting"
+    },
+    {
+      "content": "Format tracking identifies the pretraining source of each generated response by detecting distinctive structural markers: TinyGSM/OMI1 responses contain Python `def solution():` function headers; OMI2 responses use natural language reasoning paragraphs. This allows monitoring the fraction of outputs attributable to each pretraining distribution throughout RL training.",
+      "content_hash": "d3536d4f8fe295b2c020acbcc5827f981ee6d793f81ca506911dbae3e684d17c",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2504_07912::format_tracking_method",
+      "label": "format_tracking_method",
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Format tracking methodology",
+      "type": "setting"
+    },
+    {
+      "content": "The three instruction datasets (TinyGSM, OpenMathInstruct1, OpenMathInstruct2) have sufficiently distinctive output formats—code vs. natural language—that individual generated responses can be reliably attributed to one source distribution. This distinctiveness enables format-proportion tracking across RL training.",
+      "content_hash": "659ecd37344650509da7fed957223736dfca55d8a1637415cdc6408261bd94cf",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2504_07912::format_distinctiveness",
+      "label": "format_distinctiveness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "code_vs_nl_gap",
+              "format_distinctiveness",
+              "format_tracking_method"
+            ]
+          }
+        },
+        "source_section": "Section 2 / Methods"
+      },
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Format distinctiveness enables tracking",
+      "type": "claim"
+    },
+    {
+      "content": "The structural gap between Python code format (syntactically rigid function templates, machine-checkable) and natural language prose format (stylistically variable paragraphs) is large enough that automated classification of individual responses by source distribution is reliable. TinyGSM and OMI1 responses contain `def solution():` headers; OMI2 responses use paragraph-style reasoning.",
+      "content_hash": "e4115db4bdc5ecbcbfdd43b1ed1c7c400df43d267dfde78746c6d884c30d61ef",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2504_07912::code_vs_nl_gap",
+      "label": "code_vs_nl_gap",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "The structural difference between Python function syntax (`def solution():`) and natural language prose is objective and machine-checkable.",
+        "source_section": "Section 2 / Methods"
+      },
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Code vs. natural-language structural gap enables reliable classification",
+      "type": "claim"
+    },
+    {
+      "content": "By pretraining multiple model variants on different mixtures of the same documented datasets (document corpora + varying combinations of TinyGSM, OMI1, OMI2) and then applying identical RL fine-tuning, the study creates controlled comparisons where the only variable is pretraining data composition.",
+      "content_hash": "1f8eaf647dd36978d7826c35c71b23d6c149bd2a7a2e86578fe78ae4296e97c3",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2504_07912::controlled_ablation_design",
+      "label": "controlled_ablation_design",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controlled_pretraining_setup",
+              "format_distinctiveness"
+            ]
+          }
+        },
+        "source_section": "Section 2 / Methods"
+      },
+      "module": "s2_setup",
+      "parameters": [],
+      "title": "Controlled ablation design",
+      "type": "claim"
+    },
+    {
+      "content": "Mixture experiment: models are pretrained on combinations such as TinyGSM + 4×OpenMathInstruct1, TinyGSM + OpenMathInstruct2, etc. After pretraining, PPO fine-tuning is applied on GSM8K training questions for multiple epochs. Format proportions are tracked at each checkpoint.",
+      "content_hash": "ffc68f008e9844c859687c30d75c08ba3e6d27feac5bf3d947103634d4eea169",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2504_07912::mixture_experiment_setup",
+      "label": "mixture_experiment_setup",
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Mixture experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "In models pretrained on mixtures of TinyGSM, OpenMathInstruct1 (OMI1), and OpenMathInstruct2 (OMI2), RL fine-tuning causes the proportion of outputs matching a single pretraining distribution to rise from roughly 33% (uniform mixture baseline) to over 80% within the first training epoch. Outputs matching the other distributions drop correspondingly to near zero.",
+      "content_hash": "89cb26277219335f51949ca2e4747d21534fbf450d03d6e57fac455387c57abb",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2504_07912::obs_format_collapse_epoch1",
+      "label": "obs_format_collapse_epoch1",
+      "metadata": {
+        "caption": "Format proportion trajectories during RL training showing rapid convergence.",
+        "figure": "artifacts/2504.07912.pdf, Figure 2",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "echo_chamber_hypothesis",
+              "obs_format_collapse_epoch1"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Format collapse to single distribution within epoch 1",
+      "type": "claim"
+    },
+    {
+      "content": "The rapid format collapse to a single distribution (observed within epoch 1 of RL) coincides temporally with the largest improvements in pass@1 accuracy on GSM8K. After collapse, accuracy improvements slow substantially.",
+      "content_hash": "bef36a8bfecfd70d6db469c2dd0e038fc074653a3a25e48f2d14081f08e0c3dd",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2504_07912::obs_collapse_coincides_with_accuracy",
+      "label": "obs_collapse_coincides_with_accuracy",
+      "metadata": {
+        "figure": "artifacts/2504.07912.pdf, Figure 2",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_collapse_coincides_with_accuracy"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Format tracking curves and accuracy curves plotted jointly show temporal coincidence within epoch 1; both measurements from same checkpoints.",
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Format collapse coincides with peak accuracy gain",
+      "type": "claim"
+    },
+    {
+      "content": "After RL fine-tuning, pass@64 accuracy (probability that at least one of 64 samples is correct) either stays flat or declines relative to the pretrained base model, despite pass@1 (single greedy decoding accuracy) improving. This indicates reduced generation diversity.",
+      "content_hash": "5540bba0b44274d2f1dfb4df1663206ecfccce153ebebe68b4cab7f632b32510",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2504_07912::obs_diversity_decline",
+      "label": "obs_diversity_decline",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Pass@64 is a standard metric computed from 64 sampled generations; decline relative to base model is directly measurable and reported.",
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Diversity (pass@64) declines post-RL despite pass@1 gains",
+      "type": "claim"
+    },
+    {
+      "content": "For 150M parameter models pretrained on mixtures including TinyGSM, OMI1, and OMI2, RL fine-tuning consistently amplifies TinyGSM-format (Python code) outputs. The 150M model converges to code-style responses in over 80% of generations regardless of the relative mixture proportion of each dataset.",
+      "content_hash": "b1e5ed81d8a4c073c4f8093bbd792581a60c34b6a302a7e0a345b52101b3d0e2",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2504_07912::obs_tinygsm_dominates_150m",
+      "label": "obs_tinygsm_dominates_150m",
+      "metadata": {
+        "figure": "artifacts/2504.07912.pdf, Figure 3",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_tinygsm_dominates_150m"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly observed format proportion trajectory in controlled experiment; code traces confirm >80% TinyGSM format for 150M models.",
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "150M models converge to TinyGSM (code) format",
+      "type": "claim"
+    },
+    {
+      "content": "For 1B parameter models pretrained on the same dataset mixtures, RL fine-tuning amplifies OpenMathInstruct2-format (natural language chain-of-thought) outputs. The 1B model converges to natural-language responses in over 80% of generations, contrasting directly with the 150M model's preference for code.",
+      "content_hash": "ae3bf9a816a434c978bce4794950e844b5069e5b2c41be2af05865a90a69e101",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2504_07912::obs_omi2_dominates_1b",
+      "label": "obs_omi2_dominates_1b",
+      "metadata": {
+        "figure": "artifacts/2504.07912.pdf, Figure 3",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_omi2_dominates_1b"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly observed format proportion trajectory in controlled experiment; code traces confirm >80% OMI2 (NL) format for 1B models.",
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "1B models converge to OMI2 (natural language) format",
+      "type": "claim"
+    },
+    {
+      "content": "Under the assumption that the pretrained reference policy decomposes as a mixture of $k$ distinct sub-policies $\\pi_{\\text{ref}} = \\sum_{i=1}^{k} w_i \\pi_i$ (each $\\pi_i$ corresponding to a pretraining data source with mixture weight $w_i$), RL optimisation with KL regularisation (coefficient $\\beta$) reweights the mixture: the post-RL policy concentrates mass on the $\\pi_i$ with highest expected reward, with reweighting proportional to $\\exp(R_i / \\beta)$ where $R_i$ is the average reward under sub-policy $i$. This causes exponential amplification of the best-performing format.",
+      "content_hash": "53ddcce5c4c8e8407e49e111776a70d8df8a8679a635f99cb51f7144df934379",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2504_07912::theoretical_mixture_model",
+      "label": "theoretical_mixture_model",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "The mixture-of-policies model is mathematically well-motivated under KL-regularised RL, but assumes exact decomposability of the reference policy — a simplification that may not hold precisely in practice.",
+        "source_section": "Section 3 / Theory"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Theoretical mixture model for RL amplification",
+      "type": "claim"
+    },
+    {
+      "content": "RL post-training on mathematical reasoning problems amplifies a single pretraining data distribution mode while suppressing others, regardless of the initial mixture composition. The selection mechanism preferentially amplifies the highest-reward format present in pretraining, consistent with an exponential reweighting of mixture components by their average reward [@Zhao2025].",
+      "content_hash": "accd8bffa56b03c2382b6e074519acc2daa1baa65b8d3ffe0be0934f28339a65",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2504_07912::rl_amplifies_single_mode",
+      "label": "rl_amplifies_single_mode",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ],
+            "referenced_claims": [
+              "obs_collapse_coincides_with_accuracy",
+              "obs_format_collapse_epoch1",
+              "theoretical_mixture_model"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "RL amplifies single pretraining mode (core empirical finding)",
+      "type": "claim"
+    },
+    {
+      "content": "Model scale is the primary determinant of which pretraining distribution RL amplifies: 150M models amplify code-style (TinyGSM) outputs; 1B models amplify natural-language (OpenMathInstruct2) outputs. This scale-dependent preference holds across different pretraining mixture compositions tested [@Zhao2025].",
+      "content_hash": "ba79a6dadecb4f85a3e48e7a52ef16b8efc2d29c3f94c4ec29b4b6d9ad4bb084",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2504_07912::scale_determines_format_preference",
+      "label": "scale_determines_format_preference",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ],
+            "referenced_claims": [
+              "obs_omi2_dominates_1b",
+              "obs_tinygsm_dominates_150m"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Scale determines which format RL amplifies",
+      "type": "claim"
+    },
+    {
+      "content": "RL post-training simultaneously improves both pass@1 accuracy and pass@64 diversity across all experimental conditions tested.",
+      "content_hash": "ccc2d2c0421656cdaa5be4e9f438f188055a43e3ed487f6056a091f686e8ff8d",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2504_07912::hypothetical_rl_improves_both",
+      "label": "hypothetical_rl_improves_both",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "A priori unlikely: RL format collapse reduces generation diversity (pass@64). Strong theoretical and empirical reasons to expect an accuracy-diversity tradeoff. This hypothetical is included only as the contradiction partner for obs_diversity_decline."
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Hypothetical: RL improves both pass@1 and diversity",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2504_07912::not_both_diversity_and_pass1_gain",
+      "label": "not_both_diversity_and_pass1_gain",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "RL post-training introduces genuinely new mathematical reasoning capabilities not present in pretraining (alternative explanation: pure capability gain, not format amplification).",
+      "content_hash": "9d97afeb7eb122b1d63f0017aff864bcecfad55e26ddb37efe6e581db11e6007",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2504_07912::alt_pure_capability",
+      "label": "alt_pure_capability",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "The pure capability hypothesis has weak prior support: RL post-training without external data cannot logically add new knowledge; it can only reweight the existing distribution. Set low as straw-man alternative."
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Alternative: RL introduces new capabilities",
+      "type": "claim"
+    },
+    {
+      "content": "Echo chamber hypothesis predicts: format proportions collapse to a single pretraining distribution mode, coinciding with accuracy gains, and pass@64 diversity declines.",
+      "content_hash": "4cd8be265e8fe955f07da6c1c74513061c38cf7043aff544d5e89bd30164bc01",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2504_07912::pred_echo_chamber",
+      "label": "pred_echo_chamber",
+      "metadata": {
+        "prior": 0.6,
+        "prior_justification": "Prediction follows from the echo chamber hypothesis (same prior)."
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Echo chamber prediction",
+      "type": "claim"
+    },
+    {
+      "content": "Pure capability hypothesis predicts: format diversity is maintained or increases post-RL (new strategies discovered), and pass@64 improves alongside pass@1.",
+      "content_hash": "2eb81208698e6a7162104991e24bc6f473433b1cad89ea4a82b56b11114523a3",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2504_07912::pred_pure_capability",
+      "label": "pred_pure_capability",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "Prediction follows from the pure capability hypothesis (same prior)."
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "title": "Pure capability prediction",
+      "type": "claim"
+    },
+    {
+      "content": "compare(Echo chamber hypothesis predicts: format proportions collapse to a single pretraining distribution mode, coinciding with accuracy gains, and pass@64 diversity declines., Pure capability hypothesis predicts: format diversity is maintained or increases post-RL (new strategies discovered), and pass@64 improves alongside pass@1., In models pretrained on mixtures of TinyGSM, OpenMathInstruct1 (OMI1), and OpenMathInstruct2 (OMI2), RL fine-tuning causes the proportion of outputs matching a single pretraining distribution to rise from roughly 33% (uniform mixture baseline) to over 80% within the first training epoch. Outputs matching the other distributions drop correspondingly to near zero.)",
+      "content_hash": "4db12ea7fd00f95ada7a071cddae32c913325d4bb410ac334db399ed33f9b2e4",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2504_07912::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_pure_capability",
+              "echo_chamber_hypothesis",
+              "obs_diversity_decline",
+              "obs_format_collapse_epoch1"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_distribution_collapse",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "RL fine-tuning is applied using GSM8K training split questions (~7,473 problems). GSM8K consists of grade-school math word problems requiring multi-step arithmetic reasoning. The binary reward function grants +1 for a final answer matching the ground truth, 0 otherwise.",
+      "content_hash": "5c82731fe0c440f05060ab9708d19b64a58f44edd5a0892d9d39f4415150fcd7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2504_07912::gsm8k_finetuning_setup",
+      "label": "gsm8k_finetuning_setup",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "GSM8K fine-tuning setup",
+      "type": "setting"
+    },
+    {
+      "content": "MATH-500 is a benchmark of 500 competition mathematics problems at difficulty levels 1–5 (AMC/AIME style). It is substantially harder than GSM8K and tests whether improvements on easy problems transfer to harder reasoning tasks.",
+      "content_hash": "559d02fd04cf4c74f762ac1376e813aa9f54b6489f9625e5fce46f738a0f6fb7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2504_07912::math500_benchmark",
+      "label": "math500_benchmark",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "MATH-500 benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "AIME (American Invitational Mathematics Examination) problems represent the highest difficulty level tested. Only a small fraction of state-of-the-art models can solve any AIME problem. Used to test upper-end transfer.",
+      "content_hash": "2ef69535f967eda322919fb44b4ce135564078646420e2c65f5b125ce273dc6f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2504_07912::aime_benchmark",
+      "label": "aime_benchmark",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "AIME benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "After PPO fine-tuning on the GSM8K training set, 1B models show pass@1 accuracy improvements of 5–15 percentage points depending on pretraining composition, while Majority@64 improves by approximately 5 percentage points. Pass@64 accuracy either stays flat or declines relative to the base model.",
+      "content_hash": "0d51c0b752fd7d810f420d10e43b9bdbc5d4e3c114acca17b555c0d3c4932bb2",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2504_07912::obs_gsm8k_pass1_improvement",
+      "label": "obs_gsm8k_pass1_improvement",
+      "metadata": {
+        "figure": "artifacts/2504.07912.pdf, Figure 2",
+        "prior": 0.9,
+        "prior_justification": "GSM8K pass@1 is the primary training benchmark metric; 5-15pp improvement is a direct measurement from the same evaluation pipeline.",
+        "source_section": "Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "GSM8K pass@1 improvement after PPO (1B models)",
+      "type": "claim"
+    },
+    {
+      "content": "For 1B models, RL fine-tuning on GSM8K transfers to MATH-500 performance. Key results by pretraining mixture:\n\n| Pretraining mixture | Pre-RL pass@1 | Post-RL pass@1 | Gain |\n|---------------------|---------------|----------------|------|\n| TinyGSM + 4×OMI1    | 8.60%         | 12.60%         | +4.0% |\n| TinyGSM + OMI2      | 33.40%        | 43.60%         | +10.2% |\n| OMI2 only           | ~30%          | ~40%           | ~+10% |\n\nModels with OpenMathInstruct2 in pretraining show the largest absolute gains (up to ~10 percentage points).",
+      "content_hash": "65a804e7668960db4407782ed1c92fb4dd635159c86c24fc98c653988d9ba992",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2504_07912::obs_math500_transfer_1b",
+      "label": "obs_math500_transfer_1b",
+      "metadata": {
+        "figure": "artifacts/2504.07912.pdf, Table 1 / Figure 4",
+        "prior": 0.9,
+        "prior_justification": "MATH-500 results tabulated in paper with specific percentages; 8.60%→12.60% and 33.40%→43.60% are verifiable from the paper's tables.",
+        "source_section": "Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "MATH-500 transfer results for 1B models",
+      "type": "claim"
+    },
+    {
+      "content": "On AIME problems, RL fine-tuning on GSM8K produces limited pass@1 and Majority@64 improvements for most model configurations. Pass@64 improvements are observed across most configurations, suggesting some benefit from increased diversity at inference time despite the low pass@1 gains.",
+      "content_hash": "19b47da1dfd71e67d01f88721422435624929bca32be295ac8e278351087e7ba",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2504_07912::obs_aime_limited_transfer",
+      "label": "obs_aime_limited_transfer",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "AIME is known to be extremely hard; limited pass@1 transfer is expected and reported consistently across configurations.",
+        "source_section": "Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "AIME transfer is limited (pass@1 and Majority@64)",
+      "type": "claim"
+    },
+    {
+      "content": "Among all pretraining mixtures tested, configurations that include OpenMathInstruct2 (natural language chain-of-thought at 14M pairs) in pretraining consistently produce the highest post-RL MATH-500 pass@1 performance for 1B models, outperforming code-only pretraining mixtures (TinyGSM + OMI1) by approximately 30 percentage points (43.60% vs. 12.60% on MATH-500 pass@1 after RL).",
+      "content_hash": "f1aea9b1fa78bf84503c95f799487db41ba89f96b0d0da3a79b8ac327ff22085",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2504_07912::obs_omi2_pretrain_best_transfer",
+      "label": "obs_omi2_pretrain_best_transfer",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "30pp gap between OMI2 and code-only mixtures on MATH-500 post-RL is a large, robust effect across all reported configurations.",
+        "source_section": "Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "OMI2 pretraining yields best transfer after RL (1B models)",
+      "type": "claim"
+    },
+    {
+      "content": "Among the three RL algorithms tested (PPO, GRPO, Expert Iteration), PPO is the most stable: it consistently improves pass@1 without performance collapses. GRPO is less stable, occasionally exhibiting reward collapse during training. Expert Iteration underperforms both PPO and GRPO on final pass@1 accuracy.",
+      "content_hash": "775403454d8c2df46585dc5567c80ad45b826a2d5bd028dd63b9ceda89e3d4aa",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2504_07912::obs_ppo_most_stable",
+      "label": "obs_ppo_most_stable",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "PPO stability vs. GRPO instability is qualitatively reported; Expert Iteration underperformance is quantitatively shown.",
+        "source_section": "Section 4.3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "PPO most stable; GRPO unstable; Expert Iteration underperforms",
+      "type": "claim"
+    },
+    {
+      "content": "Despite differences in stability and final accuracy, all three RL algorithms (PPO, GRPO, Expert Iteration) produce the same qualitative format collapse: they converge to amplifying the same dominant pretraining distribution mode (determined by model scale) within the same early training epochs.",
+      "content_hash": "b319f47597135f07016fe8791a0284f55b3d557916614be60563275d171c5e27",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2504_07912::obs_algorithm_agreement_on_format",
+      "label": "obs_algorithm_agreement_on_format",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Format tracking applied to GRPO and EI checkpoints shows same collapse pattern; algorithm-invariance is a strong empirical observation.",
+        "source_section": "Section 4.3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "All algorithms produce same format collapse pattern",
+      "type": "claim"
+    },
+    {
+      "content": "When models are pretrained on a single instruction dataset (no mixture), RL fine-tuning still produces meaningful improvements. The mechanism shifts from format selection to within-distribution refinement: RL standardises stylistic choices within the dominant format (e.g., consistent docstring formatting conventions in code-style outputs, consistent problem-solving structure in prose-style outputs).",
+      "content_hash": "a1262375255efc0a2c0ae3c878b0e367e2a4d090767a5c6d571c1872ad3c2482",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2504_07912::obs_within_distribution_refinement",
+      "label": "obs_within_distribution_refinement",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Single-dataset ablation is a clean comparison; within-distribution improvements are smaller but consistently observed.",
+        "source_section": "Section 4.2"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RL refines within-distribution style when no mixture is present",
+      "type": "claim"
+    },
+    {
+      "content": "Varying the KL regularisation coefficient $\\beta$ between 0.001 and 0.01 affects format diversity during training: higher $\\beta = 0.01$ preserves format diversity longer (slower collapse) while achieving comparable final pass@1 accuracy. Removing KL regularisation entirely ($\\beta = 0$) performs similarly to standard KL settings in terms of final pass@1.",
+      "content_hash": "4f093a06e777bd79b1ce3b0810bfea65a86602c2ab362b3cd394d8735ac37efe",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2504_07912::obs_kl_coefficient_effect",
+      "label": "obs_kl_coefficient_effect",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "KL hyperparameter sweep is a controlled experiment; the effect on collapse speed vs. final accuracy is directly measurable.",
+        "source_section": "Section 4.4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "KL coefficient affects collapse speed but not final accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "RL fine-tuning on easy math problems (GSM8K training set) leads to meaningful performance improvements on harder benchmarks (MATH-500), demonstrating positive transfer from simple to complex reasoning. The transfer magnitude depends strongly on pretraining composition: natural-language pretraining (OMI2) enables larger transfers than code-only pretraining (TinyGSM + OMI1) for 1B models.",
+      "content_hash": "3d91e7d1c7f36da0027b9c61890538bf82864f9b4f31654448103e60b4134d1f",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2504_07912::rl_improves_easy_transfers_hard",
+      "label": "rl_improves_easy_transfers_hard",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_gsm8k_pass1_improvement",
+              "obs_math500_transfer_1b",
+              "obs_omi2_pretrain_best_transfer",
+              "scale_determines_format_preference"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RL on easy problems transfers to harder reasoning (scale and format dependent)",
+      "type": "claim"
+    },
+    {
+      "content": "The format collapse phenomenon (RL amplifying a single pretraining distribution mode) is robust across RL algorithm choice: PPO, GRPO, and Expert Iteration all exhibit qualitatively identical format convergence, suggesting format collapse is a property of the pretraining-RL interaction, not of any specific RL algorithm [@Zhao2025].",
+      "content_hash": "579d006deaedbc99151c5b4570410d31d64c4260777a6c6c37175af1666b25d2",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2504_07912::algorithm_invariant_collapse",
+      "label": "algorithm_invariant_collapse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ],
+            "referenced_claims": [
+              "obs_algorithm_agreement_on_format",
+              "obs_ppo_most_stable"
+            ]
+          }
+        },
+        "source_section": "Section 4.3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Format collapse is algorithm-invariant",
+      "type": "claim"
+    },
+    {
+      "content": "Across all experimental configurations (different pretraining mixtures, model scales, and RL algorithms), RL post-training consistently amplifies a specific pretraining distribution mode rather than introducing novel behaviors. This is a universal property of RL post-training under binary reward on mathematical reasoning.",
+      "content_hash": "f2070b1c38dfa33471ab173268c219d94fcdd8a2fefe826e464e9cb97e0ca366",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2504_07912::law_rl_amplifies_pretraining",
+      "label": "law_rl_amplifies_pretraining",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_collapse_coincides_with_accuracy",
+              "obs_omi2_dominates_1b",
+              "obs_tinygsm_dominates_150m"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Universal law: RL amplifies pretraining modes (all configs)",
+      "type": "claim"
+    },
+    {
+      "content": "Pretraining data composition — the relative proportion of different data sources in the training mixture — is a design variable that practitioners can control. Post-RL performance depends on which format RL selects, which in turn depends on which formats are present and their relative performance at pretraining time.",
+      "content_hash": "0912e02a50e9b135b0f61e96e4521b9bb4ff70b841906e8004b591b717375b26",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2504_07912::pretraining_composition_lever",
+      "label": "pretraining_composition_lever",
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Pretraining composition as a design lever",
+      "type": "setting"
+    },
+    {
+      "content": "Pretraining data composition deserves scrutiny comparable to RL algorithm choice when developing mathematical reasoning models. Because RL amplifies the highest-reward pretraining distribution, the post-RL performance ceiling is largely determined by which formats were included in pretraining and how well they perform at pretraining time.",
+      "content_hash": "75c91587bb41f2c2b8aeab970076232b505e0a0e066f1ee2145100d3a15687dc",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2504_07912::implication_pretrain_as_important_as_rl",
+      "label": "implication_pretrain_as_important_as_rl",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "algorithm_invariant_collapse",
+              "obs_omi2_pretrain_best_transfer",
+              "rl_amplifies_single_mode"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Pretraining composition is as important as RL algorithm choice",
+      "type": "claim"
+    },
+    {
+      "content": "Optimal pretraining mixture composition is model-scale-dependent: smaller models (150M) benefit more from code-style datasets (TinyGSM) because RL selects code as their dominant format; larger models (1B) benefit more from natural-language datasets (OMI2) because RL selects NL reasoning as their dominant format. A single universal mixture is unlikely to be optimal across scales.",
+      "content_hash": "77217755219cb21f4fadbb57c81f0e127ec6a472dbba686f146db8709e003ace",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2504_07912::implication_scale_specific_mixtures",
+      "label": "implication_scale_specific_mixtures",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_omi2_pretrain_best_transfer",
+              "scale_determines_format_preference"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Optimal pretraining mixture is scale-dependent",
+      "type": "claim"
+    },
+    {
+      "content": "RL post-training creates an inherent tradeoff between greedy accuracy (pass@1) and generation diversity (pass@64). Practitioners who prioritise diverse reasoning strategies or ensemble-based inference (majority voting, best-of-N) may not benefit from standard RL fine-tuning, which systematically reduces output diversity.",
+      "content_hash": "0fb265f137cc081ab32b2485cb1670b35008591ecfb16e3e533f888b73f525a0",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2504_07912::implication_diversity_tradeoff",
+      "label": "implication_diversity_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_diversity_decline",
+              "obs_kl_coefficient_effect"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "RL creates accuracy-diversity tradeoff for practitioners",
+      "type": "claim"
+    },
+    {
+      "content": "Within-distribution stylistic refinement (RL standardising formatting and style within a single format, observed in single-dataset pretraining experiments) is a secondary mechanism of RL post-training improvement, separate from and smaller in effect than the primary mechanism of cross-format selection in mixture pretraining.",
+      "content_hash": "6e500758eb884b86d1b7acf13d73ec34bb7583b618f5a5921cf2ee92ca9d933a",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2504_07912::within_distribution_refinement_is_secondary",
+      "label": "within_distribution_refinement_is_secondary",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_within_distribution_refinement",
+              "rl_amplifies_single_mode"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Within-distribution refinement is secondary to format selection",
+      "type": "claim"
+    },
+    {
+      "content": "opposite_truth(A, B)",
+      "content_hash": "faf7a1f4b55e7d7efd70f095476d9d55c2e2feae0488c157754bb3cb5bc32772",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2504_07912::one_of_selection_or_refinement",
+      "label": "one_of_selection_or_refinement",
+      "metadata": {
+        "helper_kind": "complement_result",
+        "prior": 0.85
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The study has several limitations that bound the generalisability of its conclusions: (1) Only two model scales (150M, 1B) are tested — behaviour at 7B+ is unknown. (2) Only English mathematical reasoning is evaluated — multilingual transfer is untested. (3) Pretraining mixtures are limited to three instruction datasets — more diverse mixtures may exhibit different collapse patterns. (4) The mechanism by which model scale determines format preference is not explained — it is observed but not theorised. (5) AIME transfer is limited (@obs_aime_limited_transfer), suggesting the study's findings may not generalise fully to the hardest reasoning tasks.",
+      "content_hash": "c12dfc192a8e598e1ea38413a5bf12deb2600f75937c8bf06912a740604da35a",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2504_07912::limitations_and_future",
+      "label": "limitations_and_future",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_aime_limited_transfer"
+            ]
+          }
+        },
+        "source_section": "Section 5 / Limitations"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Limitations of the study",
+      "type": "claim"
+    },
+    {
+      "content": "The echo chamber hypothesis — that RL post-training amplifies pretraining behaviors rather than introducing novel capabilities — is confirmed by the combined evidence: format collapse to pretraining modes, scale-dependent format selection, algorithm invariance of the collapse pattern, and the theoretical mixture model's quantitative predictions [@Zhao2025].",
+      "content_hash": "75e28e843560c95ab604a6d7c8db2a277f3e3206e47e795ff8b8a2ebe7254ffa",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2504_07912::echo_chamber_confirmed",
+      "label": "echo_chamber_confirmed",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhao2025"
+            ],
+            "referenced_claims": [
+              "algorithm_invariant_collapse",
+              "echo_chamber_hypothesis",
+              "law_rl_amplifies_pretraining",
+              "theoretical_mixture_model"
+            ]
+          }
+        },
+        "source_section": "Section 5 / Conclusion"
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Echo chamber hypothesis confirmed (synthesis)",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::opacity_problem,github:2504_07912::controlled_study_value)",
+      "content_hash": "cb8e64c9114704c3a00fe8bf99bafe3ed1e9efd5d406105dd622631c36eabf79",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_7489988c",
+      "label": "__implication_result_7489988c",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::opacity_problem,github:2504_07912::controlled_study_value)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_23789709f08016c6",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::code_vs_nl_gap,github:2504_07912::format_distinctiveness)",
+      "content_hash": "0210e6cf9142d1f2bb3fa7c041eb0f54c8d8dc64a28462fd03bfb17af21272c8",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_3a6f532f",
+      "label": "__implication_result_3a6f532f",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::code_vs_nl_gap,github:2504_07912::format_distinctiveness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_97eb6d1b09e6ca51",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::format_distinctiveness,github:2504_07912::controlled_ablation_design)",
+      "content_hash": "2a5972d4cdbb0ec5425976a981dec4d5ce83379304b68760073dc7d29c5dd871",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_443239af",
+      "label": "__implication_result_443239af",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::format_distinctiveness,github:2504_07912::controlled_ablation_design)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_887856ee7b112347",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_format_collapse_epoch1,github:2504_07912::obs_collapse_coincides_with_accuracy,github:2504_07912::theoretical_mixture_model)",
+      "content_hash": "2f5b8c52b03e4a2d5b25e2f998e5191e2d89fddf2c43fe4d313ed5bae8577dea",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_5bfa4c9a",
+      "label": "__conjunction_result_5bfa4c9a",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_format_collapse_epoch1,github:2504_07912::obs_collapse_coincides_with_accuracy,github:2504_07912::theoretical_mixture_model)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d2e3ca3ee2754f0b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_5bfa4c9a,github:2504_07912::rl_amplifies_single_mode)",
+      "content_hash": "b8e17acd0ac2b477b07e63877b790a0bbdde851eb83cd8a88eda71e62b4fdd78",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_55be0827",
+      "label": "__implication_result_55be0827",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_5bfa4c9a,github:2504_07912::rl_amplifies_single_mode)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d2e3ca3ee2754f0b",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_tinygsm_dominates_150m,github:2504_07912::obs_omi2_dominates_1b)",
+      "content_hash": "4a45751c5762069c68c32c5f132952599d32cbbec97fb6db0134052aa362f5ef",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_bca601d1",
+      "label": "__conjunction_result_bca601d1",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_tinygsm_dominates_150m,github:2504_07912::obs_omi2_dominates_1b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b69cd789448fb0d7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_bca601d1,github:2504_07912::scale_determines_format_preference)",
+      "content_hash": "763f2c3b260bd70de2ced3bb24f076c6007d3b8f94ac8ee188015b5622930f8a",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_cef1ae6a",
+      "label": "__implication_result_cef1ae6a",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_bca601d1,github:2504_07912::scale_determines_format_preference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b69cd789448fb0d7",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::echo_chamber_hypothesis,github:2504_07912::obs_format_collapse_epoch1)",
+      "content_hash": "8b3087a2fa1a4dcc167a28c2ef95b0df800b4633fb82ae338ca7def659dbca77",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_e01dcf67",
+      "label": "__implication_result_e01dcf67",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::echo_chamber_hypothesis,github:2504_07912::obs_format_collapse_epoch1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9102a966cba8680f",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::alt_pure_capability,github:2504_07912::obs_format_collapse_epoch1)",
+      "content_hash": "be0fe0457a60e297d1a24893737920a7109bfdfa4845c12fc083f89fade541dc",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_a2ee4724",
+      "label": "__implication_result_a2ee4724",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::alt_pure_capability,github:2504_07912::obs_format_collapse_epoch1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ffc6b48d52b7dcbe",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2504_07912::pred_echo_chamber,github:2504_07912::obs_format_collapse_epoch1)",
+      "content_hash": "960826ba81a39af3714617f9f885367e4a5b51ed9befec8efb82f044bbff52c7",
+      "exported": false,
+      "id": "github:2504_07912::__equivalence_result_7eb559b6",
+      "label": "__equivalence_result_7eb559b6",
+      "metadata": {
+        "canonical_name": "matches(github:2504_07912::pred_echo_chamber,github:2504_07912::obs_format_collapse_epoch1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_e9eab65ae79c9388",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2504_07912::pred_pure_capability,github:2504_07912::obs_format_collapse_epoch1)",
+      "content_hash": "01c3b22e2d36259be42047446a9dd2fdfdd2321e78c83be19946b790cd06f4da",
+      "exported": false,
+      "id": "github:2504_07912::__equivalence_result_f0e5aba8",
+      "label": "__equivalence_result_f0e5aba8",
+      "metadata": {
+        "canonical_name": "matches(github:2504_07912::pred_pure_capability,github:2504_07912::obs_format_collapse_epoch1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_e9eab65ae79c9388",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_gsm8k_pass1_improvement,github:2504_07912::obs_math500_transfer_1b,github:2504_07912::obs_omi2_pretrain_best_transfer)",
+      "content_hash": "3b979dffa20bb2087616e76e8fa336416ac3bd3662935306f54d4405ee8485b0",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_04af0733",
+      "label": "__conjunction_result_04af0733",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_gsm8k_pass1_improvement,github:2504_07912::obs_math500_transfer_1b,github:2504_07912::obs_omi2_pretrain_best_transfer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_689969f129c73cb2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_04af0733,github:2504_07912::rl_improves_easy_transfers_hard)",
+      "content_hash": "91d81cd9dd69630924f165a20bde772ad328ebda1d2bf3915a102bf4619b9baf",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_5ae253ca",
+      "label": "__implication_result_5ae253ca",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_04af0733,github:2504_07912::rl_improves_easy_transfers_hard)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_689969f129c73cb2",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_algorithm_agreement_on_format,github:2504_07912::obs_ppo_most_stable)",
+      "content_hash": "de0d357b567056cd99e84248334f2efc34128bd8078ee8425bb7e670da18e6a1",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_bf99fc52",
+      "label": "__conjunction_result_bf99fc52",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_algorithm_agreement_on_format,github:2504_07912::obs_ppo_most_stable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_05879d9689151cbc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_bf99fc52,github:2504_07912::algorithm_invariant_collapse)",
+      "content_hash": "9c6066c1b8aefef18f0ae8139385b9118856813fb3395901c45e6b98619da003",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_6377898a",
+      "label": "__implication_result_6377898a",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_bf99fc52,github:2504_07912::algorithm_invariant_collapse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_05879d9689151cbc",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_tinygsm_dominates_150m)",
+      "content_hash": "7dab4d824a450cb843a1173117cfff59513cb5004a47a701f519fc42b988a743",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_3c66fbce",
+      "label": "__implication_result_3c66fbce",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_tinygsm_dominates_150m)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6ef7e9ad1b44f05b",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_omi2_dominates_1b)",
+      "content_hash": "1a823df4be2497c0c7fd32991b3c79d3164304c43a323798c6735b368dedaec3",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_83a12cc7",
+      "label": "__implication_result_83a12cc7",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_omi2_dominates_1b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ecce181f88ba4beb",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_collapse_coincides_with_accuracy)",
+      "content_hash": "fff180e54fd945e3b47cfb109a9e6b3bb1ee0fa204daf822b36efe80d64033fc",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_2f68fab8",
+      "label": "__implication_result_2f68fab8",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::obs_collapse_coincides_with_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_235960e02eb5b9a2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::rl_amplifies_single_mode,github:2504_07912::obs_omi2_pretrain_best_transfer,github:2504_07912::algorithm_invariant_collapse)",
+      "content_hash": "50c5891d598a05a70b5b9e356be17369bf435e78c09b7ed4e7b265cad0f08360",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_35d7d9a6",
+      "label": "__conjunction_result_35d7d9a6",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::rl_amplifies_single_mode,github:2504_07912::obs_omi2_pretrain_best_transfer,github:2504_07912::algorithm_invariant_collapse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f428fb8519942778",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_35d7d9a6,github:2504_07912::implication_pretrain_as_important_as_rl)",
+      "content_hash": "9d80192d2a34f04683bab4e1471b375dc078c89cd321ce704fcab5a5925b6995",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_23a47447",
+      "label": "__implication_result_23a47447",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_35d7d9a6,github:2504_07912::implication_pretrain_as_important_as_rl)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f428fb8519942778",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::scale_determines_format_preference,github:2504_07912::obs_omi2_pretrain_best_transfer)",
+      "content_hash": "b6b9bdcb2d97b74dc4fd281830149078df92a97d4fd19fa1030c9d1a9c87bd49",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_08946072",
+      "label": "__conjunction_result_08946072",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::scale_determines_format_preference,github:2504_07912::obs_omi2_pretrain_best_transfer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b54307e4747958cb",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_08946072,github:2504_07912::implication_scale_specific_mixtures)",
+      "content_hash": "97efbfde10529bb7e7f153cc9f3f6b7c7e2c12c8e6be8b2f39fc0aacf8a465c2",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_9d075848",
+      "label": "__implication_result_9d075848",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_08946072,github:2504_07912::implication_scale_specific_mixtures)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b54307e4747958cb",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_diversity_decline,github:2504_07912::obs_kl_coefficient_effect)",
+      "content_hash": "06617f1547058be4c744099e1af7ef60bae070bea1ff2653eda1f220913c0668",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_f0a33102",
+      "label": "__conjunction_result_f0a33102",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_diversity_decline,github:2504_07912::obs_kl_coefficient_effect)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_074df37af487ed69",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_f0a33102,github:2504_07912::implication_diversity_tradeoff)",
+      "content_hash": "311c2a38a2fcacb6df3fd9d7f3ea0f56b105e0067535bf88f6dd7c514f1a9089",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_91e96ca4",
+      "label": "__implication_result_91e96ca4",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_f0a33102,github:2504_07912::implication_diversity_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_074df37af487ed69",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::obs_within_distribution_refinement,github:2504_07912::rl_amplifies_single_mode)",
+      "content_hash": "b363f84ed3bc18483091f39dea0408fcbb8ef684dde1063a0c4f07373164f786",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_30c6ec0f",
+      "label": "__conjunction_result_30c6ec0f",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::obs_within_distribution_refinement,github:2504_07912::rl_amplifies_single_mode)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_83fd4d39028df74c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_30c6ec0f,github:2504_07912::within_distribution_refinement_is_secondary)",
+      "content_hash": "fb5cfcd44bc10dd2a9b056e3782647cc1ba2eac94aba3c9c118ecb4b17aad0ee",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_f783c92f",
+      "label": "__implication_result_f783c92f",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_30c6ec0f,github:2504_07912::within_distribution_refinement_is_secondary)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_83fd4d39028df74c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::obs_aime_limited_transfer,github:2504_07912::limitations_and_future)",
+      "content_hash": "01592d0b8709b60268f36bca609de1bafb883e4147704c34c7706293ecbf6d0b",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_d364f805",
+      "label": "__implication_result_d364f805",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::obs_aime_limited_transfer,github:2504_07912::limitations_and_future)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_85440de5645e1ccf",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::algorithm_invariant_collapse,github:2504_07912::theoretical_mixture_model)",
+      "content_hash": "7909e7c8d5b0353c6e662fe1cf8e250400a0da583988c1ef242d0801e5d4c48e",
+      "exported": false,
+      "id": "github:2504_07912::__conjunction_result_84e731c0",
+      "label": "__conjunction_result_84e731c0",
+      "metadata": {
+        "canonical_name": "all_true(github:2504_07912::law_rl_amplifies_pretraining,github:2504_07912::algorithm_invariant_collapse,github:2504_07912::theoretical_mixture_model)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_015448bec9d7b5fc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2504_07912::__conjunction_result_84e731c0,github:2504_07912::echo_chamber_confirmed)",
+      "content_hash": "f80f4078e71e2481eb48670058cb7c24472b1339c885d5099cf8d8b8887a5ee1",
+      "exported": false,
+      "id": "github:2504_07912::__implication_result_15f89a92",
+      "label": "__implication_result_15f89a92",
+      "metadata": {
+        "canonical_name": "implies(github:2504_07912::__conjunction_result_84e731c0,github:2504_07912::echo_chamber_confirmed)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_015448bec9d7b5fc",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_setup",
+    "s3_distribution_collapse",
+    "s4_results",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation — Echo Chamber: RL Post-training Amplifies Behaviors Learned in Pretraining",
+    "s2_setup": "Section 2: Experimental Setup — Datasets, Models, Algorithms, and Metrics",
+    "s3_distribution_collapse": "Section 3: Distribution Collapse — RL Amplifies a Single Pretraining Mode",
+    "s4_results": "Section 4: Empirical Results — Performance, Transfer, and Algorithm Comparison",
+    "s5_discussion": "Section 5: Discussion and Implications"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2504_07912::not_both_diversity_and_pass1_gain",
+      "metadata": {
+        "reason": "The empirical results show a direct tradeoff: pass@1 improves but pass@64 declines or stays flat after RL. These two observations are incompatible under the same experimental conditions."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_7c8d16e243406c87",
+      "scope": "local",
+      "variables": [
+        "github:2504_07912::obs_diversity_decline",
+        "github:2504_07912::hypothetical_rl_improves_both"
+      ]
+    },
+    {
+      "conclusion": "github:2504_07912::one_of_selection_or_refinement",
+      "metadata": {
+        "reason": "In any given RL fine-tuning run, either the model has a mixture of pretraining formats (format selection dominates) or it was pretrained on a single format (refinement dominates). These cover the exhaustive space of pretraining scenarios."
+      },
+      "operator": "complement",
+      "operator_id": "lco_0992e8750feed93e",
+      "scope": "local",
+      "variables": [
+        "github:2504_07912::rl_amplifies_single_mode",
+        "github:2504_07912::within_distribution_refinement_is_secondary"
+      ]
+    }
+  ],
+  "package_name": "2504_07912",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2504_07912::controlled_pretraining_setup"
+      ],
+      "conclusion": "github:2504_07912::controlled_study_value",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_7489988c",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::opacity_problem",
+              "github:2504_07912::controlled_study_value"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Because existing studies cannot disentangle RL effects from unknown pretraining (@opacity_problem), a controlled experiment that trains entirely from scratch (@controlled_pretraining_setup) is the appropriate remedy. The value of @controlled_study_value follows directly from this gap."
+      },
+      "premises": [
+        "github:2504_07912::opacity_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23789709f08016c6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2504_07912::format_tracking_method",
+        "github:2504_07912::tinygsm_definition",
+        "github:2504_07912::openmathinstruct1_definition",
+        "github:2504_07912::openmathinstruct2_definition"
+      ],
+      "conclusion": "github:2504_07912::format_distinctiveness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_3a6f532f",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::code_vs_nl_gap",
+              "github:2504_07912::format_distinctiveness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because @code_vs_nl_gap establishes that Python function templates and natural language prose are structurally distinct (syntactic markers in code vs. free-form prose), automated classification of each response to TinyGSM/OMI1 (code) or OMI2 (NL) is reliable. @format_tracking_method operationalises this via `def solution():` detection. Therefore @format_distinctiveness holds."
+      },
+      "premises": [
+        "github:2504_07912::code_vs_nl_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_97eb6d1b09e6ca51",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2504_07912::controlled_pretraining_setup",
+        "github:2504_07912::olmo_architecture",
+        "github:2504_07912::rl_algorithms_definition"
+      ],
+      "conclusion": "github:2504_07912::controlled_ablation_design",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_443239af",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::format_distinctiveness",
+              "github:2504_07912::controlled_ablation_design"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Given @controlled_pretraining_setup (all training done from scratch on documented open data — see background), and @format_distinctiveness (outputs can be traced back to source distributions), the experimental design logically constitutes a controlled ablation: any post-RL distributional shift is attributable to the pretraining mixture, not to unknown factors."
+      },
+      "premises": [
+        "github:2504_07912::format_distinctiveness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_887856ee7b112347",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2504_07912::mixture_experiment_setup",
+        "github:2504_07912::format_tracking_method"
+      ],
+      "conclusion": "github:2504_07912::rl_amplifies_single_mode",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_5bfa4c9a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_format_collapse_epoch1",
+              "github:2504_07912::obs_collapse_coincides_with_accuracy",
+              "github:2504_07912::theoretical_mixture_model"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_55be0827",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_5bfa4c9a",
+              "github:2504_07912::rl_amplifies_single_mode"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The empirical observation @obs_format_collapse_epoch1 shows that format proportions collapse from ~33% each to >80% for a single format within epoch 1. @obs_collapse_coincides_with_accuracy shows this collapse coincides with peak accuracy gains, establishing that the format convergence is the mechanism of improvement. @theoretical_mixture_model provides the formal explanation: RL with KL regularisation exponentially reweights mixture components, amplifying the highest-reward distribution."
+      },
+      "premises": [
+        "github:2504_07912::obs_format_collapse_epoch1",
+        "github:2504_07912::obs_collapse_coincides_with_accuracy",
+        "github:2504_07912::theoretical_mixture_model"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d2e3ca3ee2754f0b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2504_07912::olmo_architecture"
+      ],
+      "conclusion": "github:2504_07912::scale_determines_format_preference",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_bca601d1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_tinygsm_dominates_150m",
+              "github:2504_07912::obs_omi2_dominates_1b"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_cef1ae6a",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_bca601d1",
+              "github:2504_07912::scale_determines_format_preference"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The contrast between @obs_tinygsm_dominates_150m (150M → code) and @obs_omi2_dominates_1b (1B → natural language) directly demonstrates that model scale, not pretraining mixture proportions, selects which format gets amplified. The same datasets are present in both experiments; only scale differs."
+      },
+      "premises": [
+        "github:2504_07912::obs_tinygsm_dominates_150m",
+        "github:2504_07912::obs_omi2_dominates_1b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b69cd789448fb0d7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::obs_format_collapse_epoch1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_e01dcf67",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::echo_chamber_hypothesis",
+              "github:2504_07912::obs_format_collapse_epoch1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "If @echo_chamber_hypothesis is correct — RL amplifies latent pretraining modes — then format collapse to a dominant pretraining distribution (@obs_format_collapse_epoch1) is the expected outcome. The hypothesis directly predicts this observation."
+      },
+      "premises": [
+        "github:2504_07912::echo_chamber_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9102a966cba8680f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::obs_format_collapse_epoch1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_a2ee4724",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::alt_pure_capability",
+              "github:2504_07912::obs_format_collapse_epoch1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35
+      },
+      "premises": [
+        "github:2504_07912::alt_pure_capability"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "A pure capability gain hypothesis could in principle produce format collapse if the most capable approach happens to be code-style. However, @obs_diversity_decline (pass@64 declines) and @obs_collapse_coincides_with_accuracy (collapse at epoch 1) are harder to explain as pure capability discovery. The alternative has moderate explanatory power but requires auxiliary assumptions."
+        }
+      ],
+      "strategy_id": "lcs_ffc6b48d52b7dcbe",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__equivalence_result_7eb559b6",
+            "operator": "equivalence",
+            "variables": [
+              "github:2504_07912::pred_echo_chamber",
+              "github:2504_07912::obs_format_collapse_epoch1"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__equivalence_result_f0e5aba8",
+            "operator": "equivalence",
+            "variables": [
+              "github:2504_07912::pred_pure_capability",
+              "github:2504_07912::obs_format_collapse_epoch1"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__equivalence_result_f0e5aba8",
+              "github:2504_07912::__equivalence_result_7eb559b6"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The echo chamber prediction (format collapse to pretraining mode + diversity drop) matches @obs_format_collapse_epoch1 and @obs_diversity_decline exactly. The pure capability prediction (maintained or increased diversity + pass@64 gains) is directly contradicted by @obs_diversity_decline. Echo chamber fits substantially better."
+      },
+      "premises": [
+        "github:2504_07912::pred_echo_chamber",
+        "github:2504_07912::pred_pure_capability",
+        "github:2504_07912::obs_format_collapse_epoch1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e9eab65ae79c9388",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2504_07912::obs_diversity_decline",
+        "github:2504_07912::controlled_ablation_design"
+      ],
+      "conclusion": "github:2504_07912::_anon_000",
+      "metadata": {
+        "reason": "Both @echo_chamber_hypothesis and @alt_pure_capability are candidate explanations for the observed format collapse (@obs_format_collapse_epoch1). Abduction selects the hypothesis with better explanatory fit, here the echo chamber hypothesis."
+      },
+      "premises": [
+        "github:2504_07912::echo_chamber_hypothesis",
+        "github:2504_07912::alt_pure_capability",
+        "github:2504_07912::pred_echo_chamber",
+        "github:2504_07912::pred_pure_capability",
+        "github:2504_07912::obs_format_collapse_epoch1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d6695bc2bd00845b",
+      "sub_strategies": [
+        "lcs_9102a966cba8680f",
+        "lcs_ffc6b48d52b7dcbe",
+        "lcs_e9eab65ae79c9388"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2504_07912::math500_benchmark",
+        "github:2504_07912::gsm8k_finetuning_setup"
+      ],
+      "conclusion": "github:2504_07912::rl_improves_easy_transfers_hard",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_04af0733",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_gsm8k_pass1_improvement",
+              "github:2504_07912::obs_math500_transfer_1b",
+              "github:2504_07912::obs_omi2_pretrain_best_transfer"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_5ae253ca",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_04af0733",
+              "github:2504_07912::rl_improves_easy_transfers_hard"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "@obs_gsm8k_pass1_improvement confirms GSM8K pass@1 gains of 5-15pp after PPO RL. @obs_math500_transfer_1b shows MATH-500 pass@1 gains of up to 10.2pp after GSM8K-only RL training, confirming positive transfer to harder problems. @obs_omi2_pretrain_best_transfer quantifies the composition dependence: OMI2 pretraining (natural language) yields ~30pp higher MATH-500 accuracy than code-only pretraining after RL, showing that the format selected by RL (@scale_determines_format_preference for 1B → OMI2) determines transfer effectiveness."
+      },
+      "premises": [
+        "github:2504_07912::obs_gsm8k_pass1_improvement",
+        "github:2504_07912::obs_math500_transfer_1b",
+        "github:2504_07912::obs_omi2_pretrain_best_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_689969f129c73cb2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2504_07912::rl_algorithms_definition"
+      ],
+      "conclusion": "github:2504_07912::algorithm_invariant_collapse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_bf99fc52",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_algorithm_agreement_on_format",
+              "github:2504_07912::obs_ppo_most_stable"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_6377898a",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_bf99fc52",
+              "github:2504_07912::algorithm_invariant_collapse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@obs_algorithm_agreement_on_format shows all three algorithms converge to the same dominant format regardless of their mechanistic differences. Since @obs_ppo_most_stable confirms the algorithms differ in stability and final accuracy, yet produce the same collapse pattern, the collapse cannot be explained by any single algorithm's objective — it must arise from the pretraining initialisation."
+      },
+      "premises": [
+        "github:2504_07912::obs_algorithm_agreement_on_format",
+        "github:2504_07912::obs_ppo_most_stable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_05879d9689151cbc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::obs_tinygsm_dominates_150m",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_3c66fbce",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::law_rl_amplifies_pretraining",
+              "github:2504_07912::obs_tinygsm_dominates_150m"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The universal law predicts that 150M models will amplify the highest-reward pretraining format (TinyGSM code-style, due to its structured computability). This is directly observed as @obs_tinygsm_dominates_150m."
+      },
+      "premises": [
+        "github:2504_07912::law_rl_amplifies_pretraining"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6ef7e9ad1b44f05b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::obs_omi2_dominates_1b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_83a12cc7",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::law_rl_amplifies_pretraining",
+              "github:2504_07912::obs_omi2_dominates_1b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The universal law predicts that 1B models will amplify the highest-reward pretraining format (OMI2 natural language, due to larger capacity for NL reasoning). This is directly observed as @obs_omi2_dominates_1b."
+      },
+      "premises": [
+        "github:2504_07912::law_rl_amplifies_pretraining"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ecce181f88ba4beb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::obs_collapse_coincides_with_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_2f68fab8",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::law_rl_amplifies_pretraining",
+              "github:2504_07912::obs_collapse_coincides_with_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The universal law predicts that format collapse coincides with accuracy gains regardless of RL algorithm, since the amplification mechanism is a property of pretraining, not the specific RL objective. @obs_collapse_coincides_with_accuracy confirms this."
+      },
+      "premises": [
+        "github:2504_07912::law_rl_amplifies_pretraining"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_235960e02eb5b9a2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::law_rl_amplifies_pretraining",
+      "metadata": {
+        "reason": "@obs_tinygsm_dominates_150m (150M scale) and @obs_omi2_dominates_1b (1B scale) are independent experiments at different model sizes — both confirm the law."
+      },
+      "premises": [
+        "github:2504_07912::obs_tinygsm_dominates_150m",
+        "github:2504_07912::obs_omi2_dominates_1b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aeedea8cbd88d09b",
+      "sub_strategies": [
+        "lcs_6ef7e9ad1b44f05b",
+        "lcs_ecce181f88ba4beb"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2504_07912::law_rl_amplifies_pretraining",
+      "metadata": {
+        "reason": "@obs_collapse_coincides_with_accuracy is an independent temporal observation confirming that format collapse drives accuracy gains — independent of scale effects."
+      },
+      "premises": [
+        "github:2504_07912::obs_tinygsm_dominates_150m",
+        "github:2504_07912::obs_omi2_dominates_1b",
+        "github:2504_07912::obs_collapse_coincides_with_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_07d31b622400aecd",
+      "sub_strategies": [
+        "lcs_aeedea8cbd88d09b",
+        "lcs_235960e02eb5b9a2"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2504_07912::pretraining_composition_lever"
+      ],
+      "conclusion": "github:2504_07912::implication_pretrain_as_important_as_rl",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_35d7d9a6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::rl_amplifies_single_mode",
+              "github:2504_07912::obs_omi2_pretrain_best_transfer",
+              "github:2504_07912::algorithm_invariant_collapse"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_23a47447",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_35d7d9a6",
+              "github:2504_07912::implication_pretrain_as_important_as_rl"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@rl_amplifies_single_mode shows RL selects among pretraining formats, not inventing new ones. @obs_omi2_pretrain_best_transfer shows that including OMI2 in pretraining yields ~30pp better MATH-500 after RL than code-only pretraining — a larger effect than any algorithm choice. @algorithm_invariant_collapse confirms the RL algorithm choice doesn't change the qualitative outcome. Together these establish pretraining composition as the dominant lever for post-RL performance."
+      },
+      "premises": [
+        "github:2504_07912::rl_amplifies_single_mode",
+        "github:2504_07912::obs_omi2_pretrain_best_transfer",
+        "github:2504_07912::algorithm_invariant_collapse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f428fb8519942778",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::implication_scale_specific_mixtures",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_08946072",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::scale_determines_format_preference",
+              "github:2504_07912::obs_omi2_pretrain_best_transfer"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_9d075848",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_08946072",
+              "github:2504_07912::implication_scale_specific_mixtures"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@scale_determines_format_preference establishes that model scale selects the amplified format (code at 150M, NL at 1B). @obs_omi2_pretrain_best_transfer shows that including the format RL will select (OMI2/NL for 1B) in pretraining is essential for maximising post-RL transfer. Therefore, the optimal pretraining mixture must be tailored to the target scale."
+      },
+      "premises": [
+        "github:2504_07912::scale_determines_format_preference",
+        "github:2504_07912::obs_omi2_pretrain_best_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b54307e4747958cb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::implication_diversity_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_f0a33102",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_diversity_decline",
+              "github:2504_07912::obs_kl_coefficient_effect"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_91e96ca4",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_f0a33102",
+              "github:2504_07912::implication_diversity_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@obs_diversity_decline directly shows pass@64 declines post-RL across configurations. @obs_kl_coefficient_effect shows that even varying KL coefficient cannot simultaneously maximise diversity and pass@1 — higher KL slows collapse but achieves only comparable final accuracy. The tradeoff appears fundamental to RL format selection."
+      },
+      "premises": [
+        "github:2504_07912::obs_diversity_decline",
+        "github:2504_07912::obs_kl_coefficient_effect"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_074df37af487ed69",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::within_distribution_refinement_is_secondary",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_30c6ec0f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::obs_within_distribution_refinement",
+              "github:2504_07912::rl_amplifies_single_mode"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_f783c92f",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_30c6ec0f",
+              "github:2504_07912::within_distribution_refinement_is_secondary"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@obs_within_distribution_refinement establishes that single-dataset RL still improves accuracy via stylistic standardisation. @rl_amplifies_single_mode shows the primary mechanism in mixture settings is format collapse, with larger accuracy gains. Since format selection (5-15pp gains) exceeds pure refinement, refinement is classified as the secondary mechanism."
+      },
+      "premises": [
+        "github:2504_07912::obs_within_distribution_refinement",
+        "github:2504_07912::rl_amplifies_single_mode"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_83fd4d39028df74c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2504_07912::limitations_and_future",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__implication_result_d364f805",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::obs_aime_limited_transfer",
+              "github:2504_07912::limitations_and_future"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@obs_aime_limited_transfer shows that RL fine-tuning on GSM8K does not substantially improve pass@1 or Majority@64 on AIME, the hardest benchmark. This limits the scope of the transfer learning claims and supports the conclusion that the study's findings are clearest in the easy-to-medium difficulty range (GSM8K → MATH-500), not at the extreme difficulty end."
+      },
+      "premises": [
+        "github:2504_07912::obs_aime_limited_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_85440de5645e1ccf",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2504_07912::controlled_study_value"
+      ],
+      "conclusion": "github:2504_07912::echo_chamber_confirmed",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2504_07912::__conjunction_result_84e731c0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2504_07912::law_rl_amplifies_pretraining",
+              "github:2504_07912::algorithm_invariant_collapse",
+              "github:2504_07912::theoretical_mixture_model"
+            ]
+          },
+          {
+            "conclusion": "github:2504_07912::__implication_result_15f89a92",
+            "operator": "implication",
+            "variables": [
+              "github:2504_07912::__conjunction_result_84e731c0",
+              "github:2504_07912::echo_chamber_confirmed"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@law_rl_amplifies_pretraining (established by induction across multiple configurations) is the empirical core. @algorithm_invariant_collapse rules out the RL algorithm as the cause. @theoretical_mixture_model provides the formal mechanism (exponential reweighting by reward under KL-regularised RL). Together these confirm @echo_chamber_hypothesis: RL is an amplification mechanism, not a capability-discovery one."
+      },
+      "premises": [
+        "github:2504_07912::law_rl_amplifies_pretraining",
+        "github:2504_07912::algorithm_invariant_collapse",
+        "github:2504_07912::theoretical_mixture_model"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_015448bec9d7b5fc",
+      "type": "support"
+    }
+  ]
+}
