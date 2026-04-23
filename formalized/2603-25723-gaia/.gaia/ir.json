@@ -1,0 +1,2694 @@
+{
+  "ir_hash": "sha256:ba070d2745fcd527c3589568f7ba635965ae44de11bba25c897fc5b71288de55",
+  "knowledges": [
+    {
+      "content": "An agent harness is the control stack that structures multi-step reasoning, tool use, memory, delegation, and stopping rules across multiple model calls, beyond any single model call.",
+      "content_hash": "7edaf8f3c8242d85becf91443bf6c3c788ebca5a122774011c4d751effb74be5",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_25723::harness_definition",
+      "label": "harness_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agent harness definition",
+      "type": "setting"
+    },
+    {
+      "content": "Context engineering is the practice of deciding what instructions, evidence, intermediate artifacts, and state should be made available at each step of a long agent run.",
+      "content_hash": "cab7a1b815b0f8ad584d02c87b2eeb9f04e259e85b4c6724135f557f6b73bbf6",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_25723::context_engineering_definition",
+      "label": "context_engineering_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context engineering definition",
+      "type": "setting"
+    },
+    {
+      "content": "In most agent systems, the effective harness is scattered across controller code, hidden framework defaults, tool adapters, verifier scripts, and runtime-specific assumptions. Harness logic is rarely exposed as a coherent, portable artifact.",
+      "content_hash": "4570f6843b4b34fe4dfc7537c7ed131a0b6770c286f93c138d4749daa4b806c5",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_25723::harness_logic_buried",
+      "label": "harness_logic_buried",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Widely corroborated: Lou et al., LangChain, Anthropic engineering blogs all acknowledge difficulty of isolating harness effects."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Harness logic is buried and non-portable",
+      "type": "claim"
+    },
+    {
+      "content": "Differences in scaffolds and harnesses can dominate task outcomes even under fixed base models. Research on reason-act loops, retrieval-augmented generation, and explicit self-feedback shows that externalized control patterns are decisive for agent performance.",
+      "content_hash": "84180d9a4c0be92b45de0d4c7dfd9aa656d88b59d78eccb8726e1f54b45f7371",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_25723::harness_affects_outcomes",
+      "label": "harness_affects_outcomes",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Broad evidence: ReAct (Yao 2023), RAG (Lewis 2021), reflection (Shinn 2023), scaffold-aware evaluation (Ding 2026). Well-established across independent papers."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Harness design decisively affects agent outcomes",
+      "type": "claim"
+    },
+    {
+      "content": "Because harness logic is scattered across controller code and framework defaults, two agent systems that nominally differ by one design choice often differ simultaneously in prompts, tool mediation, artifact conventions, verification gates, and state semantics. This collapses evaluation into controller-bundle comparisons rather than module-level evidence.",
+      "content_hash": "5e95950a830dc533a0be4b8f365b78422ddc69670d266ad44f738d741b21e65f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_25723::harness_hard_to_compare",
+      "label": "harness_hard_to_compare",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "harness_affects_outcomes",
+              "harness_logic_buried",
+              "nlah_natural_language_feasibility"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Harnesses are hard to compare and ablate",
+      "type": "claim"
+    },
+    {
+      "content": "RQ1: Under fixed budgets, how do a shared runtime charter and benchmark-specific harness logic change agent behavior and task outcomes?",
+      "content_hash": "9162a1714e306f9bc1c8b59a6e4d4c5f3ea619a906ffe09fbba8f83cf4fe2d51",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_25723::q_behavioral_effect",
+      "label": "q_behavioral_effect",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ1: Behavioral effect",
+      "type": "question"
+    },
+    {
+      "content": "RQ2: Once harness patterns are made explicit, can modules be composed and ablated at the pattern level?",
+      "content_hash": "789f64ef9c979b28f2bc37cecaaa54f5d788a86edfbd13ba16fb3eefa935524f",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_25723::q_composability",
+      "label": "q_composability",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ2: Composability",
+      "type": "question"
+    },
+    {
+      "content": "RQ3: What differences remain between native code harnesses and reconstructed natural-language harnesses under a shared runtime?",
+      "content_hash": "b5c1a6ef8a0ec6845f0aa79eda072e3d0af0a6fb6ff8492386025c6a9fd8e829",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_25723::q_migration",
+      "label": "q_migration",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ3: Code-to-text migration",
+      "type": "question"
+    },
+    {
+      "content": "Natural-language artifacts such as AGENTS.md and skill bundles show that practical systems can package repository-local conventions and reusable procedures in portable text. They establish feasibility for reusable control knowledge, but do not make harness-wide contracts, role boundaries, state semantics, failure handling, and runtime-facing adapters first-class and jointly executable.",
+      "content_hash": "c6c098d6abc9ade8b73074e5887a4cb65b5c2bde81b28e5b0575cc755849e21c",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_25723::nlah_natural_language_feasibility",
+      "label": "nlah_natural_language_feasibility",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "AGENTS.md and AgentSkills are documented prior work with concrete deployments."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Natural-language carriers feasible but not harness-complete",
+      "type": "claim"
+    },
+    {
+      "content": "A Natural-Language Agent Harness (NLAH) is a structured natural-language representation of harness control that exposes harness behavior in editable natural language, bound to explicit contracts and artifact carriers. A NLAH specifies: (1) roles and delegation boundaries, (2) stage structure with explicit contracts and gates per stage, (3) tool and output adapters for runtime bridging, (4) durable state conventions (file paths, artifact semantics), and (5) a failure taxonomy of named failure modes driving recovery.",
+      "content_hash": "bd2c2630c4c0cde695690ef9bb60c486b92cc3c28c9a628d1f6888dac9c26133",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_25723::nlah_definition",
+      "label": "nlah_definition",
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "NLAH formal definition",
+      "type": "setting"
+    },
+    {
+      "content": "The Intelligent Harness Runtime (IHR) is a shared runtime that interprets NLAHs directly. IHR decomposes into three components: (1) an in-loop LLM that reads the harness, current state, and runtime charter and selects the next action; (2) a backend providing terminal tools and a multi-agent interface (spawning and supervising child agents); and (3) a runtime charter encoding shared policy (budget accounting, artifact semantics, state management, permission boundaries).",
+      "content_hash": "118abab39e300eb3326059a4d3f3a7b259db4d7299e7a3a1a04f3867156d540b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_25723::ihr_definition",
+      "label": "ihr_definition",
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "IHR formal definition",
+      "type": "setting"
+    },
+    {
+      "content": "Formally, a task is T = (p, F_in, κ), where p is the task prompt, F_in is the set of input files or linked resources, and κ is an execution contract (required outputs, budget, permission scope, completion conditions, designated output paths). An agent call is AgentCall(T, Ω_in_t) = (A_t, ΔΩ_t, y_t), where Ω_in_t is the visible environment at call start, A_t is the designated artifact set, ΔΩ_t are environment modifications, and y_t is a normalized final response.",
+      "content_hash": "3e7f64afebbedbc4a640e1302a60704a7b48b28787beb4c1abaa6c70514fe5e4",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_25723::agent_call_definition",
+      "label": "agent_call_definition",
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "Formal agent call definition",
+      "type": "setting"
+    },
+    {
+      "content": "The file-backed state module externalizes durable state into path-addressable artifacts. It enforces three properties: (1) externalized — state is written to artifacts rather than held only in transient context; (2) path-addressable — later stages reopen the exact object by path; (3) compaction-stable — state survives truncation, restart, and delegation.",
+      "content_hash": "eb0ee7bca00252b7d79e7e8de8e96e3fc5febc46b37d53fc381ff2f2c2ef546c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_25723::file_backed_state_definition",
+      "label": "file_backed_state_definition",
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "File-backed state module definition",
+      "type": "setting"
+    },
+    {
+      "content": "NLAHs are portable, executable artifacts: harness logic that previously required reading controller source code can be expressed as editable natural-language text, transferred across runtimes, and interpreted by IHR without re-implementing the harness in code.",
+      "content_hash": "e638943e81b04f22f9c9144e265977464f09cf57a4f3f2e5cbc11d432fbfd60e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2603_25723::nlah_is_portable",
+      "label": "nlah_is_portable",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Core paper claim. Supported by migration experiment. Not independently replicated."
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "NLAHs make harness logic portable and executable",
+      "type": "claim"
+    },
+    {
+      "content": "IHR separates the shared runtime charter (universal policy: budget accounting, artifact semantics, state management, permission boundaries) from task-family harness logic (benchmark-specific stages, roles, contracts). This factorization allows controlled ablations of shared runtime policy versus benchmark-specific harness logic.",
+      "content_hash": "76bff3e1e1cc205ecf3a7fc8f24bff661bf0dcb9afc254d21156df7b5009a86a",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_25723::ihr_separates_concerns",
+      "label": "ihr_separates_concerns",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Definitional: IHR is designed with this factorization; ablation design operationalizes it (w/o RTS, w/o HS)."
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "IHR cleanly separates runtime charter from harness logic",
+      "type": "claim"
+    },
+    {
+      "content": "NLAHs make harness-wide contracts, role boundaries, state semantics, failure handling, and runtime-facing adapters first-class and jointly executable under a shared runtime. This is the gap not closed by prior natural-language carrier work (AGENTS.md, skill bundles), which attached local instructions but did not formalize these as executable harness objects.",
+      "content_hash": "8d8db9bd5cfc23609fea7a02c58ff9e700856f216e8c3c4ace5cf568186e75ea",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_25723::nlah_exposes_contracts",
+      "label": "nlah_exposes_contracts",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Architectural claim from Section 2 specification. Implementation quality affects how 'first-class' the contracts are in practice."
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "NLAHs expose harness contracts as executable objects",
+      "type": "claim"
+    },
+    {
+      "content": "Long-horizon autonomy fails when critical state remains implicit or ephemeral. The file-backed state module, by enforcing externalized, path-addressable, and compaction-stable properties, improves agent stability under context truncation and branching.",
+      "content_hash": "f7f537dcd1f42ed693fc29dbc3244cc9b02d6bf15e5dd015f436613381ff8054",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_25723::file_backed_state_addresses_truncation",
+      "label": "file_backed_state_addresses_truncation",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Supported by context-folding literature and Section 2.4 operational properties."
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "File-backed state improves stability under context truncation",
+      "type": "claim"
+    },
+    {
+      "content": "Because harness patterns are explicit in NLAHs, individual modules (file-backed state, evidence-backed answering, verifier, self-evolution, multi-candidate search, dynamic orchestration) can be composed and ablated at the pattern level under a shared runtime substrate.",
+      "content_hash": "24b78a4ef36afd360b28de6e0b2be1c955b78c897efcab3ca6e0e2635380aca5",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2603_25723::nlah_enables_module_ablation",
+      "label": "nlah_enables_module_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "harness_hard_to_compare",
+              "ihr_separates_concerns",
+              "nlah_exposes_contracts",
+              "nlah_is_portable"
+            ]
+          }
+        }
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "Explicit harness patterns enable module-level ablation",
+      "type": "claim"
+    },
+    {
+      "content": "The file-backed state module design (externalized, path-addressable, compaction-stable) is motivated by the three failure modes of implicit state in long-horizon agents: state lost to context truncation, state inaccessible by path after delegation, and state lost on restart or branching.",
+      "content_hash": "4090da1bda0888f4202d35559f5130c682ff7d2174525ba7633dbe174d2b0b40",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_25723::file_backed_state_design_rationale",
+      "label": "file_backed_state_design_rationale",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "file_backed_state_addresses_truncation"
+            ]
+          }
+        }
+      },
+      "module": "s2_approach",
+      "parameters": [],
+      "title": "File-backed state module design rationale",
+      "type": "claim"
+    },
+    {
+      "content": "SWE-bench Verified evaluates repository-level software engineering: given a GitHub issue, the agent must produce a patch that passes the issue's test suite. The benchmark uses a curated set of verified human-solvable problems.",
+      "content_hash": "b63e2ddb696eb69dbc7cabd7a4e5005e68397103b5314a123170e885435eaaf6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_25723::swe_bench_setting",
+      "label": "swe_bench_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "SWE-bench Verified benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "OSWorld evaluates computer-use agents on desktop tasks requiring multi-step GUI interaction, file management, and tool use across operating system environments.",
+      "content_hash": "18185d4cc99a2424bbe7a9b9cc81976a90e2bfdb2cc4db111ec0c164cebb6581",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_25723::osworld_setting",
+      "label": "osworld_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "OSWorld benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "TRAE (Test-time Reasoning and Execution Agent) is an LLM-based software engineering agent harness. In this study, TRAE is used as the native code harness for SWE-bench Verified experiments.",
+      "content_hash": "e48758cdb06f6b6dad188e6469efe41b482cc0ef755da2fbaf3f4251281cbe61",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_25723::trae_harness_setting",
+      "label": "trae_harness_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "TRAE harness definition",
+      "type": "setting"
+    },
+    {
+      "content": "Live-SWE is a lighter-weight SWE benchmark regime used in this study, evaluating agents on a subset of SWE-bench tasks under tighter budgets.",
+      "content_hash": "fa001d8ae51c99a8cb5bafd8b066ad1259443a8ed375254b1a169aa02b42d825",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_25723::live_swe_setting",
+      "label": "live_swe_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Live-SWE benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "OS-Symphony is the native code harness used for OSWorld evaluation. It implements a screenshot-grounded repair loop: verify the previous step, inspect the current screen, choose the next GUI action, and retry locally when focus or selection errors occur.",
+      "content_hash": "e8d0d5d0f2983d29fbb41360186693c190de160e67323f5e48b6b7f7f987be64",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_25723::os_symphony_setting",
+      "label": "os_symphony_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "OS-Symphony harness definition",
+      "type": "setting"
+    },
+    {
+      "content": "In the IHR instantiation used in experiments, the backend is realized by OpenAI Codex with terminal tools and a multi-agent interface. The shared runtime charter is carried by a fixed runtime skill; benchmark-specific harness logic is carried by harness skills.",
+      "content_hash": "a1b22e1c3f96d525b133d63b312a53ba2fadcce16b0a573cd65b195f13585279",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_25723::codex_backend_setting",
+      "label": "codex_backend_setting",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "IHR backend instantiation",
+      "type": "setting"
+    },
+    {
+      "content": "RQ1 ablation design: Three conditions are compared under fixed budgets. (1) Full IHR: runtime skill (shared charter) + harness skill (task-family logic). (2) w/o RTS: harness skill only, no runtime skill. (3) w/o HS: runtime skill only, no harness skill. Evaluated on SWE-bench Verified (TRAE and Live-SWE harness families).",
+      "content_hash": "cfce0dcc62f3b9077275d4c86c0f974991a9b4a4153fd62aba8249dc9ac8c0b5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_25723::rq1_ablation_design",
+      "label": "rq1_ablation_design",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "RQ1 ablation experimental design",
+      "type": "setting"
+    },
+    {
+      "content": "RQ2 composition design: Starting from a benchmark-specific Basic baseline, one module is added at a time: file-backed state, evidence-backed answering, verifier, self-evolution, multi-candidate search, and dynamic orchestration. Basic on SWE is a bare Codex baseline with shell, file reading/writing/editing. Basic on OSWorld is the NLAH realization of OS-Symphony before adding extra modules.",
+      "content_hash": "68976fcf8f8e209b7b3b0f5702ca3f3acaba46ae01af96a8e234127e9cf2fd82",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_25723::rq2_composition_design",
+      "label": "rq2_composition_design",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "RQ2 composition experimental design",
+      "type": "setting"
+    },
+    {
+      "content": "RQ3 migration study: Each harness appears in two realizations — original source code and reconstructed NLAH — evaluated under a shared reporting schema. Target is task-level equivalence (comparable exposed logic, contracts, and benchmark-facing artifacts), not identical internal traces.",
+      "content_hash": "d71b08fb763dcb8883a4ccc9cbcf80358f0ba82396c6dfeca438981c743cebbb",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_25723::rq3_migration_design",
+      "label": "rq3_migration_design",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "RQ3 migration experimental design",
+      "type": "setting"
+    },
+    {
+      "content": "The factorization of IHR into backend (Codex with tools and multi-agent interface), shared runtime charter (runtime skill), and task-family harness logic (harness skills) enables controlled ablations: the runtime skill and harness skill can each be independently removed or replaced to isolate their contributions.",
+      "content_hash": "5e3386f52bfdac676ac140f156c898a82f9d7e920dfd8856b7b746cd057c6a4d",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_25723::instantiation_valid",
+      "label": "instantiation_valid",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ihr_separates_concerns"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "IHR instantiation supports controlled ablation",
+      "type": "claim"
+    },
+    {
+      "content": "On SWE-bench Verified with the TRAE harness family, Full IHR achieves a resolved rate of 74.4%, using 16.3M prompt tokens, 211k completion tokens, 642.6 tool calls, 414.3 LLM calls, and 32.5 minutes average runtime per sample.",
+      "content_hash": "fed8eedbef0cceb8e79a54f842589193939d16b0a13b92fdf184adbc0f693e26",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_25723::rq1_trae_full_ihr_perf",
+      "label": "rq1_trae_full_ihr_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 1 (TRAE Full IHR row). Controlled benchmark evaluation.",
+        "source_table": "artifacts/2603.25723.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: TRAE Full IHR performance metrics",
+      "type": "claim"
+    },
+    {
+      "content": "On SWE-bench Verified with the TRAE harness family, removing the runtime skill (w/o RTS) achieves 76.0% resolved rate, 11.1M prompt tokens, 137k completion tokens, 451.9 tool calls, 260.5 LLM calls, and 16.6 minutes runtime.",
+      "content_hash": "90ed2158b4f7e379a12ae4617145474c2c78fd40e824b0d5ec360e15459b74ba",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_25723::rq1_trae_no_rts_perf",
+      "label": "rq1_trae_no_rts_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 1 (TRAE w/o RTS row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: TRAE w/o RTS performance metrics",
+      "type": "claim"
+    },
+    {
+      "content": "On SWE-bench Verified with the TRAE harness family, removing the harness skill (w/o HS) achieves 75.2% resolved rate, 1.2M prompt tokens, 13.6k completion tokens, 51.1 tool calls, 34.0 LLM calls, and 6.7 minutes runtime.",
+      "content_hash": "0b5fb331d974bfcb6f0178ee06813168def12534111aa54a6a73fcbc41f2ad67",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_25723::rq1_trae_no_hs_perf",
+      "label": "rq1_trae_no_hs_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 1 (TRAE w/o HS row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: TRAE w/o HS performance metrics",
+      "type": "claim"
+    },
+    {
+      "content": "On Live-SWE with Full IHR: 72.8% resolved rate, 1.4M prompt tokens, 17.0k completion tokens, 58.4 tool calls, 41.4 LLM calls, 7.6 minutes runtime.",
+      "content_hash": "ab3cda83e1b292a5b9ad1a3d46e1f09d52df25633424cfe94cfc79a3033d4d02",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_25723::rq1_live_swe_full_ihr_perf",
+      "label": "rq1_live_swe_full_ihr_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 1 (Live-SWE Full IHR row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Live-SWE Full IHR performance metrics",
+      "type": "claim"
+    },
+    {
+      "content": "On Live-SWE without the runtime skill (w/o RTS): 76.0% resolved rate, 1.1M prompt tokens, 11.7k completion tokens, 41.0 tool calls, 28.2 LLM calls, 5.5 minutes runtime.",
+      "content_hash": "8d48466bb201acba77f26e9f7d0e9cc0d5caacac9af6ac8970034eb1554b7ed3",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_25723::rq1_live_swe_no_rts_perf",
+      "label": "rq1_live_swe_no_rts_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 1 (Live-SWE w/o RTS row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Live-SWE w/o RTS performance metrics",
+      "type": "claim"
+    },
+    {
+      "content": "Paired flip analysis on SWE-bench Verified using 125 stitched samples: For TRAE vs. w/o RTS: Full IHR uniquely resolves 4, ablation uniquely resolves 6, both agree on 115. For TRAE vs. w/o HS: Full IHR uniquely resolves 7, ablation uniquely resolves 8, both agree on 110.",
+      "content_hash": "f605b29bcdfd76f0c32237ab9eb85c4e9b8083bbc24886149a8fecb6fd323c57",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_25723::rq1_trae_paired_flips",
+      "label": "rq1_trae_paired_flips",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 2. Paired flip counts from 125 stitched samples.",
+        "source_table": "artifacts/2603.25723.pdf, Table 2"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Paired flip counts TRAE",
+      "type": "claim"
+    },
+    {
+      "content": "Paired flip analysis for Live-SWE vs. ablations (125 stitched samples): vs. w/o RTS: Full resolves 4, ablation resolves 8, agree on 113. vs. w/o HS: Full resolves 4, ablation resolves 7, agree on 114.",
+      "content_hash": "184994b93d0de7791ba2d4174f2aa69ad1ed591a7b3c887b6826a60eb2238810",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_25723::rq1_live_swe_paired_flips",
+      "label": "rq1_live_swe_paired_flips",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 2.",
+        "source_table": "artifacts/2603.25723.pdf, Table 2"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Paired flip counts Live-SWE",
+      "type": "claim"
+    },
+    {
+      "content": "For TRAE with Full IHR, approximately 90% of total usage occurs in delegated child agents rather than the runtime-owned parent thread: prompt tokens 91.5%, completion tokens 91.9%, tool calls 90.2%, LLM calls 90.6%.",
+      "content_hash": "075921ada57ee5dcb2e76340fd782d60a75feb84c5696dcbb8515ad830dccbe6",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_25723::trae_child_agent_share",
+      "label": "trae_child_agent_share",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 4. Usage split between parent and child agents.",
+        "source_table": "artifacts/2603.25723.pdf, Table 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "TRAE child agent usage share",
+      "type": "claim"
+    },
+    {
+      "content": "Under Full IHR, process metrics (token counts, tool calls, LLM calls, runtime) move much more than resolved rate compared to ablations. On SWE-bench Verified, TRAE and Live-SWE stay within a narrow performance band (74.4%–76.0%), but Full IHR produces dramatically larger process costs: TRAE Full IHR uses 16.3M prompt tokens vs. 1.2M for w/o HS (13.6x more) and 642.6 tool calls vs. 51.1 (12.6x more).",
+      "content_hash": "26741ebd4a3b7fbe3446a5475cafb5901b78e7507de88aab50df5271f685572c",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2603_25723::rq1_process_moves_more_than_score",
+      "label": "rq1_process_moves_more_than_score",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_live_swe_full_ihr_perf",
+              "rq1_live_swe_no_rts_perf",
+              "rq1_trae_full_ihr_perf",
+              "rq1_trae_no_hs_perf",
+              "rq1_trae_no_rts_perf"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Process metrics move more than resolved rate",
+      "type": "claim"
+    },
+    {
+      "content": "Full IHR is not merely a prompt wrapper. The ~90% delegation to child agents in TRAE Full IHR (prompt tokens 91.5%, tool calls 90.2%, LLM calls 90.6%) demonstrates that the added budget reflects multi-stage exploration, candidate comparison, artifact handoff, and extra verification — not just richer prompting of a single agent.",
+      "content_hash": "9ef40fc60253f35aeeee64a48db71c709314fc5ef220650e769dc9504916199c",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2603_25723::rq1_ihr_is_not_prompt_wrapper",
+      "label": "rq1_ihr_is_not_prompt_wrapper",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_trae_full_ihr_perf",
+              "trae_child_agent_share"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: IHR is behaviorally real control, not a prompt wrapper",
+      "type": "claim"
+    },
+    {
+      "content": "Most SWE-bench instances do not flip between Full IHR and ablations. Across TRAE and Live-SWE, paired flip analysis shows that 110–115 of 125 stitched samples agree between Full IHR and each ablation, with only 4–8 unique resolves per side.",
+      "content_hash": "639329f4648fd430cddf5338d3075eecdbc48a515a69ca48e733686ed87ad496",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2603_25723::rq1_most_instances_dont_flip",
+      "label": "rq1_most_instances_dont_flip",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_live_swe_paired_flips",
+              "rq1_trae_paired_flips"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Most instances do not flip under harness changes",
+      "type": "claim"
+    },
+    {
+      "content": "The shared runtime charter plus harness logic are behaviorally real controls rather than prompt decoration. The runtime and harness change system behavior (process metrics, trajectory structure) substantially even when resolved rates shift only narrowly.",
+      "content_hash": "31f896626c052d2a175da17d7448412ca68c766791f0a44e5e70f22946f7522b",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2603_25723::rq1_harness_controls_behavior",
+      "label": "rq1_harness_controls_behavior",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_ihr_is_not_prompt_wrapper",
+              "rq1_process_moves_more_than_score"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ1: Runtime charter and harness logic are real behavioral controls",
+      "type": "claim"
+    },
+    {
+      "content": "SWE-bench Verified module ablation scores starting from Basic (75.2%): file-backed state: 76.8% (+1.6), evidence-backed answering: 76.8% (+1.6), verifier: 74.4% (-0.8), self-evolution: 80.0% (+4.8), multi-candidate search: 72.8% (-2.4), dynamic orchestration: 75.2% (0.0).",
+      "content_hash": "058d2419004b002c73944f1b1827e94c3b11a5fb70d7f8f4b1ee476329a60839",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2603_25723::rq2_swe_scores",
+      "label": "rq2_swe_scores",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 3 (SWE Verified rows).",
+        "source_table": "artifacts/2603.25723.pdf, Table 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: SWE-bench Verified module scores",
+      "type": "claim"
+    },
+    {
+      "content": "OSWorld module ablation scores starting from Basic (41.7%): file-backed state: 47.2% (+5.5), evidence-backed answering: 41.7% (0.0), verifier: 33.3% (-8.4), self-evolution: 44.4% (+2.7), multi-candidate search: 36.1% (-5.6), dynamic orchestration: 44.4% (+2.7).",
+      "content_hash": "c5ec2490dbd51e6606ccf97f68f60820272d4c6acaa0d170b10541de57dbf1ee",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2603_25723::rq2_osworld_scores",
+      "label": "rq2_osworld_scores",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 3 (OSWorld rows).",
+        "source_table": "artifacts/2603.25723.pdf, Table 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: OSWorld module scores",
+      "type": "claim"
+    },
+    {
+      "content": "Self-evolution achieves the largest score gain on SWE (+4.8%) and is the only module that moves upward on the score-cost graph without moving far right (higher cost). Its benefit is not open-ended reflection, but a more disciplined acceptance-gated attempt loop that keeps the search narrow until failure signals justify another pass.",
+      "content_hash": "0692013b066a85379411bcad989bc7f096974501ce94cd0a301d8b678800ba9e",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2603_25723::rq2_self_evolution_mechanism",
+      "label": "rq2_self_evolution_mechanism",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "Figure 4 analysis plus one case study (scikit-learn-25747). Plausible mechanism but single case limits certainty.",
+        "source_figure": "artifacts/2603.25723.pdf, Figure 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: Self-evolution mechanism — disciplined acceptance-gated loop",
+      "type": "claim"
+    },
+    {
+      "content": "File-backed state and evidence-backed answering move moderately right (higher token cost) for only mild score gains on SWE (+1.6% each), consistent with process-structure benefits (cleaner artifact handoff, explicit evidence discipline) rather than large correctness gains.",
+      "content_hash": "55c9033a3eecbeeb554316bb1c32d87504da4779cf89cf51fcfd0e6a824390bb",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2603_25723::rq2_file_backed_state_mechanism",
+      "label": "rq2_file_backed_state_mechanism",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Consistent with Figure 4 right panel and Table 3 (+1.6% SWE, +5.5% OSWorld). Mechanistic interpretation requires trajectory validation."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: File-backed state provides process-structure benefits at moderate cost",
+      "type": "claim"
+    },
+    {
+      "content": "The verifier module shows a negative score effect on SWE (-0.8%) and OSWorld (-8.4%). Case study evidence (django__django-13406 and an OSWorld case) shows that local acceptance layers can diverge from the benchmark's final acceptance object: a run can report internal success while the official evaluator still fails.",
+      "content_hash": "876c93580418f1997300d783fdfa6d2407c14e199ce36d7010d244fb75746dff",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2603_25723::rq2_verifier_negative",
+      "label": "rq2_verifier_negative",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Two quantitative datapoints (-0.8% SWE, -8.4% OSWorld) plus two case studies. Both benchmarks show same direction."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: Verifier module can diverge from benchmark acceptance object",
+      "type": "claim"
+    },
+    {
+      "content": "Module effects concentrate on a small solved frontier rather than shifting the whole benchmark uniformly. Most tasks are either solved robustly by nearly all conditions or remain unsolved across conditions. The informative differences come from boundary cases that flip under changed control logic.",
+      "content_hash": "465e861a37d39a81f4af93ef30c863164aecfbd028fcd6454642b031ea5ba554",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2603_25723::rq2_frontier_concentration",
+      "label": "rq2_frontier_concentration",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq2_file_backed_state_mechanism",
+              "rq2_osworld_scores",
+              "rq2_swe_scores"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: Module effects concentrate at the solved frontier",
+      "type": "claim"
+    },
+    {
+      "content": "Harness modules fall into two qualitatively different families: (1) modules that improve the solve loop itself (e.g., self-evolution: tighter acceptance-gated loop better aligned with benchmark gate), and (2) modules that add local process layers whose notion of success is weakly aligned with the final benchmark (e.g., verifier, multi-candidate search). The first family helps more reliably.",
+      "content_hash": "de8df46262a0e9ff31baee7fafb2d6aa3c93fa540cac886042a21323d14870b1",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2603_25723::rq2_module_families",
+      "label": "rq2_module_families",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq2_module_families",
+              "rq2_self_evolution_mechanism",
+              "rq2_swe_scores",
+              "rq2_verifier_negative"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ2: Two families of harness modules — loop-improving vs. process-layering",
+      "type": "claim"
+    },
+    {
+      "content": "OS-Symphony original code harness on OSWorld: 30.4% resolved rate, 11.4M prompt tokens, 147.2k completion tokens, 99 agent calls, 651 tool calls, 1.2k LLM calls, 361.5 minutes runtime.",
+      "content_hash": "d2d0c5fff163ff158f2e067e9af5f4bed77ec68ee8c1e58e1d987073b8302697",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2603_25723::rq3_os_symphony_code_perf",
+      "label": "rq3_os_symphony_code_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 5 (OS-Symphony Code row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 5"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: OS-Symphony code harness performance",
+      "type": "claim"
+    },
+    {
+      "content": "OS-Symphony reconstructed NLAH under IHR on OSWorld: 47.2% resolved rate, 15.7M prompt tokens, 228.5k completion tokens, 72 agent calls, 683 tool calls, 34 LLM calls, 140.8 minutes runtime.",
+      "content_hash": "cd1a248c70e710410f68b70b68f0e735d9aa90bc6ca8bff7e03856a40914bbc6",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2603_25723::rq3_os_symphony_nlah_perf",
+      "label": "rq3_os_symphony_nlah_perf",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly reported in Table 5 (OS-Symphony NLAH row).",
+        "source_table": "artifacts/2603.25723.pdf, Table 5"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: OS-Symphony NLAH under IHR performance",
+      "type": "claim"
+    },
+    {
+      "content": "Under IHR, OS-Symphony migrated from a screenshot-grounded repair loop (verify previous step, inspect screen, choose GUI action, retry on focus/selection errors) to a file-backed and artifact-backed verification approach. Migrated runs materialize task files, ledgers, and explicit artifacts, and switch more readily from brittle GUI repair to file, shell, or package-level operations when those provide a stronger completion certificate.",
+      "content_hash": "160ccbbc6aa75cc9a7804a2b80616b0c65c888aca7e503b91e7859d35bfe6bd6",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2603_25723::rq3_behavioral_relocation",
+      "label": "rq3_behavioral_relocation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_score_gain_artifacts",
+              "rq3_behavioral_relocation",
+              "rq3_migration_score_gain",
+              "rq3_search_relocation",
+              "rq3_topology_difference"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: OS-Symphony behavioral relocation from GUI repair to artifact-backed verification",
+      "type": "claim"
+    },
+    {
+      "content": "Among 6 native-search samples whose migrated inner streams are retained, only 3 also contain explicit web_search in the migrated version, and 1 additional migrated sample uses a different form of search. Search is preserved functionally under migration but relocated topologically — from a native detachable tutorial detour to a contract-first runtime flow.",
+      "content_hash": "5a1b0314dfc9269d2ccd1f23a2a3aee1fa185452759f8dd42b6b01e81848fa60",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2603_25723::rq3_search_relocation",
+      "label": "rq3_search_relocation",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Based on 6-sample subset from retained archives. Specific breakdown (3/1) adds credibility despite small sample."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: Search preserved functionally but relocated topologically",
+      "type": "claim"
+    },
+    {
+      "content": "The native OS-Symphony topology is a desktop control loop with occasional detachable tutorial detours (36 main traces + 7 short nested search_1 traces). The migrated IHR topology is a contract-first runtime flow whose state lives in task files, ledgers, and artifacts (34 retained inner event streams + 2 missing-inner-stream stubs).",
+      "content_hash": "9455fe473400ffdae5a73c2f78027808d5187c45f84ccbf680314b4e4dde0e78",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2603_25723::rq3_topology_difference",
+      "label": "rq3_topology_difference",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Supported by specific trace counts from retained archives (36+7 vs 34+2)."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: Different topology — GUI loop vs. contract-first artifact flow",
+      "type": "claim"
+    },
+    {
+      "content": "The NLAH migration of OS-Symphony achieves 47.2% on OSWorld vs. 30.4% for the native code harness — a gain of 16.8 percentage points. The more important difference is behavioral: the migration relocates reliability mechanisms from local screen repair to durable runtime state and artifact-backed closure.",
+      "content_hash": "3a42544f66d5cfee0459f6a778d2c7abeab2cd105e3743d5ce2586bef7760a9d",
+      "declaration_index": 24,
+      "exported": true,
+      "id": "github:2603_25723::rq3_migration_score_gain",
+      "label": "rq3_migration_score_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq3_os_symphony_code_perf",
+              "rq3_os_symphony_nlah_perf"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "RQ3: NLAH migration achieves +16.8pp on OSWorld with behavioral relocation",
+      "type": "claim"
+    },
+    {
+      "content": "The score gain of the NLAH migration (+16.8pp on OSWorld) may reflect IHR's file-backed state and artifact conventions providing a more reliable completion signal, rather than the NLAH representation itself being the primary cause.",
+      "content_hash": "0aaf274e91741fe68939828e8643d81630ccf5e45746f599f748a36b4bb0332a",
+      "declaration_index": 25,
+      "exported": false,
+      "id": "github:2603_25723::alt_score_gain_artifacts",
+      "label": "alt_score_gain_artifacts",
+      "metadata": {
+        "prior": 0.35,
+        "prior_justification": "Alternative that artifact conventions alone explain the gap. Weakened: (1) file-backed state module gives only +5.5% not 16.8pp; (2) topology relocation is broader than any single module effect."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Alternative: score gain may reflect IHR artifact conventions, not NLAH representation",
+      "type": "claim"
+    },
+    {
+      "content": "If the NLAH representation and IHR runtime semantics jointly explain the +16.8pp gain, the migrated harness should exhibit behavioral relocation from GUI repair to artifact-backed verification, which is consistent with the observed trajectory evidence.",
+      "content_hash": "c30eb726905f72d9c4b0cb16d37c013be908ec8af652787fbaa14abd90420ec4",
+      "declaration_index": 26,
+      "exported": false,
+      "id": "github:2603_25723::pred_nlah_explains",
+      "label": "pred_nlah_explains",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "Well-specified prediction consistent with trajectory evidence. Authors' own interpretation — no independent verification."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Prediction: NLAH+IHR explains score gain via behavioral relocation",
+      "type": "claim"
+    },
+    {
+      "content": "If IHR artifact conventions alone (file-backed state) explain the gain, we would expect similar gains from adding the file-backed state module alone to the Basic OSWorld baseline, without requiring full NLAH migration.",
+      "content_hash": "c61bed3eb7e3dedb6422128d0cdf0919a5346aaf0daa610c8afc2aae98854cd6",
+      "declaration_index": 27,
+      "exported": false,
+      "id": "github:2603_25723::pred_artifact_conventions_explains",
+      "label": "pred_artifact_conventions_explains",
+      "metadata": {
+        "prior": 0.55,
+        "prior_justification": "Partially supported: file-backed state alone gives +5.5% on OSWorld, not closing the full 16.8pp gap. Coherent but empirically underpowered."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Prediction: IHR artifact conventions alone could explain gain",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If the NLAH representation and IHR runtime semantics jointly explain the +16.8pp gain, the migrated harness should exhibit behavioral relocation from GUI repair to artifact-backed verification, which is consistent with the observed trajectory evidence., If IHR artifact conventions alone (file-backed state) explain the gain, we would expect similar gains from adding the file-backed state module alone to the Basic OSWorld baseline, without requiring full NLAH migration., Under IHR, OS-Symphony migrated from a screenshot-grounded repair loop (verify previous step, inspect screen, choose GUI action, retry on focus/selection errors) to a file-backed and artifact-backed verification approach. Migrated runs materialize task files, ledgers, and explicit artifacts, and switch more readily from brittle GUI repair to file, shell, or package-level operations when those provide a stronger completion certificate.)",
+      "content_hash": "7dc7de2b9651893c813bebb9ac1cf20c3fac617d7ddea13d16962f15554afae2",
+      "declaration_index": 28,
+      "exported": false,
+      "id": "github:2603_25723::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "pred_artifact_conventions_explains",
+              "pred_nlah_explains",
+              "rq3_topology_difference"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Natural language in NLAHs is not argued to replace code. Natural language carries editable high-level harness logic, while code remains responsible for deterministic operations, tool interfaces, and sandbox enforcement. The scientific claim is about the unit of comparison: externalizing harness pattern logic as a readable, executable object under shared runtime semantics.",
+      "content_hash": "c6aafce5673d756f8f9fffcc20b9cde0782c574bfa375bb7b59b8c5fb10f7fb9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_25723::nl_not_replacing_code",
+      "label": "nl_not_replacing_code",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_harness_controls_behavior"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Discussion: NL carries harness logic; code handles deterministic operations",
+      "type": "claim"
+    },
+    {
+      "content": "Natural language remains important for agent systems when used to specify harness-level control — roles, contracts, verification gates, durable state semantics, and delegation boundaries — rather than only one-shot prompt phrasing. Gains from complex prompt engineering may diminish for stronger foundation models, but harness-level control remains a distinct engineering layer.",
+      "content_hash": "78f7a57e7f72b02cacb37e7a637e7fc8e24650281d1e2dd4bccaa525d6486447",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2603_25723::nl_still_matters_for_control",
+      "label": "nl_still_matters_for_control",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rq1_harness_controls_behavior",
+              "rq3_behavioral_relocation"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Discussion: NL matters for harness-level control, not one-shot prompting",
+      "type": "claim"
+    },
+    {
+      "content": "Once harnesses are explicit objects (NLAHs), they become a search space. Explicit harness modules can be manually designed, retrieved, migrated, recombined, and systematically ablated under shared assumptions. Longer term, this suggests automated search and optimization over harness representations rather than opaque bundle engineering.",
+      "content_hash": "b71cdf65f74938e5b217f10319bb6440c0b0a57b77d2cdfb86b5c7f8e7063d82",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2603_25723::harness_search_space",
+      "label": "harness_search_space",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "nlah_enables_module_ablation",
+              "rq2_module_families"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Discussion: Explicit harness representations enable automated harness search",
+      "type": "claim"
+    },
+    {
+      "content": "Stronger foundation models may reduce the incremental value of natural-language harness control, since improved base models can handle more multi-step reasoning without explicit scaffolding, making harness-level control less decisive.",
+      "content_hash": "06057da900fdc7b4750e02d4e1deef76547d93ac36deb8586e49e9424a8018c2",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_25723::alt_stronger_models_reduce_nl_value",
+      "label": "alt_stronger_models_reduce_nl_value",
+      "metadata": {
+        "prior": 0.4,
+        "prior_justification": "Alternative that stronger models make NL harness control less valuable. Paper's RQ1 evidence contradicts this for current generation. Long-term plausibility noted but not empirically tested."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Alternative: Stronger models may reduce value of NL harness control",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_25723::not_both_nl_irrelevant",
+      "label": "not_both_nl_irrelevant",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.85
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::harness_logic_buried,github:2603_25723::harness_affects_outcomes)",
+      "content_hash": "c763e807a2e25c3598a9b55c6ca43e931f9483b541efa50fbd44f9fe969b5605",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_e1621a65",
+      "label": "__conjunction_result_e1621a65",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::harness_logic_buried,github:2603_25723::harness_affects_outcomes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6490feab14c8ef5e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_e1621a65,github:2603_25723::harness_hard_to_compare)",
+      "content_hash": "58d9f132fc91f042b80c3bfd2a2f49a8c5df755ed82f74afcd78976eef388865",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_91529da4",
+      "label": "__implication_result_91529da4",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_e1621a65,github:2603_25723::harness_hard_to_compare)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6490feab14c8ef5e",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::nlah_natural_language_feasibility,github:2603_25723::harness_logic_buried)",
+      "content_hash": "bb8f64a3a6cbf9362cae9fdacff4fb08251bed61533fdfa5e901a65837a140b3",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_c6f35f70",
+      "label": "__conjunction_result_c6f35f70",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::nlah_natural_language_feasibility,github:2603_25723::harness_logic_buried)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5482efca7d156bf8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_c6f35f70,github:2603_25723::harness_hard_to_compare)",
+      "content_hash": "be6210e3ab5934b3df8e2c069cdc7df39ca418823a3c39b1a035c7916f2bdbd1",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_028c0036",
+      "label": "__implication_result_028c0036",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_c6f35f70,github:2603_25723::harness_hard_to_compare)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5482efca7d156bf8",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::nlah_is_portable,github:2603_25723::ihr_separates_concerns,github:2603_25723::nlah_exposes_contracts)",
+      "content_hash": "5b88655a4088b27a2946e04d8724ccd64379add5b04afc0460eb1c2fff6ed771",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_8ec79f57",
+      "label": "__conjunction_result_8ec79f57",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::nlah_is_portable,github:2603_25723::ihr_separates_concerns,github:2603_25723::nlah_exposes_contracts)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_41a1b0b4d97e5663",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_8ec79f57,github:2603_25723::nlah_enables_module_ablation)",
+      "content_hash": "af732c6bc2edc3c3365d024cf234d82a26f50bbe60c5fd852713807b660783a2",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_0ae143de",
+      "label": "__implication_result_0ae143de",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_8ec79f57,github:2603_25723::nlah_enables_module_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_41a1b0b4d97e5663",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::file_backed_state_addresses_truncation,github:2603_25723::file_backed_state_design_rationale)",
+      "content_hash": "74a529e28b7a475866f5bfd3280cbd96974039a912cc05f76c7a92b15ca720e1",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_ba304dab",
+      "label": "__implication_result_ba304dab",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::file_backed_state_addresses_truncation,github:2603_25723::file_backed_state_design_rationale)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_178927336dbe52de",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::ihr_separates_concerns,github:2603_25723::instantiation_valid)",
+      "content_hash": "4d9f511000be33b78bc7ff4dc499d70d7afa4f45c18c0fc8ac7198552d800bdc",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_4cc25f87",
+      "label": "__implication_result_4cc25f87",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::ihr_separates_concerns,github:2603_25723::instantiation_valid)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_77ddd30a6883c2e0",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq1_trae_full_ihr_perf,github:2603_25723::rq1_trae_no_hs_perf,github:2603_25723::rq1_trae_no_rts_perf)",
+      "content_hash": "a076e9e957719dd8df92c0a4f087b3ed3209d03b4d96b5b7598ae58af70fce50",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_99f978cb",
+      "label": "__conjunction_result_99f978cb",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq1_trae_full_ihr_perf,github:2603_25723::rq1_trae_no_hs_perf,github:2603_25723::rq1_trae_no_rts_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_798e9edcce41925e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_99f978cb,github:2603_25723::rq1_process_moves_more_than_score)",
+      "content_hash": "341f0d9bc9d409c7dfab638f8df968f264e8adedfb4fc3e118d159f2cf5a0f4d",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_66a75ed7",
+      "label": "__implication_result_66a75ed7",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_99f978cb,github:2603_25723::rq1_process_moves_more_than_score)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_798e9edcce41925e",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::trae_child_agent_share,github:2603_25723::rq1_trae_full_ihr_perf)",
+      "content_hash": "62afe296aefc02d6740f629e64efec73d10839be0911556c6527184326ea6d90",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_b60a7199",
+      "label": "__conjunction_result_b60a7199",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::trae_child_agent_share,github:2603_25723::rq1_trae_full_ihr_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8ec1c30ff98ff8ab",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_b60a7199,github:2603_25723::rq1_ihr_is_not_prompt_wrapper)",
+      "content_hash": "da8f334cbc4e693f1b3d62a0ab7555bf6b58460812cc5359af4dd09840954584",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_aa4622a2",
+      "label": "__implication_result_aa4622a2",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_b60a7199,github:2603_25723::rq1_ihr_is_not_prompt_wrapper)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8ec1c30ff98ff8ab",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq1_trae_paired_flips,github:2603_25723::rq1_live_swe_paired_flips)",
+      "content_hash": "680c43953d3b3ce4c25974dd0a7ac91b9380913ba103cce5e700e5ac145d68e6",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_4234bf02",
+      "label": "__conjunction_result_4234bf02",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq1_trae_paired_flips,github:2603_25723::rq1_live_swe_paired_flips)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c8bc2caeaf1cf2e5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_4234bf02,github:2603_25723::rq1_most_instances_dont_flip)",
+      "content_hash": "6925fb40653057197f0c1ed45fd3dd60881ddb9320ea119f6786226c291eb3fa",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_148933b3",
+      "label": "__implication_result_148933b3",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_4234bf02,github:2603_25723::rq1_most_instances_dont_flip)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8bc2caeaf1cf2e5",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq1_process_moves_more_than_score,github:2603_25723::rq1_ihr_is_not_prompt_wrapper)",
+      "content_hash": "d6f9109d9d6638dccf69625f5c7c2d2ec621667a2600a2b0c7d8d3a24d44bdde",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_a7108b32",
+      "label": "__conjunction_result_a7108b32",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq1_process_moves_more_than_score,github:2603_25723::rq1_ihr_is_not_prompt_wrapper)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_3849042b0bf06fc3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_a7108b32,github:2603_25723::rq1_harness_controls_behavior)",
+      "content_hash": "b2cb052c4ae2dbe54d9c492ee288521648e2101a0ace778348f8d45dfc627332",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_1dbd3612",
+      "label": "__implication_result_1dbd3612",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_a7108b32,github:2603_25723::rq1_harness_controls_behavior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3849042b0bf06fc3",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq2_swe_scores,github:2603_25723::rq2_osworld_scores)",
+      "content_hash": "a1c5a98020fae5d1c694f4cb5359b19fbd47aa7424ae52092e627aaaf9fd89e5",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_0aed1c2d",
+      "label": "__conjunction_result_0aed1c2d",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq2_swe_scores,github:2603_25723::rq2_osworld_scores)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8fc41b3a38f8f499",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_0aed1c2d,github:2603_25723::rq2_frontier_concentration)",
+      "content_hash": "1d5d6a248d6755b16be8667ef299da1aebccf7d661b15b01a024fcb5469fc862",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_b17a9931",
+      "label": "__implication_result_b17a9931",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_0aed1c2d,github:2603_25723::rq2_frontier_concentration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8fc41b3a38f8f499",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq2_swe_scores,github:2603_25723::rq2_self_evolution_mechanism)",
+      "content_hash": "9128e3a3a33ff056506d213ed2d9a5e608e07e9cbebd20c0040f0818a8dab394",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_5cba1e99",
+      "label": "__conjunction_result_5cba1e99",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq2_swe_scores,github:2603_25723::rq2_self_evolution_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4a6b8fe200dc6a44",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_5cba1e99,github:2603_25723::rq2_module_families)",
+      "content_hash": "45e042777dcb1aa1d94a51add270bb48e980bdef5948c56e9dbd1a33ca22cb99",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_4d291bb8",
+      "label": "__implication_result_4d291bb8",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_5cba1e99,github:2603_25723::rq2_module_families)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4a6b8fe200dc6a44",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::rq2_verifier_negative,github:2603_25723::rq2_module_families)",
+      "content_hash": "c2e07f2e37aa9cb23865a0118cc624439808331496f5d8fc54b728432ee3e108",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_29e12a9b",
+      "label": "__implication_result_29e12a9b",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::rq2_verifier_negative,github:2603_25723::rq2_module_families)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_305403c0c90a93f3",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::rq3_migration_score_gain,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "6cb14029f93ff0a28da56738981898d316dd1c9d411c5883f30fcb8ff24e6977",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_67d1d89e",
+      "label": "__implication_result_67d1d89e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::rq3_migration_score_gain,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2a0fc1943f9ed742",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::alt_score_gain_artifacts,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "6f3099261f87485f5a0e74461e09f82c368ba6911a3c4dd88b24648862a57a79",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_7f39d95e",
+      "label": "__implication_result_7f39d95e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::alt_score_gain_artifacts,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c2e4f1db2c2cdfc7",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_25723::pred_nlah_explains,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "32dd298047f7975e6487f0f6a8f961f065f4c1c93a2438c259063bd150b8f2ad",
+      "exported": false,
+      "id": "github:2603_25723::__equivalence_result_175af4a0",
+      "label": "__equivalence_result_175af4a0",
+      "metadata": {
+        "canonical_name": "matches(github:2603_25723::pred_nlah_explains,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_74facc7edb89de32",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_25723::pred_artifact_conventions_explains,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "59b4a9a1b91ebc7ac6d8f1a86ffd2f484bd6ab9928a85b991e2c7a42884c9490",
+      "exported": false,
+      "id": "github:2603_25723::__equivalence_result_aef05169",
+      "label": "__equivalence_result_aef05169",
+      "metadata": {
+        "canonical_name": "matches(github:2603_25723::pred_artifact_conventions_explains,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_74facc7edb89de32",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq3_os_symphony_code_perf,github:2603_25723::rq3_os_symphony_nlah_perf)",
+      "content_hash": "bb40a61e022cde709893adce7a6270c1bc8f003f3cc3a0cbef0179cb5af12524",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_c17f6eac",
+      "label": "__conjunction_result_c17f6eac",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq3_os_symphony_code_perf,github:2603_25723::rq3_os_symphony_nlah_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d3e975015e47f6c7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_c17f6eac,github:2603_25723::rq3_migration_score_gain)",
+      "content_hash": "8565e2d8f2065ea8e033ec6e118c842867f77ca1d9815ad69d2b8b97d02ec7bb",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_ec587fc4",
+      "label": "__implication_result_ec587fc4",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_c17f6eac,github:2603_25723::rq3_migration_score_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d3e975015e47f6c7",
+        "owning_strategy_type": "support",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq3_topology_difference,github:2603_25723::rq3_search_relocation)",
+      "content_hash": "4b9bf379872bfd8833e0b542810a43e5176502fe3a6fc591c4d37f3b05db6cb9",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_67d3c36b",
+      "label": "__conjunction_result_67d3c36b",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq3_topology_difference,github:2603_25723::rq3_search_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1bf40399b46db4d5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_67d3c36b,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "aaa4f379185daf8c789bc0132e19a16571ccf85868329892b3a40153e5b360b1",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_9c2b9ca1",
+      "label": "__implication_result_9c2b9ca1",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_67d3c36b,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1bf40399b46db4d5",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq1_live_swe_full_ihr_perf,github:2603_25723::rq1_live_swe_no_rts_perf)",
+      "content_hash": "031d798b17fc4a57af7814f85135a232ce5b90bdffd1323eb33bbf7e74e9b8af",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_fc89b278",
+      "label": "__conjunction_result_fc89b278",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq1_live_swe_full_ihr_perf,github:2603_25723::rq1_live_swe_no_rts_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c8260a4800bd1c2b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_fc89b278,github:2603_25723::rq1_process_moves_more_than_score)",
+      "content_hash": "4f68aa2e752d1c88784f68c4ca391f1ef50b8cbb014fea2561fe6e41ff79b77a",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_834f6099",
+      "label": "__implication_result_834f6099",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_fc89b278,github:2603_25723::rq1_process_moves_more_than_score)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8260a4800bd1c2b",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq2_file_backed_state_mechanism,github:2603_25723::rq2_swe_scores)",
+      "content_hash": "a440bda83056d4a13913d8fb8bcd624115977211c1520f1304770fb4549507fe",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_ce4fea92",
+      "label": "__conjunction_result_ce4fea92",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq2_file_backed_state_mechanism,github:2603_25723::rq2_swe_scores)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e3bca6c9f488b6cb",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_ce4fea92,github:2603_25723::rq2_frontier_concentration)",
+      "content_hash": "b68cd8294338b045964db48a4245756f5c0a0cdb13a86ad9f60148c7354609b3",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_8c544524",
+      "label": "__implication_result_8c544524",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_ce4fea92,github:2603_25723::rq2_frontier_concentration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e3bca6c9f488b6cb",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::rq1_harness_controls_behavior,github:2603_25723::nl_not_replacing_code)",
+      "content_hash": "7692b7fadd625b0e0ffaa452fe3b9e11c023ab2eee97ea9e3ea8c51fb7bf2ee2",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_6a205e9b",
+      "label": "__implication_result_6a205e9b",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::rq1_harness_controls_behavior,github:2603_25723::nl_not_replacing_code)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ddff0e20d27b2c2f",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::rq1_harness_controls_behavior,github:2603_25723::rq3_behavioral_relocation)",
+      "content_hash": "63902a8e8ef1ccfcbe93d5eb139b047f34343544ad7d770a2105878be9c72dcd",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_8f010672",
+      "label": "__conjunction_result_8f010672",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::rq1_harness_controls_behavior,github:2603_25723::rq3_behavioral_relocation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_04c4fdaff7a8000a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_8f010672,github:2603_25723::nl_still_matters_for_control)",
+      "content_hash": "2eae32c2b2d22b01752f586fad5d807f497132d5a395d99e9c3826436662fb9f",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_20313441",
+      "label": "__implication_result_20313441",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_8f010672,github:2603_25723::nl_still_matters_for_control)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_04c4fdaff7a8000a",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_25723::nlah_enables_module_ablation,github:2603_25723::rq2_module_families)",
+      "content_hash": "8d22389ee9b86064a97fc05c131d3dcd1622522e432d051f345e5bc7e959aef1",
+      "exported": false,
+      "id": "github:2603_25723::__conjunction_result_52fd65d0",
+      "label": "__conjunction_result_52fd65d0",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_25723::nlah_enables_module_ablation,github:2603_25723::rq2_module_families)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_25430c0b13129bda",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_25723::__conjunction_result_52fd65d0,github:2603_25723::harness_search_space)",
+      "content_hash": "b2f1784edafa67c9cee8c8bf5d3261c1ee46d184650ba8923053662359926b2c",
+      "exported": false,
+      "id": "github:2603_25723::__implication_result_bc4ea589",
+      "label": "__implication_result_bc4ea589",
+      "metadata": {
+        "canonical_name": "implies(github:2603_25723::__conjunction_result_52fd65d0,github:2603_25723::harness_search_space)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_25430c0b13129bda",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_approach",
+    "s3_experiments",
+    "s4_results",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Natural-Language Agent Harnesses",
+    "s2_approach": "Section 2: Natural-Language Agent Harnesses and Intelligent Harness Runtime",
+    "s3_experiments": "Section 3: Experimental Design",
+    "s4_results": "Section 4: Results — RQ1, RQ2, RQ3",
+    "s5_discussion": "Section 5: Discussion"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2603_25723::not_both_nl_irrelevant",
+      "metadata": {
+        "reason": "Both claims address the role of natural-language control as foundation models improve. If @nl_still_matters_for_control holds (harness-level control is a distinct layer), then @alt_stronger_models_reduce_nl_value cannot fully hold (the control layer remains valuable even with stronger models). These cannot both be true simultaneously."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_ead53e44daf8132b",
+      "scope": "local",
+      "variables": [
+        "github:2603_25723::nl_still_matters_for_control",
+        "github:2603_25723::alt_stronger_models_reduce_nl_value"
+      ]
+    }
+  ],
+  "package_name": "2603_25723",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2603_25723::harness_hard_to_compare",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_e1621a65",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::harness_logic_buried",
+              "github:2603_25723::harness_affects_outcomes"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_91529da4",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_e1621a65",
+              "github:2603_25723::harness_hard_to_compare"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Because @harness_affects_outcomes (harness design is decisive), and @harness_logic_buried (harness logic is scattered, not exposed as a coherent artifact), it is impossible to isolate which component drives a difference: any two systems that nominally differ by one harness choice actually differ across prompts, tool adapters, verification, and state semantics simultaneously — collapsing comparison to bundle-level comparisons."
+      },
+      "premises": [
+        "github:2603_25723::harness_logic_buried",
+        "github:2603_25723::harness_affects_outcomes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6490feab14c8ef5e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::harness_hard_to_compare",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_c6f35f70",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::nlah_natural_language_feasibility",
+              "github:2603_25723::harness_logic_buried"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_028c0036",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_c6f35f70",
+              "github:2603_25723::harness_hard_to_compare"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@nlah_natural_language_feasibility establishes that prior work (AGENTS.md, skill bundles) shows feasibility of natural-language carriers but does not make harness-wide contracts, roles, state semantics, and failure handling jointly executable. Since @harness_logic_buried persists despite these prior approaches, the comparison problem remains: harnesses are still bundled across code and framework defaults, not exposed as coherent objects."
+      },
+      "premises": [
+        "github:2603_25723::nlah_natural_language_feasibility",
+        "github:2603_25723::harness_logic_buried"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5482efca7d156bf8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::harness_hard_to_compare",
+        "github:2603_25723::nlah_definition",
+        "github:2603_25723::ihr_definition"
+      ],
+      "conclusion": "github:2603_25723::nlah_enables_module_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_8ec79f57",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::nlah_is_portable",
+              "github:2603_25723::ihr_separates_concerns",
+              "github:2603_25723::nlah_exposes_contracts"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_0ae143de",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_8ec79f57",
+              "github:2603_25723::nlah_enables_module_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The NLAH/IHR approach addresses @harness_hard_to_compare by making harness logic an explicit artifact. @nlah_is_portable means harnesses can be transferred across runtimes. @ihr_separates_concerns means shared charter and task-specific logic are cleanly separated, enabling controlled ablations. @nlah_exposes_contracts means contracts, roles, and adapters are first-class — allowing individual modules to be composed and ablated independently, unlike bundled code harnesses."
+      },
+      "premises": [
+        "github:2603_25723::nlah_is_portable",
+        "github:2603_25723::ihr_separates_concerns",
+        "github:2603_25723::nlah_exposes_contracts"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_41a1b0b4d97e5663",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::file_backed_state_definition"
+      ],
+      "conclusion": "github:2603_25723::file_backed_state_design_rationale",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_ba304dab",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::file_backed_state_addresses_truncation",
+              "github:2603_25723::file_backed_state_design_rationale"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The file-backed state module is motivated by the observation that long-horizon autonomy breaks when state is implicit or ephemeral (@file_backed_state_addresses_truncation). The three enforced properties — externalized, path-addressable, compaction-stable — directly address each failure mode: state lost to context truncation, state inaccessible by path after delegation, and state lost on restart."
+      },
+      "premises": [
+        "github:2603_25723::file_backed_state_addresses_truncation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_178927336dbe52de",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq1_ablation_design",
+        "github:2603_25723::codex_backend_setting"
+      ],
+      "conclusion": "github:2603_25723::instantiation_valid",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_4cc25f87",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::ihr_separates_concerns",
+              "github:2603_25723::instantiation_valid"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because @ihr_separates_concerns — IHR cleanly separates shared runtime charter from task-family harness logic — the concrete instantiation as runtime skill plus harness skill directly exposes these two dimensions for ablation. Removing runtime skill leaves only harness logic; removing harness skill leaves only the charter. This is a valid controlled experiment design for isolating each component's contribution."
+      },
+      "premises": [
+        "github:2603_25723::ihr_separates_concerns"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_77ddd30a6883c2e0",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq1_ablation_design",
+        "github:2603_25723::swe_bench_setting"
+      ],
+      "conclusion": "github:2603_25723::rq1_process_moves_more_than_score",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_99f978cb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq1_trae_full_ihr_perf",
+              "github:2603_25723::rq1_trae_no_hs_perf",
+              "github:2603_25723::rq1_trae_no_rts_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_66a75ed7",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_99f978cb",
+              "github:2603_25723::rq1_process_moves_more_than_score"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Comparing @rq1_trae_full_ihr_perf (74.4%, 16.3M tokens, 642.6 tool calls) with @rq1_trae_no_hs_perf (75.2%, 1.2M tokens, 51.1 tool calls) and @rq1_trae_no_rts_perf (76.0%, 11.1M tokens, 451.9 tool calls) shows that removing harness skill collapses process metrics by 13x while barely changing resolved rate. The pattern holds for Live-SWE. Conclusion: the harness and runtime dramatically reshape agent behavior even when the final score band is narrow."
+      },
+      "premises": [
+        "github:2603_25723::rq1_trae_full_ihr_perf",
+        "github:2603_25723::rq1_trae_no_hs_perf",
+        "github:2603_25723::rq1_trae_no_rts_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_798e9edcce41925e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::trae_harness_setting"
+      ],
+      "conclusion": "github:2603_25723::rq1_ihr_is_not_prompt_wrapper",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_b60a7199",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::trae_child_agent_share",
+              "github:2603_25723::rq1_trae_full_ihr_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_aa4622a2",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_b60a7199",
+              "github:2603_25723::rq1_ihr_is_not_prompt_wrapper"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "If Full IHR were merely a richer prompt for a single agent, all computation would occur in the parent thread. Instead, @trae_child_agent_share shows ~90% of tokens and calls are delegated to child agents under @rq1_trae_full_ihr_perf. This indicates a genuine multi-stage, multi-agent workflow rather than prompt decoration."
+      },
+      "premises": [
+        "github:2603_25723::trae_child_agent_share",
+        "github:2603_25723::rq1_trae_full_ihr_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8ec1c30ff98ff8ab",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::swe_bench_setting"
+      ],
+      "conclusion": "github:2603_25723::rq1_most_instances_dont_flip",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_4234bf02",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq1_trae_paired_flips",
+              "github:2603_25723::rq1_live_swe_paired_flips"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_148933b3",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_4234bf02",
+              "github:2603_25723::rq1_most_instances_dont_flip"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "@rq1_trae_paired_flips shows 115/125 agreements for TRAE vs. w/o RTS, and 110/125 for TRAE vs. w/o HS. @rq1_live_swe_paired_flips shows 113/125 and 114/125 respectively. Both analyses support the conclusion that most instances are resolved or unresolved robustly across conditions; only the frontier cases flip."
+      },
+      "premises": [
+        "github:2603_25723::rq1_trae_paired_flips",
+        "github:2603_25723::rq1_live_swe_paired_flips"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8bc2caeaf1cf2e5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::rq1_harness_controls_behavior",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_a7108b32",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq1_process_moves_more_than_score",
+              "github:2603_25723::rq1_ihr_is_not_prompt_wrapper"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_1dbd3612",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_a7108b32",
+              "github:2603_25723::rq1_harness_controls_behavior"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@rq1_process_moves_more_than_score establishes that process metrics diverge sharply between conditions; @rq1_ihr_is_not_prompt_wrapper confirms the mechanism is genuine multi-stage delegation. Together these establish that the runtime charter and harness logic exert real behavioral control on the agent trajectory, not just cosmetic prompting effects."
+      },
+      "premises": [
+        "github:2603_25723::rq1_process_moves_more_than_score",
+        "github:2603_25723::rq1_ihr_is_not_prompt_wrapper"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3849042b0bf06fc3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq2_composition_design"
+      ],
+      "conclusion": "github:2603_25723::rq2_frontier_concentration",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_0aed1c2d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq2_swe_scores",
+              "github:2603_25723::rq2_osworld_scores"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_b17a9931",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_0aed1c2d",
+              "github:2603_25723::rq2_frontier_concentration"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Both @rq2_swe_scores and @rq2_osworld_scores show that most modules produce small or zero changes in mean score, yet their complementarity with Basic (union solved set) shows they do change which specific boundary tasks are recoverable. This pattern is consistent with effects concentrated at the solved frontier rather than uniform shifts."
+      },
+      "premises": [
+        "github:2603_25723::rq2_swe_scores",
+        "github:2603_25723::rq2_osworld_scores"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8fc41b3a38f8f499",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq2_composition_design",
+        "github:2603_25723::swe_bench_setting"
+      ],
+      "conclusion": "github:2603_25723::rq2_module_families",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_5cba1e99",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq2_swe_scores",
+              "github:2603_25723::rq2_self_evolution_mechanism"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_4d291bb8",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_5cba1e99",
+              "github:2603_25723::rq2_module_families"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@rq2_swe_scores shows self-evolution is the largest single-module gain (+4.8% SWE). @rq2_self_evolution_mechanism explains the mechanism: the acceptance-gated attempt loop aligns the solve criterion with the benchmark gate, improving the frontier without expanding to a larger, costlier search tree. By contrast, verifier and multi-candidate search are dominated on the score-cost graph. This contrast supports the two-family taxonomy in @rq2_module_families."
+      },
+      "premises": [
+        "github:2603_25723::rq2_swe_scores",
+        "github:2603_25723::rq2_self_evolution_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4a6b8fe200dc6a44",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::rq2_module_families",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_29e12a9b",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::rq2_verifier_negative",
+              "github:2603_25723::rq2_module_families"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "@rq2_verifier_negative provides evidence that process-layering modules (verifier) can actively harm performance when local acceptance diverges from benchmark acceptance. This is the canonical failure mode of the second module family: adding process structure whose success criterion is misaligned with the benchmark's actual evaluator."
+      },
+      "premises": [
+        "github:2603_25723::rq2_verifier_negative"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_305403c0c90a93f3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::rq3_behavioral_relocation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_67d1d89e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::rq3_migration_score_gain",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@rq3_migration_score_gain (47.2% vs. 30.4%) is consistent with @rq3_behavioral_relocation: the migrated harness switches from brittle GUI repair to durable artifact-backed verification, which provides more robust completion certificates aligned with the OSWorld evaluator."
+      },
+      "premises": [
+        "github:2603_25723::rq3_migration_score_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2a0fc1943f9ed742",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::rq3_behavioral_relocation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_7f39d95e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::alt_score_gain_artifacts",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "@alt_score_gain_artifacts: The file-backed state module alone on OSWorld Basic raises performance from 41.7% to 47.2% (+5.5%), which approaches but does not fully explain the 16.8pp gap. The alternative's explanatory power is limited."
+      },
+      "premises": [
+        "github:2603_25723::alt_score_gain_artifacts"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c2e4f1db2c2cdfc7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__equivalence_result_175af4a0",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_25723::pred_nlah_explains",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__equivalence_result_aef05169",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_25723::pred_artifact_conventions_explains",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__equivalence_result_aef05169",
+              "github:2603_25723::__equivalence_result_175af4a0"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "@pred_nlah_explains fits well: NLAH migration not only adds file-backed state but restructures the entire control topology to be contract-first (@rq3_topology_difference), which provides broader coverage than any single module. @pred_artifact_conventions_explains is partially supported (file-backed state alone gives +5.5% on OSWorld) but cannot account for the full gap or the topology relocation."
+      },
+      "premises": [
+        "github:2603_25723::pred_nlah_explains",
+        "github:2603_25723::pred_artifact_conventions_explains",
+        "github:2603_25723::rq3_behavioral_relocation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_74facc7edb89de32",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq3_migration_design",
+        "github:2603_25723::osworld_setting",
+        "github:2603_25723::os_symphony_setting"
+      ],
+      "conclusion": "github:2603_25723::_anon_000",
+      "metadata": {
+        "reason": "Both the NLAH+IHR hypothesis and the artifact-conventions-only alternative attempt to explain the behavioral relocation in the OS-Symphony migration."
+      },
+      "premises": [
+        "github:2603_25723::rq3_migration_score_gain",
+        "github:2603_25723::alt_score_gain_artifacts",
+        "github:2603_25723::pred_nlah_explains",
+        "github:2603_25723::pred_artifact_conventions_explains",
+        "github:2603_25723::rq3_behavioral_relocation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_18d00b176f75c169",
+      "sub_strategies": [
+        "lcs_2a0fc1943f9ed742",
+        "lcs_c2e4f1db2c2cdfc7",
+        "lcs_74facc7edb89de32"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq3_migration_design",
+        "github:2603_25723::osworld_setting"
+      ],
+      "conclusion": "github:2603_25723::rq3_migration_score_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_c17f6eac",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq3_os_symphony_code_perf",
+              "github:2603_25723::rq3_os_symphony_nlah_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_ec587fc4",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_c17f6eac",
+              "github:2603_25723::rq3_migration_score_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "@rq3_os_symphony_code_perf (30.4% OSWorld) and @rq3_os_symphony_nlah_perf (47.2% OSWorld) directly establish the +16.8pp performance gap. The raw scores are the primary evidence for the migration score gain."
+      },
+      "premises": [
+        "github:2603_25723::rq3_os_symphony_code_perf",
+        "github:2603_25723::rq3_os_symphony_nlah_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d3e975015e47f6c7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq3_migration_design"
+      ],
+      "conclusion": "github:2603_25723::rq3_behavioral_relocation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_67d3c36b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq3_topology_difference",
+              "github:2603_25723::rq3_search_relocation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_9c2b9ca1",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_67d3c36b",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@rq3_topology_difference shows that native OS-Symphony is a desktop control loop with detachable tutorial detours, while the migrated IHR topology is a contract-first artifact flow. @rq3_search_relocation corroborates this: search behavior is preserved functionally but relocated topologically — from a detachable detour to an integrated part of the contract-first flow. Together these establish the behavioral relocation from GUI repair to artifact-backed verification."
+      },
+      "premises": [
+        "github:2603_25723::rq3_topology_difference",
+        "github:2603_25723::rq3_search_relocation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1bf40399b46db4d5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq1_ablation_design",
+        "github:2603_25723::live_swe_setting"
+      ],
+      "conclusion": "github:2603_25723::rq1_process_moves_more_than_score",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_fc89b278",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq1_live_swe_full_ihr_perf",
+              "github:2603_25723::rq1_live_swe_no_rts_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_834f6099",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_fc89b278",
+              "github:2603_25723::rq1_process_moves_more_than_score"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "@rq1_live_swe_full_ihr_perf (72.8%, 1.4M tokens, 58.4 tool calls) vs. @rq1_live_swe_no_rts_perf (76.0%, 1.1M tokens, 41.0 tool calls) shows that even in the lighter Live-SWE regime, Full IHR raises process metrics (tokens, calls, runtime) substantially while the score stays in a narrow band. This corroborates the same pattern in the TRAE rows."
+      },
+      "premises": [
+        "github:2603_25723::rq1_live_swe_full_ihr_perf",
+        "github:2603_25723::rq1_live_swe_no_rts_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8260a4800bd1c2b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_25723::rq2_composition_design"
+      ],
+      "conclusion": "github:2603_25723::rq2_frontier_concentration",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_ce4fea92",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq2_file_backed_state_mechanism",
+              "github:2603_25723::rq2_swe_scores"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_8c544524",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_ce4fea92",
+              "github:2603_25723::rq2_frontier_concentration"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@rq2_file_backed_state_mechanism shows that file-backed state and evidence-backed answering move moderately right on the score-cost graph for only mild score gains (+1.6% SWE each) — consistent with process-structure benefits at boundary cases rather than broad correctness improvements. @rq2_swe_scores provides the quantitative basis. This pattern supports the frontier-concentration interpretation."
+      },
+      "premises": [
+        "github:2603_25723::rq2_file_backed_state_mechanism",
+        "github:2603_25723::rq2_swe_scores"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e3bca6c9f488b6cb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::nl_not_replacing_code",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__implication_result_6a205e9b",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::rq1_harness_controls_behavior",
+              "github:2603_25723::nl_not_replacing_code"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@rq1_harness_controls_behavior shows that Full IHR is a behaviorally real control mechanism — not merely a richer prompt. This supports the scoping claim: natural language is responsible for harness-level control logic (which the data confirms has real behavioral impact), while code remains responsible for deterministic operations and tool interfaces. The scientific contribution is specifically about the harness pattern layer, not a general claim that NL replaces code."
+      },
+      "premises": [
+        "github:2603_25723::rq1_harness_controls_behavior"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ddff0e20d27b2c2f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::nl_still_matters_for_control",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_8f010672",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::rq1_harness_controls_behavior",
+              "github:2603_25723::rq3_behavioral_relocation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_20313441",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_8f010672",
+              "github:2603_25723::nl_still_matters_for_control"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@rq1_harness_controls_behavior establishes that the runtime charter and harness logic are behaviorally real controls under current models (process metrics diverge substantially). @rq3_behavioral_relocation shows that the NLAH migration relocates reliability mechanisms structurally — not just adding prompt tokens. Together these support the view that harness-level control is a distinct engineering layer separate from one-shot prompt phrasing."
+      },
+      "premises": [
+        "github:2603_25723::rq1_harness_controls_behavior",
+        "github:2603_25723::rq3_behavioral_relocation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_04c4fdaff7a8000a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_25723::harness_search_space",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_25723::__conjunction_result_52fd65d0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_25723::nlah_enables_module_ablation",
+              "github:2603_25723::rq2_module_families"
+            ]
+          },
+          {
+            "conclusion": "github:2603_25723::__implication_result_bc4ea589",
+            "operator": "implication",
+            "variables": [
+              "github:2603_25723::__conjunction_result_52fd65d0",
+              "github:2603_25723::harness_search_space"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@nlah_enables_module_ablation establishes that explicit NLAHs allow independent module composition and ablation. @rq2_module_families shows two qualitatively different module families can be identified through such ablation. Once modules are explicit objects with measurable effects, the same framework extends to automated search over harness representations."
+      },
+      "premises": [
+        "github:2603_25723::nlah_enables_module_ablation",
+        "github:2603_25723::rq2_module_families"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_25430c0b13129bda",
+      "type": "support"
+    }
+  ]
+}
