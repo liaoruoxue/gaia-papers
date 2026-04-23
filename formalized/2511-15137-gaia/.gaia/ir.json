@@ -1,0 +1,2066 @@
+{
+  "ir_hash": "sha256:9f883153a8b5299544b2829c426596353295c718362d39bf830fb50d9655e3d8",
+  "knowledges": [
+    {
+      "content": "Large language models (LLMs) have demonstrated strong mathematical reasoning capabilities when trained with reinforcement learning (RL) algorithms such as Group Relative Policy Optimization (GRPO). RL-based training optimizes LLMs to produce correct final answers to mathematical problems.",
+      "content_hash": "c1ee21bac1322c069909f9b1edcd4a16e61d07a2c0f3607ccb15b5b34a11b63c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_15137::setting_rl_reasoning",
+      "label": "setting_rl_reasoning",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RL improves LLM reasoning",
+      "type": "setting"
+    },
+    {
+      "content": "Group Relative Policy Optimization (GRPO) is an RL algorithm for LLMs that: (1) samples n candidate solutions per problem, (2) assigns rewards based on answer correctness (+1 correct, -1 incorrect, -1.5 invalid), (3) normalizes advantages within the group using mean and standard deviation, (4) optimizes the policy using a clipped PPO-style objective with optional KL divergence penalty. GRPO is critic-free — it does not require a separate value network.",
+      "content_hash": "1af7e8d512aa874e608a0b53b37300b396ddf2736402629dd709dd481992e959",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_15137::setting_grpo_definition",
+      "label": "setting_grpo_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "GRPO definition",
+      "type": "setting"
+    },
+    {
+      "content": "Self-verification in LLMs refers to the capability of a model to assess the correctness of its own generated reasoning trace, given the original question and the solution. A verifier outputs whether the solution is correct or incorrect. Self-verification differs from process reward modeling (PRM) in that it uses the model itself as the verifier without a separate trained critic.",
+      "content_hash": "2e4d7d3544af44c39c38005841ef1237d622b2451704407a287e9fca30af4a06",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::setting_verification_definition",
+      "label": "setting_verification_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Self-verification definition",
+      "type": "setting"
+    },
+    {
+      "content": "Despite improvements in mathematical problem-solving through RL training, LLMs still struggle to consistently verify their own reasoning traces. Models trained purely to maximize solution correctness do not automatically develop reliable self-verification capabilities.",
+      "content_hash": "c2fdd07a41bfb780232cb397eea9764c79329a2310177f138cd06367109af3a7",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_15137::verification_gap",
+      "label": "verification_gap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "verification_training_neglect"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Self-verification gap in RL-trained LLMs",
+      "type": "claim"
+    },
+    {
+      "content": "Existing RL-based training approaches for LLMs (such as GRPO) optimize exclusively for solution generation correctness and do not explicitly train the model to verify whether a given solution is correct. Verification ability is treated as a byproduct rather than an explicit training objective.",
+      "content_hash": "9213dc4635f7f50792b2781e2f771bf32abe6613894b455f55273c7c6b8636eb",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_15137::verification_training_neglect",
+      "label": "verification_training_neglect",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Standard GRPO and similar methods optimize only for solution correctness. This is confirmed by inspecting the GRPO objective. The claim is accurate for the baseline GRPO approach studied in this paper."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Verification neglected in existing RL training",
+      "type": "claim"
+    },
+    {
+      "content": "Prior approaches that incorporate verification into LLM training rely on supervised fine-tuning (SFT) with error correction data. SFT-based verification training introduces distribution shift between the SFT data distribution and the RL policy distribution, which can degrade the quality of the learned policy.",
+      "content_hash": "098548a19783c9e1bd047e8fd33795bdebb318e6c54e4bf844b496c4ff6a2958",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_15137::sft_limitation",
+      "label": "sft_limitation",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Distribution shift from SFT in RL settings is a recognized problem in the literature. The claim is standard and well-supported by prior work."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "SFT-based verification causes distribution shift",
+      "type": "claim"
+    },
+    {
+      "content": "It is unclear whether jointly training an LLM for both solution generation and self-verification improves or hinders reasoning performance. The two objectives may compete for model capacity, potentially causing a tradeoff where gains in verification accuracy come at the cost of solution accuracy.",
+      "content_hash": "cae6c75e1b3a8db557320f391c99cf792f6b2c18d6b11799d0341bc451e227e6",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2511_15137::research_question_tradeoff",
+      "label": "research_question_tradeoff",
+      "metadata": {
+        "prior": 0.6,
+        "prior_justification": "The concern that joint training may hurt solution accuracy is a reasonable a priori hypothesis, though the paper's results show it does not materialize. Prior reflects the pre-experimental plausibility of the concern."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Open question: joint training tradeoff",
+      "type": "claim"
+    },
+    {
+      "content": "The paper introduces GRPO-Verif, an extension of GRPO that jointly optimizes solution generation and self-verification through a single unified RL loss function, without relying on supervised fine-tuning or a separate critic model.",
+      "content_hash": "e481620fd60e8f5157d64eb059b7bb890c7cffb47cd6e9eb2ce79a4ffc6e0f62",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2511_15137::core_contribution",
+      "label": "core_contribution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "core_contribution",
+              "grpo_verif_objective"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "GRPO-Verif contribution",
+      "type": "claim"
+    },
+    {
+      "content": "The GRPO base objective (Equation 1) is:\n\n$$J_{GRPO}(\\theta) = \\mathbb{E}\\left[\\frac{1}{n}\\sum_{i=1}^{n}\\min\\left(r_t^{(i)}(\\theta)\\hat{A}_t^{(i)},\\ \\text{clip}\\left(r_t^{(i)}(\\theta), 1-\\epsilon, 1+\\epsilon\\right)\\hat{A}_t^{(i)}\\right)\\right] - \\beta D_{KL}$$\n\nwhere $r_t^{(i)}(\\theta) = \\pi_\\theta(y_t^{(i)} | q, y_{<t}^{(i)}) / \\pi_{\\text{old}}(y_t^{(i)} | q, y_{<t}^{(i)})$ is the token-level probability ratio, $\\hat{A}_t^{(i)}$ is the group-normalized advantage, $\\epsilon$ is the clipping threshold, and $\\beta$ is the KL divergence penalty coefficient.",
+      "content_hash": "5ea7747a98aeff1655485f5205e3fcfcf1c7c028da53aaa0139fb14a0a32fd74",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_15137::setting_grpo_objective",
+      "label": "setting_grpo_objective",
+      "module": "s2_method",
+      "parameters": [],
+      "title": "GRPO base objective",
+      "type": "setting"
+    },
+    {
+      "content": "Group-relative advantage normalization (Equation 5): for a group of n solutions with rewards $\\{R^{(j)}\\}_{j=1}^n$, the advantage for solution $i$ is:\n\n$$\\hat{A}_t^{(i)} = \\frac{R^{(i)} - \\text{mean}(\\{R^{(j)}\\})}{\\text{std}(\\{R^{(j)}\\})}$$\n\nThe same normalization formula applies to verification advantages $\\hat{A}_t^{V,(i)}$ computed over the group of verification rewards $\\{R_V^{(j)}\\}$.",
+      "content_hash": "dc28bdbcdd2ae5316faa22515d98e6a4b26101ac4f2fc7443c47003487c8d1bc",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_15137::setting_advantage_normalization",
+      "label": "setting_advantage_normalization",
+      "module": "s2_method",
+      "parameters": [],
+      "title": "Group-relative advantage normalization",
+      "type": "setting"
+    },
+    {
+      "content": "Reward scheme for both solution generation and verification in GRPO-Verif:\n\n| Output type | Condition | Reward |\n|-------------|-----------|--------|\n| Solution | Correct answer | +1 |\n| Solution | Incorrect answer | -1 |\n| Solution | No valid output | -1.5 |\n| Verification | Correct judgment | +1 |\n| Verification | Incorrect judgment | -1 |\n| Verification | No valid output | -1.5 |",
+      "content_hash": "20b557fef4feca4ad6df80545e76e779d72213196134be3bfd92e682ec710d0f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::setting_reward_scheme",
+      "label": "setting_reward_scheme",
+      "module": "s2_method",
+      "parameters": [],
+      "title": "Reward scheme",
+      "type": "setting"
+    },
+    {
+      "content": "The GRPO-Verif unified objective (Equations 3-4) is:\n\n$$J_{\\text{GRPO-Verif}}(\\theta) = \\mathbb{E}\\left[\\frac{1}{n}\\sum_{i=1}^{n}\\left(\\frac{1}{|y^{(i)}|}\\sum_t r_t^{(i)}(\\theta)\\hat{A}_t^{(i)} + \\alpha \\cdot \\frac{1}{|v^{(i)}|}\\sum_t \\hat{r}_t^{(i)}(\\theta)\\hat{A}_t^{V,(i)}\\right)\\right]$$\n\nwhere $v^{(i)}$ is the verification response for solution $y^{(i)}$, $\\hat{r}_t^{(i)}(\\theta) = \\pi_\\theta(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)}) / \\pi_{\\text{old}}(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)})$ is the verification probability ratio, $\\hat{A}_t^{V,(i)}$ is the group-normalized verification advantage, and $\\alpha$ is a scalar hyperparameter controlling verification loss weight (set to 0.2 in experiments).",
+      "content_hash": "4e515d62c3e4609855c3dc4c24f8fda5b425b7196f50ff022c4ff8f0189f0cb2",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2511_15137::grpo_verif_objective",
+      "label": "grpo_verif_objective",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "The objective is formally defined with explicit equations. It correctly combines solution and verification losses. Minor uncertainty about whether the per-token normalization is the optimal choice."
+      },
+      "module": "s2_method",
+      "parameters": [],
+      "title": "GRPO-Verif joint objective",
+      "type": "claim"
+    },
+    {
+      "content": "In GRPO-Verif, verification responses are generated conditioned on both the question $q$ and the corresponding solution $y^{(i)}$: the model produces $v^{(i)} \\sim \\pi_\\theta(\\cdot | q, y^{(i)})$. This conditioning ensures that the verification task is specific to each solution, not a generic assessment of the question.",
+      "content_hash": "02f8a377834566d0aa6a9fdf52aae222a98538c31c385a86e8c06de9297d969b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_15137::grpo_verif_conditioning",
+      "label": "grpo_verif_conditioning",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Explicitly stated design choice: verification input is (q, y^(i)). No ambiguity; this is a definitional property of GRPO-Verif."
+      },
+      "module": "s2_method",
+      "parameters": [],
+      "title": "Verification conditioned on question and solution",
+      "type": "claim"
+    },
+    {
+      "content": "The verification weight hyperparameter $\\alpha$ in GRPO-Verif is set to 0.2 in all experiments. This value was chosen to provide a meaningful verification training signal while ensuring that the solution generation objective remains the dominant term in the joint loss.",
+      "content_hash": "1693ba2d0202ab34af79e02b69eceec1e3069feb1478834fefa1176d36b59d32",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_15137::alpha_hyperparameter",
+      "label": "alpha_hyperparameter",
+      "metadata": {
+        "prior": 0.7,
+        "prior_justification": "The value alpha=0.2 is asserted without ablation. Plausible as a weak auxiliary weight, but uncertainty remains about whether it is optimal."
+      },
+      "module": "s2_method",
+      "parameters": [],
+      "title": "Alpha hyperparameter value",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif requires no separate critic or reward model for verification. Both solution rewards and verification rewards are computed using rule-based correctness checks (comparing model outputs against ground-truth answers), making the approach fully self-contained without learned value functions.",
+      "content_hash": "29f2c1c6ca4e900ef14f9dce02594883016848bbb571dfd788a4fe5a63af77c8",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2511_15137::grpo_verif_no_critic",
+      "label": "grpo_verif_no_critic",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_objective"
+            ]
+          }
+        }
+      },
+      "module": "s2_method",
+      "parameters": [],
+      "title": "GRPO-Verif is critic-free",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif directly addresses the self-verification gap by making verification an explicit training objective within the RL framework, using the same policy gradient mechanism as solution generation. This avoids the distribution shift problem of SFT-based verification training.",
+      "content_hash": "9de7cbd30b46316ee017790cf154a0ad00c3d6f7c6e99930fe4101ced4fd514f",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2511_15137::grpo_verif_addresses_gap",
+      "label": "grpo_verif_addresses_gap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_conditioning",
+              "grpo_verif_objective"
+            ]
+          }
+        }
+      },
+      "module": "s2_method",
+      "parameters": [],
+      "title": "GRPO-Verif addresses verification gap without distribution shift",
+      "type": "claim"
+    },
+    {
+      "content": "Base model: Qwen2.5-3B, a 3-billion parameter language model from the Qwen2.5 series. All experiments use this single model size.",
+      "content_hash": "6955682fac1a82ddd42b7453028ef7a8239e44b4831b348094b97e338163b754",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_15137::setting_model",
+      "label": "setting_model",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Base model: Qwen2.5-3B",
+      "type": "setting"
+    },
+    {
+      "content": "Training data: 6,000 problems sampled from DAPO-Math-17k, a mathematical problem dataset used in DAPO (Direct Alignment from Preference Optimization) training.",
+      "content_hash": "63fc9ac464a635d46155c0b085a123dcf406fbe22ca73e5c34fceaf73ddb41d9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_15137::setting_training_data",
+      "label": "setting_training_data",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Training data",
+      "type": "setting"
+    },
+    {
+      "content": "Evaluation benchmarks (four datasets):\n\n| Benchmark | Description |\n|-----------|-------------|\n| AMC23 | American Mathematics Competition 2023 |\n| MATH | MATH dataset (mathematics problems) |\n| Minerva_Math | Minerva mathematics benchmark |\n| OlympiadBench | Olympiad-level mathematics problems |",
+      "content_hash": "3a1c6fd30fed5f4e2dc2de5f5cec1edbdfca7c43cc06ae260f0228dea378e05c",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::setting_benchmarks",
+      "label": "setting_benchmarks",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Evaluation benchmarks",
+      "type": "setting"
+    },
+    {
+      "content": "Training hyperparameters:\n\n| Parameter | Value |\n|-----------|-------|\n| Learning rate | $1 \\times 10^{-6}$ |\n| Batch size | 32 |\n| KL penalty $\\beta$ | 0 (disabled) |\n| Clipping threshold $\\epsilon$ | 0.28 |\n| Number of generations $n$ | 8 |\n| Verification weight $\\alpha$ | 0.2 |\n| Max completion length | 2048 tokens |\n| Sampling temperature (training) | 1 |\n| Sampling temperature (evaluation) | 0 (greedy) |",
+      "content_hash": "bf70379005fc0b5d40dae438f9a8ee69a0a550a15e6ce8cf91eefdf0f420d258",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_15137::setting_hyperparameters",
+      "label": "setting_hyperparameters",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Training hyperparameters",
+      "type": "setting"
+    },
+    {
+      "content": "Three comparison conditions:\n\n1. **Default**: Qwen2.5-3B without any RL fine-tuning (zero-shot baseline)\n2. **GRPO**: Qwen2.5-3B fine-tuned with standard GRPO (solution generation only, $\\alpha=0$)\n3. **GRPO-Verif**: Qwen2.5-3B fine-tuned with the proposed joint objective ($\\alpha=0.2$)\n\nBoth solution accuracy and verification accuracy are reported for all three conditions.",
+      "content_hash": "ebe0eaae6fb06327acc49ac64a77158f744f3d596fec0a9f46c7acce97e159e6",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_15137::setting_baselines",
+      "label": "setting_baselines",
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Comparison baselines",
+      "type": "setting"
+    },
+    {
+      "content": "Solution accuracy results across four benchmarks (Table 1, solution task rows):\n\n| Method | AMC23 | MATH | Minerva_Math | OlympiadBench | AVG |\n|--------|-------|------|--------------|---------------|-----|\n| Default (no RL) | 27.5% | 52.7% | 11.0% | 21.0% | 28.1% |\n| GRPO | 45.0% | 63.4% | 19.5% | 25.8% | 38.4% |\n| GRPO-Verif | 45.0% | 63.2% | 18.8% | 26.8% | 38.5% |\n\nGRPO-Verif achieves average solution accuracy of 38.5%, compared to GRPO's 38.4% — a difference of 0.1 percentage points.",
+      "content_hash": "559e894fb249276620ad48d10d1d075338941e599ea8e10c896ea2ae873c1083",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2511_15137::result_solution_accuracy",
+      "label": "result_solution_accuracy",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly reported experimental data in Table 1. High confidence in accuracy of the numbers given replication is straightforward. Slight uncertainty about generalizability beyond the single model/dataset configuration.",
+        "source_table": "artifacts/2511.15137.pdf, Table 1"
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Solution accuracy comparison",
+      "type": "claim"
+    },
+    {
+      "content": "Verification accuracy results across four benchmarks (Table 1, verification task rows):\n\n| Method | AMC23 | MATH | Minerva_Math | OlympiadBench | AVG |\n|--------|-------|------|--------------|---------------|-----|\n| Default (no RL) | 12.5% | 26.4% | 10.3% | 15.6% | 16.2% |\n| GRPO | 25.0% | 57.7% | 21.0% | 27.7% | 32.9% |\n| GRPO-Verif | 40.0% | 60.7% | 19.9% | 27.8% | 37.1% |\n\nGRPO-Verif achieves average verification accuracy of 37.1%, compared to GRPO's 32.9% — an improvement of 4.2 percentage points.",
+      "content_hash": "36f366e003b21e266a438feadcc966571639529d64ade5d94f7ff119f5e59e5d",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2511_15137::result_verification_accuracy",
+      "label": "result_verification_accuracy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_addresses_gap",
+              "result_verification_accuracy"
+            ]
+          }
+        },
+        "source_table": "artifacts/2511.15137.pdf, Table 1"
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Verification accuracy comparison",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO training improves solution accuracy over the untuned default by 10.3 percentage points on average (28.1% → 38.4%), demonstrating that RL fine-tuning substantially improves mathematical problem solving on the Qwen2.5-3B model.",
+      "content_hash": "3e8f0a51725d9f38b3b0a99a48b36937f25d9a6f033f7ddd9a796778c9546a8b",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2511_15137::grpo_improves_over_default_solution",
+      "label": "grpo_improves_over_default_solution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "result_solution_accuracy",
+              "setting_grpo_definition",
+              "setting_training_data"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "GRPO solution improvement over default",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO training improves verification accuracy over the untuned default by 16.7 percentage points on average (16.2% → 32.9%), showing that even solution-only RL training incidentally improves verification ability.",
+      "content_hash": "d5ed7a38f0174fd7248e52fc9b6c01a144e68bc25585ef78677e2742ab69635e",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2511_15137::grpo_improves_over_default_verification",
+      "label": "grpo_improves_over_default_verification",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "result_verification_accuracy",
+              "setting_grpo_definition"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "GRPO verification improvement over default",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif maintains solution accuracy statistically equivalent to standard GRPO: 38.5% vs 38.4% average (difference of 0.1 percentage points). The joint verification objective does not degrade solution generation capability.",
+      "content_hash": "a7f287b15491314fca1be605c178acabfddd21935d5f16d24c0b65aa0bd3c936",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2511_15137::grpo_verif_maintains_solution",
+      "label": "grpo_verif_maintains_solution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alpha_hyperparameter",
+              "grpo_verif_objective",
+              "result_solution_accuracy"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "GRPO-Verif maintains solution accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif improves average verification accuracy from 32.9% (GRPO) to 37.1% (GRPO-Verif), a gain of 4.2 percentage points. The largest single-benchmark gain is on AMC23: 25.0% → 40.0% (+15 percentage points).",
+      "content_hash": "840863033a40e240fdf2b7f2d733df1f3dd525f50afe355099a9aaa25cc6c9f3",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2511_15137::grpo_verif_improves_verification",
+      "label": "grpo_verif_improves_verification",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_amc23_verification",
+              "grpo_verif_conditioning",
+              "grpo_verif_objective",
+              "result_verification_accuracy"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "GRPO-Verif improves verification accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "On AMC23, GRPO-Verif achieves verification accuracy of 40.0% compared to GRPO's 25.0%, an improvement of 15 percentage points — the largest benchmark-level gain across all datasets.",
+      "content_hash": "498afe2a9322204d579192c942afdaeea00c4739e1dcd0a060dfc91aa4b77941",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2511_15137::grpo_verif_amc23_verification",
+      "label": "grpo_verif_amc23_verification",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "result_verification_accuracy"
+            ]
+          }
+        },
+        "source_table": "artifacts/2511.15137.pdf, Table 1"
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "GRPO-Verif AMC23 verification improvement",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif incurs additional computational cost compared to standard GRPO because it must generate verification responses for each solution in addition to the solution itself. This doubles the generation cost per training step. The paper acknowledges this as a limitation requiring future optimization.",
+      "content_hash": "b9783da94c60e9239fefdc8a398ffbaaeee28825b4f9ac442a6dab6b62e21dc0",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2511_15137::computational_overhead",
+      "label": "computational_overhead",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_objective"
+            ]
+          }
+        }
+      },
+      "module": "s3_experiments",
+      "parameters": [],
+      "title": "Computational overhead of GRPO-Verif",
+      "type": "claim"
+    },
+    {
+      "content": "PPO (Proximal Policy Optimization)-based approaches to LLM training use a separate critic (value network) to estimate state values during policy optimization. RISE is an example that incorporates verification into PPO training using unified batches and a shared critic.",
+      "content_hash": "25516d08fd06a9ad3165176d7e3c1cb17c3a1183694203f2089023ca6708f0fa",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_15137::setting_ppo_based_verification",
+      "label": "setting_ppo_based_verification",
+      "module": "s4_related",
+      "parameters": [],
+      "title": "PPO-based verification approaches",
+      "type": "setting"
+    },
+    {
+      "content": "STaR (Self-Taught Reasoner) and similar bootstrapping approaches train LLMs to generate their own rationales, then use correct rationales as supervised training data. These approaches do not use RL but rely on iterative SFT.",
+      "content_hash": "eff11b2ce44cee80ac94345661fb4296b5605c6a1f82190a669b132a43bf25b9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_15137::setting_star_approach",
+      "label": "setting_star_approach",
+      "module": "s4_related",
+      "parameters": [],
+      "title": "STaR bootstrapping approach",
+      "type": "setting"
+    },
+    {
+      "content": "RISE incorporates self-verification into PPO-based LLM training using unified training batches and a shared critic network. Unlike GRPO-Verif, RISE requires a critic model, making it more complex and computationally expensive. GRPO-Verif achieves verification improvement without a critic by using group-normalized advantages.",
+      "content_hash": "76946df06b7a6bf88887bc3a7e42bb162e2079030f3e28892c7bd6aa2f4f1207",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::related_rise_comparison",
+      "label": "related_rise_comparison",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_no_critic"
+            ]
+          }
+        }
+      },
+      "module": "s4_related",
+      "parameters": [],
+      "title": "RISE vs GRPO-Verif comparison",
+      "type": "claim"
+    },
+    {
+      "content": "Process Reward Models (PRMs) provide step-level verification feedback by training a separate model to score intermediate reasoning steps. GRPO-Verif differs from PRM approaches in that it trains the same model to both solve and verify, without a separate step-level reward model.",
+      "content_hash": "ae3df180cd112e6f253f15bee7f9efe50c50d777fa4fbf4a7fd8d9c51aa45ab8",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_15137::related_prm_distinction",
+      "label": "related_prm_distinction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_no_critic"
+            ]
+          }
+        }
+      },
+      "module": "s4_related",
+      "parameters": [],
+      "title": "PRM vs GRPO-Verif distinction",
+      "type": "claim"
+    },
+    {
+      "content": "Prior SFT-based verification methods (e.g., methods using error correction datasets) train verification capability separately from solution generation, creating a distribution gap between the SFT training data and the RL policy. GRPO-Verif avoids this gap by training both objectives jointly within the same RL loop.",
+      "content_hash": "c473a8dba64bbc5d8e3528b746c73d4ac7add8f2e7b392618827ac0eed54486c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_15137::related_sft_distinction",
+      "label": "related_sft_distinction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_addresses_gap",
+              "sft_limitation"
+            ]
+          }
+        }
+      },
+      "module": "s4_related",
+      "parameters": [],
+      "title": "SFT vs GRPO-Verif: distribution alignment",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif is novel in three respects relative to prior work: (1) it treats problem-solving and verification as integrated rather than separate tasks, (2) it uses critic-free GRPO instead of PPO-based approaches requiring a separate value function, (3) it explicitly weights the verification loss as an auxiliary objective with hyperparameter $\\alpha$, enabling systematic study of verification's impact on both accuracy dimensions.",
+      "content_hash": "fcccfb0d67c01797e2cc1aa7919f3567145d4c905a37a01fa4650de9f01e50d0",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_15137::related_novelty",
+      "label": "related_novelty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_addresses_gap",
+              "grpo_verif_no_critic",
+              "grpo_verif_objective"
+            ]
+          }
+        }
+      },
+      "module": "s4_related",
+      "parameters": [],
+      "title": "Novelty relative to prior work",
+      "type": "claim"
+    },
+    {
+      "content": "Jointly optimizing LLMs for solution generation and self-verification within a single RL objective is feasible and beneficial: it enhances verification accuracy by 4.2 percentage points while maintaining solution accuracy within 0.1 percentage points of solution-only RL training. The two objectives do not substantially compete.",
+      "content_hash": "eb4b1c2fb2e0e2c375a17ce493321b4de43cdc12ad01992a0040e620a523c2ae",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2511_15137::conclusion_joint_training_viable",
+      "label": "conclusion_joint_training_viable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_improves_verification",
+              "grpo_verif_maintains_solution",
+              "research_question_tradeoff"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Joint training is viable and beneficial",
+      "type": "claim"
+    },
+    {
+      "content": "Explicitly incorporating self-verification as an RL training objective improves the reliability of LLM reasoning by producing models that can more accurately assess whether their own solutions are correct, which is a prerequisite for self-correction and iterative refinement.",
+      "content_hash": "dcc50c18f0818f9a9793e7ee64ae3a20ac9ec7022c74d9d45bea80cdcf5e3b56",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2511_15137::conclusion_verification_reliability",
+      "label": "conclusion_verification_reliability",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "grpo_verif_conditioning",
+              "grpo_verif_improves_verification"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Verification training improves reasoning reliability",
+      "type": "claim"
+    },
+    {
+      "content": "Future work should address the computational overhead of GRPO-Verif, which requires generating both a solution and a verification for every training sample. Potential directions include training-time efficiency optimizations (e.g., shared prefixes, batched generation) or reducing verification generation frequency.",
+      "content_hash": "ea0e5d5fc05b5a6cca19554f8e9e92d4b18b21e234218aaf0a8244bd3464aa5f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::future_work_efficiency",
+      "label": "future_work_efficiency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "computational_overhead"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Future work: computational efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "The paper uses a fixed $\\alpha = 0.2$ for verification loss weighting. Future work should systematically study the effect of different $\\alpha$ values on the tradeoff between solution accuracy and verification accuracy, including whether dynamic scheduling of $\\alpha$ during training is beneficial.",
+      "content_hash": "e87bc8197ceeb7fef799cef0f2457c791e1c06fd35fd9562e0354e346d36d629",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_15137::future_work_alpha_study",
+      "label": "future_work_alpha_study",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alpha_hyperparameter"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Future work: alpha sensitivity study",
+      "type": "claim"
+    },
+    {
+      "content": "compare(GRPO-Verif improves average verification accuracy from 32.9% (GRPO) to 37.1% (GRPO-Verif), a gain of 4.2 percentage points. The largest single-benchmark gain is on AMC23: 25.0% → 40.0% (+15 percentage points)., GRPO training improves verification accuracy over the untuned default by 16.7 percentage points on average (16.2% → 32.9%), showing that even solution-only RL training incidentally improves verification ability., Verification accuracy results across four benchmarks (Table 1, verification task rows):\n\n| Method | AMC23 | MATH | Minerva_Math | OlympiadBench | AVG |\n|--------|-------|------|--------------|---------------|-----|\n| Default (no RL) | 12.5% | 26.4% | 10.3% | 15.6% | 16.2% |\n| GRPO | 25.0% | 57.7% | 21.0% | 27.7% | 32.9% |\n| GRPO-Verif | 40.0% | 60.7% | 19.9% | 27.8% | 37.1% |\n\nGRPO-Verif achieves average verification accuracy of 37.1%, compared to GRPO's 32.9% — an improvement of 4.2 percentage points.)",
+      "content_hash": "a067205dbd226f574118de7dee94ee5013e6de8ea67c7cc8156d4488c50c9d15",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_15137::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_15137::not_both_tradeoff",
+      "label": "not_both_tradeoff",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.92
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::result_solution_accuracy,github:2511_15137::grpo_improves_over_default_solution)",
+      "content_hash": "2fa73b10ecdce1bf62be1a7240893bc568c98f66deddc3dce4cf27ab6d5bb872",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_53e1ab58",
+      "label": "__implication_result_53e1ab58",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::result_solution_accuracy,github:2511_15137::grpo_improves_over_default_solution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9d5d518f5e0abab8",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::result_verification_accuracy,github:2511_15137::grpo_improves_over_default_verification)",
+      "content_hash": "536ea6eb03e30755446060b4ef89a69f41eb28958bb6833fbea3888910f4d2d2",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_f290a014",
+      "label": "__implication_result_f290a014",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::result_verification_accuracy,github:2511_15137::grpo_improves_over_default_verification)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c5a87fe912ab58d3",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_conditioning)",
+      "content_hash": "e2233f6441e42a34babc989f5351253d71d06b10962f124541995395c616c801",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_0ece8cd9",
+      "label": "__conjunction_result_0ece8cd9",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_conditioning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8b0054675618fb85",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_0ece8cd9,github:2511_15137::grpo_verif_addresses_gap)",
+      "content_hash": "feabf3868efa2cb91ae6a54d5223ef3e1c9beb0d8b77a6db5a03219fc9d3dcbb",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_30e96cd7",
+      "label": "__implication_result_30e96cd7",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_0ece8cd9,github:2511_15137::grpo_verif_addresses_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8b0054675618fb85",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::alpha_hyperparameter)",
+      "content_hash": "718069b50463bfa3adfac5acb0ce7122380a75c072095e677cb612a26b8d5846",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_616b752d",
+      "label": "__conjunction_result_616b752d",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::alpha_hyperparameter)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_27a5dba33731f3a6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_616b752d,github:2511_15137::grpo_verif_maintains_solution)",
+      "content_hash": "9896acaa28b34528e33c5bce0a00a7e1b4db9322e5a78a636d4d3d3693b24a07",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_fcecb399",
+      "label": "__implication_result_fcecb399",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_616b752d,github:2511_15137::grpo_verif_maintains_solution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_27a5dba33731f3a6",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_conditioning)",
+      "content_hash": "e2233f6441e42a34babc989f5351253d71d06b10962f124541995395c616c801",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_a6ad2923",
+      "label": "__conjunction_result_a6ad2923",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_conditioning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_548d13bb4383b35c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_a6ad2923,github:2511_15137::grpo_verif_improves_verification)",
+      "content_hash": "a7238f6875cf214eb5865434a9ae8e95362833d22bfb661548574f132f6ee497",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_26352874",
+      "label": "__implication_result_26352874",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_a6ad2923,github:2511_15137::grpo_verif_improves_verification)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_548d13bb4383b35c",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::result_verification_accuracy,github:2511_15137::grpo_verif_amc23_verification)",
+      "content_hash": "9e87dba0d19d287efc53ae4de13280864cc06ddf1d2f7e73411e91bdc2662e83",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_ee70c282",
+      "label": "__implication_result_ee70c282",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::result_verification_accuracy,github:2511_15137::grpo_verif_amc23_verification)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3d5bcb9a5ba0e2cb",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::result_verification_accuracy)",
+      "content_hash": "94836176248f72c948f0807cc6e0428b257d7df940a2b5e9cfff127a2379acb6",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_cf49442a",
+      "label": "__implication_result_cf49442a",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::result_verification_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ff7a86d29e17ef09",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_improves_over_default_verification,github:2511_15137::result_verification_accuracy)",
+      "content_hash": "8ee3768a2e80537969f203cb4de1d492a796efe6860fc4c5046f856658e656ed",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_81dd8e7e",
+      "label": "__implication_result_81dd8e7e",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_improves_over_default_verification,github:2511_15137::result_verification_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_55fb418d8748471c",
+        "owning_strategy_type": "support",
+        "prior": 0.45,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2511_15137::grpo_verif_improves_verification,github:2511_15137::result_verification_accuracy)",
+      "content_hash": "9dcd79f0e3a10d9b5f7c50f28c9ee4f2b7edc4f377f61bfd174b865a805a6d35",
+      "exported": false,
+      "id": "github:2511_15137::__equivalence_result_83b99c2e",
+      "label": "__equivalence_result_83b99c2e",
+      "metadata": {
+        "canonical_name": "matches(github:2511_15137::grpo_verif_improves_verification,github:2511_15137::result_verification_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_7a450fdb5609ae13",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2511_15137::grpo_improves_over_default_verification,github:2511_15137::result_verification_accuracy)",
+      "content_hash": "56b3f7764ade34df31b80a69b46200cf0a3730738956b42cc9e0ff07fc1e6071",
+      "exported": false,
+      "id": "github:2511_15137::__equivalence_result_e7564e47",
+      "label": "__equivalence_result_e7564e47",
+      "metadata": {
+        "canonical_name": "matches(github:2511_15137::grpo_improves_over_default_verification,github:2511_15137::result_verification_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_7a450fdb5609ae13",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_maintains_solution,github:2511_15137::grpo_verif_improves_verification)",
+      "content_hash": "25276c3a5153fb3c0cf10ca8f0dce2c7d332ac00e01df14f803d529c1346089b",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_231c8a9c",
+      "label": "__conjunction_result_231c8a9c",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_maintains_solution,github:2511_15137::grpo_verif_improves_verification)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a992bde1dbf6e737",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_231c8a9c,github:2511_15137::conclusion_joint_training_viable)",
+      "content_hash": "cd66377a8a90eaf15db0492bf0c071cabaae4c5152c96ec75b10b844277c315c",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_5a847b62",
+      "label": "__implication_result_5a847b62",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_231c8a9c,github:2511_15137::conclusion_joint_training_viable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a992bde1dbf6e737",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_improves_verification,github:2511_15137::grpo_verif_conditioning)",
+      "content_hash": "b2af0fdd1ee7a24381ae775b7b1f7d73b4ef091054b37ecd2ae8d5ef08311ccc",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_8a976e9e",
+      "label": "__conjunction_result_8a976e9e",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_improves_verification,github:2511_15137::grpo_verif_conditioning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_194f47c58a5f8633",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_8a976e9e,github:2511_15137::conclusion_verification_reliability)",
+      "content_hash": "ba6701fe2c9f425a32c113c00c08d91b3cdbfe22ff6b0ff5aeebf2d88496bb5c",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_5d04ded7",
+      "label": "__implication_result_5d04ded7",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_8a976e9e,github:2511_15137::conclusion_verification_reliability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_194f47c58a5f8633",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::verification_training_neglect,github:2511_15137::verification_gap)",
+      "content_hash": "b82f80f2d7e3e481ba3766717bd7f27f6d47a42c13e9237311d498b0b678360e",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_312eb1f5",
+      "label": "__implication_result_312eb1f5",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::verification_training_neglect,github:2511_15137::verification_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a0bb57f2c0aabba9",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::core_contribution)",
+      "content_hash": "937870b084b7bae4dc1afdba68e75b4edacfae0693fbd989ee83a38c7da85b87",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_1e3d4398",
+      "label": "__implication_result_1e3d4398",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::core_contribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_eedaa6609c629396",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_no_critic)",
+      "content_hash": "5b4c3996a89dfe94302a8ec328eb63437a5627905f1f549d98b6b4e66297a6f2",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_e33196a8",
+      "label": "__implication_result_e33196a8",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::grpo_verif_no_critic)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4af79a210c923e75",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::computational_overhead)",
+      "content_hash": "d5e8d7de74cc2594b2b1cbd66d3f3c65b2dcf7902fda91cfac6cd3d184008354",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_d1529cce",
+      "label": "__implication_result_d1529cce",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_objective,github:2511_15137::computational_overhead)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6468a75230b42df9",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_no_critic,github:2511_15137::related_rise_comparison)",
+      "content_hash": "8fe867cb2fee50e4ceffdc24e01b2e0554ab56addaf232597d8ae12f54302e8c",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_f51ce760",
+      "label": "__implication_result_f51ce760",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_no_critic,github:2511_15137::related_rise_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_31e8bea87b237b57",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::sft_limitation)",
+      "content_hash": "bb15d47c45e12082d7f1d4f99294bb3adda7f236c78e27bd0be144324f4d3584",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_6802dd10",
+      "label": "__conjunction_result_6802dd10",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::sft_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dc79b85fe888b455",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_6802dd10,github:2511_15137::related_sft_distinction)",
+      "content_hash": "00bbf3658355a8092b7bf9b4319cc7b85161776eacb0c3aeb7f04cbd637d4af2",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_1d5eea2f",
+      "label": "__implication_result_1d5eea2f",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_6802dd10,github:2511_15137::related_sft_distinction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dc79b85fe888b455",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_15137::grpo_verif_no_critic,github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::grpo_verif_objective)",
+      "content_hash": "d6e772bbed8f9c8ddcef9c5801df19a1421508b64c56ba65d45e65a8303bcbac",
+      "exported": false,
+      "id": "github:2511_15137::__conjunction_result_e381ceeb",
+      "label": "__conjunction_result_e381ceeb",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_15137::grpo_verif_no_critic,github:2511_15137::grpo_verif_addresses_gap,github:2511_15137::grpo_verif_objective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6c873f6a24d23afc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::__conjunction_result_e381ceeb,github:2511_15137::related_novelty)",
+      "content_hash": "d227401881abf427098ae66cdc58dcfd0d80c5456416d53e9976fce374097592",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_0e16f7cf",
+      "label": "__implication_result_0e16f7cf",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::__conjunction_result_e381ceeb,github:2511_15137::related_novelty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6c873f6a24d23afc",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::grpo_verif_no_critic,github:2511_15137::related_prm_distinction)",
+      "content_hash": "983d6d1c918a65f04f8470b866a09d7593fe69244cd82b2e19873c72880be02f",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_0653bfcf",
+      "label": "__implication_result_0653bfcf",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::grpo_verif_no_critic,github:2511_15137::related_prm_distinction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8b4d134f8af6c38",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::computational_overhead,github:2511_15137::future_work_efficiency)",
+      "content_hash": "83550955dae4ba89a33976d699afeff96fe6a337e07a2a544b8eb4429eff9157",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_5dbef537",
+      "label": "__implication_result_5dbef537",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::computational_overhead,github:2511_15137::future_work_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8329d08f54a2f91b",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_15137::alpha_hyperparameter,github:2511_15137::future_work_alpha_study)",
+      "content_hash": "8f941855bdb8e10edf639697c1473dfeffac601524728362e2d34c38d1481c41",
+      "exported": false,
+      "id": "github:2511_15137::__implication_result_8101df5e",
+      "label": "__implication_result_8101df5e",
+      "metadata": {
+        "canonical_name": "implies(github:2511_15137::alpha_hyperparameter,github:2511_15137::future_work_alpha_study)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_da31c9d16b6b439f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_method",
+    "s3_experiments",
+    "s4_related",
+    "s5_conclusion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Self-Verification Gap in LLM Reasoning",
+    "s2_method": "Section 2: Method — GRPO-Verif Algorithm",
+    "s3_experiments": "Section 3: Experimental Setup and Results",
+    "s4_related": "Section 4: Related Work",
+    "s5_conclusion": "Section 5: Conclusion and Future Work"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2511_15137::not_both_tradeoff",
+      "metadata": {
+        "reason": "The open concern (@research_question_tradeoff) that verification training might degrade solution accuracy is directly refuted by the experimental finding (@grpo_verif_maintains_solution) that solution accuracy is maintained. Both the concern and the finding cannot simultaneously be true once experimental evidence is available."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_d8ddc6e937fb814a",
+      "scope": "local",
+      "variables": [
+        "github:2511_15137::research_question_tradeoff",
+        "github:2511_15137::grpo_verif_maintains_solution"
+      ]
+    }
+  ],
+  "package_name": "2511_15137",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2511_15137::setting_model",
+        "github:2511_15137::setting_benchmarks",
+        "github:2511_15137::setting_grpo_definition",
+        "github:2511_15137::setting_training_data"
+      ],
+      "conclusion": "github:2511_15137::grpo_improves_over_default_solution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_53e1ab58",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::result_solution_accuracy",
+              "github:2511_15137::grpo_improves_over_default_solution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The empirical data in @result_solution_accuracy shows GRPO achieves 38.4% average solution accuracy vs the default's 28.1%, a 10.3pp improvement. Standard GRPO (@setting_grpo_definition) trains the model with RL rewards tied to solution correctness, training on 6k math problems (@setting_training_data) with n=8 samples per question. This provides sufficient policy gradient signal for the improvement."
+      },
+      "premises": [
+        "github:2511_15137::result_solution_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9d5d518f5e0abab8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_model",
+        "github:2511_15137::setting_benchmarks",
+        "github:2511_15137::setting_grpo_definition"
+      ],
+      "conclusion": "github:2511_15137::grpo_improves_over_default_verification",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_f290a014",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::result_verification_accuracy",
+              "github:2511_15137::grpo_improves_over_default_verification"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The empirical data in @result_verification_accuracy shows GRPO achieves 32.9% average verification accuracy vs the default's 16.2%, a 16.7pp incidental gain. GRPO (@setting_grpo_definition) trains exclusively on solution correctness, yet verification improves because solving math problems well requires recognizing valid vs invalid reasoning steps, which implicitly trains verification-adjacent skills."
+      },
+      "premises": [
+        "github:2511_15137::result_verification_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c5a87fe912ab58d3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_grpo_definition",
+        "github:2511_15137::setting_verification_definition"
+      ],
+      "conclusion": "github:2511_15137::grpo_verif_addresses_gap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_0ece8cd9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::grpo_verif_conditioning"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_30e96cd7",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_0ece8cd9",
+              "github:2511_15137::grpo_verif_addresses_gap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The GRPO-Verif objective (@grpo_verif_objective) adds an explicit verification term weighted by $\\alpha$ to the solution loss. Verification responses are conditioned on both question and solution (@grpo_verif_conditioning), making verification an explicit gradient signal. By construction, this is within the RL framework, so no distribution shift from SFT arises. The claim follows as a strong structural implication from the objective definition."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective",
+        "github:2511_15137::grpo_verif_conditioning"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8b0054675618fb85",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_model",
+        "github:2511_15137::setting_benchmarks"
+      ],
+      "conclusion": "github:2511_15137::grpo_verif_maintains_solution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_616b752d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::alpha_hyperparameter"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_fcecb399",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_616b752d",
+              "github:2511_15137::grpo_verif_maintains_solution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The GRPO-Verif objective (@grpo_verif_objective) keeps the solution generation term dominant, with verification weighted by $\\alpha=0.2$ (@alpha_hyperparameter). This means the policy gradient for solutions is 5× larger than for verifications, preserving the optimization pressure on solution quality. Empirically, @result_solution_accuracy shows 38.5% vs 38.4% for GRPO — within noise."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective",
+        "github:2511_15137::alpha_hyperparameter"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_27a5dba33731f3a6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_model",
+        "github:2511_15137::setting_benchmarks"
+      ],
+      "conclusion": "github:2511_15137::grpo_verif_improves_verification",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_a6ad2923",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::grpo_verif_conditioning"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_26352874",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_a6ad2923",
+              "github:2511_15137::grpo_verif_improves_verification"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "By adding explicit verification reward gradient (@grpo_verif_objective), the model receives direct training signal when its verification judgments are correct or wrong. The conditioning on solution (@grpo_verif_conditioning) ensures the model learns solution-specific verification. @result_verification_accuracy documents the 4.2pp gain (32.9% → 37.1%). The AMC23 gain of 15pp (@grpo_verif_amc23_verification) is the strongest single-benchmark evidence."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective",
+        "github:2511_15137::grpo_verif_conditioning"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_548d13bb4383b35c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_model",
+        "github:2511_15137::setting_benchmarks"
+      ],
+      "conclusion": "github:2511_15137::grpo_verif_amc23_verification",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_ee70c282",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::result_verification_accuracy",
+              "github:2511_15137::grpo_verif_amc23_verification"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The AMC23 row in @result_verification_accuracy directly records GRPO-Verif verification accuracy as 40.0% vs GRPO's 25.0%, a 15pp difference. This is a direct reading from experimental data."
+      },
+      "premises": [
+        "github:2511_15137::result_verification_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3d5bcb9a5ba0e2cb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::result_verification_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_cf49442a",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_addresses_gap",
+              "github:2511_15137::result_verification_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Explicit verification training (@grpo_verif_addresses_gap) directly optimizes for verification correctness. If explicit verification RL is the causal driver, we expect GRPO-Verif to outperform GRPO on verification — which is exactly the observed 37.1% > 32.9% in @result_verification_accuracy."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_addresses_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ff7a86d29e17ef09",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::result_verification_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_81dd8e7e",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_improves_over_default_verification",
+              "github:2511_15137::result_verification_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.45
+      },
+      "premises": [
+        "github:2511_15137::grpo_improves_over_default_verification"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Implicit/incidental verification training from solution-only GRPO already achieves 32.9% (@grpo_improves_over_default_verification). If implicit training were sufficient, we would not observe a meaningful gap between GRPO and GRPO-Verif. The observed data shows 32.9% for GRPO, which partially — but not fully — explains @result_verification_accuracy."
+        }
+      ],
+      "strategy_id": "lcs_55fb418d8748471c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__equivalence_result_83b99c2e",
+            "operator": "equivalence",
+            "variables": [
+              "github:2511_15137::grpo_verif_improves_verification",
+              "github:2511_15137::result_verification_accuracy"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__equivalence_result_e7564e47",
+            "operator": "equivalence",
+            "variables": [
+              "github:2511_15137::grpo_improves_over_default_verification",
+              "github:2511_15137::result_verification_accuracy"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__equivalence_result_e7564e47",
+              "github:2511_15137::__equivalence_result_83b99c2e"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "GRPO-Verif's prediction (37.1%) is closer to the observed verification accuracy than GRPO's implicit prediction (32.9%). The 4.2pp gap in favor of GRPO-Verif is consistent and observed across 3 of 4 benchmarks."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_improves_verification",
+        "github:2511_15137::grpo_improves_over_default_verification",
+        "github:2511_15137::result_verification_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7a450fdb5609ae13",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2511_15137::_anon_000",
+      "metadata": {
+        "reason": "Both explicit verification training (GRPO-Verif) and implicit training (GRPO) attempt to explain the observed verification accuracy levels. Abduction determines which explanation better accounts for the data."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_addresses_gap",
+        "github:2511_15137::grpo_improves_over_default_verification",
+        "github:2511_15137::grpo_verif_improves_verification",
+        "github:2511_15137::result_verification_accuracy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1d7ba6fffcda2ad2",
+      "sub_strategies": [
+        "lcs_ff7a86d29e17ef09",
+        "lcs_55fb418d8748471c",
+        "lcs_7a450fdb5609ae13"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2511_15137::research_question_tradeoff"
+      ],
+      "conclusion": "github:2511_15137::conclusion_joint_training_viable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_231c8a9c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_maintains_solution",
+              "github:2511_15137::grpo_verif_improves_verification"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_5a847b62",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_231c8a9c",
+              "github:2511_15137::conclusion_joint_training_viable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The combination of @grpo_verif_maintains_solution (solution accuracy preserved) and @grpo_verif_improves_verification (verification accuracy improved) together constitute evidence that the joint objective does not cause a harmful tradeoff. This directly answers the open question @research_question_tradeoff."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_maintains_solution",
+        "github:2511_15137::grpo_verif_improves_verification"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a992bde1dbf6e737",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::conclusion_verification_reliability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_8a976e9e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_improves_verification",
+              "github:2511_15137::grpo_verif_conditioning"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_5d04ded7",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_8a976e9e",
+              "github:2511_15137::conclusion_verification_reliability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Improved verification accuracy (@grpo_verif_improves_verification) shows the model more reliably identifies correct vs incorrect solutions. The conditioning on the specific solution (@grpo_verif_conditioning) means the model is performing solution-specific verification, not generic quality assessment. Together these support the reliability conclusion."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_improves_verification",
+        "github:2511_15137::grpo_verif_conditioning"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_194f47c58a5f8633",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::verification_gap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_312eb1f5",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::verification_training_neglect",
+              "github:2511_15137::verification_gap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Because existing RL approaches like GRPO neglect explicit verification training (@verification_training_neglect), models trained this way do not develop reliable self-verification capabilities. The gap follows directly from the absence of verification-specific training signal."
+      },
+      "premises": [
+        "github:2511_15137::verification_training_neglect"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a0bb57f2c0aabba9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::core_contribution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_1e3d4398",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::core_contribution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The GRPO-Verif algorithm is defined by its unified objective (@grpo_verif_objective), which jointly optimizes both solution generation and self-verification without relying on SFT or a separate critic. The claim @core_contribution summarizes this contribution."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_eedaa6609c629396",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_grpo_definition"
+      ],
+      "conclusion": "github:2511_15137::grpo_verif_no_critic",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_e33196a8",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::grpo_verif_no_critic"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The GRPO-Verif objective (@grpo_verif_objective) uses rule-based rewards for both solutions and verifications, computed by checking correctness against ground truth. No learned value function or separate critic model appears in the formulation."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4af79a210c923e75",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_hyperparameters"
+      ],
+      "conclusion": "github:2511_15137::computational_overhead",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_d1529cce",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_objective",
+              "github:2511_15137::computational_overhead"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The GRPO-Verif objective (@grpo_verif_objective) requires generating verification response $v^{(i)}$ for each solution $y^{(i)}$. This doubles the generation cost per training step compared to standard GRPO, which only generates solutions. The overhead is acknowledged as a limitation in the paper."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_objective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6468a75230b42df9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_15137::setting_ppo_based_verification"
+      ],
+      "conclusion": "github:2511_15137::related_rise_comparison",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_f51ce760",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_no_critic",
+              "github:2511_15137::related_rise_comparison"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "RISE uses PPO with a shared critic for verification training. GRPO-Verif does not require a critic (@grpo_verif_no_critic), distinguishing it from RISE's approach. This difference in critic requirement is the key differentiator."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_no_critic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_31e8bea87b237b57",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::related_sft_distinction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_6802dd10",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_addresses_gap",
+              "github:2511_15137::sft_limitation"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_1d5eea2f",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_6802dd10",
+              "github:2511_15137::related_sft_distinction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "GRPO-Verif avoids distribution shift by integrating verification into RL (@grpo_verif_addresses_gap), whereas SFT-based methods introduce distribution shift (@sft_limitation). The contrast establishes GRPO-Verif's advantage over SFT approaches."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_addresses_gap",
+        "github:2511_15137::sft_limitation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dc79b85fe888b455",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::related_novelty",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__conjunction_result_e381ceeb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_15137::grpo_verif_no_critic",
+              "github:2511_15137::grpo_verif_addresses_gap",
+              "github:2511_15137::grpo_verif_objective"
+            ]
+          },
+          {
+            "conclusion": "github:2511_15137::__implication_result_0e16f7cf",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::__conjunction_result_e381ceeb",
+              "github:2511_15137::related_novelty"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "GRPO-Verif's novelty stems from: critic-free design (@grpo_verif_no_critic), integration of verification into RL without distribution shift (@grpo_verif_addresses_gap), and explicit alpha-weighted auxiliary objective (@grpo_verif_objective). Together these distinguish it from all prior work."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_no_critic",
+        "github:2511_15137::grpo_verif_addresses_gap",
+        "github:2511_15137::grpo_verif_objective"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6c873f6a24d23afc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::related_prm_distinction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_0653bfcf",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::grpo_verif_no_critic",
+              "github:2511_15137::related_prm_distinction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Process Reward Models (PRMs) train a separate model to score intermediate reasoning steps. GRPO-Verif differs because it trains the same model (not a separate one) to verify, using group-normalized RL rewards rather than step-level supervision. The critic-free nature (@grpo_verif_no_critic) is the key distinguishing property."
+      },
+      "premises": [
+        "github:2511_15137::grpo_verif_no_critic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8b4d134f8af6c38",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::future_work_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_5dbef537",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::computational_overhead",
+              "github:2511_15137::future_work_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The computational overhead (@computational_overhead) of generating both solution and verification per training step is a concrete limitation that motivates future work on efficiency optimizations."
+      },
+      "premises": [
+        "github:2511_15137::computational_overhead"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8329d08f54a2f91b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_15137::future_work_alpha_study",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_15137::__implication_result_8101df5e",
+            "operator": "implication",
+            "variables": [
+              "github:2511_15137::alpha_hyperparameter",
+              "github:2511_15137::future_work_alpha_study"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The fixed alpha=0.2 choice (@alpha_hyperparameter) has not been ablated across a range of values. The effect of different alpha values on solution vs verification accuracy tradeoff is an open empirical question motivating future work."
+      },
+      "premises": [
+        "github:2511_15137::alpha_hyperparameter"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_da31c9d16b6b439f",
+      "type": "support"
+    }
+  ]
+}

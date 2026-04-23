@@ -1,0 +1,64 @@
+{
+  "exports": [
+    {
+      "content": "Jointly optimizing LLMs for solution generation and self-verification within a single RL objective is feasible and beneficial: it enhances verification accuracy by 4.2 percentage points while maintaining solution accuracy within 0.1 percentage points of solution-only RL training. The two objectives do not substantially compete.",
+      "content_hash": "eb4b1c2fb2e0e2c375a17ce493321b4de43cdc12ad01992a0040e620a523c2ae",
+      "label": "conclusion_joint_training_viable",
+      "qid": "github:2511_15137::conclusion_joint_training_viable",
+      "type": "claim"
+    },
+    {
+      "content": "Explicitly incorporating self-verification as an RL training objective improves the reliability of LLM reasoning by producing models that can more accurately assess whether their own solutions are correct, which is a prerequisite for self-correction and iterative refinement.",
+      "content_hash": "dcc50c18f0818f9a9793e7ee64ae3a20ac9ec7022c74d9d45bea80cdcf5e3b56",
+      "label": "conclusion_verification_reliability",
+      "qid": "github:2511_15137::conclusion_verification_reliability",
+      "type": "claim"
+    },
+    {
+      "content": "The paper introduces GRPO-Verif, an extension of GRPO that jointly optimizes solution generation and self-verification through a single unified RL loss function, without relying on supervised fine-tuning or a separate critic model.",
+      "content_hash": "e481620fd60e8f5157d64eb059b7bb890c7cffb47cd6e9eb2ce79a4ffc6e0f62",
+      "label": "core_contribution",
+      "qid": "github:2511_15137::core_contribution",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif improves average verification accuracy from 32.9% (GRPO) to 37.1% (GRPO-Verif), a gain of 4.2 percentage points. The largest single-benchmark gain is on AMC23: 25.0% → 40.0% (+15 percentage points).",
+      "content_hash": "840863033a40e240fdf2b7f2d733df1f3dd525f50afe355099a9aaa25cc6c9f3",
+      "label": "grpo_verif_improves_verification",
+      "qid": "github:2511_15137::grpo_verif_improves_verification",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-Verif maintains solution accuracy statistically equivalent to standard GRPO: 38.5% vs 38.4% average (difference of 0.1 percentage points). The joint verification objective does not degrade solution generation capability.",
+      "content_hash": "a7f287b15491314fca1be605c178acabfddd21935d5f16d24c0b65aa0bd3c936",
+      "label": "grpo_verif_maintains_solution",
+      "qid": "github:2511_15137::grpo_verif_maintains_solution",
+      "type": "claim"
+    },
+    {
+      "content": "The GRPO-Verif unified objective (Equations 3-4) is:\n\n$$J_{\\text{GRPO-Verif}}(\\theta) = \\mathbb{E}\\left[\\frac{1}{n}\\sum_{i=1}^{n}\\left(\\frac{1}{|y^{(i)}|}\\sum_t r_t^{(i)}(\\theta)\\hat{A}_t^{(i)} + \\alpha \\cdot \\frac{1}{|v^{(i)}|}\\sum_t \\hat{r}_t^{(i)}(\\theta)\\hat{A}_t^{V,(i)}\\right)\\right]$$\n\nwhere $v^{(i)}$ is the verification response for solution $y^{(i)}$, $\\hat{r}_t^{(i)}(\\theta) = \\pi_\\theta(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)}) / \\pi_{\\text{old}}(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)})$ is the verification probability ratio, $\\hat{A}_t^{V,(i)}$ is the group-normalized verification advantage, and $\\alpha$ is a scalar hyperparameter controlling verification loss weight (set to 0.2 in experiments).",
+      "content_hash": "4e515d62c3e4609855c3dc4c24f8fda5b425b7196f50ff022c4ff8f0189f0cb2",
+      "label": "grpo_verif_objective",
+      "qid": "github:2511_15137::grpo_verif_objective",
+      "type": "claim"
+    },
+    {
+      "content": "Solution accuracy results across four benchmarks (Table 1, solution task rows):\n\n| Method | AMC23 | MATH | Minerva_Math | OlympiadBench | AVG |\n|--------|-------|------|--------------|---------------|-----|\n| Default (no RL) | 27.5% | 52.7% | 11.0% | 21.0% | 28.1% |\n| GRPO | 45.0% | 63.4% | 19.5% | 25.8% | 38.4% |\n| GRPO-Verif | 45.0% | 63.2% | 18.8% | 26.8% | 38.5% |\n\nGRPO-Verif achieves average solution accuracy of 38.5%, compared to GRPO's 38.4% — a difference of 0.1 percentage points.",
+      "content_hash": "559e894fb249276620ad48d10d1d075338941e599ea8e10c896ea2ae873c1083",
+      "label": "result_solution_accuracy",
+      "qid": "github:2511_15137::result_solution_accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Verification accuracy results across four benchmarks (Table 1, verification task rows):\n\n| Method | AMC23 | MATH | Minerva_Math | OlympiadBench | AVG |\n|--------|-------|------|--------------|---------------|-----|\n| Default (no RL) | 12.5% | 26.4% | 10.3% | 15.6% | 16.2% |\n| GRPO | 25.0% | 57.7% | 21.0% | 27.7% | 32.9% |\n| GRPO-Verif | 40.0% | 60.7% | 19.9% | 27.8% | 37.1% |\n\nGRPO-Verif achieves average verification accuracy of 37.1%, compared to GRPO's 32.9% — an improvement of 4.2 percentage points.",
+      "content_hash": "36f366e003b21e266a438feadcc966571639529d64ade5d94f7ff119f5e59e5d",
+      "label": "result_verification_accuracy",
+      "qid": "github:2511_15137::result_verification_accuracy",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:9f883153a8b5299544b2829c426596353295c718362d39bf830fb50d9655e3d8",
+  "manifest_schema_version": 1,
+  "package": "2511-15137",
+  "version": "0.1.0"
+}

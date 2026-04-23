@@ -1,0 +1,43 @@
+{
+  "holes": [
+    {
+      "content": "The verification weight hyperparameter $\\alpha$ in GRPO-Verif is set to 0.2 in all experiments. This value was chosen to provide a meaningful verification training signal while ensuring that the solution generation objective remains the dominant term in the joint loss.",
+      "content_hash": "1693ba2d0202ab34af79e02b69eceec1e3069feb1478834fefa1176d36b59d32",
+      "interface_hash": "sha256:61be97b073d389f8869860f28dc2a08fa1603a69cdbe87f10bcce41a74212a61",
+      "label": "alpha_hyperparameter",
+      "qid": "github:2511_15137::alpha_hyperparameter",
+      "required_by": [
+        "github:2511_15137::grpo_verif_maintains_solution"
+      ]
+    },
+    {
+      "content": "In GRPO-Verif, verification responses are generated conditioned on both the question $q$ and the corresponding solution $y^{(i)}$: the model produces $v^{(i)} \\sim \\pi_\\theta(\\cdot | q, y^{(i)})$. This conditioning ensures that the verification task is specific to each solution, not a generic assessment of the question.",
+      "content_hash": "02f8a377834566d0aa6a9fdf52aae222a98538c31c385a86e8c06de9297d969b",
+      "interface_hash": "sha256:51c6d4b2430132d07708917bb4ab4b668528f1f407a8e2ae0e6e153462b5a613",
+      "label": "grpo_verif_conditioning",
+      "qid": "github:2511_15137::grpo_verif_conditioning",
+      "required_by": [
+        "github:2511_15137::conclusion_verification_reliability",
+        "github:2511_15137::grpo_verif_improves_verification",
+        "github:2511_15137::result_verification_accuracy"
+      ]
+    },
+    {
+      "content": "The GRPO-Verif unified objective (Equations 3-4) is:\n\n$$J_{\\text{GRPO-Verif}}(\\theta) = \\mathbb{E}\\left[\\frac{1}{n}\\sum_{i=1}^{n}\\left(\\frac{1}{|y^{(i)}|}\\sum_t r_t^{(i)}(\\theta)\\hat{A}_t^{(i)} + \\alpha \\cdot \\frac{1}{|v^{(i)}|}\\sum_t \\hat{r}_t^{(i)}(\\theta)\\hat{A}_t^{V,(i)}\\right)\\right]$$\n\nwhere $v^{(i)}$ is the verification response for solution $y^{(i)}$, $\\hat{r}_t^{(i)}(\\theta) = \\pi_\\theta(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)}) / \\pi_{\\text{old}}(v_t^{(i)} | q, y^{(i)}, v_{<t}^{(i)})$ is the verification probability ratio, $\\hat{A}_t^{V,(i)}$ is the group-normalized verification advantage, and $\\alpha$ is a scalar hyperparameter controlling verification loss weight (set to 0.2 in experiments).",
+      "content_hash": "4e515d62c3e4609855c3dc4c24f8fda5b425b7196f50ff022c4ff8f0189f0cb2",
+      "interface_hash": "sha256:1b0ce1b54851b732b3eee9331e21c9aafeeafb4ba64bf8b0967a7ffb12b44e87",
+      "label": "grpo_verif_objective",
+      "qid": "github:2511_15137::grpo_verif_objective",
+      "required_by": [
+        "github:2511_15137::core_contribution",
+        "github:2511_15137::grpo_verif_improves_verification",
+        "github:2511_15137::grpo_verif_maintains_solution",
+        "github:2511_15137::result_verification_accuracy"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:9f883153a8b5299544b2829c426596353295c718362d39bf830fb50d9655e3d8",
+  "manifest_schema_version": 1,
+  "package": "2511-15137",
+  "version": "0.1.0"
+}
