@@ -1,0 +1,106 @@
+{
+  "exports": [
+    {
+      "content": "Model Collapse Step values for 7 evaluated models on AIME 2024 with default hyperparameters:\n\n| Model | Collapse Step | GT Gain (AIME24) |\n|-------|-------------|------------------|\n| OLMo-2-1124-7B | 34 | +0.42% |\n| Meta-Llama-3.1-8B | 40 | +1.01% |\n| Qwen2.5-Math-1.5B | 160 | +3.96% |\n| Qwen2.5-1.5B | 221 | +3.96% |\n| Qwen2.5-7B | 245 | +6.67% |\n| Qwen3-1.7B-Base | 280 | +7.08% |\n| Qwen3-8B-Base | 383 | +17.08% |\n\nModels with later collapse steps consistently yield higher GT Gains from standard supervised RL.",
+      "content_hash": "e73d78b6cb5dd337948472a74db6d6a8b657e5a7404fc689ad39367178d8a8a8",
+      "label": "collapse_step_values",
+      "qid": "github:2603_08660::collapse_step_values",
+      "type": "claim"
+    },
+    {
+      "content": "External rewards offer a more promising path for scaling URLVR beyond what intrinsic methods allow, for two reasons:\n\n1. **Reliability**: External verifiers (arithmetic evaluators, code executors, proof checkers) do not degrade as the model improves. A verifier that checks arithmetic expressions remains equally reliable regardless of model sophistication, unlike intrinsic rewards that shift as the model's distribution changes.\n\n2. **Scale**: Verification procedures are often cheap and can be applied to vast unlabeled data, providing fresh learning signal unbounded by human labeling capacity. This contrasts with intrinsic rewards, which are bounded by initial model knowledge.\n\nKey open challenges: developing diverse verifiable environments and extending verification asymmetries to new scientific domains.",
+      "content_hash": "9f88044fb4fe1a8aa1144249de0ce14f4c5d88ed14b3b494fa939e4c98c1cabc",
+      "label": "external_rewards_path_forward",
+      "qid": "github:2603_08660::external_rewards_path_forward",
+      "type": "claim"
+    },
+    {
+      "content": "Extensive hyperparameter tuning across four key dimensions (training temperature, mini-batch size, KL regularization, rollout number) across five intrinsic reward methods shows that nearly all settings eventually degrade. Some hyperparameters (notably mini-batch size and rollout number) affect *when* collapse occurs but not *whether* it occurs. Even the most stable settings collapse around 1,000 steps (~4 epochs), suggesting the rise-then-fall pattern reflects a fundamental limitation rather than an engineering problem.",
+      "content_hash": "1522bdc8f7a9e9143b72fd412a3fe020a6e97da1f0d65cf01e94f720ed5d4ae1",
+      "label": "hyperparameter_robustness_collapse",
+      "qid": "github:2603_08660::hyperparameter_robustness_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "Instruction alignment (fine-tuning for instruction following) is critical for successful self-verification. On the Countdown task with two verification prompts (P1 and P2):\n\n- **Qwen3-1.7B (instruction-aligned)**: Starts above 60% accuracy, improves to >80%, succeeds with both P1 and P2 (robust to prompt choice).\n- **Qwen3-1.7B-Base (base model)**: Only works with P2; highly sensitive to prompt choice; final performance below instruction model's starting point.\n\nInstruction-aligned models maintain stable Reward Accuracy with both prompts; base models have high prompt sensitivity.",
+      "content_hash": "701dafe586a39bcc31adbda46ae84b52fbb3a65bcec367cfaf564a3aa8bd828f",
+      "label": "instruction_alignment_key",
+      "qid": "github:2603_08660::instruction_alignment_key",
+      "type": "claim"
+    },
+    {
+      "content": "Model Collapse Step requires substantially less computation than the gold-standard GT Gain:\n\n| Indicator | Total Tokens | Requires GT Labels |\n|-----------|-------------|--------------------|\n| GT Gain | 6.66B tokens (7k×8×17k×7) | Yes |\n| Model Collapse Step | 1.19B tokens (7k×8×662×32) | No |\n\nModel Collapse Step is **5.6× faster** than full supervised RL training while preserving the relative ranking of model trainability. It requires no ground-truth labels, making it applicable even when verification is unavailable.",
+      "content_hash": "158a477613cbdef2e24ff1e3894e5a4e98bf481eff7a28391a3ddc3fbfc3f8fc",
+      "label": "mcs_computation_efficiency",
+      "qid": "github:2603_08660::mcs_computation_efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "Model Collapse Step correlates strongly with Ground Truth (GT) Gain from standard supervised RLVR training. Models that sustain longer before collapse consistently yield better results when trained with ground-truth rewards. The correlation is stronger and more reliable than pass@k Gain, which correlates less reliably with actual RL gains and can be gamed by random guessing on multiple-choice questions when pass@k → 1 as k → ∞.",
+      "content_hash": "3709f0654a8ca81555ce046ac7322fb618ed4df53b4533377136e582a56788cf",
+      "label": "mcs_predicts_rl_gains",
+      "qid": "github:2603_08660::mcs_predicts_rl_gains",
+      "type": "claim"
+    },
+    {
+      "content": "Intrinsic URLVR universally follows a rise-then-fall pattern across all tested methods and hyperparameter configurations. Early gains reflect confidence-correctness alignment in the model's prior for the early-training problems, while eventual collapse is inevitable when this alignment breaks down. The timing of collapse is determined by the model prior (confidence-correctness alignment) rather than engineering choices.",
+      "content_hash": "8491c2d0db8379c4a371c506ec2bd2f7f998bde6d141d5a34da8b3d20b76199c",
+      "label": "rise_then_fall_universal",
+      "qid": "github:2603_08660::rise_then_fall_universal",
+      "type": "claim"
+    },
+    {
+      "content": "Self-Verification does not exhibit the rise-then-fall collapse pattern seen with intrinsic rewards: Ground Truth Reward and validation accuracy both improve sustained throughout training without collapsing. The reward hacking phase (Reward Accuracy dip at ~step 200) is transient and self-correcting, not terminal collapse.",
+      "content_hash": "5317a6021252bf6dd5dffd1881df29f7f6bcd179faf588705ffc24755c202e7d",
+      "label": "self_verify_no_collapse",
+      "qid": "github:2603_08660::self_verify_no_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "The sharpening mechanism has a dual nature depending on confidence-correctness alignment: (1) **When alignment is high** (initial confidence correctly predicts answer quality), sharpening acts as a beneficial amplifier—it concentrates probability on already-correct answers, improving performance. (2) **When alignment is low** (initial confidence is poorly calibrated), sharpening systematically reinforces errors—it concentrates probability on incorrect majority answers, leading to model collapse. The same mathematical mechanism thus produces both improvement and degradation, depending entirely on the quality of the initial model prior.",
+      "content_hash": "8a5af482e9e0773e67a5430742b80ce7b82a2746570b43565858309ea8e5500f",
+      "label": "sharpening_dual_nature",
+      "qid": "github:2603_08660::sharpening_dual_nature",
+      "type": "claim"
+    },
+    {
+      "content": "Training with 32 or 128 samples (DAPO-32, DAPO-128) maintains stable performance without model collapse throughout 600 optimization steps. Datasets with ≥512 samples consistently exhibit reward hacking. DAPO-32 achieves rapid majority consensus (Majority Voting Reward → 1) while preserving high Ground Truth Reward; this holds across all 3 random seeds.",
+      "content_hash": "6cfd48444baf9e8533cf9cb57783223dbef542c17480676c4f766130a70b5100",
+      "label": "small_dataset_stability",
+      "qid": "github:2603_08660::small_dataset_stability",
+      "type": "claim"
+    },
+    {
+      "content": "**Theorem 1 (Geometric Convergence to Deterministic Policy):** Under the KL-regularized RL objective with majority voting reward, and assuming (A1) majority stability and (A2) effective learning, the probability mass on majority trajectories $p^{(k)}_{\\mathrm{maj}}$ converges geometrically to 1 with rate $\\rho = e^{-1/\\beta}$. The limiting policy is:\n\n$$\\lim_{k\\to\\infty} \\pi^{(k)}_\\theta(y|x) = \\begin{cases} \\frac{\\pi_{\\mathrm{ref}}(y|x)}{\\sum_{y': \\mathrm{ans}(y')=\\mathrm{maj}_0(Y_0)} \\pi_{\\mathrm{ref}}(y'|x)} & \\text{if } \\mathrm{ans}(y) = \\mathrm{maj}_0(Y_0) \\\\ 0 & \\text{otherwise} \\end{cases}$$\n\nThis means training converges to a deterministic policy concentrated on whatever answer had the initial majority—regardless of whether that answer is correct.",
+      "content_hash": "237c450e98cf022659bfad60d50c0b9dfe850167fc46e4d65dea631061451f4a",
+      "label": "theorem1_sharpening",
+      "qid": "github:2603_08660::theorem1_sharpening",
+      "type": "claim"
+    },
+    {
+      "content": "Five intrinsic reward methods—Majority Voting, Self-Certainty, Trajectory-Level Entropy, Token-Level Entropy, and Probability—exhibit three distinct failure patterns:\n\n1. **Gradual degradation** (Self-Certainty, Majority Voting): Slowest collapse, maintaining higher Label Accuracy without catastrophic failure within one epoch. Self-Certainty sharpens against a uniform reference (less aggressive); Majority Voting operates at the answer level avoiding token-level artifacts.\n\n2. **Length collapse** (Probability): Multiplying token probabilities favors shorter sequences, so model becomes confident but produces overly brief answers. Reward is maximized by brevity rather than correctness.\n\n3. **Repetition collapse** (Token-Level Entropy, Trajectory-Level Entropy): Averaging entropy across tokens can be minimized by repeating high-probability tokens, leading to repetitive outputs rather than correct reasoning.",
+      "content_hash": "bbabe2873a96d445a3ca74efc054df181f7025ee95faed48d315b0fab88795ca",
+      "label": "three_failure_modes",
+      "qid": "github:2603_08660::three_failure_modes",
+      "type": "claim"
+    },
+    {
+      "content": "Intrinsic URLVR can be safely applied in test-time training (TTT) scenarios because: (1) TTT datasets are small and domain-specific (≤dozens to hundreds of problems), keeping training within the safe small-dataset regime; (2) the target evaluation domain aligns well with the training problems, so confidence-correctness alignment is more likely to hold; (3) the limited policy shift from small-scale training preserves general capabilities. This explains why many recent works using intrinsic rewards focus on test-time rather than train-time settings.",
+      "content_hash": "3b0dc4d67d8859f0ab21489e00868fb94677274c7e725c6836364c8400f7cd61",
+      "label": "ttt_safe_conclusion",
+      "qid": "github:2603_08660::ttt_safe_conclusion",
+      "type": "claim"
+    },
+    {
+      "content": "All intrinsic URLVR reward methods—both certainty-based and ensemble-based—can be understood through a unified lens: they all manipulate the cross-entropy between carefully chosen distributions in a way that sharpens the model's initial distribution. Despite diverse design choices (different reward formulas in Tables 1 and 2), all intrinsic methods converge toward sharpening the model's initial distribution, amplifying existing preferences rather than discovering new knowledge. This is formalized in a Unified Reward Framework (Appendix A.3) that covers all variants and shows the same geometric convergence behavior.",
+      "content_hash": "9f8d89c18e8e573c97e0c691e53e0736e3662b050f629478e762ce90e3c64325",
+      "label": "unified_sharpening_framework",
+      "qid": "github:2603_08660::unified_sharpening_framework",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:8bc53ba12e3289f9368d38f0947e586473d246cc1a278bad1582e4e754a0896a",
+  "manifest_schema_version": 1,
+  "package": "2603-08660",
+  "version": "0.1.0"
+}

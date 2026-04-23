@@ -1,0 +1,152 @@
+{
+  "ir_hash": "sha256:8bc53ba12e3289f9368d38f0947e586473d246cc1a278bad1582e4e754a0896a",
+  "manifest_schema_version": 1,
+  "package": "2603-08660",
+  "premises": [
+    {
+      "content": "Certainty-based intrinsic rewards derive a reward signal from the model's own confidence (logits/probability distributions) over generated token sequences, rewarding high-confidence predictions. Five variants have been proposed:\n\n| Method | Estimator | Description |\n|--------|-----------|-------------|\n| RLIF | Self-Certainty | Average KL divergence from uniform distribution $U$ to model distribution |\n| EM-RL | Trajectory-Level Entropy | Average log probability per token (sequence log-prob) |\n| EM-RL, RENT | Token-Level Entropy | Negative average token-level entropy $-H(\\pi_\\theta)$ |\n| RLSC | Probability | Product of token probabilities (raw sequence probability) |\n| RLSF | Probability Disparity | Gap between top-1 and top-2 token probabilities at answer tokens |\n\nAll variants reward high-confidence (low-entropy) predictions through different mathematical formalizations of confidence.",
+      "content_hash": "2bf29545bf35229f0386039fbb9cbee6600f04f73fd84bd2c37686030d2b89fc",
+      "exported": false,
+      "interface_hash": "sha256:e9e951d973367555246fcbd2205f1c5e5220db155c3637182d345953eb67d81a",
+      "label": "certainty_rewards_overview",
+      "qid": "github:2603_08660::certainty_rewards_overview",
+      "required_by": [
+        "github:2603_08660::unified_sharpening_framework"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Model Collapse Step values for 7 evaluated models on AIME 2024 with default hyperparameters:\n\n| Model | Collapse Step | GT Gain (AIME24) |\n|-------|-------------|------------------|\n| OLMo-2-1124-7B | 34 | +0.42% |\n| Meta-Llama-3.1-8B | 40 | +1.01% |\n| Qwen2.5-Math-1.5B | 160 | +3.96% |\n| Qwen2.5-1.5B | 221 | +3.96% |\n| Qwen2.5-7B | 245 | +6.67% |\n| Qwen3-1.7B-Base | 280 | +7.08% |\n| Qwen3-8B-Base | 383 | +17.08% |\n\nModels with later collapse steps consistently yield higher GT Gains from standard supervised RL.",
+      "content_hash": "e73d78b6cb5dd337948472a74db6d6a8b657e5a7404fc689ad39367178d8a8a8",
+      "exported": true,
+      "interface_hash": "sha256:7ff11728e03904219b39b1ba75d84248382e627e29a63d8f597f6a13be8bbdda",
+      "label": "collapse_step_values",
+      "qid": "github:2603_08660::collapse_step_values",
+      "required_by": [
+        "github:2603_08660::mcs_predicts_rl_gains"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Ensemble-based intrinsic rewards derive a reward from agreement (consistency) across multiple model rollouts for the same prompt, under the assumption that cross-sample consistency correlates with correctness. Key variants:\n\n| Method | Estimator | Notes |\n|--------|-----------|-------|\n| TTRL, SRT, ETTRL, SeRL, SQLM, R-Zero | Majority Voting | Binary reward: answer matches majority |\n| Co-Reward | Majority Voting across Rephrased Questions | Adds paraphrase consistency |\n| RLCCF | Self-consistency Weighted Voting | Multi-model collective weighted vote |\n| EMPO | Semantic Similarity / Clustering | Soft majority vote via semantic cluster size |\n| CoVo | Trajectory Consistency and Volatility | Combines consistency and reasoning volatility |\n\nAll ensemble methods treat consistency across independent samples as a proxy for correctness.",
+      "content_hash": "663bb57b315fcbdaf60f2d7e5bd425d81148d6ddb236fda92284c4023fcf12cd",
+      "exported": false,
+      "interface_hash": "sha256:0be935f8093ce198eea636362a149656bbb051717193c52c88830ea833d866b7",
+      "label": "ensemble_rewards_overview",
+      "qid": "github:2603_08660::ensemble_rewards_overview",
+      "required_by": [
+        "github:2603_08660::unified_sharpening_framework"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "External URLVR methods exploiting generation-verification asymmetry ground rewards in the observation that generating correct solutions requires deep search but verifying candidates is often cheap and deterministic. Examples:\n\n- **LADDER**: Indefinite integration; verifying an antiderivative needs only numerical evaluation.\n- **RLSR**: Countdown arithmetic puzzles; checking if an expression reaches a target is trivial.\n- **Absolute Zero (AZR)**: Code generation; execution against test cases is deterministic.\n- **DeepSeekMath-V2**: Formal theorem proving with Lean proof checker as verifier.\n- **AlphaProof**: Auto-formalized mathematical problems verified by Lean at scale.\n\nThe external verifier does not degrade as the model improves, maintaining reward quality at scale.",
+      "content_hash": "916f0e3f4cde8c889c98f4809bbbca6e91b41cf3ff782629316666c90f5cd54c",
+      "exported": false,
+      "interface_hash": "sha256:9009f8cd66887b92dbee8e054b39cf76612e7121c6332e6f81ca185c733c4a7d",
+      "label": "gen_verify_asymmetry_rewards",
+      "qid": "github:2603_08660::gen_verify_asymmetry_rewards",
+      "required_by": [
+        "github:2603_08660::external_rewards_path_forward"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Instruction alignment (fine-tuning for instruction following) is critical for successful self-verification. On the Countdown task with two verification prompts (P1 and P2):\n\n- **Qwen3-1.7B (instruction-aligned)**: Starts above 60% accuracy, improves to >80%, succeeds with both P1 and P2 (robust to prompt choice).\n- **Qwen3-1.7B-Base (base model)**: Only works with P2; highly sensitive to prompt choice; final performance below instruction model's starting point.\n\nInstruction-aligned models maintain stable Reward Accuracy with both prompts; base models have high prompt sensitivity.",
+      "content_hash": "701dafe586a39bcc31adbda46ae84b52fbb3a65bcec367cfaf564a3aa8bd828f",
+      "exported": true,
+      "interface_hash": "sha256:d7fbb40db6b31605b551f1ffb313a21dc89448c69a4b168e493b9d2d094d8a2c",
+      "label": "instruction_alignment_key",
+      "qid": "github:2603_08660::instruction_alignment_key",
+      "required_by": [
+        "github:2603_08660::external_rewards_path_forward"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "KL divergence from the reference model $D^{(t)}_{\\mathrm{KL}}(\\pi^{(t)}_\\theta \\| \\pi_{\\mathrm{ref}})$ is substantially smaller for small training subsets. DAPO-32 reaches only 0.057 KL after 600 steps, while DAPO-512 reaches approximately 2× higher KL at the same point. This shows small subsets induce far smaller distributional shifts from the reference policy.",
+      "content_hash": "fbe3e34ded1625dae80e31f4f4ce311384fee1bda0a581bd45fe258936881c28",
+      "exported": false,
+      "interface_hash": "sha256:cd6b4fba025708fc85a3c47417bdbc2f3a38894f6cf171489c30aeed38cc0565",
+      "label": "kl_divergence_small_vs_large",
+      "qid": "github:2603_08660::kl_divergence_small_vs_large",
+      "required_by": [
+        "github:2603_08660::ttt_safe_conclusion"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Model Collapse Step rankings remain relatively stable across different hyperparameter settings. With aggressive hyperparameters (mini-batch size MBS=1 or rollout count N=32), collapse occurs faster in absolute steps, but the relative ranking of 7 models is preserved, enabling more rapid assessment. With MBS=1 and N=8, total steps across 7 models = 662 (vs. 7×280+ with default hyperparameters), enabling ≥50 steps faster assessment for strong-prior models.",
+      "content_hash": "5eb32bbfaaeac02e80aa0ce20e4f426657a291b2777f878bcee7bcda764847d2",
+      "exported": false,
+      "interface_hash": "sha256:d2f4fd06e728a26011afabc6025dd974e79cf09577a694a02ca9001f08b4280f",
+      "label": "mcs_hyperparameter_robustness",
+      "qid": "github:2603_08660::mcs_hyperparameter_robustness",
+      "required_by": [
+        "github:2603_08660::mcs_predicts_rl_gains"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "A single gradient step with the majority voting reward creates a 'rich-get-richer' dynamic: trajectories leading to the majority answer have their probabilities consistently increased, while others are proportionally diminished. After one step, the probability mass on majority trajectories increases from $p^{(k)}_{\\mathrm{maj}}$ to $p^{(k+1)}_{\\mathrm{maj}} \\geq p^{(k)}_{\\mathrm{maj}}$, and this holds under two empirically validated assumptions: (A1) majority stability—the majority answer remains the same across iterations for large $N$—and (A2) effective learning—the gradient step increases probability of the rewarded answer.",
+      "content_hash": "ff1ab063e09a9c2d084526461faba53e5a4b6a99eddbeb95620989cc47944a55",
+      "exported": false,
+      "interface_hash": "sha256:d2c23440e9f69b1ae6d607f68c79991ad7ed7791364fd4779fba30350dd30f57",
+      "label": "one_step_update_dynamics",
+      "qid": "github:2603_08660::one_step_update_dynamics",
+      "required_by": [
+        "github:2603_08660::theorem1_sharpening"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Self-Verification does not exhibit the rise-then-fall collapse pattern seen with intrinsic rewards: Ground Truth Reward and validation accuracy both improve sustained throughout training without collapsing. The reward hacking phase (Reward Accuracy dip at ~step 200) is transient and self-correcting, not terminal collapse.",
+      "content_hash": "5317a6021252bf6dd5dffd1881df29f7f6bcd179faf588705ffc24755c202e7d",
+      "exported": true,
+      "interface_hash": "sha256:a11ba2b38791ccb1b54fe42c3c43211195c5961489c9fec8319d1036ee31f4e2",
+      "label": "self_verify_no_collapse",
+      "qid": "github:2603_08660::self_verify_no_collapse",
+      "required_by": [
+        "github:2603_08660::external_rewards_path_forward"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Training with 32 or 128 samples (DAPO-32, DAPO-128) maintains stable performance without model collapse throughout 600 optimization steps. Datasets with ≥512 samples consistently exhibit reward hacking. DAPO-32 achieves rapid majority consensus (Majority Voting Reward → 1) while preserving high Ground Truth Reward; this holds across all 3 random seeds.",
+      "content_hash": "6cfd48444baf9e8533cf9cb57783223dbef542c17480676c4f766130a70b5100",
+      "exported": true,
+      "interface_hash": "sha256:d90c7040e19aabbb307afa78023d2471b9bc5485cb52902237bbe5149eaed187",
+      "label": "small_dataset_stability",
+      "qid": "github:2603_08660::small_dataset_stability",
+      "required_by": [
+        "github:2603_08660::ttt_safe_conclusion"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Test-time training (TTT) of Qwen3-1.7B-Base on AMC 2023 (40 problems, batch size 40) using majority voting reward is stable: both Ground Truth Reward and Majority Voting Reward rise and stabilize, with performance improving on both AMC 2023 and the out-of-domain AIME 2024 benchmark. In contrast, training on DAPO-17k (~17,000 problems) with the same model shows the familiar rise-then-fall collapse.",
+      "content_hash": "092c75170e186fdcdcc4760054ec7cb5a12dd0b54fd8df90208c17059f4ae166",
+      "exported": false,
+      "interface_hash": "sha256:1287961a445af578c1c15429e7f4b1ace4897be3bd1978b4e3c124ebf8bc6296",
+      "label": "ttt_stability_observation",
+      "qid": "github:2603_08660::ttt_stability_observation",
+      "required_by": [
+        "github:2603_08660::ttt_safe_conclusion"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "External URLVR methods using unlabeled data derive rewards from existing text corpora, treating the corpus itself as a source of latent ground truth. Examples include:\n\n- **RPT**: Rewards correct next-token predictions on unlabeled text, converting trillions of tokens into reward signals.\n- **TPT**: Predicts tokens through step-by-step reasoning before the prediction.\n- **RLPT**: Operates at the segment level rather than token level.\n- **RLP**: Trains models to generate reasoning chains before next-token prediction, rewarding the chain's information gain.\n- **DuPO**: Pairs a primary task with a dual reconstruction objective; model must recover the original input from its output.\n- **SEAL**: Models generate their own QA pairs from unlabeled contexts and are rewarded based on downstream self-supervised performance.\n\nThese methods scale naturally with data availability, unbounded by human annotation capacity.",
+      "content_hash": "01157ee80dd9d20b66d916441ac4d26836a5395e1bf13c7f71fc12b137fe9128",
+      "exported": false,
+      "interface_hash": "sha256:64a4e6e529b27406362599baf541440ab5bb27ab9401b690d18f31e68e15e4b9",
+      "label": "unlabeled_data_rewards",
+      "qid": "github:2603_08660::unlabeled_data_rewards",
+      "required_by": [
+        "github:2603_08660::external_rewards_path_forward"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}
