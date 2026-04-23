@@ -1,0 +1,127 @@
+{
+  "exports": [
+    {
+      "content": "Standard RLVR training causes catastrophic forgetting of out-of-domain knowledge: SQL-task-trained models (Llama-3.1-8B-Instruct) show average out-of-domain math performance (across AIME24, AMC23, Math500, Olympiad, Minerva, College Math) dropping from a base of 60.35 to 52.37 (GRPO) and 52.63 (DAPO), a loss of approximately 8 percentage points.",
+      "content_hash": "a858171f233fba550d947684a9eefa446fe0479d5bcdd306444ed74b15c12b28",
+      "label": "catastrophic_forgetting",
+      "qid": "github:2509_07430::catastrophic_forgetting",
+      "type": "claim"
+    },
+    {
+      "content": "The choice of divergence measure in RLVR is a powerful and previously neglected design dimension: switching from reverse-KL (or no divergence) to mass-covering f-divergences (forward-KL, JS) provides substantial gains in Pass@k and out-of-domain generalization without sacrificing Pass@1, demonstrating that divergence selection is as impactful as policy gradient algorithm choice.",
+      "content_hash": "e394ac2fb9e5d3b36ebb8213f0a769665ecbc2b88c62a3e22b16aab4d3d91f70",
+      "label": "divergence_is_key_lever",
+      "qid": "github:2509_07430::divergence_is_key_lever",
+      "type": "claim"
+    },
+    {
+      "content": "DPH-RL's improvements generalize across model families (Llama-3.1-8B-Instruct, Qwen2.5-Math-7B), task domains (SQL generation, mathematical reasoning), and evaluation metrics (Pass@1, Pass@8, Pass@16, Pass@64), suggesting the method is broadly applicable to RLVR settings with verifiable rewards.",
+      "content_hash": "4999f1c0de7cd2fe433b27718f4b19fa91606d26e4623c0812afb6d3be650b55",
+      "label": "dphrl_generalizes",
+      "qid": "github:2509_07430::dphrl_generalizes",
+      "type": "claim"
+    },
+    {
+      "content": "DPH-RL (Diversity-Preserving Hybrid RL) resolves the RLVR diversity collapse paradox: it simultaneously improves Pass@1 (greedy accuracy) through exploration on $\\mathcal{D}_{exp}$ and maintains or improves Pass@k ($k > 1$) through f-divergence regularization on $\\mathcal{D}_{pef}$, avoiding the trade-off present in standard RLVR methods.",
+      "content_hash": "75fccea8a215a8b7d7ddf593a35be836f49e6f5c21aada2e4e235ab341e698f1",
+      "label": "dphrl_resolves_paradox",
+      "qid": "github:2509_07430::dphrl_resolves_paradox",
+      "type": "claim"
+    },
+    {
+      "content": "The generator-based pre-sampling approach in DPH-RL achieves computational efficiency comparable to GRPO/DAPO by avoiding online reference model inference during training. The divergence is computed against a static set of pre-sampled trajectories, adding only negligible overhead compared to methods that query a live reference model.",
+      "content_hash": "c68720aa35e336535e1308a70d595872166ab79b276451e2232acc95614c0e55",
+      "label": "generator_efficiency",
+      "qid": "github:2509_07430::generator_efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "Mass-covering f-divergences (forward-KL, Jensen-Shannon divergence) can be used as implicit rehearsal mechanisms in RLVR training to preserve solution diversity and prevent catastrophic forgetting, while still allowing improvements in Pass@1.",
+      "content_hash": "c982ef3bf1e1dbf0b83f07dfb81c42032b2c74a6df2d3b35ecad7eca0fe46ae5",
+      "label": "mass_covering_preserves",
+      "qid": "github:2509_07430::mass_covering_preserves",
+      "type": "claim"
+    },
+    {
+      "content": "Mathematical reasoning results on AIME24 with Llama-3.1-8B-Instruct:\n\n| Method | Pass@64 | Pass@16 | Pass@8 |\n|--------|---------|---------|--------|\n| Base Model | 40.0 | 23.3 | 95.0 |\n| GRPO | 33.3 | 26.7 | 80.0 |\n| DPH-F | 36.7 | 26.7 | 90.0 |\n| DPH-JS | 40.0 | 26.7 | 82.5 |\n\nGRPO degrades Pass@64 from 40.0 to 33.3 (−6.7). DPH-JS recovers Pass@64 fully to 40.0 while also improving Pass@16 from 23.3 to 26.7.",
+      "content_hash": "7035f4514b40a454088f069d171f402006aacfec9b40f810b283d22f96b2c409",
+      "label": "math_llama_results",
+      "qid": "github:2509_07430::math_llama_results",
+      "type": "claim"
+    },
+    {
+      "content": "Mathematical reasoning results on AIME24 with Qwen2.5-Math-7B:\n\n| Method | Pass@64 | Pass@16 | Pass@8 |\n|--------|---------|---------|--------|\n| Base Model | 63.3 | 56.7 | 87.5 |\n| GRPO | 56.6 | 50.0 | 97.5 |\n| DPH-F | 73.33 | 50.0 | 97.5 |\n| DPH-JS | 66.7 | 53.3 | 100.0 |\n\nDPH-F achieves the highest Pass@64 at 73.33 (+10.0 vs. base, +16.7 vs. GRPO). DPH-JS achieves Pass@8 = 100.0 (perfect). Both DPH variants improve Pass@64 substantially over GRPO while maintaining or exceeding GRPO's Pass@8.",
+      "content_hash": "44a8d2c27ffeb776a86177605c70e15cdaccf19039b9713eda68de0dfe405438",
+      "label": "math_qwen_results",
+      "qid": "github:2509_07430::math_qwen_results",
+      "type": "claim"
+    },
+    {
+      "content": "Out-of-domain math evaluation on SQL-trained Llama-3.1-8B-Instruct models (average across AIME24, AMC23, Math500, Olympiad, Minerva, College Math):\n\n| Method | Avg. OOD Math Score |\n|--------|--------------------|\n| Base Model | 60.35 |\n| GRPO | 52.37 |\n| DAPO | 52.63 |\n| RKL | 48.45 |\n| DPH-F | 60.98 |\n| DPH-JS | 60.23 |\n\nDPH-F and DPH-JS recover essentially all base-model out-of-domain capability (60.98 and 60.23 vs. 60.35 base), whereas GRPO/DAPO lose ~8 points and RKL loses ~12 points.",
+      "content_hash": "b9232a053d489ff7ead3763b6d04b1592b2e7981ca59c6a757d388adaeddfce7",
+      "label": "ood_math_results",
+      "qid": "github:2509_07430::ood_math_results",
+      "type": "claim"
+    },
+    {
+      "content": "Applying f-divergence regularization only to $\\mathcal{D}_{pef}$ (queries the base model already solves well) is principled because these queries represent existing capabilities that should be preserved. Applying no divergence constraint to $\\mathcal{D}_{exp}$ allows unconstrained exploration on hard queries where the model must learn new capabilities. This asymmetric treatment avoids applying a conservative constraint where aggressive exploration is needed.",
+      "content_hash": "1d2c0c0ffd62706792a47e3c40fa27d8cdbadb0f691021d15fe787d61795d06b",
+      "label": "partition_rationale",
+      "qid": "github:2509_07430::partition_rationale",
+      "type": "claim"
+    },
+    {
+      "content": "Standard RLVR training (e.g., GRPO, DAPO) causes Pass@k ($k > 1$) to degrade below the base model's Pass@k, indicating that the policy's solution distribution has narrowed (diversity collapse). For example, on the AIME24 math benchmark with Llama-3.1-8B-Instruct, GRPO reduces Pass@64 from 40.0 to 33.3 compared to the base model.",
+      "content_hash": "bb60f37a8d2acc1b519f6111cffd0c1ab5d60dd38a2fa65f097fd1fd09326050",
+      "label": "passk_degrades",
+      "qid": "github:2509_07430::passk_degrades",
+      "type": "claim"
+    },
+    {
+      "content": "Reverse KL-divergence, when used as a regularizer in RLVR objectives, actively accelerates diversity collapse by enforcing mode-seeking behavior—the policy converges to a narrow set of high-probability solutions and reduces Pass@k further compared to methods with no divergence constraint.",
+      "content_hash": "1501403b8fc2ff7cfc40e535cdb59612fc1cd5c43adf2306984943ac13f05231",
+      "label": "rkl_accelerates_collapse",
+      "qid": "github:2509_07430::rkl_accelerates_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "On the BIRD SQL in-domain benchmark (Llama-3.1-8B-Instruct), Pass@8 and Pass@16 results are:\n\n| Method | Pass@8 | Pass@16 |\n|--------|--------|---------|\n| Base Model | 68.8 | 75.0 |\n| GRPO | 66.2 | 67.7 |\n| DAPO | 67.2 | 69.0 |\n| RKL | 69.8 | 71.8 |\n| DPH-F | 70.1 | 71.6 |\n| DPH-JS ($\\eta=0.2$) | 70.5 | 72.4 |\n\nGRPO and DAPO fall below the base model on Pass@8 and Pass@16, confirming diversity collapse. DPH-JS achieves the highest Pass@8 (70.5), 4.3 points above GRPO (66.2) and 1.7 points above the base model (68.8).",
+      "content_hash": "0295c3da2c848e8b4feb9b0f0ad44850fcb781fdd96bc2fcfbf09df5b3a23a55",
+      "label": "sql_bird_results",
+      "qid": "github:2509_07430::sql_bird_results",
+      "type": "claim"
+    },
+    {
+      "content": "On the Spider SQL dataset (cross-domain evaluation, Llama-3.1-8B-Instruct), Pass@8 and Pass@16 results are:\n\n| Method | Pass@8 | Pass@16 |\n|--------|--------|---------|\n| Base Model | 90.9 | 93.2 |\n| GRPO | 79.5 | 80.6 |\n| DAPO | 75.3 | 76.7 |\n| DPH-F | 84.5 | 85.7 |\n| DPH-JS ($\\eta=0.2$) | 82.7 | 84.1 |\n\nGRPO and DAPO show severe Pass@k degradation (−11.4 and −15.6 Pass@8 respectively vs. base). DPH-F recovers 5.0 Pass@8 points vs. GRPO; Pass@16 improvement over DAPO is 9.0 points (85.7 vs. 76.7 for DPH-F).",
+      "content_hash": "fe725d1e9fc8007f8759d5ddf7dc68a05b3df8a82c6ec2a4b1849fe9e5734f6a",
+      "label": "sql_spider_results",
+      "qid": "github:2509_07430::sql_spider_results",
+      "type": "claim"
+    },
+    {
+      "content": "Theorem 1 (Enhanced Monotonic Improvement): Let $\\alpha_1 = \\max_s D_{KL}(\\pi(\\cdot|s) \\| \\pi_{old}(\\cdot|s))$ and $\\alpha_2 = \\max_s D_f(\\pi(\\cdot|s) \\| \\pi_{pef}(\\cdot|s))$ where $\\pi_{pef}$ is the policy restricted to the near-perfect set. Under Assumption 1, DPH-RL's policy improvement satisfies: $J(\\pi) - L_{\\pi_{old}}(\\pi) \\geq -\\frac{2\\gamma\\alpha_1 \\varepsilon_\\pi}{(1-\\gamma)^2} + \\varepsilon_f$, where $\\varepsilon_f = \\frac{\\delta}{1-\\gamma} - \\frac{C_f \\gamma \\alpha_2 \\varepsilon_{pef}}{(1-\\gamma)^2} > 0$. The term $\\varepsilon_f > 0$ provides a strictly better lower bound on policy improvement than the standard TRPO bound (which lacks the $+\\varepsilon_f$ term).",
+      "content_hash": "7e7b7aea2e73547fb4c4cb6879d55847495f9d18b22afa1cf1d13b0019baa9b9",
+      "label": "theorem1_statement",
+      "qid": "github:2509_07430::theorem1_statement",
+      "type": "claim"
+    },
+    {
+      "content": "Using the strictest threshold (all 8/8 sampled rollouts correct) for partitioning into $\\mathcal{D}_{pef}$ yields the best performance, selecting approximately 8% of training data. This threshold provides a statistically unbiased subset of genuinely mastered queries, avoiding contamination with borderline queries. Looser thresholds (e.g., 6/8 or 7/8) provide broader coverage but dilute the diversity-preservation signal.",
+      "content_hash": "7f1fa658b6f20f1641a3819a953ddfc534f581eb560e355bc228c07ed30a6399",
+      "label": "threshold_8_of_8_optimal",
+      "qid": "github:2509_07430::threshold_8_of_8_optimal",
+      "type": "claim"
+    },
+    {
+      "content": "The standard TRPO/PPO bound gives $J(\\pi) - L_{\\pi_{old}}(\\pi) \\geq -\\frac{2\\gamma\\alpha_1\\varepsilon_\\pi}{(1-\\gamma)^2}$, which can be negative (no guaranteed improvement). DPH-RL's bound adds $+\\varepsilon_f > 0$, providing a strictly tighter guarantee. The gap between the two bounds is $\\varepsilon_f > 0$.",
+      "content_hash": "7099fb8b138b0c3fe25175fe6e2d255728d2502c8e6a5e963f987c42f60bb3df",
+      "label": "trpo_standard_vs_dphrl",
+      "qid": "github:2509_07430::trpo_standard_vs_dphrl",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:90ba79a5dfc327ee80133cd228d67435ddb5e7034f923ab8cf5cd1e17ff9374d",
+  "manifest_schema_version": 1,
+  "package": "2509-07430",
+  "version": "0.1.0"
+}

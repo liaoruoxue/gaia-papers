@@ -1,0 +1,1838 @@
+{
+  "ir_hash": "sha256:90ba79a5dfc327ee80133cd228d67435ddb5e7034f923ab8cf5cd1e17ff9374d",
+  "knowledges": [
+    {
+      "content": "Reinforcement Learning with Verifiable Reward (RLVR) is a paradigm for fine-tuning large language models (LLMs) using rule-based reward signals from verifiable domains (e.g., mathematics, code/SQL). The agent (LLM policy $\\pi_\\theta$) generates responses and receives binary or scalar rewards $r(a|q)$ without relying on a separate reward model.",
+      "content_hash": "17b2a551dc3676e3fc5d9bcf0b70999086ace7b68b67cf5ed05fe03df510f529",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2509_07430::rlvr_setting",
+      "label": "rlvr_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR definition",
+      "type": "setting"
+    },
+    {
+      "content": "Pass@k is a multi-attempt performance metric for LLMs: given $k$ independent samples from the model for a query, Pass@k is 1 if at least one sample is correct. Pass@1 (greedy accuracy) measures single-attempt performance; Pass@k for $k > 1$ measures coverage and diversity of the model's solution space.",
+      "content_hash": "17cf573c61f3269e9e9583cdd1f968a7f1f4f1c2a3b92fffd4f52c91a0e93287",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2509_07430::pass_at_k_setting",
+      "label": "pass_at_k_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Pass@k metric definition",
+      "type": "setting"
+    },
+    {
+      "content": "Reverse KL-divergence $D_{KL}(\\pi_\\theta \\| \\pi_{ref})$ is a mode-seeking divergence: minimizing it forces the policy $\\pi_\\theta$ to concentrate probability mass on modes of the reference $\\pi_{ref}$, collapsing low-probability regions even if they contain correct solutions.",
+      "content_hash": "fd2826e53297d12403324d29ef1368dfa628789f82a02ee4c2994bde22ce99af",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2509_07430::reverse_kl_setting",
+      "label": "reverse_kl_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reverse KL mode-seeking property (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "An f-divergence between distributions $p$ and $q$ is defined as $D_f(p \\| q) = \\int q(x) f\\!\\left(\\frac{p(x)}{q(x)}\\right) dx$, where $f$ is a strictly convex function with $f(1) = 0$. Special cases: forward-KL uses $f(u) = -\\log u$; Jensen-Shannon (JS) uses $f(u) = u \\log u - (u+1)\\log\\frac{u+1}{2}$; reverse-KL uses $f(u) = u \\log u$.",
+      "content_hash": "88eb830992b46acd7425285ae3ba12a1b42af7e46f70eed96d8dc646b25078e5",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2509_07430::f_divergence_setting",
+      "label": "f_divergence_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "f-divergence definition",
+      "type": "setting"
+    },
+    {
+      "content": "Why does RLVR training improve Pass@1 (single-attempt accuracy) while simultaneously degrading Pass@k (multi-attempt diversity) compared to the base model, and how can this diversity collapse be mitigated?",
+      "content_hash": "960b9cd863ca0f95eb4920971d63281e9bf27a0025dadd101dd47a342e2e022f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2509_07430::q_diversity_collapse",
+      "label": "q_diversity_collapse",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core research question",
+      "type": "question"
+    },
+    {
+      "content": "Standard RLVR training (e.g., GRPO, DAPO) consistently improves Pass@1 (greedy single-attempt accuracy) on in-domain benchmarks compared to the base model.",
+      "content_hash": "3377f7ddf436201de8be253253dc8158479151e69563d7b84bc8fd8a4d726bc4",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2509_07430::pass1_improves",
+      "label": "pass1_improves",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Well-documented phenomenon across the RLVR literature. RLVR consistently improves Pass@1 on in-domain tasks — this is the primary motivation for using RLVR and is confirmed by this paper's own results plus extensive prior literature (DeepSeekMath, DeepSeek-R1, DAPO, etc.)."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR improves Pass@1",
+      "type": "claim"
+    },
+    {
+      "content": "Standard RLVR training (e.g., GRPO, DAPO) causes Pass@k ($k > 1$) to degrade below the base model's Pass@k, indicating that the policy's solution distribution has narrowed (diversity collapse). For example, on the AIME24 math benchmark with Llama-3.1-8B-Instruct, GRPO reduces Pass@64 from 40.0 to 33.3 compared to the base model.",
+      "content_hash": "bb60f37a8d2acc1b519f6111cffd0c1ab5d60dd38a2fa65f097fd1fd09326050",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2509_07430::passk_degrades",
+      "label": "passk_degrades",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR degrades Pass@k",
+      "type": "claim"
+    },
+    {
+      "content": "Standard RLVR training causes catastrophic forgetting of out-of-domain knowledge: SQL-task-trained models (Llama-3.1-8B-Instruct) show average out-of-domain math performance (across AIME24, AMC23, Math500, Olympiad, Minerva, College Math) dropping from a base of 60.35 to 52.37 (GRPO) and 52.63 (DAPO), a loss of approximately 8 percentage points.",
+      "content_hash": "a858171f233fba550d947684a9eefa446fe0479d5bcdd306444ed74b15c12b28",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2509_07430::catastrophic_forgetting",
+      "label": "catastrophic_forgetting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Catastrophic forgetting in out-of-domain tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Reverse KL-divergence, when used as a regularizer in RLVR objectives, actively accelerates diversity collapse by enforcing mode-seeking behavior—the policy converges to a narrow set of high-probability solutions and reduces Pass@k further compared to methods with no divergence constraint.",
+      "content_hash": "1501403b8fc2ff7cfc40e535cdb59612fc1cd5c43adf2306984943ac13f05231",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2509_07430::rkl_accelerates_collapse",
+      "label": "rkl_accelerates_collapse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ood_math_results",
+              "rkl_mode_seeking_harm"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reverse KL accelerates diversity collapse",
+      "type": "claim"
+    },
+    {
+      "content": "The choice of divergence in RLVR objectives has been neglected as a design dimension, with most prior methods either omitting divergence constraints (GRPO, DAPO) or using reverse KL, neither of which preserves solution diversity.",
+      "content_hash": "dd9d81a58c737bac14b47c2b6dd8673131c4aa1fd26538c614eb1c85f11b14a1",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2509_07430::divergence_choice_neglected",
+      "label": "divergence_choice_neglected",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "Claim about the state of prior art. Mainstream RLVR methods (GRPO, DAPO) indeed omit divergence constraints per their published formulations. 'Neglected' is a qualitative assessment; some concurrent work may have explored divergence choices but not as the primary focus."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Divergence choice neglected in prior RLVR work",
+      "type": "claim"
+    },
+    {
+      "content": "Mass-covering f-divergences (forward-KL, Jensen-Shannon divergence) can be used as implicit rehearsal mechanisms in RLVR training to preserve solution diversity and prevent catastrophic forgetting, while still allowing improvements in Pass@1.",
+      "content_hash": "c982ef3bf1e1dbf0b83f07dfb81c42032b2c74a6df2d3b35ecad7eca0fe46ae5",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2509_07430::mass_covering_preserves",
+      "label": "mass_covering_preserves",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Mass-covering divergences preserve diversity",
+      "type": "claim"
+    },
+    {
+      "content": "The Group Relative Policy Optimization (GRPO) objective maximizes expected reward without a KL-divergence constraint: $\\max_{\\pi_\\theta} \\mathbb{E}_{q \\sim \\mathcal{D}}[\\mathbb{E}_{a \\sim \\pi_\\theta(\\cdot|q)}[r(a|q)]]$. It uses group-normalized advantages (relative to other samples in the same batch) instead of a value baseline. GRPO applies clip-based PPO updates with group normalization but no explicit divergence regularization term.",
+      "content_hash": "ac65be6d51140f9a4ba85a346bf3acfb6dad2925fd7aee38375a415b0245aac7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2509_07430::grpo_objective",
+      "label": "grpo_objective",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "GRPO objective (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "DAPO (Decoupled Clip and Dynamic sAmpling Policy Optimization) extends GRPO with dynamic sampling and decoupled clip ratios for better training stability. Like GRPO, it does not include a divergence penalty against the reference (initial) policy. DAPO removes entropy-based KL terms entirely.",
+      "content_hash": "9db347eedd2d33873f47d1bb588de20d7d4c0f578ee37d2acaf825ef65cfedf1",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2509_07430::dapo_objective",
+      "label": "dapo_objective",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "DAPO objective (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "The Proximal Policy Optimization (PPO) objective uses a clipped surrogate loss with reverse-KL divergence penalty: $\\max_{\\pi_\\theta} \\mathbb{E}[\\hat{A}_t \\cdot \\min(\\rho_t, \\text{clip}(\\rho_t, 1-\\varepsilon, 1+\\varepsilon))] - \\beta D_{KL}(\\pi_\\theta \\| \\pi_{ref})$, where $\\rho_t = \\pi_\\theta(a_t|s_t)/\\pi_{old}(a_t|s_t)$ is the probability ratio and $\\hat{A}_t$ is the advantage estimate.",
+      "content_hash": "628828d9702c7461efb3f08a950bc45dc40ea785a1c62f29d96b83e32b41cbe6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2509_07430::ppo_objective",
+      "label": "ppo_objective",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "PPO with reverse-KL (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "The Trust Region Policy Optimization (TRPO) monotonic improvement theorem states that for any policy $\\pi$ and old policy $\\pi_{old}$, the true objective satisfies: $J(\\pi) - L_{\\pi_{old}}(\\pi) \\geq -\\frac{2\\gamma \\alpha_1 \\varepsilon_\\pi}{(1-\\gamma)^2}$, where $\\alpha_1 = \\max_s D_{KL}(\\pi(\\cdot|s) \\| \\pi_{old}(\\cdot|s))$, $\\varepsilon_\\pi = \\max_s |\\mathbb{E}_{a \\sim \\pi}[A_{\\pi_{old}}(s,a)]|$, and $\\gamma$ is the discount factor.",
+      "content_hash": "72abc65b9432f63c78d316f073b869710d9a12ba8fe8831051d0108a44aea55e",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2509_07430::trpo_bound",
+      "label": "trpo_bound",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "TRPO monotonic improvement bound (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "GRPO's absence of divergence regularization provides no mechanism to prevent the policy from drifting away from the reference (base) model's distribution, leaving low-reward but solution-diverse regions of the policy unprotected from collapse.",
+      "content_hash": "4ecd65f58a0450f2064d166d1be5a9226368968f4ab6a9595a716e334a32be46",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2509_07430::grpo_no_diversity",
+      "label": "grpo_no_diversity",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "GRPO lacks diversity protection",
+      "type": "claim"
+    },
+    {
+      "content": "When reverse KL-divergence $D_{KL}(\\pi_\\theta \\| \\pi_{ref})$ is used as a regularizer in RLVR, it enforces mode-seeking behavior: the policy concentrates on the dominant high-reward solution modes of the reference policy while suppressing alternative (low-probability but valid) solution styles. This theoretically forces convergence to a single high-probability solution pattern, worsening diversity collapse relative to using no divergence at all.",
+      "content_hash": "0809bd7edac96e417cd07232f8ba0af2e4b93e5041bf5db57a4f2c0b402ad8be",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2509_07430::rkl_mode_seeking_harm",
+      "label": "rkl_mode_seeking_harm",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Reverse-KL's mode-seeking property is textbook variational inference. The specific application to LLM RLVR (converging to single solution modes) requires the additional step of applying this to token distributions, which involves implicit assumptions about LLM solution space structure. Empirical evidence (RKL OOD math = 48.45, worst of all methods) supports it."
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Reverse KL enforces harmful mode-seeking",
+      "type": "claim"
+    },
+    {
+      "content": "Forward KL-divergence $D_{KL}(\\pi_{ref} \\| \\pi_\\theta)$ is mass-covering: minimizing $D_{KL}(\\pi_{ref} \\| \\pi_\\theta) = \\sum_a \\pi_{ref}(a|q)\\log\\frac{\\pi_{ref}(a|q)}{\\pi_\\theta(a|q)}$ penalizes the trained policy $\\pi_\\theta$ whenever it assigns near-zero probability to actions that the reference policy considers plausible, thereby preventing the policy from fully abandoning solution modes present in the base model.",
+      "content_hash": "aced2a948e4947cc0af55becbc0e404adc3f308d8e308b63a03a8c4c7b846af9",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2509_07430::forward_kl_mass_covering",
+      "label": "forward_kl_mass_covering",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Well-known information-theoretic property. The mass-covering behavior of D_KL(p||q) (which penalizes q for assigning near-zero mass where p is non-zero) is a textbook result in variational inference and information theory."
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Forward KL is mass-covering",
+      "type": "claim"
+    },
+    {
+      "content": "Jensen-Shannon divergence $D_{JS}(\\pi_\\theta \\| \\pi_{ref})$ is mass-covering and symmetric. For the preservation set $\\mathcal{D}_{pef}$, it is computed as: $D_{JS} = \\sum_a \\pi_{ref}(a|q)\\left[\\frac{u \\log u}{2} - \\frac{u+1}{2}\\log\\frac{u+1}{2}\\right]$ where $u = \\pi_\\theta(a|q)/\\pi_{ref}(a|q)$. This is bounded and provides a softer mass-covering constraint than forward-KL.",
+      "content_hash": "6e09f2e1709ac3b30f2eb2540fd98145a40e69e7f35e35fad304db588298bfff",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2509_07430::js_mass_covering",
+      "label": "js_mass_covering",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Well-known property of JS divergence: bounded, symmetric, mass-covering. Follows from its definition as a symmetrized KL mixture. High confidence."
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Jensen-Shannon divergence is mass-covering",
+      "type": "claim"
+    },
+    {
+      "content": "The DPH-RL (Diversity-Preserving Hybrid RL) optimization objective is: $\\max_{\\pi_\\theta} \\mathbb{E}_{q \\sim \\mathcal{D}} [\\mathbb{E}_{a \\sim \\pi_\\theta(\\cdot|q)}[r(a|q)] - \\eta D_f(\\pi_\\theta(\\cdot|q) \\| \\pi_{ref}(\\cdot|q))]$, where $\\eta > 0$ is a regularization weight, $D_f$ is an f-divergence, and $\\pi_{ref}$ is the fixed initial (reference) policy.",
+      "content_hash": "4ced2af003daafdc3fa0759de5d8609c7ec7a5625b8143089930d68323e25de3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2509_07430::dphrl_objective",
+      "label": "dphrl_objective",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "DPH-RL objective (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "The DPH-RL training dataset $\\mathcal{D}$ is partitioned into two disjoint subsets during pre-sampling: $\\mathcal{D}_{pef}$ (near-perfect set) contains queries where the base model consistently generates correct solutions (threshold: all 8/8 sampled rollouts are correct), and $\\mathcal{D}_{exp}$ (exploration set) contains the remaining queries where the model does not yet reliably succeed. The two subsets receive different training objectives.",
+      "content_hash": "677dec8096aa5e8a9ba95dd0a101cc07220fe1693f59686c17b9650e214d9aad",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2509_07430::dataset_partition",
+      "label": "dataset_partition",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Dataset partition into D_pef and D_exp (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "For queries in the exploration set $\\mathcal{D}_{exp}$, DPH-RL applies the standard PPO-clip objective without any KL or divergence penalty, enabling maximal exploration: $\\mathcal{L}_{DPH\\text{-}exp}(\\theta) = -\\mathbb{E}\\left[\\sum_t \\min\\!\\left(\\rho_{i,t}(\\theta)\\hat{A}_{i,t},\\, \\text{clip}(\\rho_{i,t}(\\theta), 1-\\varepsilon, 1+\\varepsilon)\\hat{A}_{i,t}\\right)\\right]$, where $\\rho_{i,t}(\\theta) = \\pi_\\theta(a_{i,t}|s_{i,t})/\\pi_{old}(a_{i,t}|s_{i,t})$ and $\\hat{A}_{i,t}$ is the group-normalized advantage.",
+      "content_hash": "0b7bb17750bfb7449727c08c3f02ba028406cb54da5b69c741b1babc3cbdf51e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2509_07430::exploration_loss",
+      "label": "exploration_loss",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Exploration set loss (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "For queries in the preservation set $\\mathcal{D}_{pef}$, DPH-RL applies an f-divergence regularization loss to prevent forgetting: $\\mathcal{L}_{pef}(\\theta) = \\mathbb{E}_{q \\sim \\mathcal{D}_{pef}}[D_f(\\pi_\\theta(\\cdot|q) \\| \\pi_{ref}(\\cdot|q))]$. Two variants: DPH-F uses forward-KL: $D_{KL}(\\pi_{ref} \\| \\pi_\\theta) = \\sum_a \\pi_{ref}(a|q)\\log(\\pi_{ref}(a|q)/\\pi_\\theta(a|q))$; DPH-JS uses Jensen-Shannon divergence.",
+      "content_hash": "7f1787496ce300d3a24dfafda54feadcd6a1c5e25d869e4588eca74a0566ff43",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2509_07430::preservation_loss",
+      "label": "preservation_loss",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Preservation set loss (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "DPH-RL uses a generator-based approach to compute f-divergences without an online reference model: during the pre-sampling stage, a fixed set of rollout trajectories is sampled from $\\pi_{ref}$ (the initial policy). During training, divergences are computed against these pre-sampled trajectories, eliminating the need to query a reference model at each training step. This makes DPH-RL computationally comparable to GRPO.",
+      "content_hash": "93f8491d5865db5502aeb072d3afc29ff22432eac9f7d0e0f4a53a404b94d4c4",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2509_07430::generator_method",
+      "label": "generator_method",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Generator-based f-divergence computation (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "Applying f-divergence regularization only to $\\mathcal{D}_{pef}$ (queries the base model already solves well) is principled because these queries represent existing capabilities that should be preserved. Applying no divergence constraint to $\\mathcal{D}_{exp}$ allows unconstrained exploration on hard queries where the model must learn new capabilities. This asymmetric treatment avoids applying a conservative constraint where aggressive exploration is needed.",
+      "content_hash": "1d2c0c0ffd62706792a47e3c40fa27d8cdbadb0f691021d15fe787d61795d06b",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2509_07430::partition_rationale",
+      "label": "partition_rationale",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Asymmetric partition rationale",
+      "type": "claim"
+    },
+    {
+      "content": "The generator-based pre-sampling approach in DPH-RL achieves computational efficiency comparable to GRPO/DAPO by avoiding online reference model inference during training. The divergence is computed against a static set of pre-sampled trajectories, adding only negligible overhead compared to methods that query a live reference model.",
+      "content_hash": "c68720aa35e336535e1308a70d595872166ab79b276451e2232acc95614c0e55",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2509_07430::generator_efficiency",
+      "label": "generator_efficiency",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Generator approach is computationally efficient",
+      "type": "claim"
+    },
+    {
+      "content": "DPH-RL's generator-based computation effectively handles the challenge of computing f-divergences over discrete token sequences (LLM outputs) by approximating the divergence using the pre-sampled trajectories from $\\pi_{ref}$ as a Monte Carlo estimator, rather than requiring an intractable sum over all possible sequences.",
+      "content_hash": "a5aa750a978e9015a67b79c1a872e026c5b108c92f35da3a44fd3e659b17a405",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2509_07430::dphrl_handles_discrete",
+      "label": "dphrl_handles_discrete",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Generator-based approach is described in the paper as handling discrete action spaces via pre-sampled trajectories. The claim that it 'effectively handles' the challenge is supported by the working system, but no explicit ablation shows that alternative discrete-space approaches would fail."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Generator method handles discrete action space",
+      "type": "claim"
+    },
+    {
+      "content": "Using the strictest threshold (all 8/8 sampled rollouts correct) for partitioning into $\\mathcal{D}_{pef}$ yields the best performance, selecting approximately 8% of training data. This threshold provides a statistically unbiased subset of genuinely mastered queries, avoiding contamination with borderline queries. Looser thresholds (e.g., 6/8 or 7/8) provide broader coverage but dilute the diversity-preservation signal.",
+      "content_hash": "7f1fa658b6f20f1641a3819a953ddfc534f581eb560e355bc228c07ed30a6399",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2509_07430::threshold_8_of_8_optimal",
+      "label": "threshold_8_of_8_optimal",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Table 4 ablation with limited threshold comparisons (6/8 vs 8/8). The conclusion that 8/8 is optimal is supported by one comparison point. The '8% of training data' figure is a direct dataset statistic.",
+        "source_table": "artifacts/2509.07430.pdf, Table 4"
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Strict 8/8 threshold optimal for D_pef",
+      "type": "claim"
+    },
+    {
+      "content": "Assumption 1 (Bounded advantage on preservation set): There exist constants $C_f > 0$ and $\\delta > 0$ such that for all $q \\in \\mathcal{D}_{pef}$ and all actions $a$, the advantage function satisfies a bound involving the f-divergence penalty term, yielding $\\varepsilon_f = \\delta/(1-\\gamma) - C_f \\gamma \\alpha_2 \\varepsilon_{pef}/(1-\\gamma)^2 > 0$ when the f-divergence regularization effectively captures the structure of near-perfect queries.",
+      "content_hash": "b30159b4b17ef3a4e98f051864eb0c04ffe2463cf8b492f38510a44e6321d0b0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2509_07430::assumption1",
+      "label": "assumption1",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Assumption 1: bounded advantage on D_pef",
+      "type": "setting"
+    },
+    {
+      "content": "Theorem 1 (Enhanced Monotonic Improvement): Let $\\alpha_1 = \\max_s D_{KL}(\\pi(\\cdot|s) \\| \\pi_{old}(\\cdot|s))$ and $\\alpha_2 = \\max_s D_f(\\pi(\\cdot|s) \\| \\pi_{pef}(\\cdot|s))$ where $\\pi_{pef}$ is the policy restricted to the near-perfect set. Under Assumption 1, DPH-RL's policy improvement satisfies: $J(\\pi) - L_{\\pi_{old}}(\\pi) \\geq -\\frac{2\\gamma\\alpha_1 \\varepsilon_\\pi}{(1-\\gamma)^2} + \\varepsilon_f$, where $\\varepsilon_f = \\frac{\\delta}{1-\\gamma} - \\frac{C_f \\gamma \\alpha_2 \\varepsilon_{pef}}{(1-\\gamma)^2} > 0$. The term $\\varepsilon_f > 0$ provides a strictly better lower bound on policy improvement than the standard TRPO bound (which lacks the $+\\varepsilon_f$ term).",
+      "content_hash": "7e7b7aea2e73547fb4c4cb6879d55847495f9d18b22afa1cf1d13b0019baa9b9",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2509_07430::theorem1_statement",
+      "label": "theorem1_statement",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theorem 1: enhanced monotonic improvement",
+      "type": "claim"
+    },
+    {
+      "content": "The positive bonus term $\\varepsilon_f$ in Theorem 1 arises because f-divergence regularization on $\\mathcal{D}_{pef}$ leverages the expert behavior of near-perfect queries: the policy is incentivized to stay close to the reference on queries it already handles well, which guarantees positive advantage contributions from those queries. This is an improvement over the standard TRPO guarantee that only provides a lower bound (no positive bonus).",
+      "content_hash": "131ef0e43186a9f70c872c3a623b835d81ab535f2e415f9dbdf9ae5b719a45bf",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2509_07430::theorem1_interpretation",
+      "label": "theorem1_interpretation",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theorem 1: source of positive bonus",
+      "type": "claim"
+    },
+    {
+      "content": "The standard TRPO/PPO bound gives $J(\\pi) - L_{\\pi_{old}}(\\pi) \\geq -\\frac{2\\gamma\\alpha_1\\varepsilon_\\pi}{(1-\\gamma)^2}$, which can be negative (no guaranteed improvement). DPH-RL's bound adds $+\\varepsilon_f > 0$, providing a strictly tighter guarantee. The gap between the two bounds is $\\varepsilon_f > 0$.",
+      "content_hash": "7099fb8b138b0c3fe25175fe6e2d255728d2502c8e6a5e963f987c42f60bb3df",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2509_07430::trpo_standard_vs_dphrl",
+      "label": "trpo_standard_vs_dphrl",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Mathematical comparison between standard TRPO bound and DPH-RL bound. The positive bonus term epsilon_f > 0 is formally derived in the paper; confidence is high but the proof is not independently verified here."
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "DPH-RL vs TRPO improvement bound comparison",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO (without KL constraint) does not admit the enhanced TRPO-style monotonic improvement bound because it lacks any divergence term. The absence of $D_f$ means there is no $\\varepsilon_f$ bonus: the policy can drift arbitrarily from the reference, losing existing capabilities without a formal guarantee against forgetting.",
+      "content_hash": "a330cd4da41f6bb11d511c150391d0f447776d5bb1d2d881c32d5f1955794291",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2509_07430::grpo_no_bound",
+      "label": "grpo_no_bound",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Definitionally true: GRPO's published formulation explicitly excludes a KL divergence term. Without any divergence term, no TRPO-style guarantee applies. This is a formal consequence of GRPO's design, not an empirical claim."
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "GRPO lacks monotonic improvement guarantee",
+      "type": "claim"
+    },
+    {
+      "content": "SQL experiments use Llama-3.1-8B-Instruct as the base model. Training data is sourced from the Spider and BIRD SQL datasets. Evaluation metrics: Pass@1 (greedy accuracy), Pass@8, and Pass@16 on in-domain Spider and BIRD test sets. Out-of-domain evaluation uses 6 math benchmarks: AIME24, AMC23, Math500, Olympiad, Minerva, and College Math.",
+      "content_hash": "6750f49c7a40d6dcce81f408b35fc8763c62e3331659ed79b0a9f308d006952e",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2509_07430::sql_experiment_setup",
+      "label": "sql_experiment_setup",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "SQL experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Mathematical reasoning experiments use two base models: Llama-3.1-8B-Instruct and Qwen2.5-Math-7B. Training data is from math competition datasets. Evaluation metrics: Pass@1 (greedy), Pass@8, Pass@16, Pass@64 on AIME24 benchmark.",
+      "content_hash": "8f145f38ad911e6d46e734105106b1a82d76a232e2bbfab0c9ea03744b84a38b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2509_07430::math_experiment_setup",
+      "label": "math_experiment_setup",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Math experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Compared baselines: (1) Base model (no fine-tuning), (2) GRPO (no KL constraint), (3) DAPO (decoupled clip, no divergence), (4) RKL (PPO with reverse-KL penalty), (5) DPH-F (DPH-RL with forward-KL), (6) DPH-JS (DPH-RL with Jensen-Shannon, $\\eta=0.2$). All methods trained for the same number of steps on the same dataset.",
+      "content_hash": "a6a5df58fd898816b79051d13af2b53fd76e54e1f3184f7f742dd1d137e6fe10",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2509_07430::baselines",
+      "label": "baselines",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Compared baselines",
+      "type": "setting"
+    },
+    {
+      "content": "On the BIRD SQL in-domain benchmark (Llama-3.1-8B-Instruct), Pass@8 and Pass@16 results are:\n\n| Method | Pass@8 | Pass@16 |\n|--------|--------|---------|\n| Base Model | 68.8 | 75.0 |\n| GRPO | 66.2 | 67.7 |\n| DAPO | 67.2 | 69.0 |\n| RKL | 69.8 | 71.8 |\n| DPH-F | 70.1 | 71.6 |\n| DPH-JS ($\\eta=0.2$) | 70.5 | 72.4 |\n\nGRPO and DAPO fall below the base model on Pass@8 and Pass@16, confirming diversity collapse. DPH-JS achieves the highest Pass@8 (70.5), 4.3 points above GRPO (66.2) and 1.7 points above the base model (68.8).",
+      "content_hash": "0295c3da2c848e8b4feb9b0f0ad44850fcb781fdd96bc2fcfbf09df5b3a23a55",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2509_07430::sql_bird_results",
+      "label": "sql_bird_results",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Published Table 1 data; exact Pass@8/16 numbers for 6 methods on BIRD SQL. Values directly reported; pattern of GRPO/DAPO degradation is clear and consistent.",
+        "source_table": "artifacts/2509.07430.pdf, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "BIRD SQL: Pass@k results",
+      "type": "claim"
+    },
+    {
+      "content": "On the Spider SQL dataset (cross-domain evaluation, Llama-3.1-8B-Instruct), Pass@8 and Pass@16 results are:\n\n| Method | Pass@8 | Pass@16 |\n|--------|--------|---------|\n| Base Model | 90.9 | 93.2 |\n| GRPO | 79.5 | 80.6 |\n| DAPO | 75.3 | 76.7 |\n| DPH-F | 84.5 | 85.7 |\n| DPH-JS ($\\eta=0.2$) | 82.7 | 84.1 |\n\nGRPO and DAPO show severe Pass@k degradation (−11.4 and −15.6 Pass@8 respectively vs. base). DPH-F recovers 5.0 Pass@8 points vs. GRPO; Pass@16 improvement over DAPO is 9.0 points (85.7 vs. 76.7 for DPH-F).",
+      "content_hash": "fe725d1e9fc8007f8759d5ddf7dc68a05b3df8a82c6ec2a4b1849fe9e5734f6a",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2509_07430::sql_spider_results",
+      "label": "sql_spider_results",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Published Table 1 data for Spider SQL benchmark. GRPO Pass@8 = 79.5 vs base 90.9 is a large, unambiguous degradation. Cross-domain results are directly reported.",
+        "source_table": "artifacts/2509.07430.pdf, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Spider SQL: Pass@k results",
+      "type": "claim"
+    },
+    {
+      "content": "Out-of-domain math evaluation on SQL-trained Llama-3.1-8B-Instruct models (average across AIME24, AMC23, Math500, Olympiad, Minerva, College Math):\n\n| Method | Avg. OOD Math Score |\n|--------|--------------------|\n| Base Model | 60.35 |\n| GRPO | 52.37 |\n| DAPO | 52.63 |\n| RKL | 48.45 |\n| DPH-F | 60.98 |\n| DPH-JS | 60.23 |\n\nDPH-F and DPH-JS recover essentially all base-model out-of-domain capability (60.98 and 60.23 vs. 60.35 base), whereas GRPO/DAPO lose ~8 points and RKL loses ~12 points.",
+      "content_hash": "b9232a053d489ff7ead3763b6d04b1592b2e7981ca59c6a757d388adaeddfce7",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2509_07430::ood_math_results",
+      "label": "ood_math_results",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Published Table 2 data averaging 6 math benchmarks for SQL-trained models. Pattern of catastrophic forgetting in GRPO/DAPO and recovery in DPH variants is robust across 6 diverse benchmarks.",
+        "source_table": "artifacts/2509.07430.pdf, Table 2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Out-of-domain math: catastrophic forgetting results",
+      "type": "claim"
+    },
+    {
+      "content": "Mathematical reasoning results on AIME24 with Llama-3.1-8B-Instruct:\n\n| Method | Pass@64 | Pass@16 | Pass@8 |\n|--------|---------|---------|--------|\n| Base Model | 40.0 | 23.3 | 95.0 |\n| GRPO | 33.3 | 26.7 | 80.0 |\n| DPH-F | 36.7 | 26.7 | 90.0 |\n| DPH-JS | 40.0 | 26.7 | 82.5 |\n\nGRPO degrades Pass@64 from 40.0 to 33.3 (−6.7). DPH-JS recovers Pass@64 fully to 40.0 while also improving Pass@16 from 23.3 to 26.7.",
+      "content_hash": "7035f4514b40a454088f069d171f402006aacfec9b40f810b283d22f96b2c409",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2509_07430::math_llama_results",
+      "label": "math_llama_results",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Published Table 3 data for Llama-3.1-8B on AIME24. AIME24 has ~30 problems so Pass@64 estimates carry variance, but values are directly reported from experiments.",
+        "source_table": "artifacts/2509.07430.pdf, Table 3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Math reasoning (Llama-3.1-8B): Pass@k results",
+      "type": "claim"
+    },
+    {
+      "content": "Mathematical reasoning results on AIME24 with Qwen2.5-Math-7B:\n\n| Method | Pass@64 | Pass@16 | Pass@8 |\n|--------|---------|---------|--------|\n| Base Model | 63.3 | 56.7 | 87.5 |\n| GRPO | 56.6 | 50.0 | 97.5 |\n| DPH-F | 73.33 | 50.0 | 97.5 |\n| DPH-JS | 66.7 | 53.3 | 100.0 |\n\nDPH-F achieves the highest Pass@64 at 73.33 (+10.0 vs. base, +16.7 vs. GRPO). DPH-JS achieves Pass@8 = 100.0 (perfect). Both DPH variants improve Pass@64 substantially over GRPO while maintaining or exceeding GRPO's Pass@8.",
+      "content_hash": "44a8d2c27ffeb776a86177605c70e15cdaccf19039b9713eda68de0dfe405438",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2509_07430::math_qwen_results",
+      "label": "math_qwen_results",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Published Table 3 data for Qwen2.5-Math-7B on AIME24. DPH-F Pass@64 = 73.33 is a notable improvement; slight uncertainty from small test set size.",
+        "source_table": "artifacts/2509.07430.pdf, Table 3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Math reasoning (Qwen2.5-Math-7B): Pass@k results",
+      "type": "claim"
+    },
+    {
+      "content": "Qualitative analysis of solution styles (Figure 4 of the paper) shows that reverse-KL trained models converge to generating solutions in a single stylistic format (e.g., only one SQL join pattern or one proof structure), while forward-KL and JS-divergence trained models produce multiple distinct solution styles for the same query, confirming the mass-covering property preserves stylistic diversity.",
+      "content_hash": "05be54063820a552377518881ac764a43a308b116ed00239e4614c59af8a8ba5",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2509_07430::solution_style_diversity",
+      "label": "solution_style_diversity",
+      "metadata": {
+        "caption": "Fig. 4: Solution style comparison across divergence types.",
+        "figure": "artifacts/2509.07430.pdf, Figure 4",
+        "prior": 0.85,
+        "prior_justification": "Figure 4 qualitative analysis of solution styles. Qualitative claim about multiple distinct styles vs single style is visually evaluated; harder to quantify precisely but directionally well-supported by mode-seeking theory."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Solution style diversity: reverse-KL vs forward-KL",
+      "type": "claim"
+    },
+    {
+      "content": "Capability retention analysis (Figure 3 of the paper) shows that GRPO/DAPO lose approximately 15% of base model capabilities (measured by out-of-domain benchmark performance drop) while DPH-JS retains 85%+ of base model capabilities. RKL causes 85% out-of-domain performance collapse in the most severe cases (SQL-domain specialization with out-of-domain math).",
+      "content_hash": "a98a5903ea5148005aaa9518df74473aac4b36e4ff288903881342cdd1f926ac",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2509_07430::capability_retention",
+      "label": "capability_retention",
+      "metadata": {
+        "caption": "Fig. 3: Capability retention under different divergence types.",
+        "figure": "artifacts/2509.07430.pdf, Figure 3",
+        "prior": 0.85,
+        "prior_justification": "Figure 3 qualitative analysis. Approximate 85%/15% retention figures read from a figure rather than a table; moderate confidence in exact percentages, high confidence in directional conclusion (DPH-JS retains more than GRPO/RKL)."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Capability retention: DPH-JS vs GRPO/RKL",
+      "type": "claim"
+    },
+    {
+      "content": "DPH-RL (Diversity-Preserving Hybrid RL) resolves the RLVR diversity collapse paradox: it simultaneously improves Pass@1 (greedy accuracy) through exploration on $\\mathcal{D}_{exp}$ and maintains or improves Pass@k ($k > 1$) through f-divergence regularization on $\\mathcal{D}_{pef}$, avoiding the trade-off present in standard RLVR methods.",
+      "content_hash": "75fccea8a215a8b7d7ddf593a35be836f49e6f5c21aada2e4e235ab341e698f1",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2509_07430::dphrl_resolves_paradox",
+      "label": "dphrl_resolves_paradox",
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "DPH-RL resolves diversity collapse paradox",
+      "type": "claim"
+    },
+    {
+      "content": "The choice of divergence measure in RLVR is a powerful and previously neglected design dimension: switching from reverse-KL (or no divergence) to mass-covering f-divergences (forward-KL, JS) provides substantial gains in Pass@k and out-of-domain generalization without sacrificing Pass@1, demonstrating that divergence selection is as impactful as policy gradient algorithm choice.",
+      "content_hash": "e394ac2fb9e5d3b36ebb8213f0a769665ecbc2b88c62a3e22b16aab4d3d91f70",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2509_07430::divergence_is_key_lever",
+      "label": "divergence_is_key_lever",
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Divergence choice is the key lever",
+      "type": "claim"
+    },
+    {
+      "content": "DPH-RL's improvements generalize across model families (Llama-3.1-8B-Instruct, Qwen2.5-Math-7B), task domains (SQL generation, mathematical reasoning), and evaluation metrics (Pass@1, Pass@8, Pass@16, Pass@64), suggesting the method is broadly applicable to RLVR settings with verifiable rewards.",
+      "content_hash": "4999f1c0de7cd2fe433b27718f4b19fa91606d26e4623c0812afb6d3be650b55",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2509_07430::dphrl_generalizes",
+      "label": "dphrl_generalizes",
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "DPH-RL generalizes across models and tasks",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::rkl_mode_seeking_harm,github:2509_07430::ood_math_results)",
+      "content_hash": "a98059287e32004fc810cb29f45831eeddd38a370c74a53e09ececb5afb99bfe",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_12d69b1a",
+      "label": "__conjunction_result_12d69b1a",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::rkl_mode_seeking_harm,github:2509_07430::ood_math_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_974a006ff65cee69",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_12d69b1a,github:2509_07430::rkl_accelerates_collapse)",
+      "content_hash": "f9ad52893bc6ad092f8a4594468afd605c5ccf1965541890072c1c1d1843d023",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_e9649614",
+      "label": "__implication_result_e9649614",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_12d69b1a,github:2509_07430::rkl_accelerates_collapse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_974a006ff65cee69",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::math_llama_results)",
+      "content_hash": "bf3afd7c3e027d15a4eaa44e09972caf703ad880b82d9f92ca04313a4f0a1004",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_9e4df790",
+      "label": "__conjunction_result_9e4df790",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::math_llama_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_174bd653c7dd8d32",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_9e4df790,github:2509_07430::passk_degrades)",
+      "content_hash": "d24bb5d6622444a59512eebc573508c2a802eb5b260c0a8420964b28d0b71542",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_18ce0d27",
+      "label": "__implication_result_18ce0d27",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_9e4df790,github:2509_07430::passk_degrades)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_174bd653c7dd8d32",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::ood_math_results,github:2509_07430::catastrophic_forgetting)",
+      "content_hash": "dab6f4bada23edab77b25e6cae2b92548bfd454a25aefc10952d8d2e72d9de68",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_a1ad311c",
+      "label": "__implication_result_a1ad311c",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::ood_math_results,github:2509_07430::catastrophic_forgetting)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c2c007b2f33f1bad",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::forward_kl_mass_covering,github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::ood_math_results)",
+      "content_hash": "cfbfe9b75a2f587517f5b2b982d18ef2e1366247e377c987b6d25aee363217bd",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_7c37b7a0",
+      "label": "__conjunction_result_7c37b7a0",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::forward_kl_mass_covering,github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::ood_math_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a5037db934fd68b2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_7c37b7a0,github:2509_07430::mass_covering_preserves)",
+      "content_hash": "04aee1a33b7442a18eb91ce22af7bfdfcdb038a8656bc337a4526c8fed15619f",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_3a0446eb",
+      "label": "__implication_result_3a0446eb",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_7c37b7a0,github:2509_07430::mass_covering_preserves)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a5037db934fd68b2",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::js_mass_covering,github:2509_07430::sql_bird_results,github:2509_07430::math_llama_results,github:2509_07430::math_qwen_results)",
+      "content_hash": "4114fef690a7d976ee84f10657848e53ffb229fabf64543739f1612a1de8d728",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_d7bd50a7",
+      "label": "__conjunction_result_d7bd50a7",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::js_mass_covering,github:2509_07430::sql_bird_results,github:2509_07430::math_llama_results,github:2509_07430::math_qwen_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6864e74535b35e72",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_d7bd50a7,github:2509_07430::mass_covering_preserves)",
+      "content_hash": "c2694c2efdd96b44f5ecbeed65b5573152f517759c313a6b14dfbd4d97f22514",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_86764b38",
+      "label": "__implication_result_86764b38",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_d7bd50a7,github:2509_07430::mass_covering_preserves)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6864e74535b35e72",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::trpo_standard_vs_dphrl,github:2509_07430::theorem1_statement)",
+      "content_hash": "116848dc36bf575add3003bd7d3dc317186602cd811f64ccd1a980b69bf48b05",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_d366dd47",
+      "label": "__implication_result_d366dd47",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::trpo_standard_vs_dphrl,github:2509_07430::theorem1_statement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_431190e0b14e73d6",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::ood_math_results,github:2509_07430::math_qwen_results,github:2509_07430::theorem1_statement)",
+      "content_hash": "d408e9975712dbf0b23975198fd6044bdab8b6985b2167bc28fa17b8b50ad5a1",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_c27fbe5e",
+      "label": "__conjunction_result_c27fbe5e",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::ood_math_results,github:2509_07430::math_qwen_results,github:2509_07430::theorem1_statement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c595b8e5f5684988",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_c27fbe5e,github:2509_07430::dphrl_resolves_paradox)",
+      "content_hash": "4e5471c90f90a014ee4046c7bec15ef93e0b9cd264e9d1a8a312568d53275b2d",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_0deca626",
+      "label": "__implication_result_0deca626",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_c27fbe5e,github:2509_07430::dphrl_resolves_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c595b8e5f5684988",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::dphrl_resolves_paradox,github:2509_07430::divergence_choice_neglected,github:2509_07430::mass_covering_preserves)",
+      "content_hash": "ee882df9daf79304ea73c4641ac4cc1979febde1b87312757951ac4cf6ed392c",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_be0dd2da",
+      "label": "__conjunction_result_be0dd2da",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::dphrl_resolves_paradox,github:2509_07430::divergence_choice_neglected,github:2509_07430::mass_covering_preserves)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_626db9d2698bb030",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_be0dd2da,github:2509_07430::divergence_is_key_lever)",
+      "content_hash": "dfb6e2955e134b7e1a198d7e166a5bc80731e69dd29f5ed7b5670e5a495a3abc",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_10e98b0c",
+      "label": "__implication_result_10e98b0c",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_be0dd2da,github:2509_07430::divergence_is_key_lever)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_626db9d2698bb030",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::math_llama_results,github:2509_07430::math_qwen_results,github:2509_07430::ood_math_results)",
+      "content_hash": "ccde9b38ff90fd2e8c3b44de6a1e66b52dbac4f318a7949c13368b0e9b5f0c2b",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_ee3ea212",
+      "label": "__conjunction_result_ee3ea212",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::sql_bird_results,github:2509_07430::sql_spider_results,github:2509_07430::math_llama_results,github:2509_07430::math_qwen_results,github:2509_07430::ood_math_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a8279aedb77b3387",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_ee3ea212,github:2509_07430::dphrl_generalizes)",
+      "content_hash": "31d76e567434dfd48c267ea40ba17921459baf5c103aee9e759ea72ce7d391d1",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_80e419dc",
+      "label": "__implication_result_80e419dc",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_ee3ea212,github:2509_07430::dphrl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a8279aedb77b3387",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::dphrl_handles_discrete,github:2509_07430::generator_efficiency)",
+      "content_hash": "909c027cebea3a7728e581ea024de9e3e93a0618a7a0806a0c0995c5d0500915",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_c36420ac",
+      "label": "__implication_result_c36420ac",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::dphrl_handles_discrete,github:2509_07430::generator_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef48a2ced9b141d9",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::theorem1_statement,github:2509_07430::theorem1_interpretation)",
+      "content_hash": "429d3bd6b37225670d76bedd4e7c3fdab43cafe09b1df9acca110c8eab01469a",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_b81d1f25",
+      "label": "__implication_result_b81d1f25",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::theorem1_statement,github:2509_07430::theorem1_interpretation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_409ee5d7cda909e2",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::grpo_no_bound,github:2509_07430::grpo_no_diversity)",
+      "content_hash": "5fc0d4b86c9bdc0f51856c1392c027b59167821b6d0d4a8cfda944b7cfe31488",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_2653b108",
+      "label": "__implication_result_2653b108",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::grpo_no_bound,github:2509_07430::grpo_no_diversity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fa790292fea3ac36",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::partition_rationale,github:2509_07430::dphrl_resolves_paradox)",
+      "content_hash": "25b26b48429c66ab4987da6a182c36f56b128a88496eb2de3e5954908b47565f",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_a3ff35b0",
+      "label": "__implication_result_a3ff35b0",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::partition_rationale,github:2509_07430::dphrl_resolves_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b43ad2d8805769bd",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2509_07430::pass1_improves,github:2509_07430::dphrl_resolves_paradox)",
+      "content_hash": "e6186092c3014f934e0750b98e43f090aba076870807aa8615e7a4072c423da9",
+      "exported": false,
+      "id": "github:2509_07430::__conjunction_result_53c55c49",
+      "label": "__conjunction_result_53c55c49",
+      "metadata": {
+        "canonical_name": "all_true(github:2509_07430::pass1_improves,github:2509_07430::dphrl_resolves_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fe10e5a4cf07ce7d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::__conjunction_result_53c55c49,github:2509_07430::divergence_is_key_lever)",
+      "content_hash": "25e13b6c3eca39cce29c62c98bdabd72f4862737f57644a3656846de99443623",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_c0b5bd0d",
+      "label": "__implication_result_c0b5bd0d",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::__conjunction_result_53c55c49,github:2509_07430::divergence_is_key_lever)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fe10e5a4cf07ce7d",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::solution_style_diversity,github:2509_07430::mass_covering_preserves)",
+      "content_hash": "3be9492d308c50fd15ef0abd0e94d44576a7b68d2673d098c1a7dbe82f756092",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_eb208010",
+      "label": "__implication_result_eb208010",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::solution_style_diversity,github:2509_07430::mass_covering_preserves)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2035da8b1fe74cad",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::capability_retention,github:2509_07430::dphrl_resolves_paradox)",
+      "content_hash": "0bccfa044f59a06217b0de34ab8bafea3d716958969a66ce49bee3d8bae79aec",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_4ff6ba44",
+      "label": "__implication_result_4ff6ba44",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::capability_retention,github:2509_07430::dphrl_resolves_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_45c8879ac153fe38",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2509_07430::threshold_8_of_8_optimal,github:2509_07430::partition_rationale)",
+      "content_hash": "4c57c6dc216bf7becf21c88f4ae522db3a1f9dd5999ddfc7ba82e4be1964e108",
+      "exported": false,
+      "id": "github:2509_07430::__implication_result_6074802e",
+      "label": "__implication_result_6074802e",
+      "metadata": {
+        "canonical_name": "implies(github:2509_07430::threshold_8_of_8_optimal,github:2509_07430::partition_rationale)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_77dc0f86f949a456",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_background",
+    "s3_method",
+    "s4_theory",
+    "s5_experiments",
+    "s6_conclusions"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Diversity Collapse in RLVR and the Role of Divergence Choice",
+    "s2_background": "Section 2: Background — Standard RLVR Objectives and Their Limitations",
+    "s3_method": "Section 3: DPH-RL Method — Two-Stage Training with f-Divergence Regularization",
+    "s4_theory": "Section 4: Theoretical Analysis — Enhanced Monotonic Improvement Guarantee",
+    "s5_experiments": "Section 5: Experiments — SQL and Math Reasoning Benchmarks",
+    "s6_conclusions": "Section 6: Conclusions and Broader Implications"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2509_07430",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2509_07430::reverse_kl_setting"
+      ],
+      "conclusion": "github:2509_07430::rkl_accelerates_collapse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_12d69b1a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::rkl_mode_seeking_harm",
+              "github:2509_07430::ood_math_results"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_e9649614",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_12d69b1a",
+              "github:2509_07430::rkl_accelerates_collapse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The reverse-KL divergence's mode-seeking property (@rkl_mode_seeking_harm) theoretically predicts that policies trained with reverse-KL constraints will concentrate on single solution modes. This theoretical prediction is confirmed by the empirical RKL results (@ood_math_results): out-of-domain math scores drop to 48.45 (vs 60.35 base), worse than GRPO (52.37) and DAPO (52.63), establishing that reverse-KL actively accelerates diversity collapse."
+      },
+      "premises": [
+        "github:2509_07430::rkl_mode_seeking_harm",
+        "github:2509_07430::ood_math_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_974a006ff65cee69",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::pass_at_k_setting",
+        "github:2509_07430::sql_experiment_setup",
+        "github:2509_07430::math_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::passk_degrades",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_9e4df790",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::sql_bird_results",
+              "github:2509_07430::sql_spider_results",
+              "github:2509_07430::math_llama_results"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_18ce0d27",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_9e4df790",
+              "github:2509_07430::passk_degrades"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95
+      },
+      "premises": [
+        "github:2509_07430::sql_bird_results",
+        "github:2509_07430::sql_spider_results",
+        "github:2509_07430::math_llama_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Three independent experimental observations confirm Pass@k degradation under GRPO: (1) BIRD SQL: GRPO Pass@8 = 66.2 vs base 68.8 (@sql_bird_results); (2) Spider SQL: GRPO Pass@8 = 79.5 vs base 90.9 (@sql_spider_results); (3) Math (Llama): GRPO Pass@64 = 33.3 vs base 40.0 (@math_llama_results). All three show degradation below the base model's diversity, confirming @passk_degrades across domains and model types."
+        }
+      ],
+      "strategy_id": "lcs_174bd653c7dd8d32",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::sql_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::catastrophic_forgetting",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_a1ad311c",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::ood_math_results",
+              "github:2509_07430::catastrophic_forgetting"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95
+      },
+      "premises": [
+        "github:2509_07430::ood_math_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The out-of-domain math evaluation on SQL-trained models (@ood_math_results) directly measures catastrophic forgetting: GRPO drops from 60.35 to 52.37 and DAPO from 60.35 to 52.63 on average across 6 math benchmarks, confirming @catastrophic_forgetting. RKL is worst at 48.45, demonstrating that all standard RLVR methods fail to prevent out-of-domain capability loss."
+        }
+      ],
+      "strategy_id": "lcs_c2c007b2f33f1bad",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::f_divergence_setting",
+        "github:2509_07430::sql_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::mass_covering_preserves",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_7c37b7a0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::forward_kl_mass_covering",
+              "github:2509_07430::sql_bird_results",
+              "github:2509_07430::sql_spider_results",
+              "github:2509_07430::ood_math_results"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_3a0446eb",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_7c37b7a0",
+              "github:2509_07430::mass_covering_preserves"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2509_07430::forward_kl_mass_covering",
+        "github:2509_07430::sql_bird_results",
+        "github:2509_07430::sql_spider_results",
+        "github:2509_07430::ood_math_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The mass-covering property of forward-KL (@forward_kl_mass_covering) predicts that it prevents probability mass from collapsing. Empirically: DPH-F achieves Pass@8 = 70.1 on BIRD (vs 66.2 GRPO) (@sql_bird_results), Pass@8 = 84.5 on Spider (vs 79.5 GRPO) (@sql_spider_results), and OOD math = 60.98 (fully recovering base model) (@ood_math_results). These results jointly confirm that forward-KL regularization preserves diversity (@mass_covering_preserves)."
+        }
+      ],
+      "strategy_id": "lcs_a5037db934fd68b2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::f_divergence_setting",
+        "github:2509_07430::math_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::mass_covering_preserves",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_d7bd50a7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::js_mass_covering",
+              "github:2509_07430::sql_bird_results",
+              "github:2509_07430::math_llama_results",
+              "github:2509_07430::math_qwen_results"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_86764b38",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_d7bd50a7",
+              "github:2509_07430::mass_covering_preserves"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2509_07430::js_mass_covering",
+        "github:2509_07430::sql_bird_results",
+        "github:2509_07430::math_llama_results",
+        "github:2509_07430::math_qwen_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The Jensen-Shannon divergence's mass-covering property (@js_mass_covering) similarly predicts diversity preservation. Empirically: DPH-JS achieves BIRD Pass@8 = 70.5 (best) (@sql_bird_results), Math Llama Pass@64 = 40.0 (recovering base) (@math_llama_results), and Qwen Pass@8 = 100.0 (@math_qwen_results). JS provides a softer, bounded constraint that may be more stable than forward-KL for some model-task combinations."
+        }
+      ],
+      "strategy_id": "lcs_6864e74535b35e72",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::dphrl_objective",
+        "github:2509_07430::preservation_loss",
+        "github:2509_07430::dataset_partition",
+        "github:2509_07430::assumption1",
+        "github:2509_07430::trpo_bound"
+      ],
+      "conclusion": "github:2509_07430::theorem1_statement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_d366dd47",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::trpo_standard_vs_dphrl",
+              "github:2509_07430::theorem1_statement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8
+      },
+      "premises": [
+        "github:2509_07430::trpo_standard_vs_dphrl"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Theorem 1 is derived by extending the standard TRPO monotonic improvement bound. The standard bound (formalized in @trpo_standard_vs_dphrl) shows the gap between standard TRPO and DPH-RL: by incorporating the f-divergence preservation loss on $\\mathcal{D}_{pef}$ and invoking Assumption 1 (bounded advantage on the near-perfect set), an additional positive term $\\varepsilon_f$ appears, yielding a strictly better lower bound (@theorem1_statement)."
+        }
+      ],
+      "strategy_id": "lcs_431190e0b14e73d6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::sql_experiment_setup",
+        "github:2509_07430::math_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::dphrl_resolves_paradox",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_c27fbe5e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::sql_bird_results",
+              "github:2509_07430::ood_math_results",
+              "github:2509_07430::math_qwen_results",
+              "github:2509_07430::theorem1_statement"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_0deca626",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_c27fbe5e",
+              "github:2509_07430::dphrl_resolves_paradox"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88
+      },
+      "premises": [
+        "github:2509_07430::sql_bird_results",
+        "github:2509_07430::ood_math_results",
+        "github:2509_07430::math_qwen_results",
+        "github:2509_07430::theorem1_statement"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "DPH-RL's resolution of the diversity-accuracy trade-off is supported by both empirical results and theory. Empirically: DPH-JS achieves BIRD Pass@8 = 70.5 while OOD math = 60.23 (fully recovered) and Qwen Pass@8 = 100.0 (@sql_bird_results, @ood_math_results, @math_qwen_results)—simultaneously improving Pass@1 in-domain and maintaining Pass@k/OOD performance. Theoretically, Theorem 1 (@theorem1_statement) guarantees that the f-divergence regularization provides a positive bonus on well-mastered queries, formally justifying the dual improvement."
+        }
+      ],
+      "strategy_id": "lcs_c595b8e5f5684988",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::divergence_is_key_lever",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_be0dd2da",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::dphrl_resolves_paradox",
+              "github:2509_07430::divergence_choice_neglected",
+              "github:2509_07430::mass_covering_preserves"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_10e98b0c",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_be0dd2da",
+              "github:2509_07430::divergence_is_key_lever"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85
+      },
+      "premises": [
+        "github:2509_07430::dphrl_resolves_paradox",
+        "github:2509_07430::divergence_choice_neglected",
+        "github:2509_07430::mass_covering_preserves"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The conclusion that divergence choice is a powerful and neglected lever follows from: (1) standard methods (GRPO, DAPO) omit divergence entirely and suffer collapse (@divergence_choice_neglected); (2) reverse-KL worsens the problem; (3) swapping to mass-covering f-divergences resolves it (@mass_covering_preserves); (4) DPH-RL achieves the best of both worlds (@dphrl_resolves_paradox). The single change of divergence type, with everything else equal, explains the improvement."
+        }
+      ],
+      "strategy_id": "lcs_626db9d2698bb030",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::sql_experiment_setup",
+        "github:2509_07430::math_experiment_setup"
+      ],
+      "conclusion": "github:2509_07430::dphrl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_ee3ea212",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::sql_bird_results",
+              "github:2509_07430::sql_spider_results",
+              "github:2509_07430::math_llama_results",
+              "github:2509_07430::math_qwen_results",
+              "github:2509_07430::ood_math_results"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_80e419dc",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_ee3ea212",
+              "github:2509_07430::dphrl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82
+      },
+      "premises": [
+        "github:2509_07430::sql_bird_results",
+        "github:2509_07430::sql_spider_results",
+        "github:2509_07430::math_llama_results",
+        "github:2509_07430::math_qwen_results",
+        "github:2509_07430::ood_math_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "DPH-RL's generalization is demonstrated across: (1) SQL tasks on BIRD and Spider (@sql_bird_results, @sql_spider_results); (2) math tasks with Llama-3.1-8B-Instruct (@math_llama_results) and Qwen2.5-Math-7B (@math_qwen_results); (3) OOD cross-domain evaluation (@ood_math_results). The consistent pattern of improvement across these varied settings supports the claim of broad applicability."
+        }
+      ],
+      "strategy_id": "lcs_a8279aedb77b3387",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::generator_method"
+      ],
+      "conclusion": "github:2509_07430::generator_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_c36420ac",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::dphrl_handles_discrete",
+              "github:2509_07430::generator_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88
+      },
+      "premises": [
+        "github:2509_07430::dphrl_handles_discrete"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Generator-based computation (@dphrl_handles_discrete) avoids online reference model calls during training. Pre-sampled trajectories from $\\pi_{ref}$ serve as the denominator in f-divergence computation, adding only a pre-sampling overhead (one pass through the reference model before training). During training steps, no reference model inference is needed, making DPH-RL computationally comparable to GRPO."
+        }
+      ],
+      "strategy_id": "lcs_ef48a2ced9b141d9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2509_07430::preservation_loss",
+        "github:2509_07430::dataset_partition"
+      ],
+      "conclusion": "github:2509_07430::theorem1_interpretation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_b81d1f25",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::theorem1_statement",
+              "github:2509_07430::theorem1_interpretation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82
+      },
+      "premises": [
+        "github:2509_07430::theorem1_statement"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The interpretation of $\\varepsilon_f > 0$ as a 'bonus' follows directly from the theorem statement (@theorem1_statement): the f-divergence on $\\mathcal{D}_{pef}$ ensures the policy stays near the reference on near-perfect queries, and since the reference excels on these queries, this regularization guarantees positive advantage contributions, yielding the positive bonus term."
+        }
+      ],
+      "strategy_id": "lcs_409ee5d7cda909e2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::grpo_no_diversity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_2653b108",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::grpo_no_bound",
+              "github:2509_07430::grpo_no_diversity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85
+      },
+      "premises": [
+        "github:2509_07430::grpo_no_bound"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The absence of a monotonic improvement guarantee for GRPO (@grpo_no_bound) directly implies GRPO lacks diversity protection: without a divergence term, the policy can drift arbitrarily far from the reference, and there is no formal guarantee that existing capabilities (diverse solutions) are preserved (@grpo_no_diversity)."
+        }
+      ],
+      "strategy_id": "lcs_fa790292fea3ac36",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::dphrl_resolves_paradox",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_a3ff35b0",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::partition_rationale",
+              "github:2509_07430::dphrl_resolves_paradox"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82
+      },
+      "premises": [
+        "github:2509_07430::partition_rationale"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The principled asymmetric partitioning (@partition_rationale)—applying f-divergence only on $\\mathcal{D}_{pef}$ while using unconstrained PPO on $\\mathcal{D}_{exp}$—is the design choice that enables DPH-RL to simultaneously improve exploration and preserve existing capabilities, directly contributing to its resolution of the diversity collapse paradox (@dphrl_resolves_paradox)."
+        }
+      ],
+      "strategy_id": "lcs_b43ad2d8805769bd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::divergence_is_key_lever",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__conjunction_result_53c55c49",
+            "operator": "conjunction",
+            "variables": [
+              "github:2509_07430::pass1_improves",
+              "github:2509_07430::dphrl_resolves_paradox"
+            ]
+          },
+          {
+            "conclusion": "github:2509_07430::__implication_result_c0b5bd0d",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::__conjunction_result_53c55c49",
+              "github:2509_07430::divergence_is_key_lever"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83
+      },
+      "premises": [
+        "github:2509_07430::pass1_improves",
+        "github:2509_07430::dphrl_resolves_paradox"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "That standard RLVR consistently improves Pass@1 (@pass1_improves), combined with DPH-RL's additional preservation of Pass@k (@dphrl_resolves_paradox), demonstrates that the divergence choice can decouple these metrics: the correct divergence type enables simultaneous improvement in both, establishing divergence as a key lever (@divergence_is_key_lever)."
+        }
+      ],
+      "strategy_id": "lcs_fe10e5a4cf07ce7d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::mass_covering_preserves",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_eb208010",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::solution_style_diversity",
+              "github:2509_07430::mass_covering_preserves"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87
+      },
+      "premises": [
+        "github:2509_07430::solution_style_diversity"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The qualitative solution style analysis (@solution_style_diversity) directly demonstrates mass-covering divergences preserve stylistic diversity: forward-KL and JS-trained models produce multiple distinct solution styles per query, whereas reverse-KL models converge to a single style. This provides concrete evidence that @mass_covering_preserves holds at the solution-format level."
+        }
+      ],
+      "strategy_id": "lcs_2035da8b1fe74cad",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::dphrl_resolves_paradox",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_4ff6ba44",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::capability_retention",
+              "github:2509_07430::dphrl_resolves_paradox"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87
+      },
+      "premises": [
+        "github:2509_07430::capability_retention"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The capability retention analysis (@capability_retention) shows DPH-JS retains 85%+ of base model capabilities while GRPO/DAPO lose ~15%. This retention of existing knowledge alongside task-specific improvement is a core component of resolving the diversity-accuracy paradox (@dphrl_resolves_paradox)."
+        }
+      ],
+      "strategy_id": "lcs_45c8879ac153fe38",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2509_07430::partition_rationale",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2509_07430::__implication_result_6074802e",
+            "operator": "implication",
+            "variables": [
+              "github:2509_07430::threshold_8_of_8_optimal",
+              "github:2509_07430::partition_rationale"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83
+      },
+      "premises": [
+        "github:2509_07430::threshold_8_of_8_optimal"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The threshold ablation study (@threshold_8_of_8_optimal) validates the partition strategy: the strictest threshold (8/8 correct rollouts) selects only genuinely mastered queries, confirming the rationale that $\\mathcal{D}_{pef}$ should contain only queries where the base model is already reliable (@partition_rationale)."
+        }
+      ],
+      "strategy_id": "lcs_77dc0f86f949a456",
+      "type": "support"
+    }
+  ]
+}
