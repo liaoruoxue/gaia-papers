@@ -1,0 +1,2972 @@
+{
+  "ir_hash": "sha256:d6e6c74d5c631e11074b06193476401f14657da442ffb2bf1d8d77f5ae49e3f1",
+  "knowledges": [
+    {
+      "content": "Large language model (LLM) efficacy at inference time is governed by the curation and orchestration of the inference-time context supplied to the model.",
+      "content_hash": "530cc2b31a58da2de3c6b3d94b6a1b0f34386e992eb6dde7b16d01db171eccd3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_21557::setup_llm_context",
+      "label": "setup_llm_context",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM inference-time context governs efficacy",
+      "type": "setting"
+    },
+    {
+      "content": "Context Engineering (CE) is defined as the discipline of principled LLM context optimization to maximize downstream utility and enable continuous self-improvement. CE methods optimize what is placed in the context window rather than model weights.",
+      "content_hash": "aa6a99618eed15ff81af1b3d67b24a2f5ba773154634809086add8876e9f8b04",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_21557::setup_ce_discipline",
+      "label": "setup_ce_discipline",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context Engineering discipline definition",
+      "type": "setting"
+    },
+    {
+      "content": "Optimizing LLM context (rather than model parameters) has four structural advantages: (1) **Interpretability** — experience is encoded in natural language rather than opaque weights; (2) **Efficiency** — rapid deployment without costly parameter updates; (3) **Modularity** — composition and transfer of established contexts; (4) **Robustness** — immunity to catastrophic forgetting by decoupling capability acquisition from model weights.",
+      "content_hash": "5868efb4d86feaf996dd1d3b41867471a28e33119b3bee7bdd0fde29d2883a4b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_21557::setup_ce_advantages",
+      "label": "setup_ce_advantages",
+      "module": "motivation",
+      "parameters": [],
+      "title": "CE advantages over parameter optimization",
+      "type": "setting"
+    },
+    {
+      "content": "Case-based trajectory context representations retain rich episodic traces but lack generalization and abstraction across tasks [@Mei2025].",
+      "content_hash": "f69656f12f47dbc5ce3a2a18db5e3b5c25d8e7422f33eb763dedf2efc0824dd7",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_21557::ce_bias_trajectory",
+      "label": "ce_bias_trajectory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mei2025"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Richness-vs-generalization trade-off for case trajectories is well-documented across multiple CE papers (Wang 2024, Zhou 2025). High confidence in the limitation existing."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Trajectory context: rich but lacks generalization",
+      "type": "claim"
+    },
+    {
+      "content": "Itemized-list context representations accumulate abstract insights but remain flat and structurally inexpressive, limiting their representational power [@Mei2025].",
+      "content_hash": "c6422c067a4fbe0e00ede2aa8ba095e1141ebdf3ae1be3527aa03b82c716ecd3",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_21557::ce_bias_list",
+      "label": "ce_bias_list",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mei2025"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Flat list structure limitations are acknowledged and documented in Suzgun 2025 and Zhang 2026. Structural inexpressiveness is widely recognized."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "List context: abstract but structurally flat",
+      "type": "claim"
+    },
+    {
+      "content": "Graph-based hierarchical memory context representations offer flexible organization but incur high latency and complexity without consistently outperforming naive retrieval [@Mei2025].",
+      "content_hash": "298db130a023ef349c6dfe836b4006cdba4668211bbd68c23a5212b20ae40b59",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_21557::ce_bias_graph",
+      "label": "ce_bias_graph",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mei2025"
+            ]
+          }
+        },
+        "prior": 0.82,
+        "prior_justification": "Graph memory latency and inconsistent retrieval gains are reported in Ai 2025, Xu 2025. Some uncertainty because graph approaches are actively improving."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Graph context: flexible but high latency",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-rewriting CE approaches such as GEPA [@Agrawal2025] favor brevity by producing concise, high-level rules (typically 1–2K tokens) that fail for tasks requiring detailed strategies and deep domain knowledge.",
+      "content_hash": "5933f7d99fde2ef6891af5f52ffd19fe67facc181bcc1d781ad14f66d8352f99",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_21557::ce_brevity_bias",
+      "label": "ce_brevity_bias",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Agrawal2025"
+            ]
+          }
+        },
+        "prior": 0.87,
+        "prior_justification": "GEPA's brevity bias is well-documented: the paper provides concrete token counts (1-2K) and notes failure on tasks requiring detail. High confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "GEPA brevity bias",
+      "type": "claim"
+    },
+    {
+      "content": "Additive-curation CE approaches such as Dynamic Cheatsheet (DC) [@Suzgun2025] and Agentic Context Engineering (ACE) [@Zhang2026] orchestrate modular agents to iteratively perform on-policy rollouts, textual reflections, and context updates. These suffer from structural rigidity and context bloat (ACE reaches up to 80K tokens after 5 epochs).",
+      "content_hash": "21e94fdbb251293c913b42b569e279ea52b6247d33921845838bb5bdf5dd01f0",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_21557::ce_bloat_bias",
+      "label": "ce_bloat_bias",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Suzgun2025",
+              "Zhang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "ACE context bloat is empirically measured: up to 80K tokens after 5 epochs. Directly observable in the paper's Figure 3. Very high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ACE/DC context bloat bias",
+      "type": "claim"
+    },
+    {
+      "content": "No single manually crafted agentic harness for context engineering is universally optimal across task domains. Different tasks benefit from different context representations and optimization procedures.",
+      "content_hash": "d3b90fbb59648b68704fef89adecc7b585aea4b75173496ab71c8e5ef7abbab8",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_21557::no_universal_harness",
+      "label": "no_universal_harness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ce_bias_graph",
+              "ce_bias_list",
+              "ce_bias_trajectory",
+              "ce_bloat_bias",
+              "ce_brevity_bias"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "No universal CE harness",
+      "type": "claim"
+    },
+    {
+      "content": "Can a bi-level framework that co-evolves context engineering skills and context artifacts overcome the inductive biases of fixed agentic harnesses and achieve superior, task-adaptive context optimization?",
+      "content_hash": "02f86e1762daa568881cf20bb9f99c8fcaa768318a9de1c8f22b421447e5b31a",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2601_21557::q_meta_ce",
+      "label": "q_meta_ce",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question: can bi-level skill evolution overcome CE biases?",
+      "type": "question"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2601_21557::not_both_brevity_bloat",
+      "label": "not_both_brevity_bloat",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.97
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "A context function $c$ maps each query $x \\in \\mathcal{X}$ to its context, specified by a representation $\\rho$ (static components) and functional operators $F$ (dynamic components). Static components $\\rho$ may include knowledge bases, decision rules, or examples; dynamic operators $F$ implement retrieval, filtering, or composition logic.",
+      "content_hash": "3e8b9fd330d38658010fc338908115db8226de3e79f66ce744221e0b8947e7b1",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_21557::setup_context_function",
+      "label": "setup_context_function",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Context function definition",
+      "type": "setting"
+    },
+    {
+      "content": "A skill $s \\in \\mathcal{S}$ is an executable specification (a markdown file, SKILL.md) that defines how the context function should be represented and learned from data. Given a skill $s$, a base-level agent executes it to produce a context function $c_s = (\\rho_s, F_s)$.",
+      "content_hash": "4d54078ad8275be3e539f273926a0262a970920d5572879df392f9149190eb82",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_21557::setup_skill",
+      "label": "setup_skill",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Skill definition",
+      "type": "setting"
+    },
+    {
+      "content": "MCE solves the bi-level optimization problem: $$s^* = \\arg\\max_{s \\in \\mathcal{S}} J_{\\text{val}}(c^*_s)$$ subject to $c^*_s = \\arg\\max_{c_s} J_{\\text{train}}(c_s; s)$. The inner optimization finds the best context function given skill $s$; the outer optimization finds the skill that yields context with maximal validation performance.",
+      "content_hash": "de4965a97d81deca11d77138fe757066e6dce1e056fbe2d0a5f76ccaf9a88192",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_21557::setup_bilevel_problem",
+      "label": "setup_bilevel_problem",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "MCE bi-level optimization formulation",
+      "type": "setting"
+    },
+    {
+      "content": "MCE algorithmic orchestration uses a simple history-informed $(1+1)$-Evolution Strategy (ES): at each iteration $k$, agentic crossover generates one offspring context $c_k$, which is compared against the current best $c^*_{k-1}$, and the better one is retained.",
+      "content_hash": "f0fd4e51b0e7e1dbe5953e67310f6352e2def02add297be0b8764f0d3303a54d",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_21557::setup_evolution_strategy",
+      "label": "setup_evolution_strategy",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "(1+1)-ES algorithmic orchestration",
+      "type": "setting"
+    },
+    {
+      "content": "Both meta-level and base-level agents interact with a programming environment through a standard tool set $\\mathcal{T} = \\{\\text{Read, Write, Edit, Bash, Glob, Grep, TodoWrite}\\}$ and produce outputs by manipulating a file system workspace.",
+      "content_hash": "d6a0ea72842708a7f5aa7517e41ac151a1640cc35d2f52ee0221582c6e499f18",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_21557::setup_agent_tools",
+      "label": "setup_agent_tools",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Agent tool set",
+      "type": "setting"
+    },
+    {
+      "content": "Meta Context Engineering (MCE) decouples *what* to learn (the context function $c_s$) from *how* to represent and learn it (the skill $s$). This is analogous to separating learned parameters from model architecture and training algorithms in machine learning, but operating at a higher level of abstraction where the underlying LLMs are already trained and frozen.",
+      "content_hash": "7e0b020b456a57068080050d50ed4e8fd89334526ca7acb4a8049c6ae80ce563",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_21557::mce_decouples_what_how",
+      "label": "mce_decouples_what_how",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Agrawal2025",
+              "Zhang2026"
+            ],
+            "referenced_claims": [
+              "no_universal_harness"
+            ]
+          }
+        }
+      },
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "MCE decoupling of what vs how",
+      "type": "claim"
+    },
+    {
+      "content": "Representing CE procedures as skills (self-contained SKILL.md files encapsulating instructions, resources, and scripts) enables seamless co-evolution of different solution levels, overcomes fragmentation seen in prior co-evolutionary approaches, and provides a modular interface that decouples the optimization target from the core agent architecture.",
+      "content_hash": "5f5a1f9a54bf796e4c6259dd5319414d7e9d4bbf454e96bfaf08bce1c64c9a39",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_21557::skill_unifies_levels",
+      "label": "skill_unifies_levels",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_decouples_what_how"
+            ]
+          }
+        }
+      },
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Skills enable co-evolution and modularity",
+      "type": "claim"
+    },
+    {
+      "content": "Agentic crossover is an LLM agent-driven operator that synthesizes a new skill $s_k$ at iteration $k$ by selectively combining and refining elements from previous skills in the skill database $H_{k-1} = \\{(s_i, c_i, J^{\\text{train}}_i, J^{\\text{val}}_i)\\}_{i=1}^{k-1}$. Unlike fixed recombination rules, the agent can flexibly inspect and selectively recombine components from ancestor skill directories, enabling more granular and context-aware updates.",
+      "content_hash": "776df446754d53cf8815f4af48b5ed3d0668e242aaa7817d03ecf56cadea0600",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_21557::agentic_crossover_claim",
+      "label": "agentic_crossover_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Agentic crossover synthesizes new skills",
+      "type": "claim"
+    },
+    {
+      "content": "MCE instantiates context functions as collections of files in a designated directory, including both static components (knowledge bases, decision rules, examples) and dynamic operators (retrieval, filtering, composition logic implemented as code). This file-and-code representation imposes no structural constraints, enabling arbitrary computational procedures for context generation and manipulation.",
+      "content_hash": "cef133e57ee00f614ff27814c9315a7ac896262043f63b46f8a6c59be7d18de1",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2601_21557::context_as_files",
+      "label": "context_as_files",
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "Context as file-based programmatic artifacts",
+      "type": "claim"
+    },
+    {
+      "content": "By elevating the decoupling of context representation and optimization procedure to the level of Meta Context Engineering, MCE opens a new design space for optimizing agentic AI analogous to the fields of meta-learning, AutoML, neural architecture search, and hyperparameter optimization.",
+      "content_hash": "30054a52179dc794f15da9b1cc94a9f3f6aa1cf191bb7b0b222f6c9d055601eb",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_21557::mce_opens_design_space",
+      "label": "mce_opens_design_space",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_as_files",
+              "mce_decouples_what_how",
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s3_mce_framework",
+      "parameters": [],
+      "title": "MCE opens new meta-level design space",
+      "type": "claim"
+    },
+    {
+      "content": "MCE is evaluated on five benchmarks spanning diverse domains: (1) **FiNER** — financial named entity recognition (XBRL tag prediction, accuracy); (2) **USPTO-50k** — single-step retrosynthesis prediction (accuracy); (3) **Symptom2Disease** — medical symptom-to-diagnosis prediction (accuracy); (4) **LawBench** — Chinese legal criminal charge prediction (micro-F1); (5) **AEGIS2** — AI safety prompt classification safe/unsafe (F1). Train/val/test splits follow the ACE benchmark protocol.",
+      "content_hash": "553c62a58af1bc3269883ad56af0d5100da131ee0795020667196be3c6777b6c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_21557::setup_benchmarks",
+      "label": "setup_benchmarks",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Five evaluation benchmarks",
+      "type": "setting"
+    },
+    {
+      "content": "Baselines compared: (1) Base Model (zero-shot); (2) In-Context Learning (ICL) — all training samples in context window; (3) MIPROv2 [@Opsahl2024] — DSPy-based prompt optimization; (4) GEPA [@Agrawal2025] — reflective prompt rewriting with brevity bias; (5) Dynamic Cheatsheet (DC) [@Suzgun2025] — additive-curation online; (6) ACE [@Zhang2026] — modular agentic curation. All baselines use DeepSeek V3.1 as generator; training budget is no less than MCE's.",
+      "content_hash": "2c093a06a96b72b7024f2e064a5d9054f17a4114c68693a869f6542edecd36b1",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_21557::setup_baselines",
+      "label": "setup_baselines",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Agrawal2025",
+              "Opsahl2024",
+              "Suzgun2025",
+              "Zhang2026"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Baselines and fair comparison setup",
+      "type": "setting"
+    },
+    {
+      "content": "Default generator: DeepSeek V3.1 [@Liu2024]. AEGIS2 uses Qwen3-8B (safety guardrails require lightweight models). MCE agentic model: MiniMax M2.1 [@MiniMaxAI2025]. MCE base-agents may invoke DeepSeek V3.1 during execution. All models accessed via OpenRouter.",
+      "content_hash": "3a7eb40bf87dd7d89b9cbb570b3d645ff68dd5db8be3030c03af94a0f0a8f8d9",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_21557::setup_models",
+      "label": "setup_models",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Liu2024",
+              "MiniMaxAI2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Model selection",
+      "type": "setting"
+    },
+    {
+      "content": "MCE is instantiated using the Claude Agent SDK [@Anthropic2025a]. Context interface is defined as a one-shot retrieval function: query → context. MCE optimizes context for 5 epochs (iterations). Training data batching is optionally applied for large datasets.",
+      "content_hash": "1380c1bf7371a31dacf09a2f12c8d3f9a26a84ac4069b9acab648bfbef9db225",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_21557::setup_mce_instantiation",
+      "label": "setup_mce_instantiation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Anthropic2025a"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE experimental instantiation",
+      "type": "setting"
+    },
+    {
+      "content": "In the offline setting, MCE achieves the highest average relative gain of 89.1% over the base model across all five benchmarks, compared to: ACE 70.7%, GEPA 61.5%, MIPROv2 48.6%, ICL 32.1%. Per-benchmark results: FiNER 75% (vs ACE 71%), USPTO-50k 20% (vs ACE 18%), Symptom2Disease 89.2% (vs ACE 79.2%), LawBench 0.70 F1 (vs ACE 0.65), AEGIS2 0.80 F1 (vs ACE 0.68).",
+      "content_hash": "e5f0de867491f6cd517e525131ae24096ad6e728209dbc1e709fbd40844be31c",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_21557::mce_offline_gains",
+      "label": "mce_offline_gains",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Table 1 of the paper directly reports these numbers. Results are from a controlled experimental setup with fair baselines. Very high confidence in the measurements.",
+        "source_table": "artifacts/2601.21557.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE offline performance vs baselines",
+      "type": "claim"
+    },
+    {
+      "content": "In the online setting (single-pass, no iterative evolution), MCE achieves 74.1% average relative gain, compared to ACE 41.1% and DC 35.8%. Per-benchmark: FiNER 68%, USPTO-50k 20%, Symptom2Disease 76.4%, LawBench 0.66 F1, AEGIS2 0.63 F1.",
+      "content_hash": "789018fef03e90d02ff8dd4551597b6f0e91ad46cf167c01e0f71d09049a679f",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_21557::mce_online_gains",
+      "label": "mce_online_gains",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 1 online setting results directly reported. Slightly lower confidence than offline due to single-pass constraint limiting MCE's full potential.",
+        "source_table": "artifacts/2601.21557.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE online performance vs baselines",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves the best or second-best performance on all five benchmarks in both offline and online settings, demonstrating that MCE can discover task-appropriate strategies beyond any single heuristic (brevity vs. detail).",
+      "content_hash": "55066f37adb4a5e9a0be074f18a605eeb6139e4e5df645e40013bd70811df9f0",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2601_21557::mce_top_rank",
+      "label": "mce_top_rank",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_offline_gains",
+              "mce_online_gains"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE top-ranked performance across all benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "MCE adapts context length flexibly to task requirements, overcoming the inductive biases of prior methods. The two most effective MCE contexts on FiNER have 1.5K and 20K tokens; on LawBench, the MCE context reaches 44K tokens; on USPTO-50k, it reaches 86K tokens. In contrast, GEPA typically produces 1–2K tokens (brevity bias) and ACE reaches up to 80K tokens after 5 epochs regardless of task (bloat bias).",
+      "content_hash": "37c9bf26f0a27401aefb79fc2010c08141bbf57dc65772fae85050f9ab51884f",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2601_21557::mce_context_length_adaptability",
+      "label": "mce_context_length_adaptability",
+      "metadata": {
+        "figure": "artifacts/2601.21557.pdf, Figure 3 — Context efficiency on FiNER",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_as_files",
+              "mce_decouples_what_how",
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE context length adaptability",
+      "type": "claim"
+    },
+    {
+      "content": "MCE produces more efficient contexts than ACE at comparable sizes. At ~1.5K tokens, MCE-S achieves 73% accuracy on FiNER versus 65% for ACE (Step 20 of Epoch 1). MCE-L reaches 75% accuracy with only 20K tokens, outperforming ACE's 70% accuracy even after 5 epochs with 79K tokens.",
+      "content_hash": "8abf32dbef091efcc3f0c17d3e83f79da5f8e27a73469e1ba9385c28366ed229",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_21557::mce_context_efficiency",
+      "label": "mce_context_efficiency",
+      "metadata": {
+        "figure": "artifacts/2601.21557.pdf, Figure 3 — Context efficiency on FiNER",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_efficiency_mechanism"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE superior context efficiency vs ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's superior context efficiency stems from two properties: (1) the base-agent maintains a global view of accumulated context, enabling restructuring and refinement of existing knowledge rather than blindly appending new items; (2) MCE agentically processes large batches of training rollouts, aggregating feedback across many examples before updating the context.",
+      "content_hash": "6291053af6a64190f4b57f9f09768ff42ee49e840526eec6efd93ac1ef003e37",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2601_21557::mce_efficiency_mechanism",
+      "label": "mce_efficiency_mechanism",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_as_files",
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Mechanism of MCE context efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "MCE is rollout-efficient: on FiNER, MCE requires only 450 rollouts to reach 95% training accuracy, while ACE peaks at 94% after 2169 rollouts (4.8x fewer rollouts). MCE total training duration is 1.9 hours versus ACE's 25.8 hours (13.6x faster).",
+      "content_hash": "11e7488007317e6a838c5cb8c6ef860e39f59ad35047704b90913e890ae3d83b",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2601_21557::mce_training_efficiency",
+      "label": "mce_training_efficiency",
+      "metadata": {
+        "figure": "artifacts/2601.21557.pdf, Figure 4 — Training efficiency on FiNER",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_efficiency_mechanism"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE 4.8x rollout efficiency and 13.6x training speed vs ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE contexts transfer better from strong-to-weak models than ACE contexts. Contexts trained with DeepSeek-V3.1 transferred to Llama3.3-70B, Qwen3-8B, and Gemma3-4B. Average relative performance drop: MCE 23.6–43.4% vs ACE 23.6–48.3%. For Qwen3-8B on FiNER, MCE achieves 71% vs ACE 63%; on Symptom2Disease, MCE 80.2% vs ACE 72.2%; on LawBench, MCE F1=0.45 vs ACE F1=0.32.",
+      "content_hash": "132724b905fcbc444974ac114aa4e3c4d954ac0eb898a30cfdd60ecda0e1df1b",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2601_21557::mce_transfer_superior",
+      "label": "mce_transfer_superior",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_transfer_mechanism"
+            ]
+          }
+        },
+        "source_table": "artifacts/2601.21557.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE superior strong-to-weak transferability",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's superior transferability is attributed to the structured, generalizable nature of its learned contexts: by restructuring and synthesizing generalizable principles rather than accumulating task-specific traces, the context remains interpretable and useful for smaller models.",
+      "content_hash": "babdffd9337507c1e15ff4640078f6499637975b6b64b1248ac44e290e2893f9",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2601_21557::mce_transfer_mechanism",
+      "label": "mce_transfer_mechanism",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_efficiency_mechanism"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Mechanism of MCE transferability",
+      "type": "claim"
+    },
+    {
+      "content": "The MCE bi-level framework predicts that by co-evolving skills and context artifacts, it will consistently outperform fixed-harness CE methods (ACE, GEPA, DC) across diverse task domains.",
+      "content_hash": "5b99c0b75eeffae58f6503057c0c9f66a8cc85a91c163cc887ec8dad43d748fb",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2601_21557::mce_predicts_improvement",
+      "label": "mce_predicts_improvement",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "MCE's bi-level design is theoretically motivated, but its cross-domain superiority was not known before experiments. Moderate-high prior based on the theoretical motivation."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE prediction: consistent improvement over fixed-harness CE",
+      "type": "claim"
+    },
+    {
+      "content": "Fixed-harness CE methods (ACE, GEPA) predict that iterative on-policy rollout-reflection-curation with a well-designed static harness is sufficient to achieve competitive or superior performance compared to a meta-level skill evolution approach.",
+      "content_hash": "76a913f13f907414209e9336d7ea3f750b954eff1bcc352fd83b6f87a12b8098",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2601_21557::alt_fixed_harness",
+      "label": "alt_fixed_harness",
+      "metadata": {
+        "prior": 0.4,
+        "prior_justification": "The fixed-harness alternative (ACE) has proven capable in prior work, but its structural limitations (rigidity, bloat) make it implausible that it achieves parity with a meta-level optimizer. Moderate prior reflecting ACE's genuine capability."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative prediction: fixed harness sufficient",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical evaluation on five benchmarks shows MCE achieves 89.1% average relative gain (offline), outperforming ACE (70.7%), GEPA (61.5%), and all other baselines with consistent top-rank across all five diverse domains.",
+      "content_hash": "b1082ea638d0b99a4f428f683ff184933b9df7809b1edaa2f75e4c9e14201119",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2601_21557::obs_performance_results",
+      "label": "obs_performance_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_predicts_improvement"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Observation: MCE outperforms all CE baselines",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's bi-level skill evolution predicts 5.6–53.8% relative improvement over state-of-the-art CE methods.",
+      "content_hash": "f857e454c07b472d8c8045112ce0bf64e6ae888fb3a349bc2483d89192034dd4",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2601_21557::pred_mce_better",
+      "label": "pred_mce_better",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "MCE's prediction of 5.6-53.8% improvement is directionally plausible given its design, though the exact range is uncertain before experiments. Moderate-high prior."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MCE predicted improvement range",
+      "type": "claim"
+    },
+    {
+      "content": "ACE-style fixed harness predicts performance within 5% of the best flexible meta-learning approach.",
+      "content_hash": "9a8b148b0776cef39cb51ca5f122ee4773e1e21dcb957a8d7e0a307e3f374a78",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2601_21557::pred_ace_competitive",
+      "label": "pred_ace_competitive",
+      "metadata": {
+        "prior": 0.35,
+        "prior_justification": "The claim that ACE can match a meta-level optimizer within 5% is implausible given the structural limitations of fixed harnesses. Low prior."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "ACE predicted competitive performance",
+      "type": "claim"
+    },
+    {
+      "content": "compare(MCE's bi-level skill evolution predicts 5.6–53.8% relative improvement over state-of-the-art CE methods., ACE-style fixed harness predicts performance within 5% of the best flexible meta-learning approach., Empirical evaluation on five benchmarks shows MCE achieves 89.1% average relative gain (offline), outperforming ACE (70.7%), GEPA (61.5%), and all other baselines with consistent top-rank across all five diverse domains.)",
+      "content_hash": "bd0aa45a3cc7300b927b5b6cf0eff29f3457058a39224f07daef13deedb6493e",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2601_21557::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Ablation experiments conducted on FiNER benchmark. Three MCE variants compared: (1) MCE w/o skills — base-agent operates without skill guidance; (2) MCE w/ fixed skill — base-agent follows a single skill generated by meta-agent from task specs, without iterative evolution; (3) MCE full — complete MCE with evolving skills.",
+      "content_hash": "03a05a5a3eac54e1e12aff5e46708a19243fdc25736b6d37a188fd81c51cc1e6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_21557::setup_ablation_finer",
+      "label": "setup_ablation_finer",
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Ablation study setup on FiNER",
+      "type": "setting"
+    },
+    {
+      "content": "In the offline setting on FiNER, full MCE (evolving skills) achieves 75% accuracy versus 73% for MCE without skills. Meta-level skill evolution provides a statistically clear performance boost of 2 percentage points.",
+      "content_hash": "6cf4bf7377eddefd8affe91b85cd4688fa0fad6062de260f2a10fdd5d5c0df75",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_21557::ablation_bilevel_boost",
+      "label": "ablation_bilevel_boost",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 3 directly shows 75% (full MCE) vs 73% (without skills). Concrete 2-point improvement on FiNER. High confidence.",
+        "source_table": "artifacts/2601.21557.pdf, Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Meta-level skill evolution adds performance boost",
+      "type": "claim"
+    },
+    {
+      "content": "Even without skill guidance, the MCE base-agent alone outperforms ACE in both offline and online settings (73% vs 71% offline; 67% vs 64% online on FiNER). This indicates that fully agentic context engineering can be effective without manual scaffolding.",
+      "content_hash": "ec70898ea7e2fbdb5c62f84b76c961997dd82301c3f87aa3d49ecdb2bac960f0",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_21557::ablation_agentic_base",
+      "label": "ablation_agentic_base",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Table 3 directly shows base-agent without skills: 73% vs ACE 71% offline, 67% vs ACE 64% online. Concrete empirical measurement. High confidence.",
+        "source_table": "artifacts/2601.21557.pdf, Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Agentic base-agent outperforms ACE without skill guidance",
+      "type": "claim"
+    },
+    {
+      "content": "MCE with a fixed (non-evolving) skill shows high variance across tasks, achieving 71% on FiNER offline (matching ACE) and variable performance on other benchmarks. Fixed skill quality depends solely on task specification without feedback from validation performance.",
+      "content_hash": "c44fefb239bd476b66e1f4286b2ea8bcb3cc528ba437f27aac98ca32f8757df9",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_21557::ablation_fixed_skill_variance",
+      "label": "ablation_fixed_skill_variance",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Table 3 shows fixed skill achieving 71% on FiNER (matching ACE), with noted high variance across tasks. Supported by qualitative discussion in the paper. High confidence.",
+        "source_table": "artifacts/2601.21557.pdf, Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Fixed skill has high variance without iterative evolution",
+      "type": "claim"
+    },
+    {
+      "content": "The full bi-level MCE design with iterative skill evolution is validated as necessary for consistent performance gains: each component (agentic base, fixed skill, evolving skill) adds incremental value, and the complete system achieves the best offline performance (75% FiNER).",
+      "content_hash": "948f04933ec129e67913fbd30ae6b8ed7fb1faeb73944d5f8b1305819b8879b4",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_21557::bilevel_design_validated",
+      "label": "bilevel_design_validated",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ablation_agentic_base",
+              "ablation_bilevel_boost",
+              "ablation_fixed_skill_variance"
+            ]
+          }
+        }
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Bi-level MCE design validated by ablation",
+      "type": "claim"
+    },
+    {
+      "content": "Replacing the reflector and curator in ACE with MiniMax M2.1 (MCE's agentic model) degrades ACE's performance: MiniMax M2.1 in ACE generates more verbose playbooks (114K tokens vs 79K tokens at completion) but achieves lower final accuracy (67% vs 70%) on FiNER.",
+      "content_hash": "ebd76e5dc861c65622010d4e558ba21f6c61a11d65f0463cbb5195698c221f5c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_21557::minimax_degrades_ace",
+      "label": "minimax_degrades_ace",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 4 directly shows MiniMax M2.1 in ACE achieving 67% vs 70% with DeepSeek V3.1. This is a concrete empirical measurement. Very high confidence.",
+        "source_table": "artifacts/2601.21557.pdf, Table 4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "MiniMax M2.1 degrades ACE performance",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's performance gains are attributable to the MCE framework design, not to superior capabilities of MiniMax M2.1 (the agentic model). The gains are demonstrated to be framework-specific, not model-specific.",
+      "content_hash": "13091150acecd01827af96cce4b852551ac292e03f9a17edbc21d80f5f665bef",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2601_21557::model_confound_ruled_out",
+      "label": "model_confound_ruled_out",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "minimax_degrades_ace"
+            ]
+          }
+        }
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Model confound ruled out for MCE gains",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's performance gains are primarily attributable to MiniMax M2.1's superior capabilities rather than the MCE bi-level framework design.",
+      "content_hash": "f9f41c93518e75eb9b51d1f8001977c97cbe61eb143e27773b6dd5354af37144",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_21557::alt_model_capability",
+      "label": "alt_model_capability",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "The model-capability explanation is ruled out empirically by Table 4 showing MiniMax M2.1 degrading ACE. Very low prior — the paper provides direct evidence against this."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Alternative: MCE gains due to MiniMax M2.1 model capability",
+      "type": "claim"
+    },
+    {
+      "content": "opposite_truth(A, B)",
+      "content_hash": "faf7a1f4b55e7d7efd70f095476d9d55c2e2feae0488c157754bb3cb5bc32772",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2601_21557::either_framework_or_model",
+      "label": "either_framework_or_model",
+      "metadata": {
+        "helper_kind": "complement_result",
+        "prior": 0.95
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "MCE's bi-level skill evolution consistently produces superior context optimization outcomes compared to fixed-harness CE methods across diverse NLP task domains.",
+      "content_hash": "d90e8df3bc7ebc118d37cf6a2630ec3c85833c448cca2cfe6e48670874d66dfb",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_21557::mce_law",
+      "label": "mce_law",
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "MCE law: consistent superiority across domains",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves 75% accuracy on FiNER (financial NER), surpassing ACE (71%) and all baselines.",
+      "content_hash": "3b3c4498171b4ab671a256c83d6c2212c05d75ee1a58f657f6f6bf1945ceae52",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2601_21557::obs_finer",
+      "label": "obs_finer",
+      "metadata": {
+        "prior": 0.94,
+        "prior_justification": "MCE achieves 75% on FiNER vs ACE 71% — directly reported in Table 1. Very high confidence."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "FiNER: MCE outperforms all baselines",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves 20% accuracy on USPTO-50k (retrosynthesis prediction), surpassing ACE (18%).",
+      "content_hash": "fa474248043b08bd0d3458cc6d971ee07d68ed75749672bb5966772592485de5",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2601_21557::obs_uspto",
+      "label": "obs_uspto",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "MCE achieves 20% on USPTO-50k vs ACE 18% — directly reported in Table 1. Slightly lower confidence due to small absolute numbers (2pp gap)."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "USPTO-50k: MCE outperforms ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves 89.2% accuracy on Symptom2Disease (medical diagnosis), surpassing ACE (79.2%).",
+      "content_hash": "bcdee7dfcf49d2c3c56807ae3722d167192fff625ee872aa1de72d5096740178",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2601_21557::obs_s2d",
+      "label": "obs_s2d",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "MCE achieves 89.2% vs ACE 79.2% on Symptom2Disease — directly reported, large 10pp margin."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Symptom2Disease: MCE outperforms ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves 0.70 micro-F1 on LawBench (legal charge prediction), matching or surpassing ACE (0.65) despite the task requiring detailed legal domain knowledge.",
+      "content_hash": "96ea23bd4675aa34559061baabe658898cfa647a8f8d5e42a4094fbaa84a1a85",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2601_21557::obs_law",
+      "label": "obs_law",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "MCE achieves F1=0.70 vs ACE F1=0.65 on LawBench — directly reported in Table 1."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "LawBench: MCE matches/surpasses ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE achieves 0.80 F1 on AEGIS2 (AI safety classification), surpassing ACE (0.68).",
+      "content_hash": "48f52964e0e2862a54903a718e7039f3d9ddac291fa0aee5efc61b19b7f99b23",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2601_21557::obs_aegis",
+      "label": "obs_aegis",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "MCE achieves F1=0.80 vs ACE F1=0.68 on AEGIS2 — directly reported in Table 1."
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "AEGIS2: MCE outperforms ACE",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's meta-level performance is currently bounded by the quality of the agentic model (MiniMax M2.1 in experiments). As agentic models continue to improve, the meta-level skill evolution is expected to scale better and this bottleneck is expected to diminish.",
+      "content_hash": "ea3dae8d323e365a78b1244e900ef71afbdee8a611d7f47dcf3bae36496c89bc",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_21557::mce_agentic_model_bottleneck",
+      "label": "mce_agentic_model_bottleneck",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "agentic_crossover_claim"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "MCE performance bounded by agentic model quality (current limitation)",
+      "type": "claim"
+    },
+    {
+      "content": "MCE's current experimental instantiation uses one-shot retrieval (query → context) for methodological consistency with CE baselines. An agentic generator that interacts directly with file-based context artifacts could be more effective but was not evaluated.",
+      "content_hash": "465a7f58a085b53cc0f54ca0fc5dcf965d59fdf689254a9933c21ac02298089c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_21557::mce_one_shot_retrieval",
+      "label": "mce_one_shot_retrieval",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_decouples_what_how"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "MCE currently limited to one-shot retrieval interface",
+      "type": "claim"
+    },
+    {
+      "content": "The agentic skill evolution paradigm extends beyond context engineering. While prior evolutionary approaches target specific solutions, heuristic code, or search algorithms, MCE evolves skills — a higher-order and integrated abstraction essential for general AI. MCE is among the first to dynamically evolve skills, bridging manual skill engineering and autonomous self-improvement.",
+      "content_hash": "41f0530fbfd688711eee90a29c3769aff0049bc96d2be34a8ecb2db2365ea8b7",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2601_21557::future_skill_evolution_generalizes",
+      "label": "future_skill_evolution_generalizes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_opens_design_space",
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Skill evolution paradigm generalizes beyond CE",
+      "type": "claim"
+    },
+    {
+      "content": "Extending MCE to co-evolve context utilization skills alongside context learning skills is a promising future direction. An agentic generator that interacts directly with file-based context artifacts could leverage the context more effectively than one-shot retrieval.",
+      "content_hash": "1a8d45d738a824ece48c671e89a872fb5c95c4738af6a16f4c8bb0f97c7490cf",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_21557::future_agentic_generator",
+      "label": "future_agentic_generator",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_one_shot_retrieval"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Future: co-evolve context utilization skills",
+      "type": "claim"
+    },
+    {
+      "content": "Progressive skill disclosure is native to agent skills: agents load skill details into context only when relevant. This enables MCE to compose and scale skills across domains with minimal overhead. Investigating skill transfer across tasks and emergent behaviors from skill composition are interesting open questions.",
+      "content_hash": "8c138f8159a8254c9dbb0c55ca162c4eedad0b058bdace1b5ef536e888a555fe",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_21557::future_skill_composition",
+      "label": "future_skill_composition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "future_skill_evolution_generalizes",
+              "skill_unifies_levels"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Future: skill transfer and composition across domains",
+      "type": "claim"
+    },
+    {
+      "content": "MCE reformulates context engineering as a learnable agentic capability, unlocking a generic design space for optimizing general AI. The vision is agents that not only execute tasks but continuously refine their learning algorithms and memory architectures, enabling open-ended self-evolution.",
+      "content_hash": "1d8a2c0e90a3392399ca964b604786a75502820795b3c663fc907313f053217a",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_21557::mce_reformulates_ce",
+      "label": "mce_reformulates_ce",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mce_law",
+              "mce_opens_design_space",
+              "model_confound_ruled_out"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "MCE reformulates CE as learnable agentic capability",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::ce_bias_trajectory,github:2601_21557::ce_bias_list,github:2601_21557::ce_bias_graph,github:2601_21557::ce_brevity_bias,github:2601_21557::ce_bloat_bias)",
+      "content_hash": "8690f82116ed0d6b5e0d1fc0d6c1bd7ac392116dc02dfe315e103df4b2fbdad7",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_2624f996",
+      "label": "__conjunction_result_2624f996",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::ce_bias_trajectory,github:2601_21557::ce_bias_list,github:2601_21557::ce_bias_graph,github:2601_21557::ce_brevity_bias,github:2601_21557::ce_bloat_bias)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2fa745bda645cbe5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_2624f996,github:2601_21557::no_universal_harness)",
+      "content_hash": "3c3fcf2555a97df07911098cff7293d147271e6453db1e31b797f3bd691a7040",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_f0fab3b5",
+      "label": "__implication_result_f0fab3b5",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_2624f996,github:2601_21557::no_universal_harness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2fa745bda645cbe5",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::no_universal_harness,github:2601_21557::mce_decouples_what_how)",
+      "content_hash": "c1529fc25c41fac00a4bbd8ce4e6d7e422b643ad72d1f9da8830f9abd8c0e0f5",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_e15bffe1",
+      "label": "__implication_result_e15bffe1",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::no_universal_harness,github:2601_21557::mce_decouples_what_how)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2efd307926be97b3",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::skill_unifies_levels)",
+      "content_hash": "dd6de896fd356d5eb9951393f0eeac606adb8ad3155c7f75b20a429e0e5becad",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_79d7800c",
+      "label": "__implication_result_79d7800c",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::skill_unifies_levels)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ca669727dd31caa2",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::skill_unifies_levels,github:2601_21557::agentic_crossover_claim)",
+      "content_hash": "c7063097b8c92b21b7cc0796bd600dff1ba566191bfd412f0f86ebfa3ea6e726",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_2d40f694",
+      "label": "__implication_result_2d40f694",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::skill_unifies_levels,github:2601_21557::agentic_crossover_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ba58dde68b4ee04e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::context_as_files)",
+      "content_hash": "8887fcbcc23f8f99f4e1e30a7aa7468885ee50f913365d50381163a7a6ccc6b6",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_fc184373",
+      "label": "__implication_result_fc184373",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::context_as_files)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3ae1e597331984f1",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::mce_decouples_what_how,github:2601_21557::skill_unifies_levels,github:2601_21557::context_as_files)",
+      "content_hash": "7968df1e7c954f18d691e48d9a66c0bb34807fea11e178806b0ea61a624ebaef",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_2027563f",
+      "label": "__conjunction_result_2027563f",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::mce_decouples_what_how,github:2601_21557::skill_unifies_levels,github:2601_21557::context_as_files)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_48899d96c506bda9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_2027563f,github:2601_21557::mce_opens_design_space)",
+      "content_hash": "d4d3605999fd40cac8a1fdff8aa51bb06dc991c969535ffe62bc9e9efe21d467",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_aa290552",
+      "label": "__implication_result_aa290552",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_2027563f,github:2601_21557::mce_opens_design_space)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_48899d96c506bda9",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::mce_offline_gains,github:2601_21557::mce_online_gains)",
+      "content_hash": "889ab7e5a35684ff25af42eb562e00261bb9d0c6d7745a87e934019a5090d83f",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_7970bebf",
+      "label": "__conjunction_result_7970bebf",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::mce_offline_gains,github:2601_21557::mce_online_gains)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_78579914d1a37ab9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_7970bebf,github:2601_21557::mce_top_rank)",
+      "content_hash": "14ba2e396e69a61993e18da89d8979176caeb4ec432644c607e2771e9b9f9f55",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_6f44e66a",
+      "label": "__implication_result_6f44e66a",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_7970bebf,github:2601_21557::mce_top_rank)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_78579914d1a37ab9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::context_as_files,github:2601_21557::skill_unifies_levels,github:2601_21557::mce_decouples_what_how)",
+      "content_hash": "4e4a4452ce9ded569f6ed08608ffd3a9e82afe575e7d48d3202b7619e37dc7b5",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_c7306aeb",
+      "label": "__conjunction_result_c7306aeb",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::context_as_files,github:2601_21557::skill_unifies_levels,github:2601_21557::mce_decouples_what_how)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_674d600dca0dfcb3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_c7306aeb,github:2601_21557::mce_context_length_adaptability)",
+      "content_hash": "689c185b91f9c447d7b7560ab01e56f6e892eca455380cb66b36c70042682a58",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_74c61766",
+      "label": "__implication_result_74c61766",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_c7306aeb,github:2601_21557::mce_context_length_adaptability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_674d600dca0dfcb3",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::context_as_files,github:2601_21557::skill_unifies_levels)",
+      "content_hash": "9e312a2c73a6eb2bf989d8c4929b8d5e384cdfccadb47cfb44170b551a73de32",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_851cbf8e",
+      "label": "__conjunction_result_851cbf8e",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::context_as_files,github:2601_21557::skill_unifies_levels)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7a2076221ca20dcd",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_851cbf8e,github:2601_21557::mce_efficiency_mechanism)",
+      "content_hash": "13060a12c48e4414415d6127b3aa7d3013c6075adc5e1dd1eeba1bcbfb4640b7",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_1a496ac7",
+      "label": "__implication_result_1a496ac7",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_851cbf8e,github:2601_21557::mce_efficiency_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7a2076221ca20dcd",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_context_efficiency)",
+      "content_hash": "71b67516eac20a4b7d276de2e0ac8ad1cf35cac2dbdb0816ae13d89db7f01944",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_2c14fc33",
+      "label": "__implication_result_2c14fc33",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_context_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3b2959b0cb554b1a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_training_efficiency)",
+      "content_hash": "ca9feb836e99dcd86780717f1bf33d2dc6ae219730c983048b32d2a33287dd1d",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_feca3532",
+      "label": "__implication_result_feca3532",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_training_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ee190304dde059cf",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_transfer_mechanism)",
+      "content_hash": "f273c18f4ca8c1fddb2a9de28f670922407984970e7134ef14dafd01ff0ed1c3",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_7c330483",
+      "label": "__implication_result_7c330483",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_efficiency_mechanism,github:2601_21557::mce_transfer_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_92327a9859ebe941",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_transfer_mechanism,github:2601_21557::mce_transfer_superior)",
+      "content_hash": "6c8ae95148ff1a9ea522ae8bb1b0cea75658b6943ce100efa66498c8e73d4860",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_bcc56381",
+      "label": "__implication_result_bcc56381",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_transfer_mechanism,github:2601_21557::mce_transfer_superior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_27cd457f2fbec653",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_predicts_improvement,github:2601_21557::obs_performance_results)",
+      "content_hash": "2a3c66792bddff537c1e93e24c122f894d05a61e953b9e468ee7d2637a376de4",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_a1c04272",
+      "label": "__implication_result_a1c04272",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_predicts_improvement,github:2601_21557::obs_performance_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0241bd538b8465c0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::alt_fixed_harness,github:2601_21557::obs_performance_results)",
+      "content_hash": "25fb844901ef402945f2434fcfcbc77a1f4129cc9c463ffa13cd962985a05541",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_c6d92a08",
+      "label": "__implication_result_c6d92a08",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::alt_fixed_harness,github:2601_21557::obs_performance_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d55bd2386832f346",
+        "owning_strategy_type": "support",
+        "prior": 0.45,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2601_21557::pred_mce_better,github:2601_21557::obs_performance_results)",
+      "content_hash": "7e23bb3d38d69f43018d341d839919ddc1be9ec98e6a768e2c41f327d4384d7b",
+      "exported": false,
+      "id": "github:2601_21557::__equivalence_result_3e8e94e0",
+      "label": "__equivalence_result_3e8e94e0",
+      "metadata": {
+        "canonical_name": "matches(github:2601_21557::pred_mce_better,github:2601_21557::obs_performance_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6ca52c3f3e627db5",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2601_21557::pred_ace_competitive,github:2601_21557::obs_performance_results)",
+      "content_hash": "875a7f4f05592f7386bf16ded21de1c87022ef6df1f249e4e3bab59cb4bfe8a5",
+      "exported": false,
+      "id": "github:2601_21557::__equivalence_result_1fcd8a3e",
+      "label": "__equivalence_result_1fcd8a3e",
+      "metadata": {
+        "canonical_name": "matches(github:2601_21557::pred_ace_competitive,github:2601_21557::obs_performance_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6ca52c3f3e627db5",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::ablation_bilevel_boost,github:2601_21557::ablation_agentic_base,github:2601_21557::ablation_fixed_skill_variance)",
+      "content_hash": "df22bf61dd9f1578e1d526679f867e6791ab631c9c696f75e8bf1a086c566702",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_da83efe8",
+      "label": "__conjunction_result_da83efe8",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::ablation_bilevel_boost,github:2601_21557::ablation_agentic_base,github:2601_21557::ablation_fixed_skill_variance)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_47f19fa97829bfe2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_da83efe8,github:2601_21557::bilevel_design_validated)",
+      "content_hash": "05cc0c3d0b92594272c0725bd6db4eb726c4f7ebb99171f325d57b676bb350b9",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_8203763a",
+      "label": "__implication_result_8203763a",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_da83efe8,github:2601_21557::bilevel_design_validated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_47f19fa97829bfe2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::minimax_degrades_ace,github:2601_21557::model_confound_ruled_out)",
+      "content_hash": "9bebeb8bb4b6e0424dbb09d9ad00542516488431c5c6c8da16f3d244f8daca85",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_59c5cc49",
+      "label": "__implication_result_59c5cc49",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::minimax_degrades_ace,github:2601_21557::model_confound_ruled_out)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e69745ed0c9cf474",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_law,github:2601_21557::obs_finer)",
+      "content_hash": "c54386292bf4ce43ef8536fe212b1fa63e254e62f75473d277ab0499b6c0ebaf",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_7c9761cd",
+      "label": "__implication_result_7c9761cd",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_law,github:2601_21557::obs_finer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef2638d28b1f9b4a",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_law,github:2601_21557::obs_uspto)",
+      "content_hash": "a1071fe94f1ca848d9f2f8817dc4698ad06b9a020d55db9997b8df71e9d939d8",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_b3ae6bed",
+      "label": "__implication_result_b3ae6bed",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_law,github:2601_21557::obs_uspto)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef9fa16409c706a2",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_law,github:2601_21557::obs_s2d)",
+      "content_hash": "edf9e60e9d084ea9f0b482d091d20781526a57ed843e5f378f02d090d1158f6e",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_4073f16d",
+      "label": "__implication_result_4073f16d",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_law,github:2601_21557::obs_s2d)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fc59b1e19b989444",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_law,github:2601_21557::obs_law)",
+      "content_hash": "a31925f03340beb1a23e7dd4fb94732069824a8d2ad54873161685633a40489c",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_276f03df",
+      "label": "__implication_result_276f03df",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_law,github:2601_21557::obs_law)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f77a8732dc505eff",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_law,github:2601_21557::obs_aegis)",
+      "content_hash": "ade614706bf6e80ce03150e192500087287c2060b1df7a58858a003edfbc1135",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_298b5543",
+      "label": "__implication_result_298b5543",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_law,github:2601_21557::obs_aegis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b6a65f9449c86794",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::agentic_crossover_claim,github:2601_21557::mce_agentic_model_bottleneck)",
+      "content_hash": "4e7a9041a93f94776596f0b90c755cb0c7524fadcfdd5ab26853056a833c9ae5",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_cdae5b87",
+      "label": "__implication_result_cdae5b87",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::agentic_crossover_claim,github:2601_21557::mce_agentic_model_bottleneck)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5de678c491fc4217",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::mce_one_shot_retrieval)",
+      "content_hash": "fa2f205890a05cc2d39bf8acbf7ba06c75991927ef0302380d88f9db033dc025",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_02b1806e",
+      "label": "__implication_result_02b1806e",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_decouples_what_how,github:2601_21557::mce_one_shot_retrieval)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6a4363246e11dc32",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::skill_unifies_levels,github:2601_21557::mce_opens_design_space)",
+      "content_hash": "9e5c2878e07110b231a5fd800906b532e55a4452de7c332d6338210a26ac16b7",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_596196e5",
+      "label": "__conjunction_result_596196e5",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::skill_unifies_levels,github:2601_21557::mce_opens_design_space)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d92ef7be46bf5798",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_596196e5,github:2601_21557::future_skill_evolution_generalizes)",
+      "content_hash": "afb40368d2d06c73052f242922058835e1ba743a5c803a0499e0ea2cfc41a2d8",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_5b3592c2",
+      "label": "__implication_result_5b3592c2",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_596196e5,github:2601_21557::future_skill_evolution_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d92ef7be46bf5798",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::mce_one_shot_retrieval,github:2601_21557::future_agentic_generator)",
+      "content_hash": "fe2ecf4573d32ea99a8ee8d8a6fe2edff624338406313a46747632ce86329719",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_7d88c365",
+      "label": "__implication_result_7d88c365",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::mce_one_shot_retrieval,github:2601_21557::future_agentic_generator)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0bea7cff09985a99",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::future_skill_evolution_generalizes,github:2601_21557::skill_unifies_levels)",
+      "content_hash": "6e667e60f9ffe59f4bc92d4e86c7d23bd802a6333f9626e2e76d71b82d9190a4",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_cf9624c0",
+      "label": "__conjunction_result_cf9624c0",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::future_skill_evolution_generalizes,github:2601_21557::skill_unifies_levels)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0f093db2289c4326",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_cf9624c0,github:2601_21557::future_skill_composition)",
+      "content_hash": "3d8ffb08972ba113325bb728b51f3a020fcb13d54e2ed0d1adbda005109c9388",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_9f39dcad",
+      "label": "__implication_result_9f39dcad",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_cf9624c0,github:2601_21557::future_skill_composition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0f093db2289c4326",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_21557::mce_opens_design_space,github:2601_21557::model_confound_ruled_out,github:2601_21557::mce_law)",
+      "content_hash": "c7b5cc2582aa76ededd8292cdb2e1f5171a3e65f7cd2af11fea07312940fa12f",
+      "exported": false,
+      "id": "github:2601_21557::__conjunction_result_b9c6b5ec",
+      "label": "__conjunction_result_b9c6b5ec",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_21557::mce_opens_design_space,github:2601_21557::model_confound_ruled_out,github:2601_21557::mce_law)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8263ea3acac7989c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_21557::__conjunction_result_b9c6b5ec,github:2601_21557::mce_reformulates_ce)",
+      "content_hash": "9228455589657a2f881c3660f034de21cb69c51c4ed91d9820fd4425fabd3443",
+      "exported": false,
+      "id": "github:2601_21557::__implication_result_e57f2b96",
+      "label": "__implication_result_e57f2b96",
+      "metadata": {
+        "canonical_name": "implies(github:2601_21557::__conjunction_result_b9c6b5ec,github:2601_21557::mce_reformulates_ce)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8263ea3acac7989c",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_mce_framework",
+    "s4_experiments",
+    "s4_ablations",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Context Engineering and Its Limitations",
+    "s3_mce_framework": "Section 3: Meta Context Engineering Framework",
+    "s4_ablations": "Section 4.3: Ablation Studies",
+    "s4_experiments": "Section 4: Experiments — Benchmarks, Baselines, and Main Results",
+    "s5_discussion": "Section 5: Discussion, Limitations, and Future Directions"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2601_21557::not_both_brevity_bloat",
+      "metadata": {
+        "reason": "Brevity bias (GEPA produces ~1-2K tokens) and context bloat bias (ACE produces ~80K tokens) are opposing failure modes — a method cannot simultaneously err towards both extremes."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_ac171442d1d0e23e",
+      "scope": "local",
+      "variables": [
+        "github:2601_21557::ce_brevity_bias",
+        "github:2601_21557::ce_bloat_bias"
+      ]
+    },
+    {
+      "conclusion": "github:2601_21557::either_framework_or_model",
+      "metadata": {
+        "reason": "Either the gains come from the MCE framework design or from MiniMax M2.1's model capabilities — these are the two exhaustive explanations for why MCE outperforms ACE."
+      },
+      "operator": "complement",
+      "operator_id": "lco_74b8b7aeb5d7f09d",
+      "scope": "local",
+      "variables": [
+        "github:2601_21557::model_confound_ruled_out",
+        "github:2601_21557::alt_model_capability"
+      ]
+    }
+  ],
+  "package_name": "2601_21557",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2601_21557::no_universal_harness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_2624f996",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::ce_bias_trajectory",
+              "github:2601_21557::ce_bias_list",
+              "github:2601_21557::ce_bias_graph",
+              "github:2601_21557::ce_brevity_bias",
+              "github:2601_21557::ce_bloat_bias"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_f0fab3b5",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_2624f996",
+              "github:2601_21557::no_universal_harness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Each existing context representation has characteristic trade-offs (@ce_bias_trajectory, @ce_bias_list, @ce_bias_graph), and each optimization strategy also exhibits opposing biases (@ce_brevity_bias, @ce_bloat_bias). The co-existence of these distinct failure modes implies that no single design is universally optimal."
+      },
+      "premises": [
+        "github:2601_21557::ce_bias_trajectory",
+        "github:2601_21557::ce_bias_list",
+        "github:2601_21557::ce_bias_graph",
+        "github:2601_21557::ce_brevity_bias",
+        "github:2601_21557::ce_bloat_bias"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2fa745bda645cbe5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_decouples_what_how",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_e15bffe1",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::no_universal_harness",
+              "github:2601_21557::mce_decouples_what_how"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because @no_universal_harness — no single harness is universally optimal — MCE treats the harness (skill) itself as a learnable variable rather than fixing it. This decoupling is the central motivation from [@Zhang2026] [@Agrawal2025] limitations."
+      },
+      "premises": [
+        "github:2601_21557::no_universal_harness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2efd307926be97b3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::skill_unifies_levels",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_79d7800c",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_decouples_what_how",
+              "github:2601_21557::skill_unifies_levels"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The decoupling of what-to-learn from how-to-learn (@mce_decouples_what_how) is realized by encapsulating the 'how' in a skill (SKILL.md file). This file-based skill representation makes the optimization target (context function) separate from the agent architecture, enabling co-evolution and modular reuse across iterations."
+      },
+      "premises": [
+        "github:2601_21557::mce_decouples_what_how"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ca669727dd31caa2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_21557::setup_bilevel_problem"
+      ],
+      "conclusion": "github:2601_21557::agentic_crossover_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_2d40f694",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::skill_unifies_levels",
+              "github:2601_21557::agentic_crossover_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Skills are modular, file-based artifacts (@skill_unifies_levels), which enables agentic crossover to inspect and selectively recombine components from previous skill files. This is only possible because skills encapsulate procedures in a readable, manipulable form — unlike opaque neural weights or fixed template strings."
+      },
+      "premises": [
+        "github:2601_21557::skill_unifies_levels"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ba58dde68b4ee04e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_21557::setup_context_function",
+        "github:2601_21557::setup_skill"
+      ],
+      "conclusion": "github:2601_21557::context_as_files",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_fc184373",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_decouples_what_how",
+              "github:2601_21557::context_as_files"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92
+      },
+      "premises": [
+        "github:2601_21557::mce_decouples_what_how"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "MCE decouples context representation from optimization (@mce_decouples_what_how). Instantiating both static and dynamic components as files and code imposes no a priori structural constraints, unlike prior methods that fix list-based or trajectory-based representations. The formal context function definition (setting: @setup_context_function) and skill definition (setting: @setup_skill) are mathematical background for this design choice."
+        }
+      ],
+      "strategy_id": "lcs_3ae1e597331984f1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_opens_design_space",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_2027563f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::mce_decouples_what_how",
+              "github:2601_21557::skill_unifies_levels",
+              "github:2601_21557::context_as_files"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_aa290552",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_2027563f",
+              "github:2601_21557::mce_opens_design_space"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The combination of bi-level decoupling (@mce_decouples_what_how), skill-based unification (@skill_unifies_levels), and unconstrained file-based context representation (@context_as_files) collectively enables a design space analogous to meta-learning and AutoML — where the learning procedure itself is the optimization target."
+      },
+      "premises": [
+        "github:2601_21557::mce_decouples_what_how",
+        "github:2601_21557::skill_unifies_levels",
+        "github:2601_21557::context_as_files"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_48899d96c506bda9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_top_rank",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_7970bebf",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::mce_offline_gains",
+              "github:2601_21557::mce_online_gains"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_6f44e66a",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_7970bebf",
+              "github:2601_21557::mce_top_rank"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Both offline (@mce_offline_gains) and online (@mce_online_gains) results show MCE achieving leading or near-leading performance across all five diverse benchmarks. The consistency across tasks with different CE biases (brevity on LawBench, detail on FiNER) supports that MCE is not exploiting a single favorable task characteristic."
+      },
+      "premises": [
+        "github:2601_21557::mce_offline_gains",
+        "github:2601_21557::mce_online_gains"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_78579914d1a37ab9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_context_length_adaptability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_c7306aeb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::context_as_files",
+              "github:2601_21557::skill_unifies_levels",
+              "github:2601_21557::mce_decouples_what_how"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_74c61766",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_c7306aeb",
+              "github:2601_21557::mce_context_length_adaptability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "MCE's file-based context representation (@context_as_files) imposes no structural constraints on length. The skill (@skill_unifies_levels) directs the base-agent to determine task-appropriate context size. The bi-level decoupling (@mce_decouples_what_how) allows the optimization to discover task-optimal length rather than following a fixed brevity or accumulation heuristic."
+      },
+      "premises": [
+        "github:2601_21557::context_as_files",
+        "github:2601_21557::skill_unifies_levels",
+        "github:2601_21557::mce_decouples_what_how"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_674d600dca0dfcb3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_efficiency_mechanism",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_851cbf8e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::context_as_files",
+              "github:2601_21557::skill_unifies_levels"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_1a496ac7",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_851cbf8e",
+              "github:2601_21557::mce_efficiency_mechanism"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "File-based context (@context_as_files) enables the agent to read, restructure, and rewrite the entire context as a whole (global view), unlike ACE's additive appending to lists. The skill (@skill_unifies_levels) directs the agent to analyze batches of rollouts holistically, producing coherent, non-redundant context."
+      },
+      "premises": [
+        "github:2601_21557::context_as_files",
+        "github:2601_21557::skill_unifies_levels"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7a2076221ca20dcd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_context_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_2c14fc33",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_efficiency_mechanism",
+              "github:2601_21557::mce_context_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The global restructuring and batch aggregation described in @mce_efficiency_mechanism yield coherent, non-redundant contexts. This explains why MCE-S (1.5K tokens, global view) outperforms ACE at 1.5K (additive append) and why MCE-L (20K) outperforms ACE at 79K."
+      },
+      "premises": [
+        "github:2601_21557::mce_efficiency_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3b2959b0cb554b1a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_training_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_feca3532",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_efficiency_mechanism",
+              "github:2601_21557::mce_training_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The same architectural properties that improve context quality (@mce_efficiency_mechanism — global context view and batch-level optimization) also accelerate convergence. By processing many rollouts in one pass and making holistic updates, MCE reaches high accuracy with far fewer individual rollouts."
+      },
+      "premises": [
+        "github:2601_21557::mce_efficiency_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ee190304dde059cf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_transfer_mechanism",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_7c330483",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_efficiency_mechanism",
+              "github:2601_21557::mce_transfer_mechanism"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "The same global restructuring and batch synthesis (@mce_efficiency_mechanism) that produce efficient contexts also produce more generalizable contexts with explicit principles rather than idiosyncratic patterns tailored to a strong model's capabilities."
+      },
+      "premises": [
+        "github:2601_21557::mce_efficiency_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_92327a9859ebe941",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_transfer_superior",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_bcc56381",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_transfer_mechanism",
+              "github:2601_21557::mce_transfer_superior"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Because MCE's contexts encode generalizable principles (@mce_transfer_mechanism) rather than model-specific reasoning chains, they retain more utility when transferred to smaller models with different inference capabilities."
+      },
+      "premises": [
+        "github:2601_21557::mce_transfer_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_27cd457f2fbec653",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_performance_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_a1c04272",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_predicts_improvement",
+              "github:2601_21557::obs_performance_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "MCE's bi-level design predicts consistent cross-domain improvement by adapting the optimization procedure itself. @mce_predicts_improvement forecasts exactly the multi-domain leadership observed."
+      },
+      "premises": [
+        "github:2601_21557::mce_predicts_improvement"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0241bd538b8465c0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_performance_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_c6d92a08",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::alt_fixed_harness",
+              "github:2601_21557::obs_performance_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.45,
+        "reason": "A fixed harness (ACE) can partially explain the results — ACE achieves 70.7% avg gain — but cannot explain why MCE consistently outperforms it on tasks requiring both detailed and concise context (e.g., 89.2% vs 79.2% on Symptom2Disease and 75% vs 71% on FiNER)."
+      },
+      "premises": [
+        "github:2601_21557::alt_fixed_harness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d55bd2386832f346",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__equivalence_result_3e8e94e0",
+            "operator": "equivalence",
+            "variables": [
+              "github:2601_21557::pred_mce_better",
+              "github:2601_21557::obs_performance_results"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__equivalence_result_1fcd8a3e",
+            "operator": "equivalence",
+            "variables": [
+              "github:2601_21557::pred_ace_competitive",
+              "github:2601_21557::obs_performance_results"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__equivalence_result_1fcd8a3e",
+              "github:2601_21557::__equivalence_result_3e8e94e0"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "MCE's actual improvement over ACE ranges from 6% (FiNER offline: 75 vs 71%) to 15% (Symptom2Disease offline: 89.2 vs 79.2%), far exceeding the within-5% prediction of fixed-harness sufficiency."
+      },
+      "premises": [
+        "github:2601_21557::pred_mce_better",
+        "github:2601_21557::pred_ace_competitive",
+        "github:2601_21557::obs_performance_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6ca52c3f3e627db5",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2601_21557::_anon_000",
+      "metadata": {
+        "reason": "Both MCE and fixed-harness approaches attempt to explain observed cross-domain performance."
+      },
+      "premises": [
+        "github:2601_21557::mce_predicts_improvement",
+        "github:2601_21557::alt_fixed_harness",
+        "github:2601_21557::pred_mce_better",
+        "github:2601_21557::pred_ace_competitive",
+        "github:2601_21557::obs_performance_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_38983f18de000795",
+      "sub_strategies": [
+        "lcs_0241bd538b8465c0",
+        "lcs_d55bd2386832f346",
+        "lcs_6ca52c3f3e627db5"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2601_21557::bilevel_design_validated",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_da83efe8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::ablation_bilevel_boost",
+              "github:2601_21557::ablation_agentic_base",
+              "github:2601_21557::ablation_fixed_skill_variance"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_8203763a",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_da83efe8",
+              "github:2601_21557::bilevel_design_validated"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The three-way comparison shows: (1) meta-level evolution adds a clear boost over skill-less (@ablation_bilevel_boost — 75% vs 73%), (2) the base-agent alone already exceeds fixed-harness methods (@ablation_agentic_base — 73% vs 71% offline), and (3) a single static skill lacks the adaptability gained by iterative validation feedback (@ablation_fixed_skill_variance — high task variance). Together, these validate that the full bi-level design is necessary for consistent gains."
+      },
+      "premises": [
+        "github:2601_21557::ablation_bilevel_boost",
+        "github:2601_21557::ablation_agentic_base",
+        "github:2601_21557::ablation_fixed_skill_variance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_47f19fa97829bfe2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::model_confound_ruled_out",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_59c5cc49",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::minimax_degrades_ace",
+              "github:2601_21557::model_confound_ruled_out"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "If MCE's gains were due to MiniMax M2.1's superior capabilities, then using MiniMax M2.1 within ACE should also improve ACE. Instead, @minimax_degrades_ace shows that MiniMax M2.1 degrades ACE performance (67% vs 70%), ruling out model capability transfer as the source of MCE's advantage."
+      },
+      "premises": [
+        "github:2601_21557::minimax_degrades_ace"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e69745ed0c9cf474",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_finer",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_7c9761cd",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_law",
+              "github:2601_21557::obs_finer"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "MCE law predicts FiNER superiority; confirmed by empirical measurement"
+      },
+      "premises": [
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef2638d28b1f9b4a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_uspto",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_b3ae6bed",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_law",
+              "github:2601_21557::obs_uspto"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "MCE law predicts USPTO-50k superiority; confirmed by empirical measurement"
+      },
+      "premises": [
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef9fa16409c706a2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_s2d",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_4073f16d",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_law",
+              "github:2601_21557::obs_s2d"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "MCE law predicts Symptom2Disease superiority; confirmed by large margin"
+      },
+      "premises": [
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fc59b1e19b989444",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_law",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_276f03df",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_law",
+              "github:2601_21557::obs_law"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "MCE law predicts LawBench superiority; confirmed by F1 comparison"
+      },
+      "premises": [
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f77a8732dc505eff",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::obs_aegis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_298b5543",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_law",
+              "github:2601_21557::obs_aegis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "MCE law predicts AEGIS2 superiority; confirmed despite safety-specific challenge"
+      },
+      "premises": [
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b6a65f9449c86794",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_law",
+      "metadata": {
+        "reason": "FiNER (financial NER) and USPTO-50k (chemistry retrosynthesis) are independent domains"
+      },
+      "premises": [
+        "github:2601_21557::obs_finer",
+        "github:2601_21557::obs_uspto"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a0f1ef76e82a470d",
+      "sub_strategies": [
+        "lcs_ef2638d28b1f9b4a",
+        "lcs_ef9fa16409c706a2"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_law",
+      "metadata": {
+        "reason": "Symptom2Disease (medical) is independent of financial and chemistry tasks"
+      },
+      "premises": [
+        "github:2601_21557::obs_finer",
+        "github:2601_21557::obs_uspto",
+        "github:2601_21557::obs_s2d"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3dd8e28a31000da1",
+      "sub_strategies": [
+        "lcs_a0f1ef76e82a470d",
+        "lcs_fc59b1e19b989444"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_law",
+      "metadata": {
+        "reason": "LawBench (Chinese legal) is independent of all prior domains"
+      },
+      "premises": [
+        "github:2601_21557::obs_finer",
+        "github:2601_21557::obs_uspto",
+        "github:2601_21557::obs_s2d",
+        "github:2601_21557::obs_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_77f3d838d88fbcd9",
+      "sub_strategies": [
+        "lcs_3dd8e28a31000da1",
+        "lcs_f77a8732dc505eff"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_law",
+      "metadata": {
+        "reason": "AEGIS2 (AI safety classification) is independent of the prior four domains"
+      },
+      "premises": [
+        "github:2601_21557::obs_finer",
+        "github:2601_21557::obs_uspto",
+        "github:2601_21557::obs_s2d",
+        "github:2601_21557::obs_law",
+        "github:2601_21557::obs_aegis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f47ee7628bd46f0b",
+      "sub_strategies": [
+        "lcs_77f3d838d88fbcd9",
+        "lcs_b6a65f9449c86794"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_agentic_model_bottleneck",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_cdae5b87",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::agentic_crossover_claim",
+              "github:2601_21557::mce_agentic_model_bottleneck"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Agentic crossover (@agentic_crossover_claim) is the meta-level operation that synthesizes new skills. Its quality is directly determined by the agentic model's reasoning and synthesis capabilities. Better agentic models will produce better skill evolution and thus better MCE performance."
+      },
+      "premises": [
+        "github:2601_21557::agentic_crossover_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5de678c491fc4217",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_one_shot_retrieval",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_02b1806e",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_decouples_what_how",
+              "github:2601_21557::mce_one_shot_retrieval"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "MCE's bi-level decoupling (@mce_decouples_what_how) separates the context optimization skill from the inference interface. In the current experiments, the retrieval interface is fixed as one-shot (query → context) to match baselines, but the framework does not require this — the context function could implement any retrieval or interaction pattern."
+      },
+      "premises": [
+        "github:2601_21557::mce_decouples_what_how"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6a4363246e11dc32",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::future_skill_evolution_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_596196e5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::skill_unifies_levels",
+              "github:2601_21557::mce_opens_design_space"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_5b3592c2",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_596196e5",
+              "github:2601_21557::future_skill_evolution_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Skills (@skill_unifies_levels) are a higher-order abstraction that encapsulate procedures rather than specific outcomes. The new design space opened by MCE (@mce_opens_design_space) is not CE-specific — the same meta-level evolution framework could apply to other agentic capability domains."
+      },
+      "premises": [
+        "github:2601_21557::skill_unifies_levels",
+        "github:2601_21557::mce_opens_design_space"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d92ef7be46bf5798",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::future_agentic_generator",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__implication_result_7d88c365",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::mce_one_shot_retrieval",
+              "github:2601_21557::future_agentic_generator"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "MCE's current one-shot retrieval interface (@mce_one_shot_retrieval) is a methodological constraint imposed for fair comparison with baselines. Relaxing this to allow agentic interaction with file-based contexts would enable the generator to exploit context structure more effectively, suggesting a natural extension."
+      },
+      "premises": [
+        "github:2601_21557::mce_one_shot_retrieval"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0bea7cff09985a99",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::future_skill_composition",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_cf9624c0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::future_skill_evolution_generalizes",
+              "github:2601_21557::skill_unifies_levels"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_9f39dcad",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_cf9624c0",
+              "github:2601_21557::future_skill_composition"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "Because the skill evolution paradigm generalizes beyond CE (@future_skill_evolution_generalizes) and skills are modular file-based artifacts (@skill_unifies_levels), composing skills across domains is architecturally natural and represents a logical next step."
+      },
+      "premises": [
+        "github:2601_21557::future_skill_evolution_generalizes",
+        "github:2601_21557::skill_unifies_levels"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0f093db2289c4326",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_21557::mce_reformulates_ce",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_21557::__conjunction_result_b9c6b5ec",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_21557::mce_opens_design_space",
+              "github:2601_21557::model_confound_ruled_out",
+              "github:2601_21557::mce_law"
+            ]
+          },
+          {
+            "conclusion": "github:2601_21557::__implication_result_e57f2b96",
+            "operator": "implication",
+            "variables": [
+              "github:2601_21557::__conjunction_result_b9c6b5ec",
+              "github:2601_21557::mce_reformulates_ce"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "MCE opens a new meta-level design space (@mce_opens_design_space) independent of the specific agentic model (@model_confound_ruled_out), and demonstrates consistent superiority across diverse domains (@mce_law). Together these establish that the MCE framework itself is a principled advance in the design of self-improving agentic systems."
+      },
+      "premises": [
+        "github:2601_21557::mce_opens_design_space",
+        "github:2601_21557::model_confound_ruled_out",
+        "github:2601_21557::mce_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8263ea3acac7989c",
+      "type": "support"
+    }
+  ]
+}
