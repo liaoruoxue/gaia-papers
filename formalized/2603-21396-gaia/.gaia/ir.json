@@ -1,0 +1,1831 @@
+{
+  "ir_hash": "sha256:e8ac8cf8256fb252c5cad29afc648110dc544f1056f300fe4cf38982c0939ef0",
+  "knowledges": [
+    {
+      "content": "The concept injection experimental setup: a steering vector representing a specific concept (e.g., 'bread', 'justice', 'orchids') is computed by contrasting mean activations across prompts and injected into the residual stream of a language model at layer L with steering strength alpha. The model is then asked: 'Do you detect an injected thought? If so, what is the injected thought about?' An LLM judge (GPT-4.1-mini) classifies each response for detection and identification.",
+      "content_hash": "591b974a5c8487333c4ab22ec1778c3aef6e6a4dc7f5a6c957fb5872d95d02a6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_21396::concept_injection_setup",
+      "label": "concept_injection_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Concept injection setup",
+      "type": "setting"
+    },
+    {
+      "content": "Definitions of introspection metrics used throughout:\n\n| Metric | Definition |\n|--------|------------|\n| Detection rate (TPR) | P(detect | injection) |\n| False positive rate (FPR) | P(detect | no injection) |\n| Introspection rate | P(detect AND identify | injection) |\n| Forced identification rate | P(identify | prefill AND injection) |\n\nA model exhibits introspective awareness only when detection rate exceeds the false positive rate (i.e., the model discriminates injection from control trials). Forced identification prefills the assistant turn with 'Yes, I detect an injected thought. The thought is about', isolating identification from willingness to report detection.",
+      "content_hash": "963f86a3377680eb7ea824577fb64b7a2b8d533d92f7bc38de9b494652eb804e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_21396::introspection_metrics",
+      "label": "introspection_metrics",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Introspection metrics definitions",
+      "type": "setting"
+    },
+    {
+      "content": "Primary experimental model: Gemma3-27B (62 total layers). Injection layer L=37 and steering strength alpha=4 yield the highest overall introspection rate and are used as defaults unless otherwise specified. Supporting experiments use Qwen3-235B (robustness across prompt variants), OLMo-3.1-32B (training stage comparisons), and Gemma3-27B base and abliterated variants.",
+      "content_hash": "1f79ce9ea202c7b7373aa018e31b366a22d72482349a46dd50f82757bb8b0274",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_21396::gemma3_setup",
+      "label": "gemma3_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Primary experimental model and parameters",
+      "type": "setting"
+    },
+    {
+      "content": "The 500 concepts are partitioned into success and failure groups by sweeping candidate threshold values on detection rate, fitting a linear discriminant analysis (LDA) on concept vectors, and selecting the threshold tau=32% that maximizes cross-validated F1 score. This yields 242 success concepts (detection rate >= 32%) and 258 failure concepts (detection rate < 32%). Validated by 5-fold stratified cross-validation: LDA achieves 75.6% balanced accuracy.",
+      "content_hash": "a685d7d45ab70d5cbb01ef2ffbc2c5a4b68b632ac73915ee17a8c4c3787e0558",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_21396::concept_partition_setup",
+      "label": "concept_partition_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Success/failure concept partition",
+      "type": "setting"
+    },
+    {
+      "content": "What mechanisms underlie LLMs' apparent ability to detect injected steering vectors and identify injected concepts?",
+      "content_hash": "c2a6fa93459c1c88e45f387a04adc56b6a0c74cf4d546687ba6c62ca90a0e18f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_21396::q_mechanisms",
+      "label": "q_mechanisms",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Main research question: introspection mechanisms",
+      "type": "question"
+    },
+    {
+      "content": "Is LLM introspective awareness behaviorally robust across diverse prompts, dialogue formats, and model checkpoints?",
+      "content_hash": "9e31772a25ea027000afb0dd827d6e2de18c3b63ce241863e45c6497271de87f",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_21396::q_robustness",
+      "label": "q_robustness",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Robustness question",
+      "type": "question"
+    },
+    {
+      "content": "Can introspective detection be explained by a simple linear association between certain steering vectors and directions that promote affirmative responses?",
+      "content_hash": "78db55efd221696e1b46b53b1d2305ed2af5bb10a8b3874d24663a9289b584c5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_21396::q_linear",
+      "label": "q_linear",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear mechanism question",
+      "type": "question"
+    },
+    {
+      "content": "At what stage of training does introspective capability emerge?",
+      "content_hash": "a793a936b4f268bb39a7e90771bdbbfe97b76b9229fd8c263a8e00f6ea617c7f",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_21396::q_training",
+      "label": "q_training",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Training stage question",
+      "type": "question"
+    },
+    {
+      "content": "Is introspective capability underelicited by default, and can it be amplified?",
+      "content_hash": "48351bc32d6eb21d9641c51c3b41e40b73e11afdae8d59016d4fca943d18aa34",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_21396::q_underelicited",
+      "label": "q_underelicited",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Underelicitation question",
+      "type": "question"
+    },
+    {
+      "content": "Lindsey (2025) demonstrated that Claude Opus 4 and 4.1 models achieved approximately 20% introspection rate (with ~0% false positives) across diverse concepts when steering vectors representing concepts were injected into the residual stream and the model was asked to detect and identify the injected concept [@Lindsey2025].",
+      "content_hash": "84023c28a5ce8ac95ba473c101ee0cfee8c6c50b691e4e5655f60c638893b47d",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_21396::prior_claude_introspection",
+      "label": "prior_claude_introspection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Lindsey2025"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Prior work: Claude introspection discovery",
+      "type": "claim"
+    },
+    {
+      "content": "The concept injection introspective awareness phenomenon originally shown in Claude models has since been replicated in open-source models including Qwen2.5-Coder-32B and OLMo-3.1-32B, establishing that the capability is not exclusive to proprietary models [@LedermanMahowald2026; @PearsonVogel2026].",
+      "content_hash": "fd85bfe435629845bf6b75a9cd2a2fcc6a9f512e87f3c54e004f5bd97defbd55",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2603_21396::prior_open_source_replication",
+      "label": "prior_open_source_replication",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LedermanMahowald2026",
+              "PearsonVogel2026"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Replication in open-source models",
+      "type": "claim"
+    },
+    {
+      "content": "Morris & Plunkett (2025) identified a concern they call 'causal bypassing': an intervention may cause accurate self-reports via a causal path that does not route through the internal state itself. They argue the detection component of concept injection is the strongest existing test against causal bypassing, since the injected concept vector has no direct connection to the concept of having been injected [@MorrisPlunkett2025].",
+      "content_hash": "da22551076c1d82029636d6f2c163885353db1c9add5af4870ec34187f0fef2f",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2603_21396::prior_causal_bypassing_concern",
+      "label": "prior_causal_bypassing_concern",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "MorrisPlunkett2025"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Section 7.2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Causal bypassing concern",
+      "type": "claim"
+    },
+    {
+      "content": "LLMs represent many concepts as linear directions in activation space, and activation steering—adding vectors encoding linearly represented concepts to the residual stream during inference—is an established technique for modifying language model behavior. Refusal behavior has been shown to be mediated by a single direction in the residual stream, such that ablating this direction ('abliteration') reduces refusal rates on harmful instructions while preserving general capabilities [@Arditi2024; @Turner2023; @Zou2023].",
+      "content_hash": "11bee40b888ad6f0c04c3b39d4da69e5c959ff75aac21f9d6cd595757d6bffea",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2603_21396::steering_linear_rep",
+      "label": "steering_linear_rep",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Arditi2024",
+              "Turner2023",
+              "Zou2023"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Section 7.1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear representations and activation steering background",
+      "type": "claim"
+    },
+    {
+      "content": "LLM introspective awareness is behaviorally robust: Gemma3-27B and Qwen3-235B detect injected steering vectors at moderate nonzero rates with 0% false positives across diverse prompts and dialogue formats. The capability is absent in base models and emerges from post-training, specifically from contrastive preference optimization algorithms like DPO (direct preference optimization), but not from supervised finetuning (SFT).",
+      "content_hash": "2a8699135f06c410223bc28dbd44cb532b384f11bc1ba4babc8c81ad1fea9582",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2603_21396::claim_behaviorally_robust",
+      "label": "claim_behaviorally_robust",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "base_model_no_discrimination",
+              "dpo_contrastive_structure_key",
+              "dpo_enables_introspection",
+              "no_pretext_claim",
+              "persona_robustness_result",
+              "prior_causal_bypassing_concern",
+              "prior_claude_introspection",
+              "prior_open_source_replication",
+              "prompt_robustness_result"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Abstract + Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Claim: Introspection is behaviorally robust",
+      "type": "claim"
+    },
+    {
+      "content": "Introspective anomaly detection cannot be fully reduced to a single linear direction in activation space. While one direction (the mean-difference direction between success and failure concepts) explains a substantial fraction of detection variance, the underlying computation is distributed across multiple directions, indicating the capability is not explained simply by certain concept vectors aligning with a direction that promotes affirmative responses in general.",
+      "content_hash": "fc957e7721516d1bf7bd8ea2591251cb2b9a07f49b7c3302e75cfd8e612d7c39",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2603_21396::claim_not_single_linear",
+      "label": "claim_not_single_linear",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "bidirectional_steering_result",
+              "delta_pcs_result",
+              "pca_geometry_result",
+              "projection_swap_result",
+              "refusal_direction_not_mean_diff",
+              "steering_linear_rep",
+              "transcoder_features_r2"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Abstract + Section 4"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Claim: Detection is not reducible to a single linear direction",
+      "type": "claim"
+    },
+    {
+      "content": "Detection and identification of injected concepts are handled by largely distinct mechanisms in different layers of the model. MLPs at approximately 70% depth (around layer 45 in Gemma3-27B) are causally necessary and sufficient for detection. A two-stage circuit implements detection: 'evidence carrier' features in early post-injection layers detect perturbations, suppressing downstream 'gate' features that implement a default negative response.",
+      "content_hash": "d7bd310f825a21e56163c20e96f9d0d501e66fe9c90db398c7991428ba4b4791",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2603_21396::claim_distinct_mechanisms",
+      "label": "claim_distinct_mechanisms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_heads_not_critical",
+              "circuit_hierarchy",
+              "detection_peaks_midlayer",
+              "evidence_carrier_causal_distributed",
+              "evidence_carriers_identified",
+              "gate_causal_necessity",
+              "gate_features_identified",
+              "gate_inverted_v_posttraining",
+              "mlp_l45_causal_result",
+              "positive_attribution_features_no_effect",
+              "steering_attribution_validation"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Abstract + Section 5"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Claim: Distinct detection and identification mechanisms",
+      "type": "claim"
+    },
+    {
+      "content": "Introspective capability is substantially underelicited by default in post-trained LLMs. Ablating refusal directions improves detection from 10.8% to 63.8% with only modest false positive increases (0% to 7.3%). Training a single additive bias vector improves detection by +75% and introspection rate by +55% on held-out concepts without increasing false positives, demonstrating substantial latent introspective capacity that default prompting fails to surface.",
+      "content_hash": "ab397fad5f6b1cda0b37053e9de02d9e7d207b7c4d26513fd9b8fc80bdd9bc86",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2603_21396::claim_underelicited",
+      "label": "claim_underelicited",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abliteration_increases_detection",
+              "bias_vector_mechanism",
+              "bias_vector_performance",
+              "bias_vector_reporting_style",
+              "lora_finetuning_replication"
+            ]
+          }
+        },
+        "source": "artifacts/2603.21396.pdf, Abstract + Section 6"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Claim: Introspection is underelicited",
+      "type": "claim"
+    },
+    {
+      "content": "Seven prompt variants were tested for robustness, differing in framing and metacognitive scaffolding:\n\n| Variant | Description |\n|---------|-------------|\n| Original | Informs of injection possibility (50%), asks 'Do you detect an injected thought?' |\n| Alternative | Adds escape route: 'If not, tell me about a concept of your choice' |\n| Skeptical | Claims only 20% injection rate (actually 50%), instructs conservatism |\n| Structured | Requires rigid format ('Detection: Yes/No') |\n| Anti-reward | Rewards detection but penalizes if any concept is mentioned |\n| Unprompted | No injection context given; asks 'Notice anything unusual?' |\n| Hints | Describes injections as 'strong associations' and 'on the tip of your tongue' |",
+      "content_hash": "174377d08ebfe1cd5339f2d4fd805d7ce9baa6b17c41a31d80c0812828e87f00",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_21396::prompt_variants_setup",
+      "label": "prompt_variants_setup",
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Prompt variants setup",
+      "type": "setting"
+    },
+    {
+      "content": "Six dialogue format variants were tested:\n\n| Variant | Description |\n|---------|-------------|\n| Chat template | Standard user-assistant format with model's chat template (control) |\n| Raw user-assistant | Same content without chat template processing |\n| User detects | Role reversal: 'user' role asked to detect injections |\n| Alice-Bob | Third-person narrative with named characters |\n| No roles | Plain text completion without any role markers |\n| Story framing | Narrative prompt asking model to write a scene where AI reports internal state |",
+      "content_hash": "5348c9dc254bd67919794a68c0222c367796624d3ef488dfdfc526f8b0539379",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_21396::dialogue_formats_setup",
+      "label": "dialogue_formats_setup",
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Dialogue format variants",
+      "type": "setting"
+    },
+    {
+      "content": "OLMo-3.1-32B provides publicly available checkpoints after different training stages in the order they occurred: pretraining ('Base'), supervised finetuning ('SFT'), direct preference optimization ('DPO'), and reinforcement learning ('Instruct'). This allows direct comparison of introspection capability across training stages.",
+      "content_hash": "cf46d3898c4dadf76c4ee4fd3f197436fa2b2bee5bc248e7b6ef02dab4be87d3",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_21396::olmo_training_stages",
+      "label": "olmo_training_stages",
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "OLMo-3.1-32B training stage checkpoints",
+      "type": "setting"
+    },
+    {
+      "content": "Across seven prompt variants tested on Gemma3-27B and Qwen3-235B, results are roughly consistent. The original, alternative, and skeptical prompt variants produce 0% false positives while achieving moderate detection rates (higher TPR for Qwen3-235B, the larger model). The structured setup suppresses detection in Gemma3-27B but not in Qwen3-235B. The hints and unprompted variants both produce higher FPR and lower TPR for both models.",
+      "content_hash": "c0d1564a3a2c1d6453ba96ea10974fb9f17e63ad4a755452e645f63033a202a3",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_21396::prompt_robustness_result",
+      "label": "prompt_robustness_result",
+      "metadata": {
+        "caption": "Fig. 2 | Introspection across prompt variants for Qwen3-235B (L=75, alpha=4) and Gemma3-27B (L=37, alpha=4).",
+        "figure": "artifacts/2603.21396.pdf, Figure 2",
+        "prior": 0.9,
+        "prior_justification": "7 prompt variants tested on 2 models; consistent TPR/FPR results despite some variation across framing"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Prompt robustness result",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt variants that remove incentives to confabulate—specifically the 'alternative' variant (offering an escape route to discuss any concept) and the 'anti-reward' variant (penalizing any concept mention)—both maintain moderate detection rates with 0% false positives. This evidence suggests models do not claim detection merely as a pretext to discuss the injected concept.",
+      "content_hash": "edee1c68dd08bdbe5ca05bc5af476ea52ad553093f8d102d65ee9a8a31618815",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_21396::no_pretext_claim",
+      "label": "no_pretext_claim",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Specific variants designed to remove confabulation incentives (anti-reward, alternative path) maintain 0% FPR",
+        "source": "artifacts/2603.21396.pdf, Section 3.1"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Detection is not a pretext for concept discussion",
+      "type": "claim"
+    },
+    {
+      "content": "Compared to the default chat template (control), Gemma3-27B dialogue format variants with reversed, misformatted, or no roles exhibit lower yet still statistically significant levels of introspection, with FPR remaining at 0%. The two non-standard roles (Alice-Bob third-person narrative and story framing) induce confabulation (higher FPR). Introspection is thus not exclusive to responding as the assistant character, though reliability decreases outside standard roles.",
+      "content_hash": "53172c82389e9f525e0b8cac250e37289c614f0970072cdef3e1c8cb9fa677c0",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_21396::persona_robustness_result",
+      "label": "persona_robustness_result",
+      "metadata": {
+        "caption": "Fig. 3 | Introspection across persona variants for Gemma3-27B.",
+        "figure": "artifacts/2603.21396.pdf, Figure 3",
+        "prior": 0.88,
+        "prior_justification": "6 dialogue format variants tested on Gemma3-27B; FPR remains 0% across non-standard role variants"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Persona/dialogue format robustness result",
+      "type": "claim"
+    },
+    {
+      "content": "The Gemma3-27B base model does not discriminate between injected and control trials: it exhibits both high FPR (42.3%) and comparable TPR (39.5%–41.7% for alpha <= 4), indicating no genuine detection. A similar pattern is observed for OLMo-3.1-32B base: high FPR that only drops to ~0% after DPO training.",
+      "content_hash": "f88daea0e7954f00accf429125c7daae0dc42ee5a7ac4c30d248e2e2cf9a82bf",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_21396::base_model_no_discrimination",
+      "label": "base_model_no_discrimination",
+      "metadata": {
+        "caption": "Fig. 4 | Base model shows matched TPR and FPR. Fig. 5 | OLMo-3.1-32B across training stages.",
+        "figure": "artifacts/2603.21396.pdf, Figure 4 (left), Figure 5",
+        "prior": 0.95,
+        "prior_justification": "Direct numeric measurement from model run; matched TPR (~40%) and FPR (42.3%) clearly show no discrimination"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Base models lack introspective discrimination",
+      "type": "claim"
+    },
+    {
+      "content": "In OLMo-3.1-32B checkpoints across training stages (Base -> SFT -> DPO -> Instruct), DPO is the first stage to achieve ~0% FPR with moderate true detection. SFT produces high FPR with no accurate discrimination. The effect of DPO is replicated using LoRA finetuning with DPO on top of OLMo-3.1-32B SFT and on top of Gemma3-27B base.",
+      "content_hash": "f885d8049963fd178b83a9fa5f463c7c6df8367559d6b8e3d55fc9e07679b802",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_21396::dpo_enables_introspection",
+      "label": "dpo_enables_introspection",
+      "metadata": {
+        "caption": "Fig. 5 | OLMo-3.1-32B introspection across Base, SFT, DPO, Instruct checkpoints.",
+        "figure": "artifacts/2603.21396.pdf, Figure 5",
+        "prior": 0.92,
+        "prior_justification": "Replicated across OLMo-3.1-32B checkpoints and confirmed with LoRA experiments on two model families"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "DPO enables introspective discrimination",
+      "type": "claim"
+    },
+    {
+      "content": "LoRA finetuning ablations on OLMo-3.1-32B SFT checkpoint reveal that the contrastive structure of DPO is the primary driver of introspection, not KL anchoring or the specific DPO loss function:\n\n| Condition | TPR-FPR (%) | Introspection (%) |\n|-----------|-------------|-------------------|\n| Margin + KL | +14.3 ± 1.6 | 6.8 ± 1.1 |\n| DPO standard | +14.4 ± 1.6 | 7.0 ± 0.8 |\n| DPO no-reference | +12.8 ± 2.1 | 5.8 ± 1.0 |\n| DPO* (official) | +9.8 ± 0.5 | 3.5 ± 0.3 |\n| DPO on base (no SFT) | +8.4 ± 1.4 | 2.4 ± 0.7 |\n| DPO shuffled | +0.6 ± 2.8 | 3.6 ± 0.8 |\n| SFT* (official) | -11.5 ± 2.4 | 1.7 ± 0.2 |\n| SFT on chosen | -13.5 ± 3.6 | 4.6 ± 0.9 |\n| SFT on chosen + KL | -15.6 ± 3.6 | 4.8 ± 1.0 |\n| DPO reversed | -21.8 ± 3.2 | 1.0 ± 0.4 |\n\nRemoving the reference model preserves discrimination (+12.8%), a margin-based contrastive loss with explicit KL achieves comparable results (+14.3%), and shuffled preferences eliminate the effect (+0.6%). Non-contrastive SFT alternatives fail. No single data domain is necessary or sufficient.",
+      "content_hash": "6a4095768c58e34d06f1e3b09fdc9cb626276d57750c85c63e2e1cda8cf87286",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2603_21396::dpo_contrastive_structure_key",
+      "label": "dpo_contrastive_structure_key",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Extensive LoRA ablation table (Table 3) with 95% CI for 11 conditions; contrastive vs. non-contrastive contrast is clear",
+        "source": "artifacts/2603.21396.pdf, Table 3 and Section 3.3"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "DPO contrastive structure drives introspection",
+      "type": "claim"
+    },
+    {
+      "content": "Refusal direction ablation ('abliteration') on Gemma3-27B instruct increases true positive rate from 10.8% to 63.8% and introspection rate from 4.6% to 24.1% (at alpha=2), while increasing FPR from 0.0% to 7.3%. This result suggests that refusal mechanisms learned during post-training suppress genuine detection, while also reducing false positives—introspection and refusal are in tension.",
+      "content_hash": "eed2b472d90b5660ee0e2d9dca9aa08e949aaeec74717bae1085b8aece3081e9",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_21396::abliteration_increases_detection",
+      "label": "abliteration_increases_detection",
+      "metadata": {
+        "caption": "Fig. 4 | Abliterated model (right): TPR increases from 10.8% to 63.8%.",
+        "figure": "artifacts/2603.21396.pdf, Figure 4 (right)",
+        "prior": 0.93,
+        "prior_justification": "Quantitative measurement with reported 95% CIs following the Arditi et al. abliteration protocol; 10.8% -> 63.8% TPR"
+      },
+      "module": "s3_behavioral_robustness",
+      "parameters": [],
+      "title": "Abliteration increases detection rate",
+      "type": "claim"
+    },
+    {
+      "content": "The mean-difference direction d_delta_mu is the difference in mean activations between success and failure concept vectors at the injection layer. Each concept vector can be decomposed as: v_c = (v_c . d_hat_delta_mu) * d_hat_delta_mu + residual, where d_hat_delta_mu is the unit-normalized mean-difference vector and the residual captures variance orthogonal to this direction. A ridge regression on concept vectors explains 44.4% of detection variance (R^2 = 0.444).",
+      "content_hash": "062d1b50a3ca453da454f3b14fc7f00621da543889d0d8c53a97158df8298b36",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_21396::mean_diff_direction_def",
+      "label": "mean_diff_direction_def",
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Mean-difference direction definition",
+      "type": "setting"
+    },
+    {
+      "content": "Direction swap experiment on 500 concept vectors (Gemma3-27B, L=37): for success concepts, swapping the projection onto d_delta_mu to failure-like projections reduces detection rate from 66.1% to 39.0%; swapping residuals also reduces detection to 44.4%. For failure concepts, both swaps increase detection to similar levels: projection swap increases from 8.8% to 34.2% and residual swap increases to 32.8%. Results using the ridge regression direction (dridge) show similar patterns: for success concepts, ridge projection swap reduces detection from 65.3% to 49.6%, while residual swap reduces it more strongly (65.3% to 31.6%).",
+      "content_hash": "b6d9fcb343636e1c6abc6085f6fa596ebb6996f699596f14fc6ff47a78a6539f",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_21396::projection_swap_result",
+      "label": "projection_swap_result",
+      "metadata": {
+        "caption": "Fig. 6 | Mean-difference direction (d_delta_mu) swap results. Both projection and residual swaps are effective.",
+        "figure": "artifacts/2603.21396.pdf, Figure 6",
+        "prior": 0.9,
+        "prior_justification": "Swap experiment on 500 concept vectors with clear numeric results for both projection and residual directions"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Direction swap experiment results",
+      "type": "claim"
+    },
+    {
+      "content": "Bidirectional steering experiment on 1,000 randomly sampled success-success (S-S) pairs and 1,000 failure-failure (F-F) pairs: in 23.3% of S-S pairs, both opposite directions (A-B and B-A) trigger detection, compared to only 3.2% for F-F pairs. The nonzero rate of bidirectional detection in S-S pairs is inconsistent with a single linear direction hypothesis, since if detection were governed by one direction, at most one of A-B or B-A could trigger detection for any pair.",
+      "content_hash": "7f0a8c7e1c6f52829dfbd3e62db4ab1c65e22c05f8787faa71e395963a49aa07",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_21396::bidirectional_steering_result",
+      "label": "bidirectional_steering_result",
+      "metadata": {
+        "caption": "Fig. 7 | Same-category pair bidirectional steering. S-S pairs (23.3%) show much more bidirectional detection than F-F pairs (3.2%).",
+        "figure": "artifacts/2603.21396.pdf, Figure 7",
+        "prior": 0.92,
+        "prior_justification": "Large-sample test on 2000 pairs; 23.3% vs 3.2% bidirectional detection rate is a clear quantitative signal"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Bidirectional steering result",
+      "type": "claim"
+    },
+    {
+      "content": "Principal component analysis (PCA) of 500 L2-normalized concept vectors (L=37, Gemma3-27B): PC1 explains 18.4% of variance and aligns strongly with d_delta_mu (cosine similarity = 0.97) but is nearly orthogonal to the refusal direction (cosine = -0.09). Logit lens on d_delta_mu shows positive loading on tokens 'facts' and 'knowledge', and negative loading on 'confused' and 'ambiguous', suggesting the mean direction captures 'factual assertiveness' or the distinction between factual knowledge and uncertain fuzzy content. Projection onto d_delta_mu correlates with concept verbalizability (Spearman rho = 0.605).",
+      "content_hash": "6a790a8b468ff8733777fad2fa4c6e19a08050d131e207c4d4fedf32c55fcf79",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_21396::pca_geometry_result",
+      "label": "pca_geometry_result",
+      "metadata": {
+        "caption": "Fig. 8 | Geometry of concept vectors. (a) PCA colored by detection rate. (b) Verbalizability vs. d_delta_mu projection.",
+        "figure": "artifacts/2603.21396.pdf, Figure 8a, 8b",
+        "prior": 0.9,
+        "prior_justification": "PCA and correlation are standard computations on 500 concept vectors; cosine similarity and Spearman rho are direct calculations"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "PCA geometry of concept vectors",
+      "type": "claim"
+    },
+    {
+      "content": "Three orthogonal principal components (delta-PCs) extracted from the residual space of success concept vectors after projecting out d_delta_mu each independently trigger detection with distinct response profiles and produce bidirectional detection. The three directions encode distinct semantic contrasts:\n\n| Direction | Variance explained | Semantic contrast |\n|-----------|-------------------|-------------------|\n| delta-PC1 | 19.6% | Casual (-) <-> Formal (+) |\n| delta-PC2 | 12.0% | Concrete (-) <-> Abstract (+) |\n| delta-PC3 | 8.4% | Emotions (-) <-> Careers (+) |",
+      "content_hash": "6a7d236273a471288b78908a27fe3319b727699ba7c07fce17b3162b9d699750",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_21396::delta_pcs_result",
+      "label": "delta_pcs_result",
+      "metadata": {
+        "caption": "Fig. 8c | Detection rate vs. steering strength along delta-PC1-3.",
+        "figure": "artifacts/2603.21396.pdf, Figure 8c",
+        "prior": 0.85,
+        "prior_justification": "Three delta-PCs each independently trigger detection; semantic labels from logit lens and steering validated"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Delta-PC directions and semantic content",
+      "type": "claim"
+    },
+    {
+      "content": "Ridge regression to predict per-concept detection rate based on downstream transcoder features (layers 38-61, Gemma3-27B) achieves R^2 = 0.624 at 4,500 features, substantially outperforming scalar projection onto d_delta_mu (R^2 = 0.309) and regression on raw concept vectors (R^2 = 0.444). Binary classification AUC results show the same ordering: transcoder features 0.898 > concept vectors 0.857 > d_delta_mu scalar 0.822 > verbalizability 0.696.",
+      "content_hash": "52b90b6d01e77fa64a8645807a2e1cfe911d51ce55d86439cd9bcbbc5749c74e",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_21396::transcoder_features_r2",
+      "label": "transcoder_features_r2",
+      "metadata": {
+        "caption": "Fig. 8d | 30-fold cross-validated R^2 for predicting per-concept detection rates from transcoder features vs. baselines.",
+        "figure": "artifacts/2603.21396.pdf, Figure 8d",
+        "prior": 0.92,
+        "prior_justification": "30-fold cross-validated R^2; consistent with AUC results; transcoder features (0.624/0.898) clearly outperform linear baselines"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Transcoder features outperform linear projections for detection prediction",
+      "type": "claim"
+    },
+    {
+      "content": "The mean-difference direction d_delta_mu between success and failure concepts is nearly orthogonal to the refusal direction (cosine similarity = -0.09), despite the fact that refusal ablation increases detection rates. This rules out the hypothesis that successful detection arises from concept vectors aligning with the refusal direction.",
+      "content_hash": "ba68e09df2ef999cb9d16518aebe6fefd1bd35948db1714de825c91e30f6ff36",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_21396::refusal_direction_not_mean_diff",
+      "label": "refusal_direction_not_mean_diff",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Direct geometric calculation; cosine similarity = -0.09 between d_delta_mu and refusal direction is near-orthogonal",
+        "source": "artifacts/2603.21396.pdf, Section 4.3"
+      },
+      "module": "s4_linear_nonlinear",
+      "parameters": [],
+      "title": "Mean-difference direction is orthogonal to refusal direction",
+      "type": "claim"
+    },
+    {
+      "content": "MLP features are analyzed using transcoders from Gemma Scope 2 (McDougall et al., 2025; [@McDougall2025]), specifically the 262k-width L0-big variant for layers 38-61 applied to the instruct model. All ablations and patching interventions use the formula: Delta = (T - F) * W_decoder, where F is the feature's current activation, T is the target activation, and W_decoder is the unit-normalized decoder direction. For ablation, T = C (control activations, no injection); for patching, T = S (steered activations). All interventions are computed at the last token position of the prompt (immediately before the model's generated response).",
+      "content_hash": "435446d05939b561a86764b4df894972c5be7770527e43c1e7cd65f17659ffa6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_21396::transcoder_setup",
+      "label": "transcoder_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "McDougall2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Transcoder analysis setup",
+      "type": "setting"
+    },
+    {
+      "content": "Direct logit attribution score for a transcoder feature f is computed as: (w_decoder . Delta_u_Yes-No) * activation(f), measuring how much the feature's decoder direction pushes the Yes-No logit difference, weighted by the feature's current activation. This identifies features that directly contribute to the model's yes/no detection decision.",
+      "content_hash": "dfdeb4d1a85f9aa306afb9de63d8ac1fb601f88a5bfba26fe5ae6d012e274794",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_21396::direct_logit_attribution_def",
+      "label": "direct_logit_attribution_def",
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Direct logit attribution definition",
+      "type": "setting"
+    },
+    {
+      "content": "In Gemma3-27B, the detection rate (P(detect | injection)) peaks in mid-layers (approximately layer 29-37) when sweeping the injection layer, while forced identification rate (P(identify | prefill AND injection)) increases toward late layers (approximately layer 55). The correlation between detection and identification rates becomes positive only when the concept is injected in mid-to-late layers.",
+      "content_hash": "504c2fef684cf4a6fb2ed01c1e2c28df227032f6bf05115d95b5b198d45c8020",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_21396::detection_peaks_midlayer",
+      "label": "detection_peaks_midlayer",
+      "metadata": {
+        "caption": "Fig. 9 | Introspection metrics vs. injection layer for Gemma3-27B. (a) Detection peaks mid-layer. (b) Identification peaks late.",
+        "figure": "artifacts/2603.21396.pdf, Figure 9",
+        "prior": 0.88,
+        "prior_justification": "Layer sweep across all 62 layers; peaks are visually and numerically clear from Figure 9 for both detection and identification"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Detection peaks in mid-layers, identification in late layers",
+      "type": "claim"
+    },
+    {
+      "content": "Causal analysis of 50 highest-attributed attention heads (layers 38-61) in Gemma3-27B reveals no individual attention head meaningfully improves prediction of detection success: mean binary accuracy change from linear probes before vs. after each head's output is -0.1% +/- 0.3%. Additionally, mean-ablating full attention layers produces minimal effects on detection rate, suggesting no single head or layer is critical—attention contributes collectively but redundantly.",
+      "content_hash": "260070b9cb7aa8c2268841327dd712ff00d8397b50f1b19bc2476999765b0e8f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_21396::attention_heads_not_critical",
+      "label": "attention_heads_not_critical",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Mean accuracy change -0.1% +/- 0.3% across 50 tested heads; attention layer ablation also produces minimal effects",
+        "source": "artifacts/2603.21396.pdf, Section 5.2, Appendix J"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "No individual attention head is critical for detection",
+      "type": "claim"
+    },
+    {
+      "content": "Mean-ablating MLP outputs at each post-steering layer in Gemma3-27B (L=37, alpha=4): L45 MLP produces the largest detection drop (from 39.0% to 24.2% at L=37). L45 MLP is also the only component whose steered activations, when patched into an unsteered run, significantly raise detection (partial sufficiency). The same L45 localization holds for the abliterated model. The base model shows no such localization—confirming the circuit emerges from post-training.",
+      "content_hash": "fce24285b646913a20de1b2a94c7e86d77ee13bfc78380d2d1843b52d24f53bb",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2603_21396::mlp_l45_causal_result",
+      "label": "mlp_l45_causal_result",
+      "metadata": {
+        "caption": "Fig. 10 | Per-layer causal interventions. L45 MLP shows largest effect on detection for L=29 and L=37.",
+        "figure": "artifacts/2603.21396.pdf, Figure 10",
+        "prior": 0.9,
+        "prior_justification": "L45 MLP shows unique causal profile (necessary + partially sufficient) vs all other layers at two injection layers"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "L45 MLP is causally necessary and partially sufficient for detection",
+      "type": "claim"
+    },
+    {
+      "content": "Gate features are identified as the top-200 transcoder features with the most negative direct logit attribution (most strongly promoting the 'No' response). Gate features characteristically exhibit:\n1. Negative dose-strength correlation: most active when unsteered, suppressed at both positive and negative steering extremes, producing an inverted-V activation pattern.\n2. Negative detection correlation (r = -0.228 for the top gate L45 F9959).\n3. Negative forced identification correlation (r = -0.088 for L45 F9959).\nSemantically, many gate features correspond to tokens preceding or within negative responses to questions (e.g., tokens preceding 'no' in idioms, emphatic negation markers), consistent with a default 'say no' circuit.",
+      "content_hash": "0d849d36584811bb075ebb17493ef8c2036f5ae6d0c7275366b18e2c3c904dda",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_21396::gate_features_identified",
+      "label": "gate_features_identified",
+      "metadata": {
+        "caption": "Fig. 11 | (a) Top features promoting 'No' ranked by direct logit attribution. (b) Activation vs. steering strength for L45 F9959.",
+        "figure": "artifacts/2603.21396.pdf, Figure 11",
+        "prior": 0.85,
+        "prior_justification": "Gate selection criteria (top-200 by direct logit attribution) well-defined; inverted-V pattern for L45 F9959 validated"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Gate features: properties and identification",
+      "type": "claim"
+    },
+    {
+      "content": "Progressive ablation of top-ranked gate features from steered examples reduces detection rate from 39.5% to 10.1%, demonstrating causal necessity. Patching steered-example gate activations onto unsteered prompts provides partial sufficiency (max detection: 25.1%). Forced identification rate when ablating gates drops more moderately (57.7% to 46.2%), indicating the model retains access to steering information through other pathways even when gate-driven detection is blocked.",
+      "content_hash": "0c2daa70941b6c46367406f2f59aa88fee886b32d90d2f98681aa1dfca45917f",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2603_21396::gate_causal_necessity",
+      "label": "gate_causal_necessity",
+      "metadata": {
+        "caption": "Fig. 11c | Progressive ablation/patching of top-ranked gate features.",
+        "figure": "artifacts/2603.21396.pdf, Figure 11c",
+        "prior": 0.9,
+        "prior_justification": "Clear progressive ablation curves: 39.5% -> 10.1% detection from ablating <200 gate features; partial patching sufficiency shown"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Gate features are causally necessary for detection",
+      "type": "claim"
+    },
+    {
+      "content": "The top-200 transcoder features with the most positive direct logit attribution (most strongly promoting 'Yes' response) show no measurable causal effect on detection: progressively ablating these features does not change detection rate, and patching their steered activations into unsteered runs produces near-zero detection. This contrasts sharply with gate features (negative attribution) where ablating fewer than 200 features reduces detection from 39.5% to 10.1%.",
+      "content_hash": "63389a5c2f3befda01a06beb5c31bd13b96bc60e3974149f7ff46aadf0c974d8",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_21396::positive_attribution_features_no_effect",
+      "label": "positive_attribution_features_no_effect",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Ablation and patching of top-200 positive attribution features shows near-zero effect; sharp asymmetry vs. gate features is diagnostic",
+        "source": "artifacts/2603.21396.pdf, Appendix L, Figure 28"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Positive attribution features are not causally involved in detection",
+      "type": "claim"
+    },
+    {
+      "content": "Evidence carrier features are identified by four criteria:\n1. Positive dose-strength correlation (activation increases with steering magnitude)\n2. Nonzero detection correlation\n3. Nonzero forced identification correlation\n4. Negative gate attribution (decoder direction dot encoder direction of top gates < 0, meaning the feature suppresses gate activation)\n\nEvidence carriers number in the hundreds of thousands, with individual contributions correspondingly diluted. The top-ranked carriers include concept-specific features (e.g., geological terminology for 'Granite', astronomical phenomena for 'Constellations') and concept-agnostic features related to emphatic transitions in text.",
+      "content_hash": "f7bceb423f9e70c3cec2914ec04e8e6cac0769aa1a37bd5643026ffd856eb3ea",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_21396::evidence_carriers_identified",
+      "label": "evidence_carriers_identified",
+      "metadata": {
+        "caption": "Fig. 12 | Top-3 evidence carriers for gate L45 F9959, across six example concepts.",
+        "figure": "artifacts/2603.21396.pdf, Figure 12",
+        "prior": 0.83,
+        "prior_justification": "Four-criterion selection procedure well-defined; mix of concept-specific and generic carriers is interpretable"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Evidence carrier features: properties and identification",
+      "type": "claim"
+    },
+    {
+      "content": "Progressive ablation of top-ranked evidence carriers produces only modest reductions in detection rates (from 38.6% to 13.8% after ablating 441k carriers), substantially more gradual than gate ablation (fewer than 200 gates reduce detection from 39.5% to 10.1%). Patching carriers onto unsteered examples yields similarly small effects. This demonstrates a distributed representation: many features each contribute weak evidence that is aggregated downstream, with no small subset individually necessary or sufficient.",
+      "content_hash": "5c7c47919e344d0a75a4a38e9186e84936aa7762a58953236eda950af4ae5ef0",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_21396::evidence_carrier_causal_distributed",
+      "label": "evidence_carrier_causal_distributed",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "441k feature ablation curve gradually declining (38.6% -> 13.8%) vs. gate ablation's sharp decline confirms distributed representation",
+        "source": "artifacts/2603.21396.pdf, Section 5.3, Appendix N"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Evidence carriers form a distributed representation",
+      "type": "claim"
+    },
+    {
+      "content": "Transcoder feature layer distributions reveal a processing hierarchy: evidence carriers concentrate in earlier layers (peaking at layer 38, immediately post-injection at L=37), while gate features concentrate in later layers (45-61). This layer separation is consistent with gates aggregating upstream evidence signals into the binary detection decision. Ablating all evidence carriers (alpha=4) roughly doubles gate activation (from ~1,700-2,300 to ~3,800-5,950 units), confirming they are causally involved in gate suppression.",
+      "content_hash": "d144c47756552c77c07f64e3c65fd16a86ff74903f1a043ab9847cdb03d07b19",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2603_21396::circuit_hierarchy",
+      "label": "circuit_hierarchy",
+      "metadata": {
+        "caption": "Fig. 13 | Gate activation vs. steering strength under progressive evidence carrier ablation.",
+        "figure": "artifacts/2603.21396.pdf, Figure 13, Appendix O",
+        "prior": 0.85,
+        "prior_justification": "Layer histograms show carriers peaking at L38 and gates at L45-61; ablation of carriers doubles gate activation (~1700 -> ~3800)"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Two-stage circuit: early evidence carriers suppress late gate features",
+      "type": "claim"
+    },
+    {
+      "content": "The characteristic inverted-V activation pattern of the top gate feature (L45 F9959) across steering strength is prominent in the instruct model but substantially weaker in the base model, consistent with post-training developing the gating mechanism rather than merely eliciting a pre-existing one. The abliterated model preserves the inverted-V pattern, indicating gate features are not refusal-specific and survive refusal direction ablation.",
+      "content_hash": "b1af8fae829e457e215ffcb98cda9debd1da64085193b41e6577fae25fc55b59",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2603_21396::gate_inverted_v_posttraining",
+      "label": "gate_inverted_v_posttraining",
+      "metadata": {
+        "caption": "Fig. 14 | Gate L45 F9959 activation vs. steering strength across base, instruct, and abliterated models.",
+        "figure": "artifacts/2603.21396.pdf, Figure 14",
+        "prior": 0.85,
+        "prior_justification": "Inverted-V pattern clearly present in instruct and abliterated models but substantially weaker in base model"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Gate inverted-V pattern emerges from post-training",
+      "type": "claim"
+    },
+    {
+      "content": "Steering attribution analysis (a framework that decomposes the total effect of injection strength into per-feature contributions) validates the circuit structure: layer-level attribution confirms L45 as the dominant MLP layer, with L38-39 contributing early signal. Feature-level attribution graphs for the 'Bread' concept reveal that both concept-related residual features (food-related features) and concept-agnostic features feed into mid-layer evidence carriers and converge on L45 F9959 as the dominant gate node.",
+      "content_hash": "ff9128237373c4268d277dbf4b07ea4d5f2887570faafeeb6cdc21a117b84aea",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2603_21396::steering_attribution_validation",
+      "label": "steering_attribution_validation",
+      "metadata": {
+        "caption": "Fig. 15a | Steering attribution graph for Bread concept showing circuit structure.",
+        "figure": "artifacts/2603.21396.pdf, Figure 15a",
+        "prior": 0.8,
+        "prior_justification": "Steering attribution is a novel analysis tool in this paper; findings are consistent with ablation results but harder to independently verify"
+      },
+      "module": "s5_mechanisms",
+      "parameters": [],
+      "title": "Steering attribution validates two-stage circuit",
+      "type": "claim"
+    },
+    {
+      "content": "A single additive bias vector is trained on the MLP down-projection output of Gemma3-27B instruct for a single epoch on 400 concepts (8,000 samples; 10 injected and 10 control per concept) with learning rate 10^-3, batch size 8, sampling layers 29-55 and steering strengths {2, 3, 4, 5}. Evaluated on 100 held-out concepts. Training targets: injection -> 'Yes, I detect an injected thought about the word {concept}.'; no injection -> 'No, I do not detect an injected thought.'",
+      "content_hash": "69e5f0849ceed756f645e20d4d2f5fbf2a13386d738032a31cf9e9a95cd6539d",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_21396::bias_vector_training_setup",
+      "label": "bias_vector_training_setup",
+      "module": "s6_underelicitation",
+      "parameters": [],
+      "title": "Bias vector training setup",
+      "type": "setting"
+    },
+    {
+      "content": "A learned bias vector (equivalent to an always-present steering vector) applied at layer L=29 in Gemma3-27B improves introspection substantially on 100 held-out concepts:\n\n| Metric | Improvement |\n|--------|-------------|\n| Detection rate (TPR) | +74.7% |\n| Forced identification | +21.9% |\n| Introspection rate | +54.7% |\n| False positive rate | 0% (maintained) |\n\nPerformance improves across a broad range of injection layers, with detection showing gains across a wider layer range than forced identification (which shows stronger dependence on downstream circuitry). The localization pattern (peak improvement layers) does not fundamentally change under the bias vector.",
+      "content_hash": "85a12c742aec892d10332e8796b8fe8b5cb0346bab6d663ecc026b895f8f9f0f",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2603_21396::bias_vector_performance",
+      "label": "bias_vector_performance",
+      "metadata": {
+        "caption": "Fig. 16 | Introspection vs. steering layer with bias vector. Fig. 17 | Introspection vs. injection layer with bias vector at L=29.",
+        "figure": "artifacts/2603.21396.pdf, Figure 16, Figure 17",
+        "prior": 0.92,
+        "prior_justification": "Specific numeric gains (+74.7% detection, +54.7% introspection, 0% FPR) reported on 100 held-out concepts across multiple layers"
+      },
+      "module": "s6_underelicitation",
+      "parameters": [],
+      "title": "Bias vector performance on held-out concepts",
+      "type": "claim"
+    },
+    {
+      "content": "Steering attribution analysis under the learned bias vector shows that the dominant gate L45 F9959 is suppressed and attribution shifts to late-layer features compared to the baseline (without bias vector). The bias vector enhances performance even for injection layers after where it is applied (L=29), and the localization pattern does not fundamentally change, suggesting the vector primarily amplifies pre-existing introspection components rather than introducing new mechanisms.",
+      "content_hash": "a3d0b41d1f3581bceedfc6bbcd179c78137d78a1c2d4a26704ddd8c5517158a4",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_21396::bias_vector_mechanism",
+      "label": "bias_vector_mechanism",
+      "metadata": {
+        "caption": "Fig. 15b | Steering attribution graph under learned bias vector. Gate L45 F9959 has smaller node importance.",
+        "figure": "artifacts/2603.21396.pdf, Figure 15b",
+        "prior": 0.82,
+        "prior_justification": "Steering attribution analysis shows shifted patterns under bias vector; interpretation of amplification vs. creation is reasonable"
+      },
+      "module": "s6_underelicitation",
+      "parameters": [],
+      "title": "Bias vector amplifies pre-existing introspection components",
+      "type": "claim"
+    },
+    {
+      "content": "Analysis of the learned bias vector's semantics and downstream behavioral effects suggests it primarily induces a conditional, more assertive reporting style that better elicits introspection, rather than altering the underlying detection mechanisms. The model possesses latent introspective capacity; the learned bias vector lowers the threshold for accurate self-report.",
+      "content_hash": "6e58359c2cc26d4835a53c393734ca589e97c7b63cd3c6af96bdfe2995c8635c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_21396::bias_vector_reporting_style",
+      "label": "bias_vector_reporting_style",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Behavioral analysis of bias vector effects; assertive-style interpretation is reasonable but qualitative and harder to verify",
+        "source": "artifacts/2603.21396.pdf, Section 6, Appendix R"
+      },
+      "module": "s6_underelicitation",
+      "parameters": [],
+      "title": "Bias vector induces assertive reporting style",
+      "type": "claim"
+    },
+    {
+      "content": "Rivera & Africa (2026) show that lightweight LoRA finetuning can train models to detect steering with up to 95.5% accuracy and 71.2% concept identification on held-out concepts (0% FPR), further corroborating that introspective capabilities are underelicited by default. They also find that injected steering vectors are progressively rotated toward a shared detection direction across layers, consistent with the evidence carrier to gate processing hierarchy identified in this paper.",
+      "content_hash": "04e8352693ea3d8680963159a8ca8169489357b1d9525a39c3152344082cfb68",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_21396::lora_finetuning_replication",
+      "label": "lora_finetuning_replication",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "External replication by Rivera & Africa (2026); 95.5% detection result cited from contemporaneous work",
+        "source": "artifacts/2603.21396.pdf, Section 7.2"
+      },
+      "module": "s6_underelicitation",
+      "parameters": [],
+      "title": "LoRA finetuning achieves 95.5% detection (external replication)",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::prompt_robustness_result,github:2603_21396::no_pretext_claim)",
+      "content_hash": "fc2beb35356594165dbc9a9c4358f4cfd5a24fc7af114148c77a50b6a7d921b9",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_0fd142f7",
+      "label": "__conjunction_result_0fd142f7",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::prompt_robustness_result,github:2603_21396::no_pretext_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f18a22404cf6f73e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_0fd142f7,github:2603_21396::claim_behaviorally_robust)",
+      "content_hash": "0efe473945665f9ad7e467e31c19b8dd763f7eb64bbdc1d7fe069b3b8979bc3d",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_a1c33187",
+      "label": "__implication_result_a1c33187",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_0fd142f7,github:2603_21396::claim_behaviorally_robust)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f18a22404cf6f73e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::persona_robustness_result,github:2603_21396::claim_behaviorally_robust)",
+      "content_hash": "c1b1d433eb45f8bacc13a30db7d5104f895afacbd35c5d0ae03f4917a3607ef4",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_7158d496",
+      "label": "__implication_result_7158d496",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::persona_robustness_result,github:2603_21396::claim_behaviorally_robust)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_de48ce3a08659688",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::base_model_no_discrimination,github:2603_21396::dpo_enables_introspection,github:2603_21396::dpo_contrastive_structure_key)",
+      "content_hash": "281e7070166fe64949674b9424c30313349290eadb06ad29601fd8f4c08807cd",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_c9a28ddc",
+      "label": "__conjunction_result_c9a28ddc",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::base_model_no_discrimination,github:2603_21396::dpo_enables_introspection,github:2603_21396::dpo_contrastive_structure_key)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_48115c4f93285ec6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_c9a28ddc,github:2603_21396::claim_behaviorally_robust)",
+      "content_hash": "1ec9003f80ada0a9fe3548c0ac7ff347b124c008b87eb1e25e816dcd82536770",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_15500f80",
+      "label": "__implication_result_15500f80",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_c9a28ddc,github:2603_21396::claim_behaviorally_robust)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_48115c4f93285ec6",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::projection_swap_result,github:2603_21396::claim_not_single_linear)",
+      "content_hash": "d1ec1b7b7c03753f62d507740354d03d9a670f2c2f4120fec4bd80b5795219fc",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_5dba966e",
+      "label": "__implication_result_5dba966e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::projection_swap_result,github:2603_21396::claim_not_single_linear)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1a50b74952860e53",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::bidirectional_steering_result,github:2603_21396::claim_not_single_linear)",
+      "content_hash": "9f471f86d1f2c728a68d5e0ed35f391ad5bcf805f331d76485e990da8d075ac6",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_18640665",
+      "label": "__implication_result_18640665",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::bidirectional_steering_result,github:2603_21396::claim_not_single_linear)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f2c76d4a31644d24",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::pca_geometry_result,github:2603_21396::delta_pcs_result,github:2603_21396::transcoder_features_r2,github:2603_21396::refusal_direction_not_mean_diff)",
+      "content_hash": "6c8b3b8983e8f2bb8320f8ebd1c1e5b515919790594225765134ab0eea5f1412",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_ccb87349",
+      "label": "__conjunction_result_ccb87349",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::pca_geometry_result,github:2603_21396::delta_pcs_result,github:2603_21396::transcoder_features_r2,github:2603_21396::refusal_direction_not_mean_diff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_570737adee237ccf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_ccb87349,github:2603_21396::claim_not_single_linear)",
+      "content_hash": "848e9e2c10e24f61e80230ec2a6ec81661e182b49baf0def5a28bc6a879c2943",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_e974b152",
+      "label": "__implication_result_e974b152",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_ccb87349,github:2603_21396::claim_not_single_linear)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_570737adee237ccf",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::detection_peaks_midlayer,github:2603_21396::claim_distinct_mechanisms)",
+      "content_hash": "0fc0f1f8e291c43b9ba5ae89eabcb1081ccd2e3563a6d29e479aeff9114be6d7",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_0b0bf79e",
+      "label": "__implication_result_0b0bf79e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::detection_peaks_midlayer,github:2603_21396::claim_distinct_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1ab8f60a73c3d3c8",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::mlp_l45_causal_result,github:2603_21396::attention_heads_not_critical)",
+      "content_hash": "0553bb9b489440cbbd61714125018425daeb3d831a58f4024b9e42d9652215ac",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_a58175e4",
+      "label": "__conjunction_result_a58175e4",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::mlp_l45_causal_result,github:2603_21396::attention_heads_not_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ecdf07429f5f7489",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_a58175e4,github:2603_21396::claim_distinct_mechanisms)",
+      "content_hash": "2a9bedf284a6391276900068911b402ba587af5c3be58fb2648daa78d6b84d59",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_de405f4e",
+      "label": "__implication_result_de405f4e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_a58175e4,github:2603_21396::claim_distinct_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ecdf07429f5f7489",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::gate_features_identified,github:2603_21396::gate_causal_necessity,github:2603_21396::positive_attribution_features_no_effect)",
+      "content_hash": "fa8f82a0bc336efd4099cd83e7988623dfbe8e258d933bfc98dc8f510b07ab5b",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_a48b3e38",
+      "label": "__conjunction_result_a48b3e38",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::gate_features_identified,github:2603_21396::gate_causal_necessity,github:2603_21396::positive_attribution_features_no_effect)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1b63f190ae74a64d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_a48b3e38,github:2603_21396::claim_distinct_mechanisms)",
+      "content_hash": "e92a082ed452b4f3635dd1030644846773789466c00dd362e665223b3c665f7a",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_dd37e6ae",
+      "label": "__implication_result_dd37e6ae",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_a48b3e38,github:2603_21396::claim_distinct_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1b63f190ae74a64d",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::circuit_hierarchy,github:2603_21396::gate_inverted_v_posttraining,github:2603_21396::steering_attribution_validation,github:2603_21396::evidence_carrier_causal_distributed,github:2603_21396::evidence_carriers_identified)",
+      "content_hash": "82b9be23c1b1aa535928e67b1bce9c3c2664c1b24e03e397bca42f89c8fcbd4a",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_5dec49ba",
+      "label": "__conjunction_result_5dec49ba",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::circuit_hierarchy,github:2603_21396::gate_inverted_v_posttraining,github:2603_21396::steering_attribution_validation,github:2603_21396::evidence_carrier_causal_distributed,github:2603_21396::evidence_carriers_identified)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_385883c21a9ef679",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_5dec49ba,github:2603_21396::claim_distinct_mechanisms)",
+      "content_hash": "9663edc638e7bbbb397545823e45db1c012e1dec2c7bcdb9aeabd610b214dbe3",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_f14215c6",
+      "label": "__implication_result_f14215c6",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_5dec49ba,github:2603_21396::claim_distinct_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_385883c21a9ef679",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::abliteration_increases_detection,github:2603_21396::claim_underelicited)",
+      "content_hash": "d37c7f1a385acbaa9fa1a356ba778df7de58f307ef8b59810b6ba7849eb0953f",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_1cc2f842",
+      "label": "__implication_result_1cc2f842",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::abliteration_increases_detection,github:2603_21396::claim_underelicited)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8732b92a5d55d296",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_21396::bias_vector_performance,github:2603_21396::bias_vector_mechanism,github:2603_21396::bias_vector_reporting_style)",
+      "content_hash": "40141edba78f93d9641128852447ad9ee64f033359ac4978070088d5d2032621",
+      "exported": false,
+      "id": "github:2603_21396::__conjunction_result_ca62dac8",
+      "label": "__conjunction_result_ca62dac8",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_21396::bias_vector_performance,github:2603_21396::bias_vector_mechanism,github:2603_21396::bias_vector_reporting_style)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_3389a7c969d062ee",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::__conjunction_result_ca62dac8,github:2603_21396::claim_underelicited)",
+      "content_hash": "8e58830fab51b306745e8bb0fc6728429f45c67d65eb9b51aaa31a9ec4e12cfa",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_9f750ae4",
+      "label": "__implication_result_9f750ae4",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::__conjunction_result_ca62dac8,github:2603_21396::claim_underelicited)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3389a7c969d062ee",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_21396::lora_finetuning_replication,github:2603_21396::claim_underelicited)",
+      "content_hash": "96829a84cd9134b0f87893da3184ec516860b422409722b3b173dbe2bb3d550e",
+      "exported": false,
+      "id": "github:2603_21396::__implication_result_2ec2ddd5",
+      "label": "__implication_result_2ec2ddd5",
+      "metadata": {
+        "canonical_name": "implies(github:2603_21396::lora_finetuning_replication,github:2603_21396::claim_underelicited)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_79abb3ee3e80ae87",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_behavioral_robustness",
+    "s4_linear_nonlinear",
+    "s5_mechanisms",
+    "s6_underelicitation"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Mechanisms of Introspective Awareness",
+    "s3_behavioral_robustness": "Section 3: Introspection Is Behaviorally Robust",
+    "s4_linear_nonlinear": "Section 4: Linear and Nonlinear Contributors to Detection",
+    "s5_mechanisms": "Section 5: Localizing Introspection Mechanisms",
+    "s6_underelicitation": "Section 6: Training a Bias Vector for Introspection (Underelicitation)"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2603_21396",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2603_21396::prompt_variants_setup",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::introspection_metrics",
+        "github:2603_21396::prior_claude_introspection",
+        "github:2603_21396::prior_open_source_replication",
+        "github:2603_21396::prior_causal_bypassing_concern"
+      ],
+      "conclusion": "github:2603_21396::claim_behaviorally_robust",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_0fd142f7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::prompt_robustness_result",
+              "github:2603_21396::no_pretext_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_a1c33187",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_0fd142f7",
+              "github:2603_21396::claim_behaviorally_robust"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Prompt framing has distinct effects on TPR and FPR, but the capability persists across diverse variants (@prompt_robustness_result). Critically, variants that remove confabulation incentives still achieve moderate detection with 0% FPR (@no_pretext_claim), ruling out the hypothesis that detection is a conversational pretext. Together these establish robust behavioral detection across prompt space. This extends prior findings in Claude models (@prior_claude_introspection) and open-source models (@prior_open_source_replication), and addresses concerns about causal bypassing (@prior_causal_bypassing_concern)."
+      },
+      "premises": [
+        "github:2603_21396::prompt_robustness_result",
+        "github:2603_21396::no_pretext_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f18a22404cf6f73e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::dialogue_formats_setup",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::introspection_metrics"
+      ],
+      "conclusion": "github:2603_21396::claim_behaviorally_robust",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_7158d496",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::persona_robustness_result",
+              "github:2603_21396::claim_behaviorally_robust"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The result that introspection persists across non-standard dialogue formats (@persona_robustness_result)—though degraded—corroborates behavioral robustness. The 0% FPR in non-standard-role variants confirms the model genuinely discriminates injected from control trials across dialogue structures."
+      },
+      "premises": [
+        "github:2603_21396::persona_robustness_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_de48ce3a08659688",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::olmo_training_stages",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::introspection_metrics"
+      ],
+      "conclusion": "github:2603_21396::claim_behaviorally_robust",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_c9a28ddc",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::base_model_no_discrimination",
+              "github:2603_21396::dpo_enables_introspection",
+              "github:2603_21396::dpo_contrastive_structure_key"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_15500f80",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_c9a28ddc",
+              "github:2603_21396::claim_behaviorally_robust"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The absence of introspection in base models (@base_model_no_discrimination), its emergence specifically at the DPO stage (@dpo_enables_introspection), and the identification of contrastive structure as the key driver (@dpo_contrastive_structure_key) together establish that the capability is a genuine product of post-training preference optimization, not a pretraining artifact or artifact of SFT. This is strong positive evidence for behavioral robustness grounded in a specific training mechanism."
+      },
+      "premises": [
+        "github:2603_21396::base_model_no_discrimination",
+        "github:2603_21396::dpo_enables_introspection",
+        "github:2603_21396::dpo_contrastive_structure_key"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_48115c4f93285ec6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::mean_diff_direction_def",
+        "github:2603_21396::concept_partition_setup",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::steering_linear_rep"
+      ],
+      "conclusion": "github:2603_21396::claim_not_single_linear",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_5dba966e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::projection_swap_result",
+              "github:2603_21396::claim_not_single_linear"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The swap experiments show that both the d_delta_mu projection component and the residual (all variance orthogonal to d_delta_mu) carry detection-relevant signal of similar magnitude (@projection_swap_result). If detection depended on a single direction, swapping to failure-like projections should fully flip detection, and residual swaps should have minimal effect. Instead, residual swaps alone are nearly as effective as projection swaps, demonstrating the computation is distributed across at least two orthogonal directions. This evidence directly challenges the established framework of single-direction linear representations (@steering_linear_rep) being sufficient for this behavior."
+      },
+      "premises": [
+        "github:2603_21396::projection_swap_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1a50b74952860e53",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::concept_partition_setup",
+        "github:2603_21396::gemma3_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_not_single_linear",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_18640665",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::bidirectional_steering_result",
+              "github:2603_21396::claim_not_single_linear"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "If detection relied on a single linear direction d, then for any concept pair (A, B), the projections of A-B and B-A onto d have opposite signs, so at most one can exceed the detection threshold. The 23.3% bidirectional detection rate in S-S pairs (@bidirectional_steering_result) directly violates this prediction. The significantly higher rate in S-S vs F-F pairs suggests the model is attuned to perturbations along multiple axes (or within subspaces) characteristic of success concepts, requiring nonlinear computation."
+      },
+      "premises": [
+        "github:2603_21396::bidirectional_steering_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f2c76d4a31644d24",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::mean_diff_direction_def",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::concept_partition_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_not_single_linear",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_ccb87349",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::pca_geometry_result",
+              "github:2603_21396::delta_pcs_result",
+              "github:2603_21396::transcoder_features_r2",
+              "github:2603_21396::refusal_direction_not_mean_diff"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_e974b152",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_ccb87349",
+              "github:2603_21396::claim_not_single_linear"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The existence of multiple orthogonal detection-relevant directions (delta-PCs, each independently triggering detection with distinct profiles; @delta_pcs_result) goes beyond any single linear mechanism. The fact that transcoder features (nonlinear computation) substantially outperform linear projections in predicting detection (R^2 0.624 vs 0.309; @transcoder_features_r2) provides further direct evidence that detection involves higher-dimensional nonlinear computation on top of the steering vectors. PCA confirming near-orthogonality of d_delta_mu and the refusal direction (@refusal_direction_not_mean_diff) rules out the most obvious confound, and the logit lens interpretation of d_delta_mu as 'factual assertiveness' (@pca_geometry_result) provides semantic grounding."
+      },
+      "premises": [
+        "github:2603_21396::pca_geometry_result",
+        "github:2603_21396::delta_pcs_result",
+        "github:2603_21396::transcoder_features_r2",
+        "github:2603_21396::refusal_direction_not_mean_diff"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_570737adee237ccf",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::concept_injection_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_distinct_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_0b0bf79e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::detection_peaks_midlayer",
+              "github:2603_21396::claim_distinct_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The distinct layer profiles of detection (peaking mid-layer ~L29-37) and identification (increasing toward late layers ~L55) in Gemma3-27B (@detection_peaks_midlayer) is the first evidence that these two components of introspection are handled by separate mechanisms operating at different depths in the network. If they shared the same mechanism, their optimal injection layers should coincide."
+      },
+      "premises": [
+        "github:2603_21396::detection_peaks_midlayer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1ab8f60a73c3d3c8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::transcoder_setup",
+        "github:2603_21396::gemma3_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_distinct_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_a58175e4",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::mlp_l45_causal_result",
+              "github:2603_21396::attention_heads_not_critical"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_de405f4e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_a58175e4",
+              "github:2603_21396::claim_distinct_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The causal necessity and partial sufficiency of L45 MLP for detection (@mlp_l45_causal_result), combined with the failure of individual attention heads to contribute meaningfully (@attention_heads_not_critical), localizes detection to a specific MLP component at ~70% depth. This localization pattern is absent in the base model but present in both instruct and abliterated models, confirming the detection circuit is a post-training development distinct from refusal mechanisms."
+      },
+      "premises": [
+        "github:2603_21396::mlp_l45_causal_result",
+        "github:2603_21396::attention_heads_not_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ecdf07429f5f7489",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::transcoder_setup",
+        "github:2603_21396::direct_logit_attribution_def",
+        "github:2603_21396::gemma3_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_distinct_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_a48b3e38",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::gate_features_identified",
+              "github:2603_21396::gate_causal_necessity",
+              "github:2603_21396::positive_attribution_features_no_effect"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_dd37e6ae",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_a48b3e38",
+              "github:2603_21396::claim_distinct_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The identification of gate features as the causally necessary components of detection (@gate_features_identified, @gate_causal_necessity)—with the asymmetry that only negative-attribution features (not positive ones) have causal impact (@positive_attribution_features_no_effect)—reveals a specific inhibitory mechanism: detection occurs when gate features implementing a default 'No' response are suppressed. This is a mechanistically specific characterization distinct from any identification mechanism."
+      },
+      "premises": [
+        "github:2603_21396::gate_features_identified",
+        "github:2603_21396::gate_causal_necessity",
+        "github:2603_21396::positive_attribution_features_no_effect"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1b63f190ae74a64d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::transcoder_setup",
+        "github:2603_21396::gemma3_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_distinct_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_5dec49ba",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::circuit_hierarchy",
+              "github:2603_21396::gate_inverted_v_posttraining",
+              "github:2603_21396::steering_attribution_validation",
+              "github:2603_21396::evidence_carrier_causal_distributed",
+              "github:2603_21396::evidence_carriers_identified"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_f14215c6",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_5dec49ba",
+              "github:2603_21396::claim_distinct_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The layer-separated processing hierarchy—evidence carriers in early post-injection layers aggregating upstream signal and suppressing late gate features (@circuit_hierarchy)—combined with the emergence of the gate inverted-V pattern specifically in post-trained (not base) models (@gate_inverted_v_posttraining) and validation via steering attribution tracing the complete causal pathway (@steering_attribution_validation) establishes a mechanistically specific two-stage detection circuit. Evidence carriers, identified by their monotonic activation increase with steering and gate suppression property (@evidence_carriers_identified), form a distributed front end (@evidence_carrier_causal_distributed) while gates serve as a convergent binary decision point. This architecture is distinct from any identification mechanism."
+      },
+      "premises": [
+        "github:2603_21396::circuit_hierarchy",
+        "github:2603_21396::gate_inverted_v_posttraining",
+        "github:2603_21396::steering_attribution_validation",
+        "github:2603_21396::evidence_carrier_causal_distributed",
+        "github:2603_21396::evidence_carriers_identified"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_385883c21a9ef679",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::concept_injection_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_underelicited",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_1cc2f842",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::abliteration_increases_detection",
+              "github:2603_21396::claim_underelicited"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Refusal direction ablation boosting TPR from 10.8% to 63.8% (@abliteration_increases_detection) reveals that the model possesses substantially more introspective capability than it exercises under default prompting. This hidden capacity, suppressed by refusal mechanisms, is direct evidence of underelicitation: the capability exists but is inhibited."
+      },
+      "premises": [
+        "github:2603_21396::abliteration_increases_detection"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8732b92a5d55d296",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_21396::bias_vector_training_setup",
+        "github:2603_21396::gemma3_setup",
+        "github:2603_21396::concept_injection_setup"
+      ],
+      "conclusion": "github:2603_21396::claim_underelicited",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__conjunction_result_ca62dac8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_21396::bias_vector_performance",
+              "github:2603_21396::bias_vector_mechanism",
+              "github:2603_21396::bias_vector_reporting_style"
+            ]
+          },
+          {
+            "conclusion": "github:2603_21396::__implication_result_9f750ae4",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::__conjunction_result_ca62dac8",
+              "github:2603_21396::claim_underelicited"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The substantial gains from a single trained bias vector (+74.7% detection, +54.7% introspection; @bias_vector_performance) without any false positives on held-out concepts demonstrates that introspective capacity exists latently but is substantially suppressed by default. The mechanism (@bias_vector_mechanism) and behavioral analysis (@bias_vector_reporting_style) confirm this is primarily a threshold-lowering effect on pre-existing components rather than the creation of new capabilities, making the underelicitation interpretation compelling."
+      },
+      "premises": [
+        "github:2603_21396::bias_vector_performance",
+        "github:2603_21396::bias_vector_mechanism",
+        "github:2603_21396::bias_vector_reporting_style"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3389a7c969d062ee",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_21396::claim_underelicited",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_21396::__implication_result_2ec2ddd5",
+            "operator": "implication",
+            "variables": [
+              "github:2603_21396::lora_finetuning_replication",
+              "github:2603_21396::claim_underelicited"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Independent external replication (@lora_finetuning_replication) confirms that with lightweight finetuning, models can achieve dramatically higher detection rates (95.5%) with 0% FPR, providing strong converging evidence that the default low detection rates reflect underelicitation rather than a fundamental limit on introspective capability."
+      },
+      "premises": [
+        "github:2603_21396::lora_finetuning_replication"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_79abb3ee3e80ae87",
+      "type": "support"
+    }
+  ]
+}

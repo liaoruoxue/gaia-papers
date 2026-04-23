@@ -1,0 +1,288 @@
+{
+  "holes": [
+    {
+      "content": "Refusal direction ablation ('abliteration') on Gemma3-27B instruct increases true positive rate from 10.8% to 63.8% and introspection rate from 4.6% to 24.1% (at alpha=2), while increasing FPR from 0.0% to 7.3%. This result suggests that refusal mechanisms learned during post-training suppress genuine detection, while also reducing false positives—introspection and refusal are in tension.",
+      "content_hash": "eed2b472d90b5660ee0e2d9dca9aa08e949aaeec74717bae1085b8aece3081e9",
+      "interface_hash": "sha256:c9c80f20801372db3a2277195f614222f45ef94b5b3cf6fc7357961714c8cce9",
+      "label": "abliteration_increases_detection",
+      "qid": "github:2603_21396::abliteration_increases_detection",
+      "required_by": [
+        "github:2603_21396::claim_underelicited"
+      ]
+    },
+    {
+      "content": "Causal analysis of 50 highest-attributed attention heads (layers 38-61) in Gemma3-27B reveals no individual attention head meaningfully improves prediction of detection success: mean binary accuracy change from linear probes before vs. after each head's output is -0.1% +/- 0.3%. Additionally, mean-ablating full attention layers produces minimal effects on detection rate, suggesting no single head or layer is critical—attention contributes collectively but redundantly.",
+      "content_hash": "260070b9cb7aa8c2268841327dd712ff00d8397b50f1b19bc2476999765b0e8f",
+      "interface_hash": "sha256:e0101b6b64de0af30db7445d2230ce965831967be866e47373e34926508da382",
+      "label": "attention_heads_not_critical",
+      "qid": "github:2603_21396::attention_heads_not_critical",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "The Gemma3-27B base model does not discriminate between injected and control trials: it exhibits both high FPR (42.3%) and comparable TPR (39.5%–41.7% for alpha <= 4), indicating no genuine detection. A similar pattern is observed for OLMo-3.1-32B base: high FPR that only drops to ~0% after DPO training.",
+      "content_hash": "f88daea0e7954f00accf429125c7daae0dc42ee5a7ac4c30d248e2e2cf9a82bf",
+      "interface_hash": "sha256:472589203b783e0fb6c55cb76e8966c4b44c1151d2e9a689759b8f7a49340a55",
+      "label": "base_model_no_discrimination",
+      "qid": "github:2603_21396::base_model_no_discrimination",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "Steering attribution analysis under the learned bias vector shows that the dominant gate L45 F9959 is suppressed and attribution shifts to late-layer features compared to the baseline (without bias vector). The bias vector enhances performance even for injection layers after where it is applied (L=29), and the localization pattern does not fundamentally change, suggesting the vector primarily amplifies pre-existing introspection components rather than introducing new mechanisms.",
+      "content_hash": "a3d0b41d1f3581bceedfc6bbcd179c78137d78a1c2d4a26704ddd8c5517158a4",
+      "interface_hash": "sha256:ca0bf150b3aaa43df98ea6c25e8538285e599a0633f59a879bff64638faa525c",
+      "label": "bias_vector_mechanism",
+      "qid": "github:2603_21396::bias_vector_mechanism",
+      "required_by": [
+        "github:2603_21396::claim_underelicited"
+      ]
+    },
+    {
+      "content": "A learned bias vector (equivalent to an always-present steering vector) applied at layer L=29 in Gemma3-27B improves introspection substantially on 100 held-out concepts:\n\n| Metric | Improvement |\n|--------|-------------|\n| Detection rate (TPR) | +74.7% |\n| Forced identification | +21.9% |\n| Introspection rate | +54.7% |\n| False positive rate | 0% (maintained) |\n\nPerformance improves across a broad range of injection layers, with detection showing gains across a wider layer range than forced identification (which shows stronger dependence on downstream circuitry). The localization pattern (peak improvement layers) does not fundamentally change under the bias vector.",
+      "content_hash": "85a12c742aec892d10332e8796b8fe8b5cb0346bab6d663ecc026b895f8f9f0f",
+      "interface_hash": "sha256:2b11a60fb28ebabd5cb58e5ae3b854ef1134a7f81a86c830cd146aa279a090ba",
+      "label": "bias_vector_performance",
+      "qid": "github:2603_21396::bias_vector_performance",
+      "required_by": [
+        "github:2603_21396::claim_underelicited"
+      ]
+    },
+    {
+      "content": "Analysis of the learned bias vector's semantics and downstream behavioral effects suggests it primarily induces a conditional, more assertive reporting style that better elicits introspection, rather than altering the underlying detection mechanisms. The model possesses latent introspective capacity; the learned bias vector lowers the threshold for accurate self-report.",
+      "content_hash": "6e58359c2cc26d4835a53c393734ca589e97c7b63cd3c6af96bdfe2995c8635c",
+      "interface_hash": "sha256:07b0452e5c88238e89a3e18944a44b28838f066d7110bad55791aa057cc8f16e",
+      "label": "bias_vector_reporting_style",
+      "qid": "github:2603_21396::bias_vector_reporting_style",
+      "required_by": [
+        "github:2603_21396::claim_underelicited"
+      ]
+    },
+    {
+      "content": "Bidirectional steering experiment on 1,000 randomly sampled success-success (S-S) pairs and 1,000 failure-failure (F-F) pairs: in 23.3% of S-S pairs, both opposite directions (A-B and B-A) trigger detection, compared to only 3.2% for F-F pairs. The nonzero rate of bidirectional detection in S-S pairs is inconsistent with a single linear direction hypothesis, since if detection were governed by one direction, at most one of A-B or B-A could trigger detection for any pair.",
+      "content_hash": "7f0a8c7e1c6f52829dfbd3e62db4ab1c65e22c05f8787faa71e395963a49aa07",
+      "interface_hash": "sha256:7e89902a494e01764126bf387195a20c7d037abbfabd69ae732e2500954d6f00",
+      "label": "bidirectional_steering_result",
+      "qid": "github:2603_21396::bidirectional_steering_result",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    },
+    {
+      "content": "Transcoder feature layer distributions reveal a processing hierarchy: evidence carriers concentrate in earlier layers (peaking at layer 38, immediately post-injection at L=37), while gate features concentrate in later layers (45-61). This layer separation is consistent with gates aggregating upstream evidence signals into the binary detection decision. Ablating all evidence carriers (alpha=4) roughly doubles gate activation (from ~1,700-2,300 to ~3,800-5,950 units), confirming they are causally involved in gate suppression.",
+      "content_hash": "d144c47756552c77c07f64e3c65fd16a86ff74903f1a043ab9847cdb03d07b19",
+      "interface_hash": "sha256:ac0414506a7951274c7f4520e980d9fa6d7f62047f66f01620fb26c4d94d89d2",
+      "label": "circuit_hierarchy",
+      "qid": "github:2603_21396::circuit_hierarchy",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Three orthogonal principal components (delta-PCs) extracted from the residual space of success concept vectors after projecting out d_delta_mu each independently trigger detection with distinct response profiles and produce bidirectional detection. The three directions encode distinct semantic contrasts:\n\n| Direction | Variance explained | Semantic contrast |\n|-----------|-------------------|-------------------|\n| delta-PC1 | 19.6% | Casual (-) <-> Formal (+) |\n| delta-PC2 | 12.0% | Concrete (-) <-> Abstract (+) |\n| delta-PC3 | 8.4% | Emotions (-) <-> Careers (+) |",
+      "content_hash": "6a7d236273a471288b78908a27fe3319b727699ba7c07fce17b3162b9d699750",
+      "interface_hash": "sha256:56a0e9e993b911bc93ca9da78651dab71edf543b153acd297e9d02c62b3a7ade",
+      "label": "delta_pcs_result",
+      "qid": "github:2603_21396::delta_pcs_result",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    },
+    {
+      "content": "In Gemma3-27B, the detection rate (P(detect | injection)) peaks in mid-layers (approximately layer 29-37) when sweeping the injection layer, while forced identification rate (P(identify | prefill AND injection)) increases toward late layers (approximately layer 55). The correlation between detection and identification rates becomes positive only when the concept is injected in mid-to-late layers.",
+      "content_hash": "504c2fef684cf4a6fb2ed01c1e2c28df227032f6bf05115d95b5b198d45c8020",
+      "interface_hash": "sha256:da5695e844ed2481378fcce2f81e30b53d1452a6258a0d6123c8f1be6d708ba7",
+      "label": "detection_peaks_midlayer",
+      "qid": "github:2603_21396::detection_peaks_midlayer",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "LoRA finetuning ablations on OLMo-3.1-32B SFT checkpoint reveal that the contrastive structure of DPO is the primary driver of introspection, not KL anchoring or the specific DPO loss function:\n\n| Condition | TPR-FPR (%) | Introspection (%) |\n|-----------|-------------|-------------------|\n| Margin + KL | +14.3 ± 1.6 | 6.8 ± 1.1 |\n| DPO standard | +14.4 ± 1.6 | 7.0 ± 0.8 |\n| DPO no-reference | +12.8 ± 2.1 | 5.8 ± 1.0 |\n| DPO* (official) | +9.8 ± 0.5 | 3.5 ± 0.3 |\n| DPO on base (no SFT) | +8.4 ± 1.4 | 2.4 ± 0.7 |\n| DPO shuffled | +0.6 ± 2.8 | 3.6 ± 0.8 |\n| SFT* (official) | -11.5 ± 2.4 | 1.7 ± 0.2 |\n| SFT on chosen | -13.5 ± 3.6 | 4.6 ± 0.9 |\n| SFT on chosen + KL | -15.6 ± 3.6 | 4.8 ± 1.0 |\n| DPO reversed | -21.8 ± 3.2 | 1.0 ± 0.4 |\n\nRemoving the reference model preserves discrimination (+12.8%), a margin-based contrastive loss with explicit KL achieves comparable results (+14.3%), and shuffled preferences eliminate the effect (+0.6%). Non-contrastive SFT alternatives fail. No single data domain is necessary or sufficient.",
+      "content_hash": "6a4095768c58e34d06f1e3b09fdc9cb626276d57750c85c63e2e1cda8cf87286",
+      "interface_hash": "sha256:280af055b7613d1a3ba94470a8729c7f9d87c1702356f2205df18ddb656900da",
+      "label": "dpo_contrastive_structure_key",
+      "qid": "github:2603_21396::dpo_contrastive_structure_key",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "In OLMo-3.1-32B checkpoints across training stages (Base -> SFT -> DPO -> Instruct), DPO is the first stage to achieve ~0% FPR with moderate true detection. SFT produces high FPR with no accurate discrimination. The effect of DPO is replicated using LoRA finetuning with DPO on top of OLMo-3.1-32B SFT and on top of Gemma3-27B base.",
+      "content_hash": "f885d8049963fd178b83a9fa5f463c7c6df8367559d6b8e3d55fc9e07679b802",
+      "interface_hash": "sha256:c9e2994aaeaf349e70f8cc5e6d1ae50abc4af4a3c4868b2ba24cd35a692efe8c",
+      "label": "dpo_enables_introspection",
+      "qid": "github:2603_21396::dpo_enables_introspection",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "Progressive ablation of top-ranked evidence carriers produces only modest reductions in detection rates (from 38.6% to 13.8% after ablating 441k carriers), substantially more gradual than gate ablation (fewer than 200 gates reduce detection from 39.5% to 10.1%). Patching carriers onto unsteered examples yields similarly small effects. This demonstrates a distributed representation: many features each contribute weak evidence that is aggregated downstream, with no small subset individually necessary or sufficient.",
+      "content_hash": "5c7c47919e344d0a75a4a38e9186e84936aa7762a58953236eda950af4ae5ef0",
+      "interface_hash": "sha256:00132e83513e09bf2f6b29ebb94a34ea850c6c7e79783f2e3165dbbedea19591",
+      "label": "evidence_carrier_causal_distributed",
+      "qid": "github:2603_21396::evidence_carrier_causal_distributed",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Evidence carrier features are identified by four criteria:\n1. Positive dose-strength correlation (activation increases with steering magnitude)\n2. Nonzero detection correlation\n3. Nonzero forced identification correlation\n4. Negative gate attribution (decoder direction dot encoder direction of top gates < 0, meaning the feature suppresses gate activation)\n\nEvidence carriers number in the hundreds of thousands, with individual contributions correspondingly diluted. The top-ranked carriers include concept-specific features (e.g., geological terminology for 'Granite', astronomical phenomena for 'Constellations') and concept-agnostic features related to emphatic transitions in text.",
+      "content_hash": "f7bceb423f9e70c3cec2914ec04e8e6cac0769aa1a37bd5643026ffd856eb3ea",
+      "interface_hash": "sha256:2293105052dce1bb8f527c496a854bb4bb1811e59fc86ba55da9d68c17fb8261",
+      "label": "evidence_carriers_identified",
+      "qid": "github:2603_21396::evidence_carriers_identified",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Progressive ablation of top-ranked gate features from steered examples reduces detection rate from 39.5% to 10.1%, demonstrating causal necessity. Patching steered-example gate activations onto unsteered prompts provides partial sufficiency (max detection: 25.1%). Forced identification rate when ablating gates drops more moderately (57.7% to 46.2%), indicating the model retains access to steering information through other pathways even when gate-driven detection is blocked.",
+      "content_hash": "0c2daa70941b6c46367406f2f59aa88fee886b32d90d2f98681aa1dfca45917f",
+      "interface_hash": "sha256:f25dbae5382f6f950a2bc32c8efb7be6ee17c1b6d59a1e20415cb53e42a9bca2",
+      "label": "gate_causal_necessity",
+      "qid": "github:2603_21396::gate_causal_necessity",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Gate features are identified as the top-200 transcoder features with the most negative direct logit attribution (most strongly promoting the 'No' response). Gate features characteristically exhibit:\n1. Negative dose-strength correlation: most active when unsteered, suppressed at both positive and negative steering extremes, producing an inverted-V activation pattern.\n2. Negative detection correlation (r = -0.228 for the top gate L45 F9959).\n3. Negative forced identification correlation (r = -0.088 for L45 F9959).\nSemantically, many gate features correspond to tokens preceding or within negative responses to questions (e.g., tokens preceding 'no' in idioms, emphatic negation markers), consistent with a default 'say no' circuit.",
+      "content_hash": "0d849d36584811bb075ebb17493ef8c2036f5ae6d0c7275366b18e2c3c904dda",
+      "interface_hash": "sha256:dd109eeada59354a067e6c814e9e8e992688f2ce7e92842dcb4208c041ebfc0b",
+      "label": "gate_features_identified",
+      "qid": "github:2603_21396::gate_features_identified",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "The characteristic inverted-V activation pattern of the top gate feature (L45 F9959) across steering strength is prominent in the instruct model but substantially weaker in the base model, consistent with post-training developing the gating mechanism rather than merely eliciting a pre-existing one. The abliterated model preserves the inverted-V pattern, indicating gate features are not refusal-specific and survive refusal direction ablation.",
+      "content_hash": "b1af8fae829e457e215ffcb98cda9debd1da64085193b41e6577fae25fc55b59",
+      "interface_hash": "sha256:06107f64e9b408cd59c25fa15e8c612d505c20ee67966b0d7fc71e59c64b3930",
+      "label": "gate_inverted_v_posttraining",
+      "qid": "github:2603_21396::gate_inverted_v_posttraining",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Rivera & Africa (2026) show that lightweight LoRA finetuning can train models to detect steering with up to 95.5% accuracy and 71.2% concept identification on held-out concepts (0% FPR), further corroborating that introspective capabilities are underelicited by default. They also find that injected steering vectors are progressively rotated toward a shared detection direction across layers, consistent with the evidence carrier to gate processing hierarchy identified in this paper.",
+      "content_hash": "04e8352693ea3d8680963159a8ca8169489357b1d9525a39c3152344082cfb68",
+      "interface_hash": "sha256:c82c3561744d06984078e79b6c6907838fe67e26b9d1a6d57a6e17d4a3366253",
+      "label": "lora_finetuning_replication",
+      "qid": "github:2603_21396::lora_finetuning_replication",
+      "required_by": [
+        "github:2603_21396::claim_underelicited"
+      ]
+    },
+    {
+      "content": "Mean-ablating MLP outputs at each post-steering layer in Gemma3-27B (L=37, alpha=4): L45 MLP produces the largest detection drop (from 39.0% to 24.2% at L=37). L45 MLP is also the only component whose steered activations, when patched into an unsteered run, significantly raise detection (partial sufficiency). The same L45 localization holds for the abliterated model. The base model shows no such localization—confirming the circuit emerges from post-training.",
+      "content_hash": "fce24285b646913a20de1b2a94c7e86d77ee13bfc78380d2d1843b52d24f53bb",
+      "interface_hash": "sha256:164aef94152f61884844d807491b64d62d9883c8d0867379d2bb73f83e4eca0a",
+      "label": "mlp_l45_causal_result",
+      "qid": "github:2603_21396::mlp_l45_causal_result",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Prompt variants that remove incentives to confabulate—specifically the 'alternative' variant (offering an escape route to discuss any concept) and the 'anti-reward' variant (penalizing any concept mention)—both maintain moderate detection rates with 0% false positives. This evidence suggests models do not claim detection merely as a pretext to discuss the injected concept.",
+      "content_hash": "edee1c68dd08bdbe5ca05bc5af476ea52ad553093f8d102d65ee9a8a31618815",
+      "interface_hash": "sha256:5bf4d6aa8e94b0d2f2fdb69dc02b85c99dbb54135404f4a06662666b71f0a3ed",
+      "label": "no_pretext_claim",
+      "qid": "github:2603_21396::no_pretext_claim",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "Principal component analysis (PCA) of 500 L2-normalized concept vectors (L=37, Gemma3-27B): PC1 explains 18.4% of variance and aligns strongly with d_delta_mu (cosine similarity = 0.97) but is nearly orthogonal to the refusal direction (cosine = -0.09). Logit lens on d_delta_mu shows positive loading on tokens 'facts' and 'knowledge', and negative loading on 'confused' and 'ambiguous', suggesting the mean direction captures 'factual assertiveness' or the distinction between factual knowledge and uncertain fuzzy content. Projection onto d_delta_mu correlates with concept verbalizability (Spearman rho = 0.605).",
+      "content_hash": "6a790a8b468ff8733777fad2fa4c6e19a08050d131e207c4d4fedf32c55fcf79",
+      "interface_hash": "sha256:aa48d79e4955e5f4a565b8567a3623f108313e85bb87d98f399eb3c12756210d",
+      "label": "pca_geometry_result",
+      "qid": "github:2603_21396::pca_geometry_result",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    },
+    {
+      "content": "Compared to the default chat template (control), Gemma3-27B dialogue format variants with reversed, misformatted, or no roles exhibit lower yet still statistically significant levels of introspection, with FPR remaining at 0%. The two non-standard roles (Alice-Bob third-person narrative and story framing) induce confabulation (higher FPR). Introspection is thus not exclusive to responding as the assistant character, though reliability decreases outside standard roles.",
+      "content_hash": "53172c82389e9f525e0b8cac250e37289c614f0970072cdef3e1c8cb9fa677c0",
+      "interface_hash": "sha256:a8eb6663baea990625b38119f2da548102164d313db2e3b43fc900ab49aa01f1",
+      "label": "persona_robustness_result",
+      "qid": "github:2603_21396::persona_robustness_result",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "The top-200 transcoder features with the most positive direct logit attribution (most strongly promoting 'Yes' response) show no measurable causal effect on detection: progressively ablating these features does not change detection rate, and patching their steered activations into unsteered runs produces near-zero detection. This contrasts sharply with gate features (negative attribution) where ablating fewer than 200 features reduces detection from 39.5% to 10.1%.",
+      "content_hash": "63389a5c2f3befda01a06beb5c31bd13b96bc60e3974149f7ff46aadf0c974d8",
+      "interface_hash": "sha256:935d0d92d9e1f5a97b6fdf67cd76bc4dc0282be9c8ee3671333717e20a205625",
+      "label": "positive_attribution_features_no_effect",
+      "qid": "github:2603_21396::positive_attribution_features_no_effect",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Direction swap experiment on 500 concept vectors (Gemma3-27B, L=37): for success concepts, swapping the projection onto d_delta_mu to failure-like projections reduces detection rate from 66.1% to 39.0%; swapping residuals also reduces detection to 44.4%. For failure concepts, both swaps increase detection to similar levels: projection swap increases from 8.8% to 34.2% and residual swap increases to 32.8%. Results using the ridge regression direction (dridge) show similar patterns: for success concepts, ridge projection swap reduces detection from 65.3% to 49.6%, while residual swap reduces it more strongly (65.3% to 31.6%).",
+      "content_hash": "b6d9fcb343636e1c6abc6085f6fa596ebb6996f699596f14fc6ff47a78a6539f",
+      "interface_hash": "sha256:605b1a3f462dadad56e5b0cf2bbfabb9c0e170ee43caaf1bfe7327d721d1413c",
+      "label": "projection_swap_result",
+      "qid": "github:2603_21396::projection_swap_result",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    },
+    {
+      "content": "Across seven prompt variants tested on Gemma3-27B and Qwen3-235B, results are roughly consistent. The original, alternative, and skeptical prompt variants produce 0% false positives while achieving moderate detection rates (higher TPR for Qwen3-235B, the larger model). The structured setup suppresses detection in Gemma3-27B but not in Qwen3-235B. The hints and unprompted variants both produce higher FPR and lower TPR for both models.",
+      "content_hash": "c0d1564a3a2c1d6453ba96ea10974fb9f17e63ad4a755452e645f63033a202a3",
+      "interface_hash": "sha256:8228d833398c649dfcb91958521e4b4189f9c23e0ab1d721200a89cc3fa0867f",
+      "label": "prompt_robustness_result",
+      "qid": "github:2603_21396::prompt_robustness_result",
+      "required_by": [
+        "github:2603_21396::claim_behaviorally_robust"
+      ]
+    },
+    {
+      "content": "The mean-difference direction d_delta_mu between success and failure concepts is nearly orthogonal to the refusal direction (cosine similarity = -0.09), despite the fact that refusal ablation increases detection rates. This rules out the hypothesis that successful detection arises from concept vectors aligning with the refusal direction.",
+      "content_hash": "ba68e09df2ef999cb9d16518aebe6fefd1bd35948db1714de825c91e30f6ff36",
+      "interface_hash": "sha256:f1e34a51ffb9adda86846989fda0adb79dbe1e0655c4ff36ce2b11fda1dc853a",
+      "label": "refusal_direction_not_mean_diff",
+      "qid": "github:2603_21396::refusal_direction_not_mean_diff",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    },
+    {
+      "content": "Steering attribution analysis (a framework that decomposes the total effect of injection strength into per-feature contributions) validates the circuit structure: layer-level attribution confirms L45 as the dominant MLP layer, with L38-39 contributing early signal. Feature-level attribution graphs for the 'Bread' concept reveal that both concept-related residual features (food-related features) and concept-agnostic features feed into mid-layer evidence carriers and converge on L45 F9959 as the dominant gate node.",
+      "content_hash": "ff9128237373c4268d277dbf4b07ea4d5f2887570faafeeb6cdc21a117b84aea",
+      "interface_hash": "sha256:17ecf7a94cc24854725feb6e84d156cb08e1a3544912a623a76cf024c4847547",
+      "label": "steering_attribution_validation",
+      "qid": "github:2603_21396::steering_attribution_validation",
+      "required_by": [
+        "github:2603_21396::claim_distinct_mechanisms"
+      ]
+    },
+    {
+      "content": "Ridge regression to predict per-concept detection rate based on downstream transcoder features (layers 38-61, Gemma3-27B) achieves R^2 = 0.624 at 4,500 features, substantially outperforming scalar projection onto d_delta_mu (R^2 = 0.309) and regression on raw concept vectors (R^2 = 0.444). Binary classification AUC results show the same ordering: transcoder features 0.898 > concept vectors 0.857 > d_delta_mu scalar 0.822 > verbalizability 0.696.",
+      "content_hash": "52b90b6d01e77fa64a8645807a2e1cfe911d51ce55d86439cd9bcbbc5749c74e",
+      "interface_hash": "sha256:fa8ccb00e7e9141f617ef0129cc5f0be85b68da81a2d3354ff9f85083953e8af",
+      "label": "transcoder_features_r2",
+      "qid": "github:2603_21396::transcoder_features_r2",
+      "required_by": [
+        "github:2603_21396::claim_not_single_linear"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:e8ac8cf8256fb252c5cad29afc648110dc544f1056f300fe4cf38982c0939ef0",
+  "manifest_schema_version": 1,
+  "package": "2603-21396",
+  "version": "0.1.0"
+}

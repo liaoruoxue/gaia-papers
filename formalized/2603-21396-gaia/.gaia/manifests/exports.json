@@ -1,0 +1,92 @@
+{
+  "exports": [
+    {
+      "content": "A learned bias vector (equivalent to an always-present steering vector) applied at layer L=29 in Gemma3-27B improves introspection substantially on 100 held-out concepts:\n\n| Metric | Improvement |\n|--------|-------------|\n| Detection rate (TPR) | +74.7% |\n| Forced identification | +21.9% |\n| Introspection rate | +54.7% |\n| False positive rate | 0% (maintained) |\n\nPerformance improves across a broad range of injection layers, with detection showing gains across a wider layer range than forced identification (which shows stronger dependence on downstream circuitry). The localization pattern (peak improvement layers) does not fundamentally change under the bias vector.",
+      "content_hash": "85a12c742aec892d10332e8796b8fe8b5cb0346bab6d663ecc026b895f8f9f0f",
+      "label": "bias_vector_performance",
+      "qid": "github:2603_21396::bias_vector_performance",
+      "type": "claim"
+    },
+    {
+      "content": "Transcoder feature layer distributions reveal a processing hierarchy: evidence carriers concentrate in earlier layers (peaking at layer 38, immediately post-injection at L=37), while gate features concentrate in later layers (45-61). This layer separation is consistent with gates aggregating upstream evidence signals into the binary detection decision. Ablating all evidence carriers (alpha=4) roughly doubles gate activation (from ~1,700-2,300 to ~3,800-5,950 units), confirming they are causally involved in gate suppression.",
+      "content_hash": "d144c47756552c77c07f64e3c65fd16a86ff74903f1a043ab9847cdb03d07b19",
+      "label": "circuit_hierarchy",
+      "qid": "github:2603_21396::circuit_hierarchy",
+      "type": "claim"
+    },
+    {
+      "content": "LLM introspective awareness is behaviorally robust: Gemma3-27B and Qwen3-235B detect injected steering vectors at moderate nonzero rates with 0% false positives across diverse prompts and dialogue formats. The capability is absent in base models and emerges from post-training, specifically from contrastive preference optimization algorithms like DPO (direct preference optimization), but not from supervised finetuning (SFT).",
+      "content_hash": "2a8699135f06c410223bc28dbd44cb532b384f11bc1ba4babc8c81ad1fea9582",
+      "label": "claim_behaviorally_robust",
+      "qid": "github:2603_21396::claim_behaviorally_robust",
+      "type": "claim"
+    },
+    {
+      "content": "Detection and identification of injected concepts are handled by largely distinct mechanisms in different layers of the model. MLPs at approximately 70% depth (around layer 45 in Gemma3-27B) are causally necessary and sufficient for detection. A two-stage circuit implements detection: 'evidence carrier' features in early post-injection layers detect perturbations, suppressing downstream 'gate' features that implement a default negative response.",
+      "content_hash": "d7bd310f825a21e56163c20e96f9d0d501e66fe9c90db398c7991428ba4b4791",
+      "label": "claim_distinct_mechanisms",
+      "qid": "github:2603_21396::claim_distinct_mechanisms",
+      "type": "claim"
+    },
+    {
+      "content": "Introspective anomaly detection cannot be fully reduced to a single linear direction in activation space. While one direction (the mean-difference direction between success and failure concepts) explains a substantial fraction of detection variance, the underlying computation is distributed across multiple directions, indicating the capability is not explained simply by certain concept vectors aligning with a direction that promotes affirmative responses in general.",
+      "content_hash": "fc957e7721516d1bf7bd8ea2591251cb2b9a07f49b7c3302e75cfd8e612d7c39",
+      "label": "claim_not_single_linear",
+      "qid": "github:2603_21396::claim_not_single_linear",
+      "type": "claim"
+    },
+    {
+      "content": "Introspective capability is substantially underelicited by default in post-trained LLMs. Ablating refusal directions improves detection from 10.8% to 63.8% with only modest false positive increases (0% to 7.3%). Training a single additive bias vector improves detection by +75% and introspection rate by +55% on held-out concepts without increasing false positives, demonstrating substantial latent introspective capacity that default prompting fails to surface.",
+      "content_hash": "ab397fad5f6b1cda0b37053e9de02d9e7d207b7c4d26513fd9b8fc80bdd9bc86",
+      "label": "claim_underelicited",
+      "qid": "github:2603_21396::claim_underelicited",
+      "type": "claim"
+    },
+    {
+      "content": "LoRA finetuning ablations on OLMo-3.1-32B SFT checkpoint reveal that the contrastive structure of DPO is the primary driver of introspection, not KL anchoring or the specific DPO loss function:\n\n| Condition | TPR-FPR (%) | Introspection (%) |\n|-----------|-------------|-------------------|\n| Margin + KL | +14.3 ± 1.6 | 6.8 ± 1.1 |\n| DPO standard | +14.4 ± 1.6 | 7.0 ± 0.8 |\n| DPO no-reference | +12.8 ± 2.1 | 5.8 ± 1.0 |\n| DPO* (official) | +9.8 ± 0.5 | 3.5 ± 0.3 |\n| DPO on base (no SFT) | +8.4 ± 1.4 | 2.4 ± 0.7 |\n| DPO shuffled | +0.6 ± 2.8 | 3.6 ± 0.8 |\n| SFT* (official) | -11.5 ± 2.4 | 1.7 ± 0.2 |\n| SFT on chosen | -13.5 ± 3.6 | 4.6 ± 0.9 |\n| SFT on chosen + KL | -15.6 ± 3.6 | 4.8 ± 1.0 |\n| DPO reversed | -21.8 ± 3.2 | 1.0 ± 0.4 |\n\nRemoving the reference model preserves discrimination (+12.8%), a margin-based contrastive loss with explicit KL achieves comparable results (+14.3%), and shuffled preferences eliminate the effect (+0.6%). Non-contrastive SFT alternatives fail. No single data domain is necessary or sufficient.",
+      "content_hash": "6a4095768c58e34d06f1e3b09fdc9cb626276d57750c85c63e2e1cda8cf87286",
+      "label": "dpo_contrastive_structure_key",
+      "qid": "github:2603_21396::dpo_contrastive_structure_key",
+      "type": "claim"
+    },
+    {
+      "content": "In OLMo-3.1-32B checkpoints across training stages (Base -> SFT -> DPO -> Instruct), DPO is the first stage to achieve ~0% FPR with moderate true detection. SFT produces high FPR with no accurate discrimination. The effect of DPO is replicated using LoRA finetuning with DPO on top of OLMo-3.1-32B SFT and on top of Gemma3-27B base.",
+      "content_hash": "f885d8049963fd178b83a9fa5f463c7c6df8367559d6b8e3d55fc9e07679b802",
+      "label": "dpo_enables_introspection",
+      "qid": "github:2603_21396::dpo_enables_introspection",
+      "type": "claim"
+    },
+    {
+      "content": "Progressive ablation of top-ranked gate features from steered examples reduces detection rate from 39.5% to 10.1%, demonstrating causal necessity. Patching steered-example gate activations onto unsteered prompts provides partial sufficiency (max detection: 25.1%). Forced identification rate when ablating gates drops more moderately (57.7% to 46.2%), indicating the model retains access to steering information through other pathways even when gate-driven detection is blocked.",
+      "content_hash": "0c2daa70941b6c46367406f2f59aa88fee886b32d90d2f98681aa1dfca45917f",
+      "label": "gate_causal_necessity",
+      "qid": "github:2603_21396::gate_causal_necessity",
+      "type": "claim"
+    },
+    {
+      "content": "Gate features are identified as the top-200 transcoder features with the most negative direct logit attribution (most strongly promoting the 'No' response). Gate features characteristically exhibit:\n1. Negative dose-strength correlation: most active when unsteered, suppressed at both positive and negative steering extremes, producing an inverted-V activation pattern.\n2. Negative detection correlation (r = -0.228 for the top gate L45 F9959).\n3. Negative forced identification correlation (r = -0.088 for L45 F9959).\nSemantically, many gate features correspond to tokens preceding or within negative responses to questions (e.g., tokens preceding 'no' in idioms, emphatic negation markers), consistent with a default 'say no' circuit.",
+      "content_hash": "0d849d36584811bb075ebb17493ef8c2036f5ae6d0c7275366b18e2c3c904dda",
+      "label": "gate_features_identified",
+      "qid": "github:2603_21396::gate_features_identified",
+      "type": "claim"
+    },
+    {
+      "content": "The characteristic inverted-V activation pattern of the top gate feature (L45 F9959) across steering strength is prominent in the instruct model but substantially weaker in the base model, consistent with post-training developing the gating mechanism rather than merely eliciting a pre-existing one. The abliterated model preserves the inverted-V pattern, indicating gate features are not refusal-specific and survive refusal direction ablation.",
+      "content_hash": "b1af8fae829e457e215ffcb98cda9debd1da64085193b41e6577fae25fc55b59",
+      "label": "gate_inverted_v_posttraining",
+      "qid": "github:2603_21396::gate_inverted_v_posttraining",
+      "type": "claim"
+    },
+    {
+      "content": "Mean-ablating MLP outputs at each post-steering layer in Gemma3-27B (L=37, alpha=4): L45 MLP produces the largest detection drop (from 39.0% to 24.2% at L=37). L45 MLP is also the only component whose steered activations, when patched into an unsteered run, significantly raise detection (partial sufficiency). The same L45 localization holds for the abliterated model. The base model shows no such localization—confirming the circuit emerges from post-training.",
+      "content_hash": "fce24285b646913a20de1b2a94c7e86d77ee13bfc78380d2d1843b52d24f53bb",
+      "label": "mlp_l45_causal_result",
+      "qid": "github:2603_21396::mlp_l45_causal_result",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:e8ac8cf8256fb252c5cad29afc648110dc544f1056f300fe4cf38982c0939ef0",
+  "manifest_schema_version": 1,
+  "package": "2603-21396",
+  "version": "0.1.0"
+}
