@@ -1,0 +1,1880 @@
+{
+  "ir_hash": "sha256:3497ce3624cc4c0557b04bf441dc533ec19e043ad846c4c86fcff722b34983e1",
+  "knowledges": [
+    {
+      "content": "Large language models (LLMs) are increasingly deployed as search operators in iterative optimization systems. In such workflows, LLMs are embedded into evolutionary or agentic loops as black-box optimizers: they repeatedly propose candidate solutions, receive fitness feedback, and iteratively refine solutions. This paradigm has been applied to prompt optimization, symbolic regression, combinatorial optimization, and scientific discovery.",
+      "content_hash": "39a2bfb58100ecccf8be2d76d9a7335ad2e3a8904cd7d1b9faf004efcab1f4f8",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_19440::llm_as_search_operators",
+      "label": "llm_as_search_operators",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLMs as evolutionary search operators",
+      "type": "setting"
+    },
+    {
+      "content": "In classical evolutionary algorithms, the exploration–exploitation trade-off is managed via stochastic mutation and crossover operators. Novelty (distance to prior solutions) is treated as a proxy for exploration. Higher novelty in classical settings typically indicates broader coverage of the search space, which should improve long-horizon optimization. In meta-heuristics, large breakthroughs occur at rare intervals, followed by long plateaus or small refinements [@Mitchell1999].",
+      "content_hash": "af2e2d7135a4da960f6c5605be6764930f181730e2c00b1c3e2c92916ed51d0b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_19440::exploration_exploitation_classical",
+      "label": "exploration_exploitation_classical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mitchell1999"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Classical evolutionary exploration–exploitation paradigm",
+      "type": "setting"
+    },
+    {
+      "content": "In LLM-driven metaheuristics, the mutation operator is no longer fully random but is strongly shaped by the LLM's prior toward producing improved solutions conditioned on parent candidates and their fitness feedback. Consequently, exploration is more structured and constrained than in classical, non-LLM-driven evolution—LLMs generate semantically meaningful variations rather than random perturbations.",
+      "content_hash": "887c9bbf42048ccabdf78312b2bde771fb6a2908c2d1201292cd7b269f6a400e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_19440::llm_mutation_differs",
+      "label": "llm_mutation_differs",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM mutation differs from classical stochastic mutation",
+      "type": "setting"
+    },
+    {
+      "content": "What explains large model-to-model differences in LLM optimization performance? Are these differences primarily a reflection of base model capability, or do they arise from more subtle differences in the exploration–exploitation dynamics induced by the models?",
+      "content_hash": "50046d01463a2533081384afdf96cd745f2855f5a7dce178489e1ca070b58d7a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_19440::rq_what_makes_good_optimizer",
+      "label": "rq_what_makes_good_optimizer",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Central research question",
+      "type": "question"
+    },
+    {
+      "content": "Under identical evolutionary conditions (fixed selection rules, evaluation functions, population initialization, and budget of 30 generations × 10 offspring per generation), different LLMs exhibit vastly different optimization trajectories and final performance. A pronounced optimization gap exists across the 15 tested LLMs on 8 tasks: e.g., GPT-4o achieves an average final fitness of 77.4 vs. GPT-3.5-turbo at 59.3 (Table 2, normalized fitness scores). Strong early performance does not reliably predict long-horizon outcomes: Deepseek-V3 performs best in generation 1 (avg first-gen fitness 56.9) but fails to achieve the largest gains over time (final avg 75.3 vs. Mistral-24B-Instruct's 81.6).",
+      "content_hash": "613da772c0e7f98b7cac347c44002426d4d00d4777287797e16a4458df402e6b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_19440::optimization_gap_exists",
+      "label": "optimization_gap_exists",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly observed outcome gap under identical experimental conditions (Table 2, N=15 models).",
+        "source_table": "artifacts/2604.19440.pdf, Table 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Optimization gap between LLMs under identical conditions",
+      "type": "claim"
+    },
+    {
+      "content": "A natural hypothesis is that models generating more novel solutions explore the search space more effectively and should therefore achieve better optimization outcomes. Under the classical evolutionary view where novelty equals exploration, higher novelty should yield better long-horizon fitness.",
+      "content_hash": "9f68381b2817fa844de7269d961d28f070daf7a019bd911eb6001f3092326176",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_19440::novelty_not_sufficient_hypothesis",
+      "label": "novelty_not_sufficient_hypothesis",
+      "metadata": {
+        "prior": 0.6,
+        "prior_justification": "Widely held classical evolutionary intuition; plausible but refuted by study results."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Novelty-as-exploration hypothesis (to be tested)",
+      "type": "claim"
+    },
+    {
+      "content": "The study conducts a large-scale controlled analysis of LLM-based evolutionary optimization, collecting optimization trajectories for 15 LLMs across 4 task families (8 tasks), resulting in over 72,000 analyzed candidate solutions (15 models × 8 tasks × 30 generations × 10 offspring per generation × 2 seeds).",
+      "content_hash": "d839af7c4dc4b0666c6016881db26b84799be2524cbd76e6833506785e29be96",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_19440::study_scope",
+      "label": "study_scope",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Study scale: 15 LLMs, 8 tasks, 72K+ solutions",
+      "type": "claim"
+    },
+    {
+      "content": "The evolutionary search loop follows Novikov et al. (2025). At each generation t: (1) An elite subset E_t = Top_{ceil(qN)}(P_t) with q=0.2 is selected. (2) Parents are sampled from E_t with probability proportional to fitness: Pr(x | E_t) ∝ f_T(x). (3) Selected parents are provided as context to the LLM, which generates 10 offspring per generation conditioned on task and parent structure. (4) Offspring are deduplicated and merged into the population pool; if pool size exceeds N, only top-N by fitness are retained. Best-so-far fitness is updated as f*_t = max_{x ∈ P_t} f_T(x). Invalid/unparsable outputs receive zero fitness.",
+      "content_hash": "f607939772a6a6c977f802eeb23f23927ba7c6dbfa6d5e2c847bbec7a6b85969",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_19440::evo_loop_design",
+      "label": "evo_loop_design",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Evolutionary search loop specification",
+      "type": "setting"
+    },
+    {
+      "content": "For each task, an initial population P_0 of valid genomes with their fitness values is constructed and shared across all models for the same task. This ensures that differences in final performance are attributable to the LLMs' search behavior rather than initial conditions.",
+      "content_hash": "17db94382e52ff2bb624963f259c8529be12dfa4a131346f0231d3252cb69704",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_19440::shared_initial_population",
+      "label": "shared_initial_population",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Shared fixed initial population across models",
+      "type": "setting"
+    },
+    {
+      "content": "Four optimization task families are evaluated: (1) Route Optimization: Traveling Salesman Problem (TSP-30 and TSP-60 cities). Genome = tour permutation. Fitness = inverse total distance. (2) Prompt Optimization: automatic prompt improvement for dialogue summarization (SAMSum, ROUGE-L metric) and text simplification (ASSET, SARI metric). Genome = natural language instruction prompt. Evaluator = frozen GPT-4o-mini. (3) Equation Discovery: symbolic regression for nonlinear oscillators (Oscillator-1: 3 variables; Oscillator-2: 4 variables). Genome = Python function. Fitness = 1 - norm(MSE(y_pred, y_true)). (4) Heuristic Design: online bin packing priority function design (OR3: 20 instances × 500 items; Weibull: 5 instances × 5,000 items). Genome = Python priority heuristic. Fitness = inverse bins used.",
+      "content_hash": "91f2a18115cde72e66970ec95f19b16f68a6d734b2e3d4cca1b30f8808d4bb85",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_19440::four_task_families",
+      "label": "four_task_families",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Four task families and genome representations",
+      "type": "setting"
+    },
+    {
+      "content": "Task-agnostic novelty of a solution a with respect to prior solutions A_prior is defined as: nov(a, A_prior) = min_{b ∈ A_prior} D_T(a, b), where D_T is a task-specific semantic distance metric. Task-specific distances: TSP uses edge-set distance invariant to rotation; prompt optimization uses cosine distance in OpenAI text-embedding-ada-002 space; equation discovery and heuristic design use functional behavior distance over a fixed input grid. Novelty is normalized per subtask.",
+      "content_hash": "5dbda3b5501395ca79a41893e54df7807560b0462f1a0af73070ed2f8f35986a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_19440::novelty_definition",
+      "label": "novelty_definition",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Novelty as minimum semantic distance to prior solutions",
+      "type": "setting"
+    },
+    {
+      "content": "Study involves 15 LLMs spanning 6 model families: OpenAI (GPT-4o, GPT-4o-mini, GPT-3.5-turbo), Google Gemini (Gemini-1.5-flash, Gemini-1.5-pro), Google Gemma (Gemma-3n-4b), Meta Llama (Llama-3.1-70B/8B, Llama-3.2-1B/3B), DeepSeek (Deepseek-V3), MistralAI (Mistral-7B/24B-Instruct, Mistral-large, Magistral-small). 30 generations per (model, task) pair; each pair repeated twice (same initial population). Total: over 72,000 API calls. Temperature = 0.7 (default). Estimated total cost ≈ $500.",
+      "content_hash": "57067384f8c501d03bcffb1eda51689554bfcd073c8950876fe541074803c8d5",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_19440::evolution_scale",
+      "label": "evolution_scale",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Experimental scale: 15 LLMs, 8 tasks, 2 seeds, 72K+ API calls",
+      "type": "setting"
+    },
+    {
+      "content": "Zero-shot performance is defined as the best fitness achieved via temperature-swept best-of-N sampling: for each (model, task) pair, candidates are generated across six temperatures T ∈ {0.0, 0.2, 0.4, 0.6, 0.8, 1.0}, with two samples per temperature, and the best fitness among them is reported. This measures intrinsic task-specific problem-solving ability without evolutionary refinement.",
+      "content_hash": "3e1aaeb4240a37ce8dbe69e856d2d1d23767776e919adc0a0907b79914b410db",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_19440::zeroshot_definition",
+      "label": "zeroshot_definition",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Zero-shot performance definition (best-of-N temperature sweep)",
+      "type": "setting"
+    },
+    {
+      "content": "Spatial entropy H_spatial measures how broadly candidate solutions spread across semantic space within a generation. Given embeddings x_i ∈ R^d of solutions and a Gaussian kernel K(·,·), local density estimates are: g_i = sum_j K(x_i, x_j), q_i = g_i / sum_k g_k. Setting w_j = 1 gives H_spatial = -sum_i q_i log q_i (uniform density). Setting w_j = f_j (fitness weight) gives H_fitness = fitness-weighted spatial entropy, measuring whether high-quality solutions cluster or disperse. Low H_spatial = localized search; high H_spatial = diffuse/drifting search.",
+      "content_hash": "263bf096d09980caa1e60e7c693503e1b5c09503be8b416eca82f4655a2603c5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_19440::spatial_entropy_definition",
+      "label": "spatial_entropy_definition",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Kernel-based spatial entropy and fitness spatial entropy definitions",
+      "type": "setting"
+    },
+    {
+      "content": "By sharing the same initial population, using the same selection rules and evaluation functions across all models, the evolutionary loop creates a controlled comparison where differences in final fitness are attributable to the LLMs' search behavior (mutation quality) rather than to differences in starting conditions or evaluation criteria.",
+      "content_hash": "108aa1701000669517a9f1bbda1048ca7d7ff241d45205237a6abe7a95831275",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_19440::controlled_comparison",
+      "label": "controlled_comparison",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Shared initial population and identical selection/evaluation ensure valid controlled design."
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Controlled comparison design isolates LLM search behavior",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot performance is strongly positively correlated with post-optimization performance when aggregated across tasks (Figure 3, linear fit r=0.860, p=3.95e-05). Similar trends are observed at the sub-task level for 6 of 8 tasks; equation discovery tasks are the exception where the correlation is weaker. This confirms that base capability is a significant predictor of optimization potential.",
+      "content_hash": "8c895fde2801370fc41e945d8fc3dec4d7901c0c5d9366f1d6da6d70e203d135",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_19440::zeroshot_correlates_with_final",
+      "label": "zeroshot_correlates_with_final",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 3",
+        "prior": 0.92,
+        "prior_justification": "Strong positive correlation (r=0.860, p<0.001) across 15 LLMs and 8 tasks (Figure 3)."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Zero-shot performance correlates with final optimization outcome",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot performance alone is insufficient to fully explain long-horizon optimization success. Models with nearly identical zero-shot performance can diverge substantially after evolution. For example, at a zero-shot score of approximately 0.4 (Figure 3), multiple models cluster tightly along the zero-shot axis yet spread widely in their best final performance. The OLS regression of final performance on zero-shot alone yields R²=0.103, explaining only ~10% of variance (Table 14, model M7).",
+      "content_hash": "53cfac023e4f926ac6c02f3b8d510d51c19e28373ae7cc1105d7f59ecf04e19d",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_19440::zeroshot_insufficient",
+      "label": "zeroshot_insufficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controlled_comparison",
+              "zeroshot_correlates_with_final"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.19440.pdf, Table 14 (M7), Figure 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Zero-shot capability is insufficient: residual variance is large",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty-based measures—including average novelty and initial novelty (first-generation diversity)—are not significant predictors of final optimization performance in OLS regression. OLS results (Table 13): avg_novelty coefficient β=−0.027 (SE=0.073, p=0.710, R²=0.001); initial_novelty β=−0.042 (SE=0.102, p=0.681, R²=0.002). Adding novelty to a model that already includes zero-shot performance adds essentially no explanatory power (novelty β=0.002, p=0.980 in M4). Novelty explanatory power is negligible: increasing diversity alone does not contribute to improved optimization performance.",
+      "content_hash": "61bb1355423a31af6972bab635ea531df145c32a05426c2c1160400d2cd1d9cc",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_19440::novelty_not_significant",
+      "label": "novelty_not_significant",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Multiple OLS specifications (M1-M5) all show non-significant novelty (p>0.6); Table 13.",
+        "source_table": "artifacts/2604.19440.pdf, Table 13"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Novelty does not predict optimization performance (OLS, Table 13)",
+      "type": "claim"
+    },
+    {
+      "content": "A breakthrough is defined as a best-so-far improvement event: an offspring generation in which the current solution exceeds the best fitness solution in all previous generations, i.e., f_child > f*_{t-1}. The breakthrough rate is the fraction of generations achieving a breakthrough, averaged per (model, task) pair.",
+      "content_hash": "1ded8658bc53777d708b74f7ab94ccdfa050ad943ffc0df2054d94ccc7aeb0d4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_19440::breakthrough_definition",
+      "label": "breakthrough_definition",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Breakthrough: best-so-far improvement event; breakthrough rate definition",
+      "type": "setting"
+    },
+    {
+      "content": "Breakthrough rate (fraction of generations achieving best-so-far improvement) is the strongest predictor of final optimization performance. OLS results (Table 14): breakthrough rate alone yields β=0.445 (SE=0.097, p<0.001, R²=0.198)—approximately two times the explanatory power of zero-shot capability alone (R²=0.103). In the joint model (M8: zero-shot + breakthrough rate), breakthrough rate remains highly significant (β=0.389, p<0.001, R²=0.246), while the zero-shot coefficient decreases from 0.322 to 0.226 (p=0.076, no longer significant). This indicates that part of zero-shot's predictive power is mediated through its ability to generate consistent improvements during search.",
+      "content_hash": "1d296c28ec1d3e6f82986c3929f727acb5f7e5ebc15d384af54c488e0aa024fe",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_19440::breakthrough_rate_predicts",
+      "label": "breakthrough_rate_predicts",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Highly significant OLS result: β=0.445 (p<0.001, R²=0.198) alone; β=0.389 (p<0.001) joint (Table 14).",
+        "source_table": "artifacts/2604.19440.pdf, Table 14"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Breakthrough rate strongly predicts final performance (R²=0.198)",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_19440::strat_novelty_vs_br_contradiction",
+      "label": "strat_novelty_vs_br_contradiction",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Part of the predictive power of zero-shot capability on final optimization performance is mediated through breakthrough rate: models with stronger base capability tend to generate more consistent improvements during search, which in turn drives better final fitness. This mediation is evidenced by the decrease in the zero-shot coefficient from 0.322 (standalone) to 0.226 (joint with breakthrough rate), with the zero-shot p-value rising from 0.016 to 0.076 (no longer significant at p<0.05).",
+      "content_hash": "7d34899e0d8d75721b0b49541b5cee9ab836c066cc811548c6ba3c70da8d80d6",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_19440::breakthrough_mediates_capability",
+      "label": "breakthrough_mediates_capability",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "breakthrough_rate_predicts",
+              "zeroshot_insufficient"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.19440.pdf, Table 14"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Zero-shot capability partly mediates optimization success through LRR",
+      "type": "claim"
+    },
+    {
+      "content": "Effective LLM optimizers progressively localize their search in semantic space. Qualitative case study (Figure 5, TSP-60): Gemini-1.5-Pro forms a convergent solution cluster in the multidimensional scaling (MDS) projection, with spatial entropy H_spatial decreasing from ~4.45 at generation 0 to ~4.30 by generation 30. Mean best fitness increases monotonically from ~0.75 to ~0.95. Fitness spatial entropy H_fitness also decreases, indicating high-quality solutions concentrate into a tight semantic region.",
+      "content_hash": "c1dd8054bc3d07815fb28ac4ce619170f88c672543cb11293d9480cfacbd9a5a",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_19440::strong_optimizers_localize",
+      "label": "strong_optimizers_localize",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 5",
+        "prior": 0.8,
+        "prior_justification": "Qualitative case study (Gemini-1.5-Pro, TSP-60, Figure 5); consistent with quantitative data."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Strong optimizers progressively localize search in semantic space",
+      "type": "claim"
+    },
+    {
+      "content": "Weak LLM optimizers exhibit large semantic drift: solutions continue to diffuse across distant regions of semantic space throughout all generations. Qualitative case study (Figure 5, TSP-60): Mistral-7B-Instruct maintains high spatial entropy H_spatial (~4.45-4.55, roughly flat across generations) and high fitness spatial entropy H_fitness (~4.30-4.50 flat), indicating sustained diffusion without convergence. Mean best fitness shows sporadic breakthroughs followed by stagnation, reaching only ~0.75 by generation 30 vs. Gemini-1.5-Pro's ~0.95.",
+      "content_hash": "b838b50582cc2239aa4ff3dd46366d80e6d25b64dd9ff4a5236be605123bff12",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_19440::weak_optimizers_drift",
+      "label": "weak_optimizers_drift",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 5",
+        "prior": 0.8,
+        "prior_justification": "Qualitative case study (Mistral-7B, TSP-60, Figure 5); paired contrast with Gemini-1.5-Pro."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Weak optimizers exhibit semantic drift without convergence",
+      "type": "claim"
+    },
+    {
+      "content": "opposite_truth(A, B)",
+      "content_hash": "faf7a1f4b55e7d7efd70f095476d9d55c2e2feae0488c157754bb3cb5bc32772",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_19440::localization_vs_drift_complement",
+      "label": "localization_vs_drift_complement",
+      "metadata": {
+        "helper_kind": "complement_result",
+        "prior": 0.8
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Higher fitness spatial entropy (H_fitness) is negatively associated with breakthrough probability. Mixed-effects regression (Table 15): H_fitness coefficient β=−0.073 (SE=0.026, p=0.005) in the concurrent model and β=−0.074 (SE=0.024, p=0.002) in the lagged model. Maintaining multiple dispersed high-quality regions hinders breakthrough production.",
+      "content_hash": "72b377a549f079ce17acb0df5972e4442e6605863d8b5fdef2ee87d60cc4bf49",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_19440::fitness_entropy_negative",
+      "label": "fitness_entropy_negative",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Significant in both concurrent (p=0.005) and lagged (p=0.002) mixed-effects models (Table 15).",
+        "source_table": "artifacts/2604.19440.pdf, Table 15"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Higher fitness spatial entropy reduces breakthrough probability",
+      "type": "claim"
+    },
+    {
+      "content": "Mean novelty is positively associated with breakthrough probability within a generation, but only when the search is sufficiently localized. Mixed-effects regression (Table 15): mean_novelty concurrent β=0.070 (SE=0.026, p=0.006). However, the interaction term (novelty × H_spatial) is significantly negative: concurrent β=−0.090 (SE=0.010, p<0.001) and lagged β=−0.051 (SE=0.009, p<0.001). The lagged novelty main effect becomes non-significant (β=0.016, p=0.517), but the interaction remains strong (p<0.001), indicating the productivity of novelty depends on the geometric state of the population, not just contemporaneous correlations.",
+      "content_hash": "379981a2ab588d49998149feff79e8e53e4fc9b1657e5666585423a0f1024f63",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_19440::novelty_positive_conditional",
+      "label": "novelty_positive_conditional",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Concurrent mean novelty β=0.070 (p=0.006), but interaction β=-0.090 (p<0.001) dominates (Table 15).",
+        "source_table": "artifacts/2604.19440.pdf, Table 15, Figure 12"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Novelty boosts breakthroughs only when search is spatially localized",
+      "type": "claim"
+    },
+    {
+      "content": "Breakthrough probability decreases with generation index. Mixed-effects regression (Table 15): generation coefficient β=−0.250 (SE=0.018, p<0.001) concurrent and β=−0.193 (SE=0.017, p<0.001) lagged. Breakthroughs occur predominantly in early generations when there is still room for large improvements, and become rarer as the population converges.",
+      "content_hash": "ad6cda904dddd4037922b0448649083f05bd5f39b893b933e173322ae548bc24",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_19440::generation_index_negative",
+      "label": "generation_index_negative",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Very strong: concurrent β=-0.250 (p<0.001), lagged β=-0.193 (p<0.001) (Table 15).",
+        "source_table": "artifacts/2604.19440.pdf, Table 15"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Breakthrough probability decreases with generation index",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty is conditionally useful: it increases breakthrough probability only when the search is sufficiently localized (low spatial entropy). Under high spatial dispersion, novelty is largely unproductive or even detrimental. Breakthrough events concentrate in regions of high novelty and low spatial entropy; high novelty under high dispersion correlates with low breakthrough probability (Figure 12 heatmap). This conditional benefit is robust across both concurrent and lagged analyses.",
+      "content_hash": "9eaf1a973fd05a6317ccfd1c1437c9e5e6184c95a43759d517a40d3d0cce0113",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2604_19440::novelty_conditional_on_localization",
+      "label": "novelty_conditional_on_localization",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 12",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "fitness_entropy_negative",
+              "generation_index_negative",
+              "novelty_conditional_on_localization",
+              "novelty_positive_conditional"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Novelty × localization interaction: novelty is productive only when localized",
+      "type": "claim"
+    },
+    {
+      "content": "Effective LLM optimizers behave as local refiners: they frequently produce offspring that strictly improve upon their prompted parents while maintaining controlled semantic step sizes. This is characterized by two operator-level metrics: (1) Local Refinement Rate (LRR) = fraction of valid offspring that strictly improve upon their parent; (2) Parent–Child Distance (PCD) = average semantic distance between each offspring and its prompted parents.",
+      "content_hash": "9d3fe8508614ef78f4ec9c2f6069d19a5aa16eac15ea23074784c0e28438fad0",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2604_19440::local_refiner_hypothesis",
+      "label": "local_refiner_hypothesis",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "exploration_exploitation_classical",
+              "lrr_predicts_strongly",
+              "model_mixing_degrades_performance",
+              "pcd_negative_mediated",
+              "strong_optimizers_localize",
+              "weak_optimizers_drift"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Local refiner hypothesis: effective LLMs improve parents frequently with small steps",
+      "type": "claim"
+    },
+    {
+      "content": "Local Refinement Rate (LRR) is a strong positive predictor of final performance. Model-level OLS regression (Table 1): in the joint model (ZS + LRR + PCD), LRR coefficient β=0.528 (p<0.001), while PCD effect vanishes (β=−0.024, p=0.838) once LRR is included. R² increases from 0.204 (ZS + PCD) to 0.367 (ZS + LRR + PCD). The negative effect of PCD (β=−0.329, p=0.001) disappears when LRR is added, indicating that large semantic modifications are harmful primarily because they reduce refinement reliability, not because of step size per se.",
+      "content_hash": "ae4b5fd286f3736c3a1bc8bc966a5dd425b1ab20b6ab1e7f15c97c88d7261e6c",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_19440::lrr_predicts_strongly",
+      "label": "lrr_predicts_strongly",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Highly significant (β=0.528, p<0.001), robust to inclusion of other predictors (Table 1).",
+        "source_table": "artifacts/2604.19440.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "LRR strongly predicts final performance; PCD effect mediated by LRR",
+      "type": "claim"
+    },
+    {
+      "content": "Parent–child semantic distance (PCD) alone is negatively correlated with final performance (β=−0.329, p=0.001 in ZS+PCD model, Table 1). However, this negative effect vanishes once local refinement rate (LRR) is included in the model, indicating that larger edits reduce performance primarily because they reduce the probability of producing refinements, not because of step size per se.",
+      "content_hash": "9f5d99cecffd323f0bcb19ebf3e51667eae634eb598aa0d836eb6a5ca1f33bce",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2604_19440::pcd_negative_mediated",
+      "label": "pcd_negative_mediated",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "PCD coefficient goes from -0.329 (sig) to -0.024 (ns) when LRR added (Table 1).",
+        "source_table": "artifacts/2604.19440.pdf, Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "PCD's negative effect on performance is mediated by LRR",
+      "type": "claim"
+    },
+    {
+      "content": "The model mixing perturbation study injects a fraction α of offspring from a 'weak refiner' model into an otherwise strong-refiner evolutionary run. At each generation, α × 10 offspring are generated by the weaker model and (1−α) × 10 by the stronger model. Task-specific model pairs are chosen with comparable zero-shot performance but contrasting LRR: TSP-60 (Mistral-24B vs. Mistral-7B), Summarization (DeepSeek-V3 vs. GPT-4o-mini), Bin-Packing-OR3 (Mistral-24B vs. LLaMA-3.2-3B-Instruct).",
+      "content_hash": "ee1b6aa3d78170cb7b4cd54895c5834a43b01721c5ff4e909687cf7b31cad94f",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2604_19440::model_mixing_design",
+      "label": "model_mixing_design",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Model mixing perturbation: inject weak-refiner offspring fraction",
+      "type": "setting"
+    },
+    {
+      "content": "Increasing the fraction of weak-refiner offspring monotonically degrades optimization performance and reduces the overall refinement rate. On TSP-60 and bin packing-OR3, performance degrades sharply and monotonically as the proportion of weak-refiner offspring increases (Figure 7). The same effect exists but is weaker and less consistent in prompt optimization. Higher weak-offspring ratios consistently reduce the overall refinement rate, which co-varies with performance degradation.",
+      "content_hash": "efb023ca5de02770a2dd61e229cf7482c5228d9f3a1a984f793e67fec15bac0d",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2604_19440::model_mixing_degrades_performance",
+      "label": "model_mixing_degrades_performance",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 7",
+        "prior": 0.85,
+        "prior_justification": "Monotonic degradation on TSP-60 and bin packing; co-varies with LRR reduction (Figure 7)."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Model mixing: injecting weak refiners degrades performance monotonically",
+      "type": "claim"
+    },
+    {
+      "content": "The relationship between local refinement rate and final performance is robust to substantial variations in decoding temperature. Temperature sensitivity analysis on TSP and Oscillator tasks with Mistral-7B and Mistral-24B (T ∈ {0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3}): Pearson r between LRR and final performance = 0.76 (p=0.027) for Mistral-7B on TSP and 0.92 (p<0.001) for Mistral-24B on TSP. Oscillator correlations are positive but not significant (r=0.49, p=0.209 and r=0.32, p=0.433). Refinement behavior is a stable property of the combined system (model, prompt, decoding configuration), not tied to a narrow temperature regime.",
+      "content_hash": "c6871621f19dc7e96aa6fc21d367bf855e878d55a97547c6b7a4b6ce1d5145dd",
+      "declaration_index": 19,
+      "exported": true,
+      "id": "github:2604_19440::temperature_robustness",
+      "label": "temperature_robustness",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Strong on TSP (r=0.76-0.92, p<0.05) but non-significant on Oscillator tasks (Table 11).",
+        "source_table": "artifacts/2604.19440.pdf, Table 11"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "LRR-performance relationship robust across temperature settings",
+      "type": "claim"
+    },
+    {
+      "content": "Optimization performance is not fully determined by base model capability or cost. Some mid-sized models achieve large fitness improvements at relatively low cost. Mistral-24B-Instruct lies on the Pareto frontier of optimization gain vs. monetary cost, combining large fitness improvement with moderate cost (Figure 8). Larger/more expensive models (e.g., GPT-4o at much higher cost) do not always yield proportional gains per dollar. Cost-efficient optimization is achieved by selecting models with favorable refinement behavior rather than maximum zero-shot capability.",
+      "content_hash": "abd79a0bee12d66a159768287256b13d2ef674aff2fca02a50442718d33c5c74",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2604_19440::cost_efficiency_frontier",
+      "label": "cost_efficiency_frontier",
+      "metadata": {
+        "figure": "artifacts/2604.19440.pdf, Figure 8, Figure 15",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "lrr_predicts_strongly"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Cost-efficient optimization: mid-sized refiners on Pareto frontier",
+      "type": "claim"
+    },
+    {
+      "content": "LLM optimization performance comprises two distinct abilities: (1) base zero-shot problem-solving capability, which correlates with but only partially explains optimization success; and (2) 'optimizable ability'—the capacity to function as an effective local refiner during evolutionary search, characterized by high local refinement rate (LRR), progressive localization in semantic space, and frequent incremental breakthroughs. These abilities are empirically dissociable: models with similar zero-shot scores can differ substantially in optimization trajectories and outcomes. Optimizable ability is not simply a property of base model strength—smaller or cheaper models can outperform larger ones when they exhibit more reliable refinement behavior.",
+      "content_hash": "82cfc5cda42f5338d698234e3f763da938920a022ceb7c28d7aa4f63f6c85c04",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2604_19440::optimizable_ability_distinct",
+      "label": "optimizable_ability_distinct",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "lrr_predicts_strongly",
+              "model_mixing_degrades_performance",
+              "novelty_conditional_on_localization",
+              "strong_optimizers_localize",
+              "zeroshot_insufficient"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Optimizable ability: a distinct dimension from base LLM capability",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-guided evolution differs qualitatively from classical evolutionary algorithms. The LLM mutation operator is not random but instantiates a learned generative prior that induces structured, semantically meaningful variations, strongly biasing the search toward exploitation rather than random exploration. This makes novelty-as-exploration a misleading proxy in the LLM setting: LLM-generated novelty does not arise from blind exploration but from semantic variation conditioned on parent solutions and fitness context.",
+      "content_hash": "03ff4509f8eca8a9f3fc0ba89aa6e85028e97eaa54aa27529cda3b21f12fe95d",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_19440::llm_evolution_differs_from_classical",
+      "label": "llm_evolution_differs_from_classical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "exploration_exploitation_classical",
+              "llm_mutation_differs",
+              "novelty_not_significant"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "LLM evolution: structured exploitation, not random exploration",
+      "type": "claim"
+    },
+    {
+      "content": "Local refinement behavior should not be viewed as an inherent property of the base model alone. It emerges as a property of the entire agentic system: the model, the prompting strategy, and the decoding configuration. Temperature changes affect both refinement rates and performance, but the relationship between refinement behavior and performance remains stable across a wide range of temperature settings (Table 11: Pearson r = 0.76-0.92 on TSP).",
+      "content_hash": "23d5e32c3c9032ad01190f15d820910c367f5ee77ef383bc614b6a744cfc219d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_19440::refinement_is_system_property",
+      "label": "refinement_is_system_property",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "temperature_robustness"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Refinement is a system property (model + prompt + decoding), not just model",
+      "type": "claim"
+    },
+    {
+      "content": "For practitioners designing LLM-based optimization systems, the primary objective should be to control and optimize refinement behavior, rather than simply maximizing base model capability or using the most expensive model. Smaller or cheaper models with strong inductive biases toward local refinement can outperform larger models that produce high-novelty but low-refinement offspring. Model selection should consider LRR, not just zero-shot benchmarks.",
+      "content_hash": "15f2c75cb2f4a1b8d9172e6d844f8fc04bc7eed7b5a4c75016189d76a1c4f5db",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_19440::design_implication_select_refiners",
+      "label": "design_implication_select_refiners",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cost_efficiency_frontier",
+              "design_implication_select_refiners",
+              "limitation_fixed_protocol",
+              "limitation_model_mixing_confound",
+              "limitation_novelty_operationalization",
+              "lrr_predicts_strongly",
+              "optimizable_ability_distinct"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Design implication: optimize for refinement behavior, not base capability",
+      "type": "claim"
+    },
+    {
+      "content": "The results support training or fine-tuning LLMs specifically as effective search operators—emphasizing local refinement and error correction rather than general-purpose capability. Specialized training objectives targeting high LRR may yield better evolutionary search operators than general capability scaling.",
+      "content_hash": "cab5908737d15570bb9fbb0366650b6f63b335f230358a53c9d54e26372d6c63",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_19440::training_implication",
+      "label": "training_implication",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "model_mixing_degrades_performance",
+              "optimizable_ability_distinct"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Training implication: specialize LLMs as local refiners",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty's role in LLM-guided evolutionary search is reinterpreted: rather than being a stochastic explorer, novelty acts as an immediate driver of exploratory breakthroughs, but its long-term utility depends on whether the search regime allows these deviations to be selectively retained and amplified. In localized, high-performing regions, novelty is productive. In diffuse, low-quality regions, novelty is largely unproductive or harmful.",
+      "content_hash": "c55765009a59cbf072d729c32bd61975a0f2af61996bb0c274d078d6bf1fd3d6",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_19440::novelty_reinterpretation",
+      "label": "novelty_reinterpretation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "novelty_conditional_on_localization",
+              "novelty_not_significant"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Novelty reinterpreted: immediate driver of exploration, context-dependent utility",
+      "type": "claim"
+    },
+    {
+      "content": "The study relies on a fixed evolutionary protocol. Other design choices—selection pressure, offspring size, alternative sampling strategies—may influence the exploration–exploitation balance and cross-model differences. The findings may not generalize to evolutionary loops with substantially different hyperparameter configurations.",
+      "content_hash": "1e82e8bc101bb3e45c1b164528822a4a6979e31fa7dd245ce50109ce80afdeca",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_19440::limitation_fixed_protocol",
+      "label": "limitation_fixed_protocol",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Authors explicitly acknowledge: only one fixed evolutionary protocol tested."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Limitation: fixed evolutionary protocol may not generalize",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty is primarily operationalized as nearest-neighbor distance. Broader comparisons to KNN/average-distance novelty and alternative diversity indices would help assess the robustness of the null novelty result.",
+      "content_hash": "046a82cb32be373c9c62cfbc098e92e5c8d8a659972cac1cf98e6f50a873c9d1",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_19440::limitation_novelty_operationalization",
+      "label": "limitation_novelty_operationalization",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Authors acknowledge: novelty only measured as nearest-neighbor distance."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Limitation: novelty operationalized as nearest-neighbor distance only",
+      "type": "claim"
+    },
+    {
+      "content": "The model mixing perturbation study cannot fully isolate local refinement behavior. Replacing the model that generates offspring may also affect other latent characteristics (e.g., reasoning patterns or exploration tendencies), making it difficult to attribute all performance differences solely to local refinement rate.",
+      "content_hash": "268982845f173e4508a15de65bbfcdf681af9252d874933d2a139230721a730f",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_19440::limitation_model_mixing_confound",
+      "label": "limitation_model_mixing_confound",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Authors acknowledge: model mixing may confound LRR with other latent behavioral properties."
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Limitation: model mixing may confound refinement with other latent properties",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::zeroshot_correlates_with_final,github:2604_19440::controlled_comparison,github:2604_19440::optimization_gap_exists)",
+      "content_hash": "c6283b739abde4c5731c9701b2c706ad95e5e4adc7b8648f89c558b970da7261",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_27ec4895",
+      "label": "__conjunction_result_27ec4895",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::zeroshot_correlates_with_final,github:2604_19440::controlled_comparison,github:2604_19440::optimization_gap_exists)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_43505911c25818a2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_27ec4895,github:2604_19440::zeroshot_insufficient)",
+      "content_hash": "161ff669e6c46961ec0ea8c5395639bd36238d7a628a8b2587ebe68f5357a9dd",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_ff0a442f",
+      "label": "__implication_result_ff0a442f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_27ec4895,github:2604_19440::zeroshot_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_43505911c25818a2",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::breakthrough_rate_predicts,github:2604_19440::zeroshot_insufficient)",
+      "content_hash": "e1fdf92ba58760041c2e832ba9cd99f08e22de86ae34d02a557c84cbddd9cfa0",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_5f22dc0b",
+      "label": "__conjunction_result_5f22dc0b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::breakthrough_rate_predicts,github:2604_19440::zeroshot_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_888b021316a9dd30",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_5f22dc0b,github:2604_19440::breakthrough_mediates_capability)",
+      "content_hash": "36a19dcbec501d130673a096773fb405435ebe143c26b56831dbf7463174f98f",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_a1140b69",
+      "label": "__implication_result_a1140b69",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_5f22dc0b,github:2604_19440::breakthrough_mediates_capability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_888b021316a9dd30",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::generation_index_negative,github:2604_19440::novelty_conditional_on_localization)",
+      "content_hash": "ec78397a6b00f78b031f124a0ff2bd8c09616b443e1333bcf862022fbf917124",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_2a38ec89",
+      "label": "__implication_result_2a38ec89",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::generation_index_negative,github:2604_19440::novelty_conditional_on_localization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2ba8e90bafdcd9c8",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::novelty_positive_conditional,github:2604_19440::fitness_entropy_negative)",
+      "content_hash": "dd4d36e556432f6e3cc78c132004b89801ebd71bcaaf9e8b9a5bdabd640701ee",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_4b7d97e6",
+      "label": "__conjunction_result_4b7d97e6",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::novelty_positive_conditional,github:2604_19440::fitness_entropy_negative)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_49b2448672c59d5d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_4b7d97e6,github:2604_19440::novelty_conditional_on_localization)",
+      "content_hash": "371368e8d542a4d1ccc9d7362a0f5dbfc829b9b0e99b41791d37cb2bd653692c",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_44de16f0",
+      "label": "__implication_result_44de16f0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_4b7d97e6,github:2604_19440::novelty_conditional_on_localization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_49b2448672c59d5d",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::strong_optimizers_localize,github:2604_19440::weak_optimizers_drift)",
+      "content_hash": "d04976ae8e8ef7e6824ab36d049e49109927aa6920ac1bfbad57bb1ece1edf49",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_c47e80e9",
+      "label": "__conjunction_result_c47e80e9",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::strong_optimizers_localize,github:2604_19440::weak_optimizers_drift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_34f81ab47807000d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_c47e80e9,github:2604_19440::local_refiner_hypothesis)",
+      "content_hash": "c96dc75f173504bcec8949c7fe7b46da96331db9aa5671e2a4fafead39f789b6",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_be865487",
+      "label": "__implication_result_be865487",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_c47e80e9,github:2604_19440::local_refiner_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_34f81ab47807000d",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::lrr_predicts_strongly,github:2604_19440::pcd_negative_mediated)",
+      "content_hash": "75097a2ec5f0e547ecf08b7985ff7480344c1c9af32233cff4f3437027187cad",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_16ea6f5c",
+      "label": "__conjunction_result_16ea6f5c",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::lrr_predicts_strongly,github:2604_19440::pcd_negative_mediated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1d508153ab9d5f0d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_16ea6f5c,github:2604_19440::local_refiner_hypothesis)",
+      "content_hash": "fa4113e04e968c93131b2d20e68bfaefa05d1101ea18b36b45aa622d492d9d35",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_16ba4bc4",
+      "label": "__implication_result_16ba4bc4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_16ea6f5c,github:2604_19440::local_refiner_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1d508153ab9d5f0d",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::model_mixing_degrades_performance,github:2604_19440::local_refiner_hypothesis)",
+      "content_hash": "8697aa5374e775c837bc9feeab6a36370e4e5260c0a7eeef2f4611251c8c53b9",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_6bbde8b4",
+      "label": "__implication_result_6bbde8b4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::model_mixing_degrades_performance,github:2604_19440::local_refiner_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a0c48cb03e72d758",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::lrr_predicts_strongly,github:2604_19440::cost_efficiency_frontier)",
+      "content_hash": "a1103f8b5609f409b3f58d6d72f15b74f52b002cb8b945d68f990a853b9d680b",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_017eda95",
+      "label": "__implication_result_017eda95",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::lrr_predicts_strongly,github:2604_19440::cost_efficiency_frontier)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d80b4581d03e56b3",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::zeroshot_insufficient,github:2604_19440::lrr_predicts_strongly,github:2604_19440::strong_optimizers_localize,github:2604_19440::novelty_conditional_on_localization,github:2604_19440::model_mixing_degrades_performance)",
+      "content_hash": "2237e513e843032b51feb49e575317be795f198806ae0332e067259cc4e413ff",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_f3828948",
+      "label": "__conjunction_result_f3828948",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::zeroshot_insufficient,github:2604_19440::lrr_predicts_strongly,github:2604_19440::strong_optimizers_localize,github:2604_19440::novelty_conditional_on_localization,github:2604_19440::model_mixing_degrades_performance)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8561f795bc5f16d8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_f3828948,github:2604_19440::optimizable_ability_distinct)",
+      "content_hash": "a3a506ca9898d9bc4b0bd1bc671e171f41a889a23e85df794b64d1f9ea9f2269",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_bc6f63aa",
+      "label": "__implication_result_bc6f63aa",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_f3828948,github:2604_19440::optimizable_ability_distinct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8561f795bc5f16d8",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::novelty_not_significant,github:2604_19440::llm_evolution_differs_from_classical)",
+      "content_hash": "4a4a23249989dcd3dbfc174398d638f3fc4b01473432e560c399ac2aa14618e5",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_2d640302",
+      "label": "__implication_result_2d640302",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::novelty_not_significant,github:2604_19440::llm_evolution_differs_from_classical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14f5926767144b65",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::temperature_robustness,github:2604_19440::refinement_is_system_property)",
+      "content_hash": "e3a16f0ed130ea05b3568f43f62749bc434e2d934af9a5ccca71864048c00292",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_b12012f1",
+      "label": "__implication_result_b12012f1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::temperature_robustness,github:2604_19440::refinement_is_system_property)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5d7e3d12485a1896",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::optimizable_ability_distinct,github:2604_19440::cost_efficiency_frontier,github:2604_19440::lrr_predicts_strongly)",
+      "content_hash": "fd84823f171abfb90f895ee16d0cd420c567c1e8d00a0be29dc2a4ebb81135c6",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_1d798666",
+      "label": "__conjunction_result_1d798666",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::optimizable_ability_distinct,github:2604_19440::cost_efficiency_frontier,github:2604_19440::lrr_predicts_strongly)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0a7272484620f830",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_1d798666,github:2604_19440::design_implication_select_refiners)",
+      "content_hash": "c3d3d8da29b86ba97382ec19a859bc7e3aa42846e6ad14333496a96249425d60",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_fa524066",
+      "label": "__implication_result_fa524066",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_1d798666,github:2604_19440::design_implication_select_refiners)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0a7272484620f830",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::optimizable_ability_distinct,github:2604_19440::model_mixing_degrades_performance)",
+      "content_hash": "44dacfe830e647b9ef3064e62b4dd94222e48536ac8708b2870652f6e85015e2",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_0f2bd19b",
+      "label": "__conjunction_result_0f2bd19b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::optimizable_ability_distinct,github:2604_19440::model_mixing_degrades_performance)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f83b2a6e687d19fa",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_0f2bd19b,github:2604_19440::training_implication)",
+      "content_hash": "a0956583be924fdd066d1a3df87d6c5aaf2e7208807e7b40faefb99f9d6bcd71",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_79782772",
+      "label": "__implication_result_79782772",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_0f2bd19b,github:2604_19440::training_implication)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f83b2a6e687d19fa",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::novelty_conditional_on_localization,github:2604_19440::novelty_not_significant)",
+      "content_hash": "30434f463a9c79a092118b946d4ee9d11a848dc4cb5d448503c990c59ece7302",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_8f30637a",
+      "label": "__conjunction_result_8f30637a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::novelty_conditional_on_localization,github:2604_19440::novelty_not_significant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2e689fbf186f1b59",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_8f30637a,github:2604_19440::novelty_reinterpretation)",
+      "content_hash": "bd5dad0d3d1d1e56d0b9037df833ba802b45d7ae3eae43b8196c05cca50f357e",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_4e74b456",
+      "label": "__implication_result_4e74b456",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_8f30637a,github:2604_19440::novelty_reinterpretation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2e689fbf186f1b59",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_19440::limitation_fixed_protocol,github:2604_19440::limitation_model_mixing_confound,github:2604_19440::limitation_novelty_operationalization)",
+      "content_hash": "10dcb50033d7a3a09ac705362070145b0bb4634d521ef923bb9d8635a714de52",
+      "exported": false,
+      "id": "github:2604_19440::__conjunction_result_0675e3c9",
+      "label": "__conjunction_result_0675e3c9",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_19440::limitation_fixed_protocol,github:2604_19440::limitation_model_mixing_confound,github:2604_19440::limitation_novelty_operationalization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_eef1b07279321910",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_19440::__conjunction_result_0675e3c9,github:2604_19440::design_implication_select_refiners)",
+      "content_hash": "909615df88cb1dc20b219f93ee160024908995d14c82ba2c1c81800d10cf20cf",
+      "exported": false,
+      "id": "github:2604_19440::__implication_result_ac8e6aba",
+      "label": "__implication_result_ac8e6aba",
+      "metadata": {
+        "canonical_name": "implies(github:2604_19440::__conjunction_result_0675e3c9,github:2604_19440::design_implication_select_refiners)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_eef1b07279321910",
+        "owning_strategy_type": "support",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_methodology",
+    "s4_results",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Why LLM Optimization Performance Varies",
+    "s3_methodology": "Section 3: Methodology — Evolutionary Loop and Task Design",
+    "s4_results": "Section 4: Results and Analysis — Base Capability, Novelty, Breakthroughs, Geometry",
+    "s5_discussion": "Section 5: Discussion and Conclusion — Implications and Limitations"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_19440::strat_novelty_vs_br_contradiction",
+      "metadata": {
+        "reason": "The classical novelty-as-exploration hypothesis predicts that novelty should be a significant positive predictor of optimization success. The OLS result (@novelty_not_significant, β≈0, p>0.6) directly contradicts this: novelty coefficients are near zero and non-significant across all model specifications. These two propositions cannot both be true."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_2448ca9c824828e7",
+      "scope": "local",
+      "variables": [
+        "github:2604_19440::novelty_not_sufficient_hypothesis",
+        "github:2604_19440::novelty_not_significant"
+      ]
+    },
+    {
+      "conclusion": "github:2604_19440::localization_vs_drift_complement",
+      "metadata": {
+        "reason": "In the TSP-60 case study, Gemini-1.5-Pro and Mistral-7B-Instruct with nearly identical zero-shot performance exhibit diametrically opposite geometric search behaviors: one progressively localizes, the other persistently drifts. These two behavioral modes are exhaustive and mutually exclusive characterizations of the qualitative trajectory geometry."
+      },
+      "operator": "complement",
+      "operator_id": "lco_7f950884167af52c",
+      "scope": "local",
+      "variables": [
+        "github:2604_19440::strong_optimizers_localize",
+        "github:2604_19440::weak_optimizers_drift"
+      ]
+    }
+  ],
+  "package_name": "2604_19440",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_19440::zeroshot_definition",
+        "github:2604_19440::evo_loop_design",
+        "github:2604_19440::shared_initial_population"
+      ],
+      "conclusion": "github:2604_19440::zeroshot_insufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_27ec4895",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::zeroshot_correlates_with_final",
+              "github:2604_19440::controlled_comparison",
+              "github:2604_19440::optimization_gap_exists"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_ff0a442f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_27ec4895",
+              "github:2604_19440::zeroshot_insufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The correlation between @zeroshot_correlates_with_final and final performance is real but partial (R²=0.103). Under the controlled design (@controlled_comparison), initial conditions are equalized, so residual variance must reflect differences in search behavior rather than capability alone. The scatter around the regression line in Figure 3 is large enough to establish that zero-shot capability is necessary but not sufficient for good optimization."
+      },
+      "premises": [
+        "github:2604_19440::zeroshot_correlates_with_final",
+        "github:2604_19440::controlled_comparison",
+        "github:2604_19440::optimization_gap_exists"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_43505911c25818a2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::breakthrough_definition",
+        "github:2604_19440::evo_loop_design"
+      ],
+      "conclusion": "github:2604_19440::breakthrough_mediates_capability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_5f22dc0b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::breakthrough_rate_predicts",
+              "github:2604_19440::zeroshot_insufficient"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_a1140b69",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_5f22dc0b",
+              "github:2604_19440::breakthrough_mediates_capability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given that @zeroshot_insufficient shows that base capability alone cannot fully explain final performance variance (R²=0.103), and given that @breakthrough_rate_predicts shows breakthrough rate explains ~2× more variance (R²=0.198) and remains significant even controlling for zero-shot, the mediation pattern (zero-shot coefficient decreasing from 0.322 to 0.226 when breakthrough rate is added) implies that stronger base models partly succeed because they better generate incremental improvements during search."
+      },
+      "premises": [
+        "github:2604_19440::breakthrough_rate_predicts",
+        "github:2604_19440::zeroshot_insufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_888b021316a9dd30",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::breakthrough_definition"
+      ],
+      "conclusion": "github:2604_19440::novelty_conditional_on_localization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__implication_result_2a38ec89",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::generation_index_negative",
+              "github:2604_19440::novelty_conditional_on_localization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The negative generation index effect (@generation_index_negative, β=−0.250) shows that breakthroughs concentrate in early generations when the population has not yet localized. This temporal structure reinforces the localization story: as generations progress, the population progressively converges (localization increases), which changes the regime in which novelty operates. The generation index thus provides indirect evidence for the localization–novelty interaction described in @novelty_conditional_on_localization."
+      },
+      "premises": [
+        "github:2604_19440::generation_index_negative"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2ba8e90bafdcd9c8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::spatial_entropy_definition",
+        "github:2604_19440::breakthrough_definition"
+      ],
+      "conclusion": "github:2604_19440::novelty_conditional_on_localization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_4b7d97e6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::novelty_positive_conditional",
+              "github:2604_19440::fitness_entropy_negative"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_44de16f0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_4b7d97e6",
+              "github:2604_19440::novelty_conditional_on_localization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "From the mixed-effects model: @novelty_positive_conditional establishes that mean novelty has a positive main effect (β=0.070, p=0.006) on breakthrough probability, but the novelty × H_spatial interaction (β=−0.090, p<0.001) is larger in magnitude, indicating that high spatial entropy cancels and reverses novelty's benefit. @fitness_entropy_negative confirms that dispersed high-fitness regions reduce breakthrough probability. Together: novelty is productive only within already-localized, high-performing regions—not as a general exploration strategy."
+      },
+      "premises": [
+        "github:2604_19440::novelty_positive_conditional",
+        "github:2604_19440::fitness_entropy_negative"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_49b2448672c59d5d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::spatial_entropy_definition",
+        "github:2604_19440::exploration_exploitation_classical"
+      ],
+      "conclusion": "github:2604_19440::local_refiner_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_c47e80e9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::strong_optimizers_localize",
+              "github:2604_19440::weak_optimizers_drift"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_be865487",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_c47e80e9",
+              "github:2604_19440::local_refiner_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The semantic geometry analysis provides a mechanistic explanation for the local refiner characterization: @strong_optimizers_localize shows that effective optimizer models converge their search to promising regions, enabling repeated incremental improvements—the geometric signature of local refinement. @weak_optimizers_drift shows that ineffective models scatter solutions across remote semantic regions without exploiting them, leading to sporadic gains followed by stagnation (the classical meta-heuristic pattern from @exploration_exploitation_classical). These two behaviors provide geometric validation of the local refiner hypothesis."
+      },
+      "premises": [
+        "github:2604_19440::strong_optimizers_localize",
+        "github:2604_19440::weak_optimizers_drift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_34f81ab47807000d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::evo_loop_design",
+        "github:2604_19440::four_task_families"
+      ],
+      "conclusion": "github:2604_19440::local_refiner_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_16ea6f5c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::lrr_predicts_strongly",
+              "github:2604_19440::pcd_negative_mediated"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_16ba4bc4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_16ea6f5c",
+              "github:2604_19440::local_refiner_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The operator-level regression confirms the local refiner hypothesis: @lrr_predicts_strongly shows LRR has the largest coefficient (β=0.528, p<0.001) in the joint model, adding substantial explanatory power (R² from 0.204 to 0.367). @pcd_negative_mediated shows that PCD's negative effect is fully explained by its negative impact on LRR—larger steps tend to produce fewer improvements. This validates the mechanistic story: what matters is not how far offspring deviate semantically, but whether they reliably improve upon their parents."
+      },
+      "premises": [
+        "github:2604_19440::lrr_predicts_strongly",
+        "github:2604_19440::pcd_negative_mediated"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1d508153ab9d5f0d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::model_mixing_design",
+        "github:2604_19440::evo_loop_design"
+      ],
+      "conclusion": "github:2604_19440::local_refiner_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__implication_result_6bbde8b4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::model_mixing_degrades_performance",
+              "github:2604_19440::local_refiner_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The perturbation study provides quasi-interventional evidence: by directly manipulating refinement behavior through model mixing, @model_mixing_degrades_performance shows that degrading refinement capability causes predictable drops in optimization performance. This rules out that the correlation between LRR and performance is spurious. The co-variation of refinement rate and performance across injection fractions traces the causal mechanism: LRR → sustained improvements → higher final fitness."
+      },
+      "premises": [
+        "github:2604_19440::model_mixing_degrades_performance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a0c48cb03e72d758",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::zeroshot_definition"
+      ],
+      "conclusion": "github:2604_19440::cost_efficiency_frontier",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__implication_result_017eda95",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::lrr_predicts_strongly",
+              "github:2604_19440::cost_efficiency_frontier"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Since @lrr_predicts_strongly establishes that LRR (not raw capability or cost) is the dominant predictor of final performance (β=0.528, R²=0.246 joint), models with high LRR and moderate cost can outperform more expensive models with lower LRR. The cost-efficiency data (Figure 8, Figure 15) shows Mistral-24B-Instruct on the Pareto frontier: large fitness improvement at moderate API cost, despite not being the most capable model by zero-shot standards. Its strong refinement behavior generates frequent incremental improvements efficiently."
+      },
+      "premises": [
+        "github:2604_19440::lrr_predicts_strongly"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d80b4581d03e56b3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::evo_loop_design",
+        "github:2604_19440::shared_initial_population",
+        "github:2604_19440::study_scope"
+      ],
+      "conclusion": "github:2604_19440::optimizable_ability_distinct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_f3828948",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::zeroshot_insufficient",
+              "github:2604_19440::lrr_predicts_strongly",
+              "github:2604_19440::strong_optimizers_localize",
+              "github:2604_19440::novelty_conditional_on_localization",
+              "github:2604_19440::model_mixing_degrades_performance"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_bc6f63aa",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_f3828948",
+              "github:2604_19440::optimizable_ability_distinct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Five converging lines of evidence establish optimizable ability as distinct: (1) @zeroshot_insufficient: zero-shot explains only ~10% of final performance variance; (2) @lrr_predicts_strongly: LRR explains ~20% alone and ~25% jointly with zero-shot—more than zero-shot alone; (3) @strong_optimizers_localize: geometric trajectory analysis shows the mechanism—progressive localization; (4) @novelty_conditional_on_localization: novelty benefits are contingent on already being in an exploitable regime; (5) @model_mixing_degrades_performance: direct manipulation of refinement causes predictable performance changes. Together, these support a causal story: LLMs that reliably improve upon parents (high LRR) progressively localize their search (low entropy), produce frequent breakthroughs, and achieve higher final fitness—independently of zero-shot capability."
+      },
+      "premises": [
+        "github:2604_19440::zeroshot_insufficient",
+        "github:2604_19440::lrr_predicts_strongly",
+        "github:2604_19440::strong_optimizers_localize",
+        "github:2604_19440::novelty_conditional_on_localization",
+        "github:2604_19440::model_mixing_degrades_performance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8561f795bc5f16d8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_19440::exploration_exploitation_classical",
+        "github:2604_19440::llm_as_search_operators",
+        "github:2604_19440::llm_mutation_differs"
+      ],
+      "conclusion": "github:2604_19440::llm_evolution_differs_from_classical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__implication_result_2d640302",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::novelty_not_significant",
+              "github:2604_19440::llm_evolution_differs_from_classical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The LLM mutation operator is conditioned on parent candidates and their fitness (as described in @llm_mutation_differs), making exploration more constrained than in classical stochastic mutation. @novelty_not_significant confirms empirically that higher LLM-generated novelty does not translate to better outcomes—precisely because novelty in this setting reflects the LLM's semantic variation patterns rather than random coverage of the search space. Together, these establish that classical exploration–exploitation intuitions from @exploration_exploitation_classical do not transfer directly to LLM-guided evolution."
+      },
+      "premises": [
+        "github:2604_19440::novelty_not_significant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14f5926767144b65",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_19440::refinement_is_system_property",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__implication_result_b12012f1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::temperature_robustness",
+              "github:2604_19440::refinement_is_system_property"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The temperature sensitivity analysis (@temperature_robustness) shows that the LRR–performance correlation holds across a wide temperature range (T ∈ {0.0–1.3}), ruling out that refinement behavior is tied to a specific decoding hyperparameter. This supports viewing refinement behavior as an emergent property of the combined system rather than a fixed model attribute, suggesting that prompting and decoding can modulate it."
+      },
+      "premises": [
+        "github:2604_19440::temperature_robustness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5d7e3d12485a1896",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_19440::design_implication_select_refiners",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_1d798666",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::optimizable_ability_distinct",
+              "github:2604_19440::cost_efficiency_frontier",
+              "github:2604_19440::lrr_predicts_strongly"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_fa524066",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_1d798666",
+              "github:2604_19440::design_implication_select_refiners"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Since @optimizable_ability_distinct establishes that refinement ability is dissociable from zero-shot capability, and @cost_efficiency_frontier shows that high-LRR models like Mistral-24B-Instruct reach the Pareto frontier of cost-performance, and @lrr_predicts_strongly demonstrates LRR explains more variance than zero-shot, the actionable implication is to evaluate and select models for their refinement behavior. This is a novel evaluation criterion beyond standard LLM benchmarks."
+      },
+      "premises": [
+        "github:2604_19440::optimizable_ability_distinct",
+        "github:2604_19440::cost_efficiency_frontier",
+        "github:2604_19440::lrr_predicts_strongly"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0a7272484620f830",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_19440::training_implication",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_0f2bd19b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::optimizable_ability_distinct",
+              "github:2604_19440::model_mixing_degrades_performance"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_79782772",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_0f2bd19b",
+              "github:2604_19440::training_implication"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Since @optimizable_ability_distinct shows refinement ability is separable from general capability, and @model_mixing_degrades_performance confirms that refinement behavior causally drives performance, it follows that targeted training objectives for refinement (rather than general capability) could improve evolutionary search without requiring larger or more expensive models. This is consistent with the EvoTune and related work directions."
+      },
+      "premises": [
+        "github:2604_19440::optimizable_ability_distinct",
+        "github:2604_19440::model_mixing_degrades_performance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f83b2a6e687d19fa",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_19440::novelty_reinterpretation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_8f30637a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::novelty_conditional_on_localization",
+              "github:2604_19440::novelty_not_significant"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_4e74b456",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_8f30637a",
+              "github:2604_19440::novelty_reinterpretation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The mixed-effects model reveals a nuanced picture: @novelty_conditional_on_localization shows novelty's positive main effect (p=0.006) is cancelled by the negative novelty × H_spatial interaction (p<0.001). @novelty_not_significant confirms that averaged across all search states (including diffuse ones), novelty does not predict final performance. Together: novelty is a conditional resource—useful when spent within an already-exploitable region, wasteful otherwise. This reconciles novelty's intuitive appeal with the empirical null result."
+      },
+      "premises": [
+        "github:2604_19440::novelty_conditional_on_localization",
+        "github:2604_19440::novelty_not_significant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2e689fbf186f1b59",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_19440::design_implication_select_refiners",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_19440::__conjunction_result_0675e3c9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_19440::limitation_fixed_protocol",
+              "github:2604_19440::limitation_model_mixing_confound",
+              "github:2604_19440::limitation_novelty_operationalization"
+            ]
+          },
+          {
+            "conclusion": "github:2604_19440::__implication_result_ac8e6aba",
+            "operator": "implication",
+            "variables": [
+              "github:2604_19440::__conjunction_result_0675e3c9",
+              "github:2604_19440::design_implication_select_refiners"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "The stated limitations partially qualify the design implication: @limitation_fixed_protocol means that findings may not generalize to evolutionary loops with very different selection pressure or offspring size; @limitation_model_mixing_confound means that model mixing evidence for the causal role of LRR is not fully isolated; @limitation_novelty_operationalization means the null novelty result could be sensitive to the choice of novelty metric. These limitations lower (but do not eliminate) confidence in @design_implication_select_refiners as a universal prescription."
+      },
+      "premises": [
+        "github:2604_19440::limitation_fixed_protocol",
+        "github:2604_19440::limitation_model_mixing_confound",
+        "github:2604_19440::limitation_novelty_operationalization"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_eef1b07279321910",
+      "type": "support"
+    }
+  ]
+}

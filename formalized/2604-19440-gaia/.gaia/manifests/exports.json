@@ -1,0 +1,113 @@
+{
+  "exports": [
+    {
+      "content": "Breakthrough rate (fraction of generations achieving best-so-far improvement) is the strongest predictor of final optimization performance. OLS results (Table 14): breakthrough rate alone yields β=0.445 (SE=0.097, p<0.001, R²=0.198)—approximately two times the explanatory power of zero-shot capability alone (R²=0.103). In the joint model (M8: zero-shot + breakthrough rate), breakthrough rate remains highly significant (β=0.389, p<0.001, R²=0.246), while the zero-shot coefficient decreases from 0.322 to 0.226 (p=0.076, no longer significant). This indicates that part of zero-shot's predictive power is mediated through its ability to generate consistent improvements during search.",
+      "content_hash": "1d296c28ec1d3e6f82986c3929f727acb5f7e5ebc15d384af54c488e0aa024fe",
+      "label": "breakthrough_rate_predicts",
+      "qid": "github:2604_19440::breakthrough_rate_predicts",
+      "type": "claim"
+    },
+    {
+      "content": "Optimization performance is not fully determined by base model capability or cost. Some mid-sized models achieve large fitness improvements at relatively low cost. Mistral-24B-Instruct lies on the Pareto frontier of optimization gain vs. monetary cost, combining large fitness improvement with moderate cost (Figure 8). Larger/more expensive models (e.g., GPT-4o at much higher cost) do not always yield proportional gains per dollar. Cost-efficient optimization is achieved by selecting models with favorable refinement behavior rather than maximum zero-shot capability.",
+      "content_hash": "abd79a0bee12d66a159768287256b13d2ef674aff2fca02a50442718d33c5c74",
+      "label": "cost_efficiency_frontier",
+      "qid": "github:2604_19440::cost_efficiency_frontier",
+      "type": "claim"
+    },
+    {
+      "content": "For practitioners designing LLM-based optimization systems, the primary objective should be to control and optimize refinement behavior, rather than simply maximizing base model capability or using the most expensive model. Smaller or cheaper models with strong inductive biases toward local refinement can outperform larger models that produce high-novelty but low-refinement offspring. Model selection should consider LRR, not just zero-shot benchmarks.",
+      "content_hash": "15f2c75cb2f4a1b8d9172e6d844f8fc04bc7eed7b5a4c75016189d76a1c4f5db",
+      "label": "design_implication_select_refiners",
+      "qid": "github:2604_19440::design_implication_select_refiners",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-guided evolution differs qualitatively from classical evolutionary algorithms. The LLM mutation operator is not random but instantiates a learned generative prior that induces structured, semantically meaningful variations, strongly biasing the search toward exploitation rather than random exploration. This makes novelty-as-exploration a misleading proxy in the LLM setting: LLM-generated novelty does not arise from blind exploration but from semantic variation conditioned on parent solutions and fitness context.",
+      "content_hash": "03ff4509f8eca8a9f3fc0ba89aa6e85028e97eaa54aa27529cda3b21f12fe95d",
+      "label": "llm_evolution_differs_from_classical",
+      "qid": "github:2604_19440::llm_evolution_differs_from_classical",
+      "type": "claim"
+    },
+    {
+      "content": "Effective LLM optimizers behave as local refiners: they frequently produce offspring that strictly improve upon their prompted parents while maintaining controlled semantic step sizes. This is characterized by two operator-level metrics: (1) Local Refinement Rate (LRR) = fraction of valid offspring that strictly improve upon their parent; (2) Parent–Child Distance (PCD) = average semantic distance between each offspring and its prompted parents.",
+      "content_hash": "9d3fe8508614ef78f4ec9c2f6069d19a5aa16eac15ea23074784c0e28438fad0",
+      "label": "local_refiner_hypothesis",
+      "qid": "github:2604_19440::local_refiner_hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "Local Refinement Rate (LRR) is a strong positive predictor of final performance. Model-level OLS regression (Table 1): in the joint model (ZS + LRR + PCD), LRR coefficient β=0.528 (p<0.001), while PCD effect vanishes (β=−0.024, p=0.838) once LRR is included. R² increases from 0.204 (ZS + PCD) to 0.367 (ZS + LRR + PCD). The negative effect of PCD (β=−0.329, p=0.001) disappears when LRR is added, indicating that large semantic modifications are harmful primarily because they reduce refinement reliability, not because of step size per se.",
+      "content_hash": "ae4b5fd286f3736c3a1bc8bc966a5dd425b1ab20b6ab1e7f15c97c88d7261e6c",
+      "label": "lrr_predicts_strongly",
+      "qid": "github:2604_19440::lrr_predicts_strongly",
+      "type": "claim"
+    },
+    {
+      "content": "Increasing the fraction of weak-refiner offspring monotonically degrades optimization performance and reduces the overall refinement rate. On TSP-60 and bin packing-OR3, performance degrades sharply and monotonically as the proportion of weak-refiner offspring increases (Figure 7). The same effect exists but is weaker and less consistent in prompt optimization. Higher weak-offspring ratios consistently reduce the overall refinement rate, which co-varies with performance degradation.",
+      "content_hash": "efb023ca5de02770a2dd61e229cf7482c5228d9f3a1a984f793e67fec15bac0d",
+      "label": "model_mixing_degrades_performance",
+      "qid": "github:2604_19440::model_mixing_degrades_performance",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty is conditionally useful: it increases breakthrough probability only when the search is sufficiently localized (low spatial entropy). Under high spatial dispersion, novelty is largely unproductive or even detrimental. Breakthrough events concentrate in regions of high novelty and low spatial entropy; high novelty under high dispersion correlates with low breakthrough probability (Figure 12 heatmap). This conditional benefit is robust across both concurrent and lagged analyses.",
+      "content_hash": "9eaf1a973fd05a6317ccfd1c1437c9e5e6184c95a43759d517a40d3d0cce0113",
+      "label": "novelty_conditional_on_localization",
+      "qid": "github:2604_19440::novelty_conditional_on_localization",
+      "type": "claim"
+    },
+    {
+      "content": "Novelty-based measures—including average novelty and initial novelty (first-generation diversity)—are not significant predictors of final optimization performance in OLS regression. OLS results (Table 13): avg_novelty coefficient β=−0.027 (SE=0.073, p=0.710, R²=0.001); initial_novelty β=−0.042 (SE=0.102, p=0.681, R²=0.002). Adding novelty to a model that already includes zero-shot performance adds essentially no explanatory power (novelty β=0.002, p=0.980 in M4). Novelty explanatory power is negligible: increasing diversity alone does not contribute to improved optimization performance.",
+      "content_hash": "61bb1355423a31af6972bab635ea531df145c32a05426c2c1160400d2cd1d9cc",
+      "label": "novelty_not_significant",
+      "qid": "github:2604_19440::novelty_not_significant",
+      "type": "claim"
+    },
+    {
+      "content": "LLM optimization performance comprises two distinct abilities: (1) base zero-shot problem-solving capability, which correlates with but only partially explains optimization success; and (2) 'optimizable ability'—the capacity to function as an effective local refiner during evolutionary search, characterized by high local refinement rate (LRR), progressive localization in semantic space, and frequent incremental breakthroughs. These abilities are empirically dissociable: models with similar zero-shot scores can differ substantially in optimization trajectories and outcomes. Optimizable ability is not simply a property of base model strength—smaller or cheaper models can outperform larger ones when they exhibit more reliable refinement behavior.",
+      "content_hash": "82cfc5cda42f5338d698234e3f763da938920a022ceb7c28d7aa4f63f6c85c04",
+      "label": "optimizable_ability_distinct",
+      "qid": "github:2604_19440::optimizable_ability_distinct",
+      "type": "claim"
+    },
+    {
+      "content": "Effective LLM optimizers progressively localize their search in semantic space. Qualitative case study (Figure 5, TSP-60): Gemini-1.5-Pro forms a convergent solution cluster in the multidimensional scaling (MDS) projection, with spatial entropy H_spatial decreasing from ~4.45 at generation 0 to ~4.30 by generation 30. Mean best fitness increases monotonically from ~0.75 to ~0.95. Fitness spatial entropy H_fitness also decreases, indicating high-quality solutions concentrate into a tight semantic region.",
+      "content_hash": "c1dd8054bc3d07815fb28ac4ce619170f88c672543cb11293d9480cfacbd9a5a",
+      "label": "strong_optimizers_localize",
+      "qid": "github:2604_19440::strong_optimizers_localize",
+      "type": "claim"
+    },
+    {
+      "content": "The relationship between local refinement rate and final performance is robust to substantial variations in decoding temperature. Temperature sensitivity analysis on TSP and Oscillator tasks with Mistral-7B and Mistral-24B (T ∈ {0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3}): Pearson r between LRR and final performance = 0.76 (p=0.027) for Mistral-7B on TSP and 0.92 (p<0.001) for Mistral-24B on TSP. Oscillator correlations are positive but not significant (r=0.49, p=0.209 and r=0.32, p=0.433). Refinement behavior is a stable property of the combined system (model, prompt, decoding configuration), not tied to a narrow temperature regime.",
+      "content_hash": "c6871621f19dc7e96aa6fc21d367bf855e878d55a97547c6b7a4b6ce1d5145dd",
+      "label": "temperature_robustness",
+      "qid": "github:2604_19440::temperature_robustness",
+      "type": "claim"
+    },
+    {
+      "content": "The results support training or fine-tuning LLMs specifically as effective search operators—emphasizing local refinement and error correction rather than general-purpose capability. Specialized training objectives targeting high LRR may yield better evolutionary search operators than general capability scaling.",
+      "content_hash": "cab5908737d15570bb9fbb0366650b6f63b335f230358a53c9d54e26372d6c63",
+      "label": "training_implication",
+      "qid": "github:2604_19440::training_implication",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot performance is strongly positively correlated with post-optimization performance when aggregated across tasks (Figure 3, linear fit r=0.860, p=3.95e-05). Similar trends are observed at the sub-task level for 6 of 8 tasks; equation discovery tasks are the exception where the correlation is weaker. This confirms that base capability is a significant predictor of optimization potential.",
+      "content_hash": "8c895fde2801370fc41e945d8fc3dec4d7901c0c5d9366f1d6da6d70e203d135",
+      "label": "zeroshot_correlates_with_final",
+      "qid": "github:2604_19440::zeroshot_correlates_with_final",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot performance alone is insufficient to fully explain long-horizon optimization success. Models with nearly identical zero-shot performance can diverge substantially after evolution. For example, at a zero-shot score of approximately 0.4 (Figure 3), multiple models cluster tightly along the zero-shot axis yet spread widely in their best final performance. The OLS regression of final performance on zero-shot alone yields R²=0.103, explaining only ~10% of variance (Table 14, model M7).",
+      "content_hash": "53cfac023e4f926ac6c02f3b8d510d51c19e28373ae7cc1105d7f59ecf04e19d",
+      "label": "zeroshot_insufficient",
+      "qid": "github:2604_19440::zeroshot_insufficient",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:3497ce3624cc4c0557b04bf441dc533ec19e043ad846c4c86fcff722b34983e1",
+  "manifest_schema_version": 1,
+  "package": "2604-19440",
+  "version": "0.1.0"
+}
