@@ -1,0 +1,221 @@
+{
+  "holes": [
+    {
+      "content": "The decision-centric framework predicts high task success and low wasted executions in calendar scheduling because the deterministic, explicit policy prevents premature execution (by requiring $\\hat{p}_{\\text{suff}}=1.0$ before executing) and prevents blind retries (by the no-blind-retry constraint in Branch 1 of the policy) [@Sun2026].",
+      "content_hash": "70c09e7a3eef52fa58d809a50a99c6feece58eedfe2aa39ad7a7d2c0f34bed71",
+      "interface_hash": "sha256:4a6fa321c04bfdccf094c642722ef6117ad889c3c9a4f52e8a81930399434101",
+      "label": "dc_predicts_high_success",
+      "qid": "github:2604_00414::dc_predicts_high_success",
+      "required_by": [
+        "github:2604_00414::dc_granite_100pct_success"
+      ]
+    },
+    {
+      "content": "The decision-centric approach predicts high medium-bucket success because the explicit sufficiency signal $\\hat{p}$ is computed independently of the action, allowing the controller to correctly identify $\\hat{p} < \\tau$ (insufficient) and select 'expand' even when the model internally assesses insufficiency but would fuse that assessment with a 'stop' action in a prompt-based system [@Sun2026].",
+      "content_hash": "e06832405c1d6382711262c68f8905d1ae4c2d05b703278f0c17f5848e2afa32",
+      "interface_hash": "sha256:9cc728c7e7699eb3b79b493b855b7f1f77f65d2e5ba34b83b350ec1fc5d6209f",
+      "label": "dc_predicts_medium_expand",
+      "qid": "github:2604_00414::dc_predicts_medium_expand",
+      "required_by": [
+        "github:2604_00414::medium_bucket_results"
+      ]
+    },
+    {
+      "content": "The decision-centric framework predicts success in scenario S5 because it maintains and updates the belief state $\\hat{p}_{\\text{suff}}$ explicitly after each action: when decoy D (level=L1) fails and eliminates node E (also level=L1), the candidate count drops from 5 to 3 and $\\hat{p}_{\\text{suff}}$ rises from 0.200 to 0.333 at $t=2$, enabling the correct backtrack-and-search policy thereafter [@Sun2026].",
+      "content_hash": "21e794fd2e3a1b0d57c2710eeebd5f67f213e69b839c93a7545964155ad610f2",
+      "interface_hash": "sha256:4c8e5cb99852faf1fd1eb56dbe3b6274a5fcaf8afd1845cc87e1cc4d7256c9fd",
+      "label": "dc_predicts_s5_success",
+      "qid": "github:2604_00414::dc_predicts_s5_success",
+      "required_by": [
+        "github:2604_00414::s5_correlated_update_result"
+      ]
+    },
+    {
+      "content": "On easy questions (gold passage present at round 0), all four methods achieve 100% success. However, they differ in retrieval efficiency: Prompt uses 0.10 rounds, DC-LLM uses 0.62 rounds, DC-Dense uses 1.12 rounds, DC-Composite uses 0.84 rounds. DC-Dense tends to over-expand on easy questions (treating retrieved passages as insufficient when they are sufficient) [@Sun2026].",
+      "content_hash": "4ae52c18bea2924bb1edf5bda8f56e9d4d96ab8c63c0d66b6cbe2eb1676f5362",
+      "interface_hash": "sha256:4d03bf9f58b0dde9d5a8a43cadfe6ebe0cf9385cf3b9d93e7c6c8c430997cccb",
+      "label": "easy_bucket_results",
+      "qid": "github:2604_00414::easy_bucket_results",
+      "required_by": [
+        "github:2604_00414::modularity_signal_isolation"
+      ]
+    },
+    {
+      "content": "Failure attribution for DC-Composite: medium-bucket failures (3 total) are entirely cases where both DC-Dense and DC-LLM confidently support 'stop' incorrectly (both signals high). Hard-bucket failures (41 total) are 98% corpus gaps (gold passage never retrieved within budget) and 2% both-signals-high errors. This suggests different remedies: medium failures require a signal of a different type (e.g., passage highlighting, answer-type matching, token-level overlap); hard failures require a stronger retriever or corpus-exhaustion signal [@Sun2026].",
+      "content_hash": "3ababcba8b081767654b23743ffc1019723df7e0e988dc7c890290fc48b285ac",
+      "interface_hash": "sha256:a2f7f3f90564ed80a928f9723991c97c8b383933ac82d6036cb2226f41f80c4e",
+      "label": "failure_attribution_retrieval",
+      "qid": "github:2604_00414::failure_attribution_retrieval",
+      "required_by": [
+        "github:2604_00414::framework_is_general"
+      ]
+    },
+    {
+      "content": "Making the decision interface explicit does not eliminate uncertainty: the decision context $c$ may be noisy, and the chosen action may still be executed by a stochastic generator. The benefit is attribution: once context, policy, and execution are separated, failures can be localized rather than remaining entangled inside a single model call [@Sun2026].",
+      "content_hash": "31c0e1e31c8a393aac4c33853a0f54313461b2987e17ba4745221a46b5c50211",
+      "interface_hash": "sha256:f14b6b995eea5ae42f8fa2166469543c91c2985e1827edee6e5af0d065f8d42c",
+      "label": "framework_preserves_uncertainty",
+      "qid": "github:2604_00414::framework_preserves_uncertainty",
+      "required_by": [
+        "github:2604_00414::framework_is_general"
+      ]
+    },
+    {
+      "content": "On hard questions (gold passage never retrieved within budget), all methods achieve ~14–18% success: Prompt 14% (0.14 rounds), DC-LLM 18% (1.66 rounds), DC-Dense 18% (1.84 rounds), DC-Composite 18% (1.84 rounds). The DC variants expand more but cannot improve success because the gold passage is simply not in the 2000-passage corpus within budget. Hard failures are corpus gaps, not signal failures [@Sun2026].",
+      "content_hash": "bb8040dd01ca0bda7a8ab49333ee0d08b56554cb781644600b2bb554376a8cc9",
+      "interface_hash": "sha256:e9b5c2b8a82ddb0cfe5126783e7fade64aee43d8572a7b74af7d0b782a9c88bb",
+      "label": "hard_bucket_results",
+      "qid": "github:2604_00414::hard_bucket_results",
+      "required_by": [
+        "github:2604_00414::modularity_signal_isolation"
+      ]
+    },
+    {
+      "content": "In the LLaMA 3 $k=1$ absent failure of DC (original), the sufficiency estimator correctly identifies that only duration_min is missing ($\\hat{p}_{\\text{suff}}=0.75$) and the policy correctly selects 'clarify', but the question generator produces a question about already-known fields (e.g., 'What time should the meeting start?'), preventing acquisition of the missing information. Constraining the question-generator prompt to ask only about the listed missing fields restores 100% success at $k=1$ absent without modifying the estimator, policy, or executor [@Sun2026].",
+      "content_hash": "61b459eb80d2397b877ee8eb7b5403c43f39d37620ae08e71e9380b3c132f2dc",
+      "interface_hash": "sha256:54e7e7a3aba9fe1b5148798be56060bd8174895ce256f1261f9d77577a8276f0",
+      "label": "k1_failure_localized",
+      "qid": "github:2604_00414::k1_failure_localized",
+      "required_by": [
+        "github:2604_00414::dc_llama_transfer",
+        "github:2604_00414::framework_is_general"
+      ]
+    },
+    {
+      "content": "A multi-signal instantiation of the decision-centric framework uses two co-evolving explicit signals: (1) a sufficiency signal $\\hat{p}_{\\text{suff},t} \\in [0, 1]$, reflecting whether the current context contains enough information to act reliably (low value favors information acquisition), and (2) a correctness signal $\\hat{p}_{\\text{corr},t} \\in [0, 1]$, reflecting whether the current trajectory or intermediate result appears to be on the right track (low value after an action favors revision or backtracking) [@Sun2026].",
+      "content_hash": "51fc947607b40ca29dbf33d135b37f43788d0232c7cb05108451e315823e3e49",
+      "interface_hash": "sha256:ad6b5cb773293db157a20cbd43850a813f17340bdcb66b91726f3571ce44d6e2",
+      "label": "multi_signal_def",
+      "qid": "github:2604_00414::multi_signal_def",
+      "required_by": [
+        "github:2604_00414::correlated_belief_update",
+        "github:2604_00414::dc_graph_100pct",
+        "github:2604_00414::joint_signal_value"
+      ]
+    },
+    {
+      "content": "The Prompt-Clarify baseline on Granite 4 micro degrades sharply with increasing missing fields: success rates are 100% at $k=0$, 100% at $k=1$ absent, 100% at $k=1$ unresolvable, 100% at $k=2$ absent, 50% at $k=2$ unresolvable, 60% at $k=3$ (both types), and 10% at $k=4$. Average wasted executions reach 2.90 at $k=4$ [@Sun2026].",
+      "content_hash": "ddc413e831e97e451c96dc4d2ac91f5879260d9ca11dd264ebc74529b2f0db13",
+      "interface_hash": "sha256:0b350e30e841b3952797c3aa0d8a34c5297c0e550c7c89219d8d7f28d08323fa",
+      "label": "prompt_calendar_degrades",
+      "qid": "github:2604_00414::prompt_calendar_degrades",
+      "required_by": [
+        "github:2604_00414::dc_framework_proposed"
+      ]
+    },
+    {
+      "content": "Prompt-based control is implicit: assessment and action are fused inside a single model call, making the basis for system behavior hard to inspect, enforce, diagnose, or repair, especially in sequential settings where errors compound over time [@Sun2026].",
+      "content_hash": "89d27d422bceb6394a68c7ab301bcaa33f8f056dd72a177bfae52abb7d7b8c73",
+      "interface_hash": "sha256:abde0b43c2bb33b94e7e32da2dcd6467a687864ab193768d1a77da64a9e636eb",
+      "label": "prompt_control_implicit",
+      "qid": "github:2604_00414::prompt_control_implicit",
+      "required_by": [
+        "github:2604_00414::prompt_fundamental_limit"
+      ]
+    },
+    {
+      "content": "In 28 of 44 medium-bucket Prompt failures (64%), the model's own free-text reason string explicitly states that the passages do not contain the answer, yet the model still outputs 'stop'. This demonstrates the core failure of implicit control: the internal assessment is correct, but it is not bound to the action selection — the failure is of mapping recognition to control, not of recognition itself [@Sun2026].",
+      "content_hash": "784d588140da5e294f2c0857a40d83d1fba663c63525487816d1d00e7318d137",
+      "interface_hash": "sha256:c06bb1adde5ecf82b9b8d04817c4634df0808db6e3c87becb8facb911ddb0309",
+      "label": "prompt_correct_assessment_wrong_action",
+      "qid": "github:2604_00414::prompt_correct_assessment_wrong_action",
+      "required_by": [
+        "github:2604_00414::prompt_fundamental_limit"
+      ]
+    },
+    {
+      "content": "In scenario S5, embedding the decision policy in the system prompt (Prompt w/ policy) does not recover the performance gap versus DC: both Prompt and Prompt (w/ policy) remain at 35% success, even below the Retry baseline at 60%. The bottleneck is not deciding how to act given observable state, but the absence of the updated belief state — the effective candidate set has already changed during traversal (from 5 to 3) and that state update is not available to the LLM at decision time [@Sun2026].",
+      "content_hash": "56b3e069191089249fc4d808d3bb142c546462204fc1ad96551920abeb831054",
+      "interface_hash": "sha256:90264220e581e5f956f4d57512a9b9ddc4a1e0bfc750787464080eb9728b08ee",
+      "label": "prompt_policy_insufficient_for_s5",
+      "qid": "github:2604_00414::prompt_policy_insufficient_for_s5",
+      "required_by": [
+        "github:2604_00414::prompt_fundamental_limit"
+      ]
+    },
+    {
+      "content": "Prompt-based approaches predict degrading success rates as missing field count $k$ increases, because the model must simultaneously assess sufficiency and select actions within a single generation call, leading to premature execution when ambiguous information is mistakenly treated as resolved [@Sun2026].",
+      "content_hash": "15db1a66bc5f66d996be98c2f265c1073fc8c4ccd7283c310b71d29d99c65fb7",
+      "interface_hash": "sha256:d3a6b1732a9c0c0656f6dbeea3b3e1a5b7c14d5dbf455e4c917767202e59a27a",
+      "label": "prompt_predicts_degradation",
+      "qid": "github:2604_00414::prompt_predicts_degradation",
+      "required_by": [
+        "github:2604_00414::dc_granite_100pct_success"
+      ]
+    },
+    {
+      "content": "Prompt-based control predicts medium-bucket failure because the sufficiency assessment and action selection are fused in a single call: the model's internal recognition that passages are insufficient cannot reliably propagate to a 'expand' action, producing the observed 64% rate of correct-assessment-wrong-action failures [@Sun2026].",
+      "content_hash": "53afabaec8ada02d68926bf3130c36b675b1d7206f1fe17fe2109f90dcfd0d33",
+      "interface_hash": "sha256:94a5e877264c4860173c8f7ebae92be038a5e3bb5296f66c2af1bf505488d573",
+      "label": "prompt_predicts_medium_failure",
+      "qid": "github:2604_00414::prompt_predicts_medium_failure",
+      "required_by": [
+        "github:2604_00414::medium_bucket_results"
+      ]
+    },
+    {
+      "content": "Prompt-based approaches (including Prompt w/ policy) predict failure in scenario S5 because their decision-relevant state (candidate set size after elimination) is not exposed at decision time. The LLM must infer the action from a state snapshot that does not include the implicit elimination that occurred during traversal [@Sun2026].",
+      "content_hash": "5647917c91779895d7fc343ea1a3e667637603f520d5cbcc4c11524e1e86bec0",
+      "interface_hash": "sha256:21f460f8a4b92a854fc10e5620d6b36894b5b7e71e8dc37d6c2aa1e1a2e55fb4",
+      "label": "prompt_predicts_s5_failure",
+      "qid": "github:2604_00414::prompt_predicts_s5_failure",
+      "required_by": [
+        "github:2604_00414::s5_correlated_update_result"
+      ]
+    },
+    {
+      "content": "The Retry baseline (regenerate after failure without explicit action decision) achieves 100% success only at $k=0$ (all fields present) and 0% at all $k \\geq 1$ by exhausting the turn budget $T=6$ on repeated executions without ever clarifying. This confirms that Retry failures are structural (never clarifying) rather than ambiguity-driven [@Sun2026].",
+      "content_hash": "998e1c427a3cc23b5f251724e1af5f8c6fe4a19a4b7578e3296fe628188caf87",
+      "interface_hash": "sha256:d0fb98974fcea3d5ea098b85978f988c77b17ee2d9161ad57d56014edf114bbc",
+      "label": "retry_calendar_fails",
+      "qid": "github:2604_00414::retry_calendar_fails",
+      "required_by": [
+        "github:2604_00414::prompt_fundamental_limit"
+      ]
+    },
+    {
+      "content": "In scenario S2 (ambiguous, $\\hat{p}_{\\text{suff}}$ only: 13 candidates, 2 known attributes), DC achieves 100% by clarifying until the candidate pool is small enough to act on. Retry drops to 45% by executing blindly. Prompt-Clarify reaches 85%, occasionally acting too early without explicit sufficiency tracking. Prompt (w/ policy) improves to 95%, indicating that policy prose helps when the correct action can be read directly from the observable candidate count [@Sun2026].",
+      "content_hash": "7320cfea99b304c549f16b9a637a89b637a6d7899399318b04c0bb70ae546f92",
+      "interface_hash": "sha256:8489b96512126615cf1eed32a1bfe72b68f33dc6f9ada96af7a43d08d67bf3d7",
+      "label": "s2_sufficiency_isolation",
+      "qid": "github:2604_00414::s2_sufficiency_isolation",
+      "required_by": [
+        "github:2604_00414::prompt_fundamental_limit"
+      ]
+    },
+    {
+      "content": "In the minimal sequential instantiation, action selection depends on a single explicit signal: a sufficiency score $\\hat{p}_{\\text{suff},t} \\in [0, 1]$, estimated from the current decision context $c_t$, that reflects whether the current context appears sufficient to act reliably. A simple threshold policy selects 'execute' when $\\hat{p}_{\\text{suff},t}$ exceeds a preset threshold and 'clarify' otherwise. The signal may be produced by an LLM-based estimator, rule-based checks, structural completeness measures, or retrieval scores [@Sun2026].",
+      "content_hash": "d29f09d60d142c52cd14e2d2e42b6b850829ade12ecd4fec7a619ba0a0d615c2",
+      "interface_hash": "sha256:005c7d653b270966f875d3d8ec0f36c1fcbad18ef9cf16b1dd8f5974b99467c9",
+      "label": "sufficiency_signal_def",
+      "qid": "github:2604_00414::sufficiency_signal_def",
+      "required_by": [
+        "github:2604_00414::dc_granite_100pct_success"
+      ]
+    },
+    {
+      "content": "A robustness sweep over DC-Composite parameters $\\alpha \\in \\{0.2, \\ldots, 0.6\\}$ and $\\tau \\in \\{0.5, \\ldots, 0.9\\}$ on the held-out test set shows: easy-bucket success is 100% throughout. Medium-bucket success ranges from 78% ($\\tau=0.5$) to 92% ($\\tau=0.9$). The selected operating point ($\\alpha=0.4$, $\\tau=0.8$, medium 88%) is conservative — higher $\\tau$ or $\\alpha$ further improves medium-bucket success at the cost of more retrieval rounds on easy questions. Parameters were selected on a separate validation set, confirming results are not cherry-picked [@Sun2026].",
+      "content_hash": "eb4cc8a36223dc3386e8d7eae11289702cbfa7de8b097eb80961f833bdf4f862",
+      "interface_hash": "sha256:ecaf435e1b45b0e2b081163e6f39d032f4c89ee52aa8794fc4db00f5bf763ddd",
+      "label": "threshold_robustness",
+      "qid": "github:2604_00414::threshold_robustness",
+      "required_by": [
+        "github:2604_00414::modularity_signal_isolation"
+      ]
+    },
+    {
+      "content": "The unresolvable ambiguity condition (field referenced but not inferable) consistently widens the performance gap between DC and Prompt-Clarify compared to the absent condition. Prompt-Clarify drops to 50%, 60%, and 10% success at $k=2$, $k=3$, $k=4$ unresolvable, whereas DC maintains 100% because it continues clarifying until fields are explicitly confirmed rather than treating vague references as resolved [@Sun2026].",
+      "content_hash": "01ef91315f55fd6fd096f7721d72e5bb10982cb6f092fd8557b1efece3cd35e9",
+      "interface_hash": "sha256:b5d8c619be9034b88f871dfdeebbc23209be5c03dc61e828c62635d56dd957c9",
+      "label": "unresolvable_widens_gap",
+      "qid": "github:2604_00414::unresolvable_widens_gap",
+      "required_by": [
+        "github:2604_00414::dc_granite_100pct_success"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:61dedc179b4824dbce3629780643cf1594b5e92cf005c8c139806da2854093ba",
+  "manifest_schema_version": 1,
+  "package": "2604-00414",
+  "version": "0.1.0"
+}

@@ -1,0 +1,3393 @@
+{
+  "ir_hash": "sha256:61dedc179b4824dbce3629780643cf1594b5e92cf005c8c139806da2854093ba",
+  "knowledges": [
+    {
+      "content": "Large language model (LLM) systems are increasingly deployed as components of larger AI pipelines, where they must do more than generate text: they help route requests, allocate compute, retrieve information, call tools, and participate in multi-step workflows. In these settings, system behavior depends on both generation quality and control decisions about when and how to act [@Sun2026].",
+      "content_hash": "29b5b43439c175cd57f71573795c4bd3c3c4d687d9ed4fed65fe2ec9a6764876",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_00414::deployment_context",
+      "label": "deployment_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM deployment context",
+      "type": "setting"
+    },
+    {
+      "content": "In many current LLM system architectures, control decisions (whether to answer, clarify, retrieve, call tools, repair, or escalate) remain implicit within generation, entangling context interpretation, signal estimation, action selection, and output generation inside a single model call. This makes failures hard to inspect, constrain, or repair [@Sun2026].",
+      "content_hash": "09a72a9ef5db59b15a3d0d19047a6fa81ecf2c04e99e27de54b8e9cba65216fb",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_00414::implicit_control_problem",
+      "label": "implicit_control_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_framework_proposed",
+              "implicit_control_problem",
+              "prompt_calendar_degrades"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The paper's central premise: widely-observable problem in deployed LLM systems. Supported by concrete examples (retry loops, prompt-based clarify) across the literature and confirmed by the paper's own prompt baseline failures."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Implicit control problem in LLM systems",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-based control is implicit: assessment and action are fused inside a single model call, making the basis for system behavior hard to inspect, enforce, diagnose, or repair, especially in sequential settings where errors compound over time [@Sun2026].",
+      "content_hash": "89d27d422bceb6394a68c7ab301bcaa33f8f056dd72a177bfae52abb7d7b8c73",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_00414::prompt_control_implicit",
+      "label": "prompt_control_implicit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Definitional/architectural claim: assessment and action are fused in a single LLM call in prompt-based systems. Not contested; directly observable from system architecture."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Prompt-based control is fundamentally implicit",
+      "type": "claim"
+    },
+    {
+      "content": "A decision-centric framework (DC) is proposed that separates decision-relevant signals from the policy that maps them to actions, turning control from an implicit byproduct of generation into an explicit, inspectable, and enforceable layer of the LLM system. The three core elements are: (1) a finite set of candidate actions $\\mathcal{A}$, (2) a decision context $c$ comprising observed, estimated, and learned quantities, and (3) a deterministic decision function $\\delta: c \\mapsto a \\in \\mathcal{A}$ [@Sun2026].",
+      "content_hash": "af54b758da1f34f0e5d555ba085397cf5065ef8c94a504668ae97bdf2fcbe9a0",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_00414::dc_framework_proposed",
+      "label": "dc_framework_proposed",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "implicit_control_problem"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Decision-centric framework proposal",
+      "type": "claim"
+    },
+    {
+      "content": "Separating the decision context $c$, decision policy $\\delta$, and execution in an LLM system enables attribution of failures to one of three specific components: signal estimation (is $c$ correctly computed?), decision policy (does $\\delta$ map $c$ to the right action?), or execution (does the chosen action perform as expected?) [@Sun2026].",
+      "content_hash": "deb86f6c5fbd2556ad922b90bd97fb1c71e30aa5a6436914fc358d197a5a03b8",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_00414::separation_enables_attribution",
+      "label": "separation_enables_attribution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_framework_proposed"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Separation enables failure attribution",
+      "type": "claim"
+    },
+    {
+      "content": "A common instantiation of the decision function $\\delta$ is constrained utility maximization: $\\delta(c) = a^* = \\arg\\max_{a \\in \\mathcal{F}(c)} U(a, c)$, where $U(a, c)$ is a utility function and $\\mathcal{F}(c) \\subseteq \\mathcal{A}$ is the set of feasible actions under the current context $c$. A common linear specification is $U(a, c) = R(a, c) - \\sum_k \\lambda_k C_k(a, c)$, where $R$ is reward, $C_k$ the $k$-th cost term, and $\\lambda_k$ the tradeoff weight. Alternative objectives include regret-based, constraint-based, and ranking-based formulations [@Sun2026].",
+      "content_hash": "d159d14cbbe0ab18448ea657947fb681fc4a3ccbdaa3d1b7cdc8f1a466cf7072",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_00414::utility_maximization",
+      "label": "utility_maximization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_framework_proposed",
+              "utility_maximization"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Decision function as constrained utility maximization",
+      "type": "claim"
+    },
+    {
+      "content": "Making the decision interface explicit does not eliminate uncertainty: the decision context $c$ may be noisy, and the chosen action may still be executed by a stochastic generator. The benefit is attribution: once context, policy, and execution are separated, failures can be localized rather than remaining entangled inside a single model call [@Sun2026].",
+      "content_hash": "31c0e1e31c8a393aac4c33853a0f54313461b2987e17ba4745221a46b5c50211",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_00414::framework_preserves_uncertainty",
+      "label": "framework_preserves_uncertainty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Architectural design property of the DC framework, not an empirical claim. Follows from definition: the decision interface is made explicit while the underlying signals remain stochastic."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Explicit control preserves uncertainty but enables attribution",
+      "type": "claim"
+    },
+    {
+      "content": "The decision-centric abstraction $(\\mathcal{A}, c, \\delta)$ unifies familiar single-step LLM control settings such as model routing (action = which model to invoke) and adaptive inference scaling (action = which inference strategy and how much compute to allocate), and extends naturally to sequential settings where actions can change the information available for subsequent decisions [@Sun2026].",
+      "content_hash": "3de67aeeb4e9af035626ecce5280730790d010af4ff8f084d20b5accf103a450",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_00414::dc_unifies_settings",
+      "label": "dc_unifies_settings",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_framework_proposed"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "DC abstraction unifies routing, scaling, and sequential control",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-based approaches that leave action selection implicit within a single LLM call may be sufficient for reliable LLM system control, as models become more capable and prompts can be improved with stronger engineering.",
+      "content_hash": "bf68e9dc22a717b8485c2b5a6e0166e4afe5eeb9cf6e1d828ac3d03f1ac492b4",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_00414::alt_prompt_sufficient",
+      "label": "alt_prompt_sufficient",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The paper explicitly argues against prompt-based control being sufficient. The experimental evidence strongly contradicts this: Prompt achieves only 14% medium retrieval success, 10% calendar success at k=4, and 35% in graph S5, with 64% of failures showing correct assessment but wrong action. The fundamental limitation (assessment-action fusion) persists architecturally."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Alternative: prompt-based control may be sufficient",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_00414::no_both_sufficient",
+      "label": "no_both_sufficient",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.85
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "In sequential settings, LLM systems face a recurring decision at each turn $t$: act on the current context $c_t$ or seek more information. The decision context $c_t$ contains the decision-relevant information available at turn $t$: the original request, prior model outputs, user responses, retrieved evidence, and validation outcomes. The framework does not prescribe a particular representation of $c_t$; its only architectural requirement is that whatever drives action selection be exposed explicitly [@Sun2026].",
+      "content_hash": "ad8e043f18f0e157289b8afc95aa64fb355661b3dbbfebf219bf26595ceb0c3d",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_00414::sequential_setting_def",
+      "label": "sequential_setting_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Sequential decision-making setting definition",
+      "type": "setting"
+    },
+    {
+      "content": "In the minimal sequential instantiation, action selection depends on a single explicit signal: a sufficiency score $\\hat{p}_{\\text{suff},t} \\in [0, 1]$, estimated from the current decision context $c_t$, that reflects whether the current context appears sufficient to act reliably. A simple threshold policy selects 'execute' when $\\hat{p}_{\\text{suff},t}$ exceeds a preset threshold and 'clarify' otherwise. The signal may be produced by an LLM-based estimator, rule-based checks, structural completeness measures, or retrieval scores [@Sun2026].",
+      "content_hash": "d29f09d60d142c52cd14e2d2e42b6b850829ade12ecd4fec7a619ba0a0d615c2",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_00414::sufficiency_signal_def",
+      "label": "sufficiency_signal_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The sufficiency signal is well-defined in the paper and instantiated concretely in experiments (boolean field presence, 1/|candidates|, BM25 similarity). High confidence as a methodological definition claim."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Sufficiency signal for minimal sequential control",
+      "type": "claim"
+    },
+    {
+      "content": "In the sequential decision-centric setting, if the system acts too early, the source of error can be traced to the sufficiency estimate $\\hat{p}_{\\text{suff},t}$, the policy $\\delta$, or the execution itself. Structural constraints can be enforced directly at the decision level — for example, after a failed 'execute', the system can be constrained to 'clarify' rather than retry blindly, preventing wasted turns that do not acquire new information [@Sun2026].",
+      "content_hash": "76334e71ac772007d494dbc6c3ebc4a69b54cf7f1d2775d370b6b08691599d53",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_00414::sequential_makes_failures_attributable",
+      "label": "sequential_makes_failures_attributable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_framework_proposed"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Sequential DC enables failure attribution and structural constraints",
+      "type": "claim"
+    },
+    {
+      "content": "A multi-signal instantiation of the decision-centric framework uses two co-evolving explicit signals: (1) a sufficiency signal $\\hat{p}_{\\text{suff},t} \\in [0, 1]$, reflecting whether the current context contains enough information to act reliably (low value favors information acquisition), and (2) a correctness signal $\\hat{p}_{\\text{corr},t} \\in [0, 1]$, reflecting whether the current trajectory or intermediate result appears to be on the right track (low value after an action favors revision or backtracking) [@Sun2026].",
+      "content_hash": "51fc947607b40ca29dbf33d135b37f43788d0232c7cb05108451e315823e3e49",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_00414::multi_signal_def",
+      "label": "multi_signal_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "The two-signal instantiation is a specific architectural choice — well-defined and directly implemented in the graph disambiguation experiment. High confidence as a design specification claim."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Multi-signal instantiation with sufficiency and correctness",
+      "type": "claim"
+    },
+    {
+      "content": "The value of exposing both the sufficiency signal $\\hat{p}_{\\text{suff}}$ and correctness signal $\\hat{p}_{\\text{corr}}$ is that the optimal action depends on their joint state, not on either signal alone. Crucially, actions can update beliefs they were not primarily intended to target: a failed 'execute' action lowers perceived correctness while simultaneously improving sufficiency by eliminating alternative candidates. This enables richer action spaces without changing the architectural separation between context, policy, and execution [@Sun2026].",
+      "content_hash": "8b922cff8a7d7c1d18a676022c2790d12e98842a617eb312ac3f3b502a0c3634",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_00414::joint_signal_value",
+      "label": "joint_signal_value",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "multi_signal_def"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Value of joint multi-signal state for action selection",
+      "type": "claim"
+    },
+    {
+      "content": "In sequential settings with multiple signals, actions can produce correlated belief updates across signals. Specifically, a failed traversal (execute action that returns incorrect result) can simultaneously decrease $\\hat{p}_{\\text{corr}}$ and increase $\\hat{p}_{\\text{suff}}$ by eliminating candidates that share the traversed node's minority-valued hidden attribute. This 'passive' sufficiency improvement via elimination is unobservable to prompt-based systems that do not maintain explicit belief state [@Sun2026].",
+      "content_hash": "fefc77a1d497254dcb0a795fe4272e4f54b6910215112b967d301d44f82cad22",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_00414::correlated_belief_update",
+      "label": "correlated_belief_update",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "joint_signal_value",
+              "multi_signal_def"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Correlated belief update via failed traversal eliminates candidates",
+      "type": "claim"
+    },
+    {
+      "content": "Calendar scheduling experiment: the system must produce a valid JSON calendar event with four required fields — date, start_time, duration_min, attendees — from a natural-language request that may be incomplete or ambiguous. Scenarios vary two factors: (1) missing field count $k \\in \\{0, 1, 2, 3, 4\\}$ and (2) ambiguity type: 'absent' (field omitted) or 'unresolvable' (field referenced but not inferable, e.g., 'on Jack's usual slot'). This yields 8 unique scenarios. Turn budget $T=6$. Each scenario runs $N=10$ independent times. Executed on ibm/granite4:micro and LLaMA 3 (8B) [@Sun2026].",
+      "content_hash": "bc36d6bf082cbf86963e7fc827ef12d8280cd6c1434b8f9eb477d7a7d1a2764b",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_00414::calendar_setup",
+      "label": "calendar_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "Calendar experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "The decision-centric (DC) calendar policy is a deterministic three-branch rule. Input: $\\hat{p}_{\\text{suff},t}$ (fraction of confirmed fields), last action, last validation result. Branch 1 (no-blind-retry): if last_action == execute AND last_val.valid == False → CLARIFY. Branch 2: elif $\\hat{p}_{\\text{suff},t} == 1.0$ → EXECUTE. Branch 3: else → CLARIFY (ask about all unconfirmed fields at once). The sufficiency score $\\hat{p}_t = |\\text{confirmed fields}|/4$ is computed by an LLM extractor returning boolean presence per field [@Sun2026].",
+      "content_hash": "aaaa93b938db86b69ba346c02e84d987d75a6346b9bca6d3322a2962aa301c89",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_00414::dc_calendar_policy",
+      "label": "dc_calendar_policy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "DC calendar policy specification",
+      "type": "setting"
+    },
+    {
+      "content": "The decision-centric (DC) system achieves 100% success rate across all 8 calendar scheduling scenarios on Granite 4 micro, with 0 wasted executions at $k=2$ absent, $k=3$ absent, and 0.10 wasted at $k=1$ absent and $k=4$, and 0–1.65 clarification turns per run depending on scenario [@Sun2026].",
+      "content_hash": "7e9994246910deb9d5d6bb447b3353a05e9bd13b43fddb893d741e20bea5229f",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_00414::dc_granite_100pct_success",
+      "label": "dc_granite_100pct_success",
+      "metadata": {
+        "caption": "Table 7: Full results by missing-field count k and ambiguity type. Granite 4 micro, T=6, N=10.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_high_success",
+              "prompt_predicts_degradation",
+              "sufficiency_signal_def",
+              "unresolvable_widens_gap"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.00414.pdf, Table 7"
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "DC achieves 100% success on all 8 calendar scenarios (Granite)",
+      "type": "claim"
+    },
+    {
+      "content": "The Prompt-Clarify baseline on Granite 4 micro degrades sharply with increasing missing fields: success rates are 100% at $k=0$, 100% at $k=1$ absent, 100% at $k=1$ unresolvable, 100% at $k=2$ absent, 50% at $k=2$ unresolvable, 60% at $k=3$ (both types), and 10% at $k=4$. Average wasted executions reach 2.90 at $k=4$ [@Sun2026].",
+      "content_hash": "ddc413e831e97e451c96dc4d2ac91f5879260d9ca11dd264ebc74529b2f0db13",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_00414::prompt_calendar_degrades",
+      "label": "prompt_calendar_degrades",
+      "metadata": {
+        "caption": "Table 7: Full results by missing-field count k and ambiguity type.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly measured in N=10 runs per scenario on Granite 4 micro. The degradation pattern (100%→100%→75%→60%→10%) is a direct experimental observation with clear trend across k values.",
+        "source_table": "artifacts/2604.00414.pdf, Table 7"
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "Prompt-Clarify degrades sharply with missing field count (Granite)",
+      "type": "claim"
+    },
+    {
+      "content": "The Retry baseline (regenerate after failure without explicit action decision) achieves 100% success only at $k=0$ (all fields present) and 0% at all $k \\geq 1$ by exhausting the turn budget $T=6$ on repeated executions without ever clarifying. This confirms that Retry failures are structural (never clarifying) rather than ambiguity-driven [@Sun2026].",
+      "content_hash": "998e1c427a3cc23b5f251724e1af5f8c6fe4a19a4b7578e3296fe628188caf87",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_00414::retry_calendar_fails",
+      "label": "retry_calendar_fails",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Retry baseline failure is mechanistically expected and directly measured: without any clarify mechanism, the system exhausts its T=6 budget on repeated executions at all k>=1. 0% success at k>=1 is a direct measurement."
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "Retry baseline fails at all k>=1 by exhausting turn budget",
+      "type": "claim"
+    },
+    {
+      "content": "The unresolvable ambiguity condition (field referenced but not inferable) consistently widens the performance gap between DC and Prompt-Clarify compared to the absent condition. Prompt-Clarify drops to 50%, 60%, and 10% success at $k=2$, $k=3$, $k=4$ unresolvable, whereas DC maintains 100% because it continues clarifying until fields are explicitly confirmed rather than treating vague references as resolved [@Sun2026].",
+      "content_hash": "01ef91315f55fd6fd096f7721d72e5bb10982cb6f092fd8557b1efece3cd35e9",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_00414::unresolvable_widens_gap",
+      "label": "unresolvable_widens_gap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly measured: Table 7 shows DC maintains 100% on unresolvable scenarios while Prompt-Clarify drops to 50%/60%/10% at k=2/3/4. Pattern is consistent across all unresolvable scenarios tested."
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "Unresolvable references widen the DC vs Prompt-Clarify gap",
+      "type": "claim"
+    },
+    {
+      "content": "The decision-centric approach transfers across model families: on LLaMA 3 (8B), DC (original) outperforms both Retry and Prompt-Clarify at every missing-field count $k$. DC (original) achieves 100% at $k=0$, 50% at $k=1$ absent, 100% at $k=1$ unresolvable, 100% at $k=2$, 80% at $k=3$ unresolvable, and 100% at $k=4$. After constraining the question-generator prompt (DC constrained), success restores to 100% at all $k$ except $k=3$ unresolvable (90%) [@Sun2026].",
+      "content_hash": "8d581eeced6212b58918c4b82a3d0aad19a126e3d4f9f45eb130d616127da84c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_00414::dc_llama_transfer",
+      "label": "dc_llama_transfer",
+      "metadata": {
+        "caption": "Table 8: LLaMA 3 (8B) full per-scenario breakdown, N=10, T=6.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "k1_failure_localized",
+              "separation_enables_attribution"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.00414.pdf, Table 8"
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "DC transfers across model families (LLaMA 3 results)",
+      "type": "claim"
+    },
+    {
+      "content": "In the LLaMA 3 $k=1$ absent failure of DC (original), the sufficiency estimator correctly identifies that only duration_min is missing ($\\hat{p}_{\\text{suff}}=0.75$) and the policy correctly selects 'clarify', but the question generator produces a question about already-known fields (e.g., 'What time should the meeting start?'), preventing acquisition of the missing information. Constraining the question-generator prompt to ask only about the listed missing fields restores 100% success at $k=1$ absent without modifying the estimator, policy, or executor [@Sun2026].",
+      "content_hash": "61b459eb80d2397b877ee8eb7b5403c43f39d37620ae08e71e9380b3c132f2dc",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_00414::k1_failure_localized",
+      "label": "k1_failure_localized",
+      "metadata": {
+        "caption": "Figure 1: Diagnostic trace for LLaMA 3 at k=1 (before and after fix).",
+        "figure": "artifacts/2604.00414.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Directly observable from the diagnostic trace (Figure 1): logged values show p_suff=0.75 (correct), missing=[duration_min] (correct), but the question asks about date and time. The fix (constraining prompt) is directly measured to restore 100% at k=1."
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "k=1 LLaMA failure localized to question generator; fix is surgical",
+      "type": "claim"
+    },
+    {
+      "content": "The decision-centric framework predicts high task success and low wasted executions in calendar scheduling because the deterministic, explicit policy prevents premature execution (by requiring $\\hat{p}_{\\text{suff}}=1.0$ before executing) and prevents blind retries (by the no-blind-retry constraint in Branch 1 of the policy) [@Sun2026].",
+      "content_hash": "70c09e7a3eef52fa58d809a50a99c6feece58eedfe2aa39ad7a7d2c0f34bed71",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_00414::dc_predicts_high_success",
+      "label": "dc_predicts_high_success",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "The DC approach's prediction of high success follows from the design: $\\hat{p}_{\\text{suff}}=1.0$ gate before execute, plus no-blind-retry constraint, should logically prevent premature execution and blind retries. High confidence that the prediction follows from the design specification."
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "DC predicts high calendar success via explicit sufficiency gating",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-based approaches predict degrading success rates as missing field count $k$ increases, because the model must simultaneously assess sufficiency and select actions within a single generation call, leading to premature execution when ambiguous information is mistakenly treated as resolved [@Sun2026].",
+      "content_hash": "15db1a66bc5f66d996be98c2f265c1073fc8c4ccd7283c310b71d29d99c65fb7",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_00414::prompt_predicts_degradation",
+      "label": "prompt_predicts_degradation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.8,
+        "prior_justification": "The prompt-based prediction of degradation with increasing k follows from the assessment-action fusion architecture. Moderate-high confidence as it is theoretically motivated and confirmed by empirical results."
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "title": "Prompt-based approach predicts degradation with increasing missingness",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The decision-centric framework predicts high task success and low wasted executions in calendar scheduling because the deterministic, explicit policy prevents premature execution (by requiring $\\hat{p}_{\\text{suff}}=1.0$ before executing) and prevents blind retries (by the no-blind-retry constraint in Branch 1 of the policy) [@Sun2026]., Prompt-based approaches predict degrading success rates as missing field count $k$ increases, because the model must simultaneously assess sufficiency and select actions within a single generation call, leading to premature execution when ambiguous information is mistakenly treated as resolved [@Sun2026]., The decision-centric (DC) system achieves 100% success rate across all 8 calendar scheduling scenarios on Granite 4 micro, with 0 wasted executions at $k=2$ absent, $k=3$ absent, and 0.10 wasted at $k=1$ absent and $k=4$, and 0–1.65 clarification turns per run depending on scenario [@Sun2026].)",
+      "content_hash": "0393779ee00cf1e030f268778de4f12891d7e0c13f7f70f91fc1393be7f9086b",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_00414::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_high_success",
+              "prompt_predicts_degradation"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_exp1_calendar",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Graph disambiguation experiment: a synthetic knowledge graph with 200 nodes (people), each described by five categorical attributes: department \\in {Engineering, Marketing, Sales, Finance}, role \\in {Manager, Analyst, Engineer, Lead}, location \\in {New York, London, Tokyo, Berlin}, project \\in {Alpha, Beta, Gamma, Delta}, level \\in {L1, L2, L3, L4}. Edges connect pairs sharing >= 2 attributes; 15% noisy edges added (sharing <= 1 attribute). Given a partial description, the system identifies the target node by interleaving three actions: clarify (ask for a missing attribute), execute (visit a candidate), and backtrack (reject current candidate). Five scenarios: S1 (clean baseline), S2 (ambiguous, $\\hat{p}_{\\text{suff}}$ only), S3 (unreliable, $\\hat{p}_{\\text{corr}}$ only), S4 (orthogonal joint belief), S5 (correlated coupled update). $N=20$ runs per scenario [@Sun2026].",
+      "content_hash": "637afdd184150145a1167e15ad38d5521d6cf64b0ee6dee18be634236ea2f3b0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_00414::graph_setup",
+      "label": "graph_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "Graph disambiguation experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "DC signals for graph disambiguation: sufficiency $\\hat{p}_{\\text{suff}} = 1/|\\text{candidates}|$ (increases as candidate set shrinks via clarification or elimination after failed traversal). Correctness $\\hat{p}_{\\text{corr}}$ estimated after each visit: for each hidden attribute $k$, compute fraction of active peer candidates sharing the visited node's value; average over hidden attributes; penalize similarity to prior rejections by subtracting 0.15–0.35 if >= 50% hidden attribute match to previously rejected node; clamp to $[0.05, 0.95]$. Thresholds: $\\tau_{\\text{suff}} = 0.4$, $\\theta_{\\text{corr}} = 0.5$ [@Sun2026].",
+      "content_hash": "4b8e9db907b72e633a4d443090d21cf19db4578c93f5b68d3469932fe7c46442",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_00414::graph_dc_signals",
+      "label": "graph_dc_signals",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "DC signal definitions for graph disambiguation",
+      "type": "setting"
+    },
+    {
+      "content": "The decision-centric (DC) approach achieves 100% success across all five graph disambiguation scenarios (S1–S5), while baselines degrade: Retry drops to 45% (S2) and 60% (S5); Prompt reaches 85% (S2) and 35% (S5); Prompt (w/ policy) reaches 95% (S2) but also only 35% (S5) [@Sun2026].",
+      "content_hash": "1678b4876d898e4fe5e7004994295b9bd0de401d4ffbf88442d6a5c50c18fc31",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_00414::dc_graph_100pct",
+      "label": "dc_graph_100pct",
+      "metadata": {
+        "caption": "Table 4: Graph disambiguation success rates.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "joint_signal_value",
+              "multi_signal_def"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.00414.pdf, Table 4"
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "DC achieves 100% success across all 5 graph scenarios",
+      "type": "claim"
+    },
+    {
+      "content": "In scenario S2 (ambiguous, $\\hat{p}_{\\text{suff}}$ only: 13 candidates, 2 known attributes), DC achieves 100% by clarifying until the candidate pool is small enough to act on. Retry drops to 45% by executing blindly. Prompt-Clarify reaches 85%, occasionally acting too early without explicit sufficiency tracking. Prompt (w/ policy) improves to 95%, indicating that policy prose helps when the correct action can be read directly from the observable candidate count [@Sun2026].",
+      "content_hash": "7320cfea99b304c549f16b9a637a89b637a6d7899399318b04c0bb70ae546f92",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_00414::s2_sufficiency_isolation",
+      "label": "s2_sufficiency_isolation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly measured in N=20 runs: DC 100%, Retry 45%, Prompt 85%, Prompt(w/policy) 95% in S2. The causal isolation (psuFF only, single-signal setting) is by experimental design."
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "S2 isolates sufficiency signal: DC 100% vs Retry 45% vs Prompt 85%",
+      "type": "claim"
+    },
+    {
+      "content": "In scenario S5 (correlated coupled update: 12 initial candidates, 3 known attributes, forced first execution to decoy D), DC achieves 100% success by updating its belief state when decoy D's traversal eliminates node E (which shares level=L1, a minority value), reducing candidates from 5 to 3 and raising $\\hat{p}_{\\text{suff}}$ from 0.200 to 0.333 without any additional clarification turn. Prompt and Prompt (w/ policy) both achieve only 35% success, even below Retry at 60%, because the updated candidate state is not available to the LLM at decision time [@Sun2026].",
+      "content_hash": "4a19753203d1c13d7b1dd802edde2f8e5532da326b27339c920b84fdd241ce9c",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_00414::s5_correlated_update_result",
+      "label": "s5_correlated_update_result",
+      "metadata": {
+        "caption": "Table 10: Full graph disambiguation results, N=20, structural p_corr estimator.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_s5_success",
+              "prompt_predicts_s5_failure"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.00414.pdf, Table 10"
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "S5 correlated update: DC 100% vs Prompt 35% — state not available to LLM",
+      "type": "claim"
+    },
+    {
+      "content": "In scenario S5, embedding the decision policy in the system prompt (Prompt w/ policy) does not recover the performance gap versus DC: both Prompt and Prompt (w/ policy) remain at 35% success, even below the Retry baseline at 60%. The bottleneck is not deciding how to act given observable state, but the absence of the updated belief state — the effective candidate set has already changed during traversal (from 5 to 3) and that state update is not available to the LLM at decision time [@Sun2026].",
+      "content_hash": "56b3e069191089249fc4d808d3bb142c546462204fc1ad96551920abeb831054",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_00414::prompt_policy_insufficient_for_s5",
+      "label": "prompt_policy_insufficient_for_s5",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 10: both Prompt and Prompt(w/policy) achieve 35% in S5, below Retry at 60%. The diagnosis (missing belief state update) is confirmed by the S5 trace analysis."
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "Policy-in-prompt fails for S5: missing belief state update is the bottleneck",
+      "type": "claim"
+    },
+    {
+      "content": "The decision-centric framework predicts success in scenario S5 because it maintains and updates the belief state $\\hat{p}_{\\text{suff}}$ explicitly after each action: when decoy D (level=L1) fails and eliminates node E (also level=L1), the candidate count drops from 5 to 3 and $\\hat{p}_{\\text{suff}}$ rises from 0.200 to 0.333 at $t=2$, enabling the correct backtrack-and-search policy thereafter [@Sun2026].",
+      "content_hash": "21e794fd2e3a1b0d57c2710eeebd5f67f213e69b839c93a7545964155ad610f2",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_00414::dc_predicts_s5_success",
+      "label": "dc_predicts_s5_success",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "DC's prediction of S5 success follows from the design: explicit belief state maintained and updated after each action. The key mechanism (psuFF rises via elimination) is deterministic given the structural correctness estimator."
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "DC predicts S5 success via explicit correlated belief state update",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-based approaches (including Prompt w/ policy) predict failure in scenario S5 because their decision-relevant state (candidate set size after elimination) is not exposed at decision time. The LLM must infer the action from a state snapshot that does not include the implicit elimination that occurred during traversal [@Sun2026].",
+      "content_hash": "5647917c91779895d7fc343ea1a3e667637603f520d5cbcc4c11524e1e86bec0",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_00414::prompt_predicts_s5_failure",
+      "label": "prompt_predicts_s5_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.82,
+        "prior_justification": "The prompt-based prediction of S5 failure follows from the missing belief state in the observation payload: the updated candidate count after elimination is not available at decision time. Mechanistically motivated."
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "title": "Prompt-based approach predicts S5 failure due to unobserved state change",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The decision-centric framework predicts success in scenario S5 because it maintains and updates the belief state $\\hat{p}_{\\text{suff}}$ explicitly after each action: when decoy D (level=L1) fails and eliminates node E (also level=L1), the candidate count drops from 5 to 3 and $\\hat{p}_{\\text{suff}}$ rises from 0.200 to 0.333 at $t=2$, enabling the correct backtrack-and-search policy thereafter [@Sun2026]., Prompt-based approaches (including Prompt w/ policy) predict failure in scenario S5 because their decision-relevant state (candidate set size after elimination) is not exposed at decision time. The LLM must infer the action from a state snapshot that does not include the implicit elimination that occurred during traversal [@Sun2026]., In scenario S5 (correlated coupled update: 12 initial candidates, 3 known attributes, forced first execution to decoy D), DC achieves 100% success by updating its belief state when decoy D's traversal eliminates node E (which shares level=L1, a minority value), reducing candidates from 5 to 3 and raising $\\hat{p}_{\\text{suff}}$ from 0.200 to 0.333 without any additional clarification turn. Prompt and Prompt (w/ policy) both achieve only 35% success, even below Retry at 60%, because the updated candidate state is not available to the LLM at decision time [@Sun2026].)",
+      "content_hash": "fd672e5a2a1e1025d9ad3e523f1ffb939f191266957c24cb07da0f45e56eb669",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_00414::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_s5_success",
+              "prompt_predicts_s5_failure"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_exp2_graph",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Retrieval sufficiency experiment: given a question and accumulated BM25 passages, the system decides whether to 'stop' (current passages are sufficient) or 'expand k' (retrieve more passages, with $k = 3 \\to 6 \\to 9$). Budget: 2 retrieval rounds. 150 Natural Questions examples [@Kwiatkowski2019] over a 2000-passage BM25 corpus, split into $N=50$ each by difficulty: easy (gold passage present at round 0), medium (absent at round 0, retrieved within budget), hard (never retrieved within budget). Retrieval states (accumulated passages at $k=3,6,9$) are precomputed once and shared across all methods [@Sun2026].",
+      "content_hash": "8e664d423a5069c3313a934364734975303b358ab7379c18a22e8d12e68f8607",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_00414::retrieval_setup",
+      "label": "retrieval_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kwiatkowski2019",
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Retrieval experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Four retrieval control methods compared, all acting over the same action set and receiving the same state: (1) Prompt: direct LLM call to select stop/expand_k; (2) DC-LLM: LLM answerability judge outputting $\\hat{p}_{\\text{llm}} \\in [0,1]$, where $\\hat{p} = \\text{confidence}$ if answerable else $1 - \\text{confidence}$ (temperature 0.1); (3) DC-Dense: max cosine similarity between question and passage embeddings using all-MiniLM-L6-v2, normalized to $[0,1]$; (4) DC-Composite: $\\hat{p} = \\alpha \\hat{p}_{\\text{dense}} + (1-\\alpha)\\hat{p}_{\\text{llm}}$ with $\\alpha=0.4$. All DC variants use a fixed threshold controller: stop if $\\hat{p} \\geq \\tau = 0.8$, else expand. Parameters selected on a held-out validation set (N=30) [@Sun2026].",
+      "content_hash": "edd19d8ac40639b6cf2911df1933ec318d070593ee4e2334982ae085a2b65502",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_00414::signal_variants_def",
+      "label": "signal_variants_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Retrieval signal variant definitions",
+      "type": "setting"
+    },
+    {
+      "content": "On medium-difficulty questions (gold passage absent at round 0 but retrievable within budget), the four methods achieve: Prompt 14% success (avg 0.08 retrieval rounds), DC-LLM 88% success (1.34 rounds), DC-Dense 90% success (1.66 rounds), DC-Composite 94% success (1.62 rounds). The Prompt model achieves near-zero retrieval rounds, indicating it nearly always stops at round 0 [@Sun2026].",
+      "content_hash": "28d6aaecd3f64a5fbee3cee7ac4c1c49d0043d8d0eaf937c5ab434d750b3028b",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_00414::medium_bucket_results",
+      "label": "medium_bucket_results",
+      "metadata": {
+        "caption": "Table 5: Retrieval control results. Succ. = success rate; RR = avg retrieval rounds.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_medium_expand",
+              "prompt_predicts_medium_failure"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.00414.pdf, Table 5"
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Medium bucket retrieval results: Prompt 14% vs DC-LLM 88% vs DC-Composite 94%",
+      "type": "claim"
+    },
+    {
+      "content": "On easy questions (gold passage present at round 0), all four methods achieve 100% success. However, they differ in retrieval efficiency: Prompt uses 0.10 rounds, DC-LLM uses 0.62 rounds, DC-Dense uses 1.12 rounds, DC-Composite uses 0.84 rounds. DC-Dense tends to over-expand on easy questions (treating retrieved passages as insufficient when they are sufficient) [@Sun2026].",
+      "content_hash": "4ae52c18bea2924bb1edf5bda8f56e9d4d96ab8c63c0d66b6cbe2eb1676f5362",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_00414::easy_bucket_results",
+      "label": "easy_bucket_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "All methods achieve 100% on easy questions — directly measured, N=50. The differential retrieval rounds (DC-Dense 1.12 vs Prompt 0.10 vs DC-LLM 0.62) are directly measured from logged traces."
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Easy bucket: all methods 100% success but DC-Dense over-expands",
+      "type": "claim"
+    },
+    {
+      "content": "On hard questions (gold passage never retrieved within budget), all methods achieve ~14–18% success: Prompt 14% (0.14 rounds), DC-LLM 18% (1.66 rounds), DC-Dense 18% (1.84 rounds), DC-Composite 18% (1.84 rounds). The DC variants expand more but cannot improve success because the gold passage is simply not in the 2000-passage corpus within budget. Hard failures are corpus gaps, not signal failures [@Sun2026].",
+      "content_hash": "bb8040dd01ca0bda7a8ab49333ee0d08b56554cb781644600b2bb554376a8cc9",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_00414::hard_bucket_results",
+      "label": "hard_bucket_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Hard bucket results (~18% for all DC methods) directly measured, N=50. The corpus gap explanation is confirmed by the attribution analysis (Table 12: 98% hard failures are corpus gaps)."
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Hard bucket: ~18% success for all methods — corpus gap limits performance",
+      "type": "claim"
+    },
+    {
+      "content": "In 28 of 44 medium-bucket Prompt failures (64%), the model's own free-text reason string explicitly states that the passages do not contain the answer, yet the model still outputs 'stop'. This demonstrates the core failure of implicit control: the internal assessment is correct, but it is not bound to the action selection — the failure is of mapping recognition to control, not of recognition itself [@Sun2026].",
+      "content_hash": "784d588140da5e294f2c0857a40d83d1fba663c63525487816d1d00e7318d137",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_00414::prompt_correct_assessment_wrong_action",
+      "label": "prompt_correct_assessment_wrong_action",
+      "metadata": {
+        "caption": "Table 13: Prompt failure modes on medium questions. Type 1 (64%): correct assessment, wrong action.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly measured from logged prompt free-text reason strings: 28 of 44 medium failures (64%) contain explicit statements that passages are insufficient followed by 'stop'. Direct observation from logged outputs.",
+        "source_table": "artifacts/2604.00414.pdf, Table 13"
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Prompt failure: correct internal assessment overridden by fused action selection (64%)",
+      "type": "claim"
+    },
+    {
+      "content": "The three DC variants (DC-LLM, DC-Dense, DC-Composite) share an identical fixed-threshold controller and differ only in how the sufficiency signal $\\hat{p}$ is constructed. DC-Dense behaves like a relevance signal and tends to over-expand; DC-LLM behaves like an answerability signal and is more selective; DC-Composite achieves the best medium-bucket performance at 94%. Because the controller is fixed, performance differences isolate the effect of signal construction, not action policy [@Sun2026].",
+      "content_hash": "967beada453d08646d5cf1758040d086e8dbf00db6881faecc3679e2b494f37b",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_00414::modularity_signal_isolation",
+      "label": "modularity_signal_isolation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "easy_bucket_results",
+              "hard_bucket_results",
+              "medium_bucket_results",
+              "modularity_signal_isolation",
+              "threshold_robustness"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC variants isolate signal quality from control logic via shared controller",
+      "type": "claim"
+    },
+    {
+      "content": "Failure attribution for DC-Composite: medium-bucket failures (3 total) are entirely cases where both DC-Dense and DC-LLM confidently support 'stop' incorrectly (both signals high). Hard-bucket failures (41 total) are 98% corpus gaps (gold passage never retrieved within budget) and 2% both-signals-high errors. This suggests different remedies: medium failures require a signal of a different type (e.g., passage highlighting, answer-type matching, token-level overlap); hard failures require a stronger retriever or corpus-exhaustion signal [@Sun2026].",
+      "content_hash": "3ababcba8b081767654b23743ffc1019723df7e0e988dc7c890290fc48b285ac",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_00414::failure_attribution_retrieval",
+      "label": "failure_attribution_retrieval",
+      "metadata": {
+        "caption": "Table 12: Failure attribution for DC-Composite on the test set.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Attribution analysis is directly computed from logged p_dense and p_llm traces for each failed DC-Composite episode. Medium: 3/3 both-signals-high. Hard: 40/41 corpus gaps. Direct measurement from logged signals.",
+        "source_table": "artifacts/2604.00414.pdf, Table 12"
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC-Composite failure attribution: medium=both-signals-wrong; hard=corpus-gap",
+      "type": "claim"
+    },
+    {
+      "content": "A robustness sweep over DC-Composite parameters $\\alpha \\in \\{0.2, \\ldots, 0.6\\}$ and $\\tau \\in \\{0.5, \\ldots, 0.9\\}$ on the held-out test set shows: easy-bucket success is 100% throughout. Medium-bucket success ranges from 78% ($\\tau=0.5$) to 92% ($\\tau=0.9$). The selected operating point ($\\alpha=0.4$, $\\tau=0.8$, medium 88%) is conservative — higher $\\tau$ or $\\alpha$ further improves medium-bucket success at the cost of more retrieval rounds on easy questions. Parameters were selected on a separate validation set, confirming results are not cherry-picked [@Sun2026].",
+      "content_hash": "eb4cc8a36223dc3386e8d7eae11289702cbfa7de8b097eb80961f833bdf4f862",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_00414::threshold_robustness",
+      "label": "threshold_robustness",
+      "metadata": {
+        "caption": "Table 11: Offline threshold sweep for DC-Composite.",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Threshold sweep is computed offline from saved per-round signal traces (no model re-runs), using a held-out test set (N=50) selected before the test set was run. Direct computation from logged data.",
+        "source_table": "artifacts/2604.00414.pdf, Table 11"
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC-Composite threshold sweep: medium success 78-92%, conservative setting chosen",
+      "type": "claim"
+    },
+    {
+      "content": "The decision-centric approach predicts high medium-bucket success because the explicit sufficiency signal $\\hat{p}$ is computed independently of the action, allowing the controller to correctly identify $\\hat{p} < \\tau$ (insufficient) and select 'expand' even when the model internally assesses insufficiency but would fuse that assessment with a 'stop' action in a prompt-based system [@Sun2026].",
+      "content_hash": "e06832405c1d6382711262c68f8905d1ae4c2d05b703278f0c17f5848e2afa32",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_00414::dc_predicts_medium_expand",
+      "label": "dc_predicts_medium_expand",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "The DC approach's prediction of medium success follows from signal externalization: the threshold controller strictly follows p >= tau → stop, else expand, so correct signal values mechanistically produce correct actions."
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC predicts medium-bucket success via externalized sufficiency signal",
+      "type": "claim"
+    },
+    {
+      "content": "Prompt-based control predicts medium-bucket failure because the sufficiency assessment and action selection are fused in a single call: the model's internal recognition that passages are insufficient cannot reliably propagate to a 'expand' action, producing the observed 64% rate of correct-assessment-wrong-action failures [@Sun2026].",
+      "content_hash": "53afabaec8ada02d68926bf3130c36b675b1d7206f1fe17fe2109f90dcfd0d33",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_00414::prompt_predicts_medium_failure",
+      "label": "prompt_predicts_medium_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ]
+          }
+        },
+        "prior": 0.8,
+        "prior_justification": "Prediction follows from assessment-action fusion: even with correct internal assessment, the fused call may select stop. Confirmed by the 64% correct-assessment-wrong-action pattern in the logged reason strings."
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Prompt predicts medium failure via assessment-action fusion",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The decision-centric approach predicts high medium-bucket success because the explicit sufficiency signal $\\hat{p}$ is computed independently of the action, allowing the controller to correctly identify $\\hat{p} < \\tau$ (insufficient) and select 'expand' even when the model internally assesses insufficiency but would fuse that assessment with a 'stop' action in a prompt-based system [@Sun2026]., Prompt-based control predicts medium-bucket failure because the sufficiency assessment and action selection are fused in a single call: the model's internal recognition that passages are insufficient cannot reliably propagate to a 'expand' action, producing the observed 64% rate of correct-assessment-wrong-action failures [@Sun2026]., On medium-difficulty questions (gold passage absent at round 0 but retrievable within budget), the four methods achieve: Prompt 14% success (avg 0.08 retrieval rounds), DC-LLM 88% success (1.34 rounds), DC-Dense 90% success (1.66 rounds), DC-Composite 94% success (1.62 rounds). The Prompt model achieves near-zero retrieval rounds, indicating it nearly always stops at round 0 [@Sun2026].)",
+      "content_hash": "e516e908859c77355350c7a58c15b83d37a3518b690543e83b2964fe7f12a643",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_00414::_anon_002",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_predicts_medium_expand",
+              "prompt_predicts_medium_failure"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "In the calendar scheduling task, the DC approach reduces wasted executions to 0 in most scenarios compared to Prompt-Clarify's average 1.35–2.90 wasted executions at $k=1$ to $k=4$, by enforcing explicit sufficiency-based gating before execution [@Sun2026].",
+      "content_hash": "1b9fd7de2537d76597c8bd33f420270674acd2e0ce421858c9752287f3c4ffd2",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_00414::dc_reduces_wasted_calendar",
+      "label": "dc_reduces_wasted_calendar",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "explicit_control_law"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC reduces wasted actions in calendar scheduling",
+      "type": "claim"
+    },
+    {
+      "content": "In the graph disambiguation task, the DC approach achieves 100% success across all five scenarios including the correlated-update scenario S5 where prompt-based approaches reach only 35%, by maintaining explicit belief state that captures passive candidate elimination [@Sun2026].",
+      "content_hash": "9c05ff1710262faa98dd0c0b38f7b78f6b5d93699cc037311c5b17f8ef6345be",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_00414::dc_improves_graph_success",
+      "label": "dc_improves_graph_success",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "explicit_control_law"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC improves success in graph disambiguation via explicit belief state",
+      "type": "claim"
+    },
+    {
+      "content": "In the retrieval control task, DC-LLM achieves 88% medium-bucket success versus Prompt's 14% by externalizing the sufficiency assessment as a scalar signal that is bound to the action selection policy rather than fused inside generation [@Sun2026].",
+      "content_hash": "0e43c4f63484826e0646b32a84f1064bbdc5e3a4575db63e1e7b32f244bbd681",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2604_00414::dc_improves_retrieval_medium",
+      "label": "dc_improves_retrieval_medium",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "explicit_control_law"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "DC improves retrieval success by externalizing sufficiency signal",
+      "type": "claim"
+    },
+    {
+      "content": "Making the decision layer explicit — separating decision-relevant signals from the policy that maps them to actions — improves LLM system control reliability, interpretability, and ease of improvement across diverse task types and signal modalities [@Sun2026].",
+      "content_hash": "1f09f973df4d439afa83cdd74a1f6526176c8ea784e7ba97087605db8c1abb7d",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2604_00414::explicit_control_law",
+      "label": "explicit_control_law",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_granite_100pct_success",
+              "dc_graph_100pct",
+              "explicit_control_law",
+              "medium_bucket_results"
+            ]
+          }
+        }
+      },
+      "module": "s5_exp3_retrieval",
+      "parameters": [],
+      "title": "Explicit decision layer improves control across diverse task types",
+      "type": "claim"
+    },
+    {
+      "content": "The value of an explicit decision layer in LLM systems is not tied to a single task or signal type. In calendar scheduling, it reduces wasted actions by enforcing sufficiency-based control. In graph search, it supports multi-belief, cross-turn decisions that implicit prompting does not reliably recover. In retrieval, it makes sufficiency a modular and diagnosable signal, enabling attribution and improvement without changing the controller. The common benefit is architectural: once decision-relevant state is externalized, control becomes more reliable, interpretable, and easier to improve [@Sun2026].",
+      "content_hash": "f292c10114869cd34f1ce695ba9352ac96237d79eec7c47bc3ded1c3d7642787",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_00414::framework_is_general",
+      "label": "framework_is_general",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "dc_improves_graph_success",
+              "dc_improves_retrieval_medium",
+              "dc_reduces_wasted_calendar",
+              "failure_attribution_retrieval",
+              "framework_preserves_uncertainty",
+              "k1_failure_localized",
+              "modularity_signal_isolation"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusion",
+      "parameters": [],
+      "title": "Explicit decision layer provides general architectural benefit across tasks",
+      "type": "claim"
+    },
+    {
+      "content": "The fundamental limitation of prompt-based control persists regardless of model capability: assessment and action are fused inside a single model call, making the basis for behavior hard to inspect, enforce, diagnose, or repair, especially in sequential settings where errors compound over time. Even Prompt (w/ policy) — which explicitly states the decision logic in the system prompt — fails in scenario S5 (35%) because the bottleneck is not the policy specification but the missing belief state update that only explicit state maintenance can provide [@Sun2026].",
+      "content_hash": "a883464342331dbd0cd6b882e44d292a6a735d34d659c951429db85f4064288e",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_00414::prompt_fundamental_limit",
+      "label": "prompt_fundamental_limit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Sun2026"
+            ],
+            "referenced_claims": [
+              "prompt_control_implicit",
+              "prompt_correct_assessment_wrong_action",
+              "prompt_policy_insufficient_for_s5",
+              "retry_calendar_fails",
+              "s2_sufficiency_isolation"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusion",
+      "parameters": [],
+      "title": "Prompt-based control has fundamental limitation beyond model capability",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::implicit_control_problem,github:2604_00414::dc_framework_proposed)",
+      "content_hash": "832974b2382193e7f23b466cd9bc2fac8026e588660ad6bbe1d03634cb7eab43",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_6b97fe37",
+      "label": "__implication_result_6b97fe37",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::implicit_control_problem,github:2604_00414::dc_framework_proposed)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_99bb331979a35566",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::separation_enables_attribution)",
+      "content_hash": "e644d5ceb0055c2aa35dd2e1b49d2b7f9062a79997c87f96e0167c74b2ea15c8",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_f1e21835",
+      "label": "__implication_result_f1e21835",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::separation_enables_attribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8a6a91139d7c0dd",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::dc_unifies_settings)",
+      "content_hash": "1a1594d78748afd5bcd0abbe9abe9b56313142a6d151aabb2417591de8858e87",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_4217436e",
+      "label": "__implication_result_4217436e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::dc_unifies_settings)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_342b5c9571012413",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::sequential_makes_failures_attributable)",
+      "content_hash": "fb2770e6c72699da0edf04a85bd2cebf5dca6c51b448f39206aece0ca0f5f745",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_8d5555e2",
+      "label": "__implication_result_8d5555e2",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::sequential_makes_failures_attributable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cbd3ccccb2e168a6",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::multi_signal_def,github:2604_00414::joint_signal_value)",
+      "content_hash": "7715ccff903ab989224c1dfcd93e46206fc476fd128aecfbc8dee4da2a6533ef",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_e63410c2",
+      "label": "__implication_result_e63410c2",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::multi_signal_def,github:2604_00414::joint_signal_value)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_91c8f37db2106b69",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::joint_signal_value,github:2604_00414::multi_signal_def)",
+      "content_hash": "4976474670fcda8717391dbb8eb451808ed7cb13a3dbc8e27d3de2702ba5e4cc",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_0dfe6c9b",
+      "label": "__conjunction_result_0dfe6c9b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::joint_signal_value,github:2604_00414::multi_signal_def)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_099eb7ad018cf898",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_0dfe6c9b,github:2604_00414::correlated_belief_update)",
+      "content_hash": "f298f1299beb40526766b23be87808c43ba8f9329bf2e9071425004529ff0cdd",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_beefba5e",
+      "label": "__implication_result_beefba5e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_0dfe6c9b,github:2604_00414::correlated_belief_update)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_099eb7ad018cf898",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_predicts_high_success,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "853bc6f0eb55d9d056339bc04f0b2a86cda26e24207e1c724314c5b2f20f5b1a",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_0e69c627",
+      "label": "__implication_result_0e69c627",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_predicts_high_success,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cdd83c214fd87dad",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::prompt_predicts_degradation,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "79d519ac71bb65d0826d6c35e2418fd68cc83ee117d1b2a13dd883a5b17937e5",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_c285c6c5",
+      "label": "__implication_result_c285c6c5",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::prompt_predicts_degradation,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0ae009ceb90cd305",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::dc_predicts_high_success,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "413974679df4aac7cac4f303d58473315aa83b41d6ed67f0b05631f11688adbd",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_0186f707",
+      "label": "__equivalence_result_0186f707",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::dc_predicts_high_success,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a4561facb909179a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::prompt_predicts_degradation,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "33da88e9d57d357ddec76c5bf39b155c6379f3400069c2807d49e20fca35f128",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_d1114c15",
+      "label": "__equivalence_result_d1114c15",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::prompt_predicts_degradation,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a4561facb909179a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::k1_failure_localized,github:2604_00414::separation_enables_attribution)",
+      "content_hash": "85043974110499e1e605435c67d0be3d50b62b0c4c827da6700ecec8b0f5abe4",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_efa475be",
+      "label": "__conjunction_result_efa475be",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::k1_failure_localized,github:2604_00414::separation_enables_attribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_151a5897519bb7b2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_efa475be,github:2604_00414::dc_llama_transfer)",
+      "content_hash": "8c432462afbedbb5c3535c17c8166f5f9da5727014fa48ac5e90832ba5733a83",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_4fec142f",
+      "label": "__implication_result_4fec142f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_efa475be,github:2604_00414::dc_llama_transfer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_151a5897519bb7b2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_predicts_s5_success,github:2604_00414::s5_correlated_update_result)",
+      "content_hash": "28a19f5dc067931f7f2189c6c682d7809b15b4c9e3ad605fb249a928266ee084",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_2ecf8bb6",
+      "label": "__implication_result_2ecf8bb6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_predicts_s5_success,github:2604_00414::s5_correlated_update_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_86126b37095fddb7",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::prompt_predicts_s5_failure,github:2604_00414::s5_correlated_update_result)",
+      "content_hash": "eac2871762637e3663359e1431f9e23f5d13af04577acba95a1c062316584e07",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_4765e6ee",
+      "label": "__implication_result_4765e6ee",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::prompt_predicts_s5_failure,github:2604_00414::s5_correlated_update_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dafc240c4855e998",
+        "owning_strategy_type": "support",
+        "prior": 0.45,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::dc_predicts_s5_success,github:2604_00414::s5_correlated_update_result)",
+      "content_hash": "44484008a62a1dbf2d78e4dd61391eecce63722b1187db8aa730dcfc293983f7",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_bce462ab",
+      "label": "__equivalence_result_bce462ab",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::dc_predicts_s5_success,github:2604_00414::s5_correlated_update_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_452563696aa0a650",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::prompt_predicts_s5_failure,github:2604_00414::s5_correlated_update_result)",
+      "content_hash": "a5a37c48757d70ec485c8ad1bf69cfa6259ceb679f05f98d3fd09bc2c4844771",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_2a9692ef",
+      "label": "__equivalence_result_2a9692ef",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::prompt_predicts_s5_failure,github:2604_00414::s5_correlated_update_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_452563696aa0a650",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::joint_signal_value,github:2604_00414::dc_graph_100pct)",
+      "content_hash": "028678b17011f26f4946bfd93bafdf4d130fa8a9d97bfc206478a251514d1967",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_755d71e6",
+      "label": "__implication_result_755d71e6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::joint_signal_value,github:2604_00414::dc_graph_100pct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7331a0b1f6874032",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_predicts_medium_expand,github:2604_00414::medium_bucket_results)",
+      "content_hash": "0af62a29ab9952770279bf746fe9cee060f058cbc44fd0bdc79586aed54226e3",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_21123f68",
+      "label": "__implication_result_21123f68",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_predicts_medium_expand,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4d9791e7d9e41a74",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::prompt_predicts_medium_failure,github:2604_00414::medium_bucket_results)",
+      "content_hash": "0880b9fa8b696ddcfe14b2a1d1aaa909cbd4a77c01b1db16d2aea8f3b6dae60a",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_6ebc97fd",
+      "label": "__implication_result_6ebc97fd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::prompt_predicts_medium_failure,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_19c00904e3d3ec7d",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::dc_predicts_medium_expand,github:2604_00414::medium_bucket_results)",
+      "content_hash": "03cb61d563161b95520e0798e9eb3835408a88930bb4151a10eac9d24346582c",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_e97b056a",
+      "label": "__equivalence_result_e97b056a",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::dc_predicts_medium_expand,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_cbe16e415ebdcbbf",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_00414::prompt_predicts_medium_failure,github:2604_00414::medium_bucket_results)",
+      "content_hash": "423dc730cdecb06fccc48dc81ebaf48e1f4d6b5fbff1bcbcb048f9f532a679e1",
+      "exported": false,
+      "id": "github:2604_00414::__equivalence_result_468eb63a",
+      "label": "__equivalence_result_468eb63a",
+      "metadata": {
+        "canonical_name": "matches(github:2604_00414::prompt_predicts_medium_failure,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_cbe16e415ebdcbbf",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_reduces_wasted_calendar)",
+      "content_hash": "7a3c61a15d33082d5a43e2942c00002388ae9eda88b578bf457dbe5d140f5895",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_1145272e",
+      "label": "__implication_result_1145272e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_reduces_wasted_calendar)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6f7fb6e7e16faac8",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_improves_graph_success)",
+      "content_hash": "06527d07d7381d10501d3e91a81be5ad83bebfbfb4e3fd6cab797dce83078e2c",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_59db3328",
+      "label": "__implication_result_59db3328",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_improves_graph_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a4be59a3bcdde9ab",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_improves_retrieval_medium)",
+      "content_hash": "4020d0545cc45f3e5cb7bab48f28c81b2603c86a9613ad46b968beffc905ffdd",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_53aa11d4",
+      "label": "__implication_result_53aa11d4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::explicit_control_law,github:2604_00414::dc_improves_retrieval_medium)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_24dfe848df1a4618",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::dc_reduces_wasted_calendar,github:2604_00414::dc_improves_graph_success,github:2604_00414::dc_improves_retrieval_medium)",
+      "content_hash": "7ffcf2216683eb4670320a582c15151d41063702847f818de24bd4665e67faac",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_c3ccb3b5",
+      "label": "__conjunction_result_c3ccb3b5",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::dc_reduces_wasted_calendar,github:2604_00414::dc_improves_graph_success,github:2604_00414::dc_improves_retrieval_medium)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_505a22b6090064c3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_c3ccb3b5,github:2604_00414::framework_is_general)",
+      "content_hash": "56e6a8e5dfcc503de736a2942de3535cf26ab1be496bc4b8ebf0c3af2b5fb87a",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_be6e8ddb",
+      "label": "__implication_result_be6e8ddb",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_c3ccb3b5,github:2604_00414::framework_is_general)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_505a22b6090064c3",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::prompt_control_implicit,github:2604_00414::prompt_policy_insufficient_for_s5,github:2604_00414::prompt_correct_assessment_wrong_action)",
+      "content_hash": "8ab46a9fb888eafea901372c18f4a54765db93669f856e0319d851bb6c923126",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_c458bb3d",
+      "label": "__conjunction_result_c458bb3d",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::prompt_control_implicit,github:2604_00414::prompt_policy_insufficient_for_s5,github:2604_00414::prompt_correct_assessment_wrong_action)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_140fc06a94398338",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_c458bb3d,github:2604_00414::prompt_fundamental_limit)",
+      "content_hash": "d8dfb8fb56c00f17602245e9e824b7c004b1fe8407121b09c0ae8b6ee63b16e5",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_fef84be4",
+      "label": "__implication_result_fef84be4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_c458bb3d,github:2604_00414::prompt_fundamental_limit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_140fc06a94398338",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::dc_granite_100pct_success,github:2604_00414::dc_graph_100pct,github:2604_00414::medium_bucket_results)",
+      "content_hash": "9498e027768f3ecf898feb8a2c79d651bcc6164f3876d498644f64ca19aa9be1",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_4f8b77b3",
+      "label": "__conjunction_result_4f8b77b3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::dc_granite_100pct_success,github:2604_00414::dc_graph_100pct,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2697b4ec6c8dfa38",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_4f8b77b3,github:2604_00414::explicit_control_law)",
+      "content_hash": "c41061bd5bff99da91b4a885f70a066ce46b5b1e17d695d025bdfa95481e643f",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_38d1b648",
+      "label": "__implication_result_38d1b648",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_4f8b77b3,github:2604_00414::explicit_control_law)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2697b4ec6c8dfa38",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::dc_framework_proposed,github:2604_00414::prompt_calendar_degrades)",
+      "content_hash": "beebc729d09db17c1ebb29529e2e486953af50ee82f61f6e9c0974d5695f5d87",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_128b9614",
+      "label": "__conjunction_result_128b9614",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::dc_framework_proposed,github:2604_00414::prompt_calendar_degrades)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a087fcfdae2001a0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_128b9614,github:2604_00414::implicit_control_problem)",
+      "content_hash": "c85efc0d2647ac47b90f2bf4c95aa82650efce3bd53dd02cace5e28f29b6189c",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_8a4a8ad1",
+      "label": "__implication_result_8a4a8ad1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_128b9614,github:2604_00414::implicit_control_problem)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a087fcfdae2001a0",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::sufficiency_signal_def,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "8e71c6227fbaf46ac620c3e129f8af6512f97542224e13c8b13097a216814bd2",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_f4db0609",
+      "label": "__implication_result_f4db0609",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::sufficiency_signal_def,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2db3151c16e6c1eb",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::modularity_signal_isolation,github:2604_00414::failure_attribution_retrieval,github:2604_00414::k1_failure_localized)",
+      "content_hash": "7a6d4cbe519129c207fcc200a056d59c75bc24846a69ad99d8564666210b066a",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_e37ee107",
+      "label": "__conjunction_result_e37ee107",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::modularity_signal_isolation,github:2604_00414::failure_attribution_retrieval,github:2604_00414::k1_failure_localized)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fbb2ccd5c0241cea",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_e37ee107,github:2604_00414::framework_is_general)",
+      "content_hash": "a2e397fa58d4dad21193e3e74d5814f9c5e87353d8da2b9985c0167d4e544239",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_b7ccc49c",
+      "label": "__implication_result_b7ccc49c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_e37ee107,github:2604_00414::framework_is_general)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fbb2ccd5c0241cea",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::threshold_robustness,github:2604_00414::modularity_signal_isolation)",
+      "content_hash": "68beccac0b8a4bd373c2aa750715b755b72a9945049cf135671444cba8ee121f",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_d2bd79b7",
+      "label": "__implication_result_d2bd79b7",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::threshold_robustness,github:2604_00414::modularity_signal_isolation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_51f94e617208115e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::retry_calendar_fails,github:2604_00414::s2_sufficiency_isolation)",
+      "content_hash": "71dca99315e50aee81fae71cad74ad0f8be0b1bd4d2a351936e1ca8e480a0ea4",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_001faddd",
+      "label": "__conjunction_result_001faddd",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::retry_calendar_fails,github:2604_00414::s2_sufficiency_isolation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c1de80753923ab43",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_001faddd,github:2604_00414::prompt_fundamental_limit)",
+      "content_hash": "fd480fe8861d68b48362ec813bb9843736f4e27fa2d3e72cb3ec3f7f932336a2",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_cf36d5be",
+      "label": "__implication_result_cf36d5be",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_001faddd,github:2604_00414::prompt_fundamental_limit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c1de80753923ab43",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_00414::easy_bucket_results,github:2604_00414::hard_bucket_results,github:2604_00414::medium_bucket_results)",
+      "content_hash": "a0ffa5607234e96f7109df818da9d81aefad19c20b409da9a10398521ce952a8",
+      "exported": false,
+      "id": "github:2604_00414::__conjunction_result_1995eb6f",
+      "label": "__conjunction_result_1995eb6f",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_00414::easy_bucket_results,github:2604_00414::hard_bucket_results,github:2604_00414::medium_bucket_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a73d9bdb9e90b089",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::__conjunction_result_1995eb6f,github:2604_00414::modularity_signal_isolation)",
+      "content_hash": "befcc061bf089453744f98956a1c065a34f0f3e5de92cdab76ffb96f27bb4213",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_6e849c09",
+      "label": "__implication_result_6e849c09",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::__conjunction_result_1995eb6f,github:2604_00414::modularity_signal_isolation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a73d9bdb9e90b089",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::unresolvable_widens_gap,github:2604_00414::dc_granite_100pct_success)",
+      "content_hash": "98c31e6b4125307cc0a168972a8043a634f0c7113f331cbaa2d824e57b01eeac",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_ccf085ab",
+      "label": "__implication_result_ccf085ab",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::unresolvable_widens_gap,github:2604_00414::dc_granite_100pct_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d0c3578579407adc",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::framework_preserves_uncertainty,github:2604_00414::framework_is_general)",
+      "content_hash": "9707a05b61978d8307171eee5e1cd1dd9c98763d931aa00d4cd428f90d64128a",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_742a8ae7",
+      "label": "__implication_result_742a8ae7",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::framework_preserves_uncertainty,github:2604_00414::framework_is_general)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_be7d60fa5c7e7f92",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::multi_signal_def,github:2604_00414::dc_graph_100pct)",
+      "content_hash": "a23566d7252a86dbfc440e1f383146c51541d0a9fd3882b89956f3bbbf1125fa",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_2a1ca478",
+      "label": "__implication_result_2a1ca478",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::multi_signal_def,github:2604_00414::dc_graph_100pct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_891e52472299bd9a",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::utility_maximization)",
+      "content_hash": "837d7f000374d8a2e71ef886f4d29485b8144730666ffb2ef39798770c13cdab",
+      "exported": false,
+      "id": "github:2604_00414::__implication_result_c56a9ac9",
+      "label": "__implication_result_c56a9ac9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_00414::dc_framework_proposed,github:2604_00414::utility_maximization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_59853afe2df72c16",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_framework",
+    "s5_exp1_calendar",
+    "s5_exp2_graph",
+    "s5_exp3_retrieval",
+    "s6_conclusion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Decision-Centric Design for LLM Systems",
+    "s3_framework": "Section 3 & 4: Decision-Centric Abstraction and Sequential Decision-Making",
+    "s5_exp1_calendar": "Section 5.1: Calendar Scheduling — Clarify vs. Execute (Experiment 1)",
+    "s5_exp2_graph": "Section 5.2: Graph Disambiguation — Joint Beliefs and Correlated Updates (Experiment 2)",
+    "s5_exp3_retrieval": "Section 5.3: Modular Signals for Retrieval Control with Diagnosable Feedback (Experiment 3)",
+    "s6_conclusion": "Section 6: Conclusion — Synthesizing Evidence for Explicit Decision Layer"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_00414::no_both_sufficient",
+      "metadata": {
+        "reason": "The paper argues that the fundamental limitation of prompt-based control — assessment and action fused inside a single model call — persists regardless of model capability, making an explicit decision layer architecturally necessary rather than optional [@Sun2026]."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_391c999268146d5b",
+      "scope": "local",
+      "variables": [
+        "github:2604_00414::alt_prompt_sufficient",
+        "github:2604_00414::dc_framework_proposed"
+      ]
+    }
+  ],
+  "package_name": "2604_00414",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_00414::dc_framework_proposed",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_6b97fe37",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::implicit_control_problem",
+              "github:2604_00414::dc_framework_proposed"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The decision-centric framework is directly motivated by the implicit control problem (@implicit_control_problem): because current systems entangle assessment and action in a single model call, the proposed remedy is to separate the decision-relevant signals from the policy that maps them to actions. Making the decision interface explicit addresses the core failure mode identified in @implicit_control_problem [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::implicit_control_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_99bb331979a35566",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::separation_enables_attribution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_f1e21835",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_framework_proposed",
+              "github:2604_00414::separation_enables_attribution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Given the decision-centric framework (@dc_framework_proposed) decomposes the system into three explicit, separable components — signal estimation (building $c$), decision policy ($\\delta$), and execution — it follows by construction that any failure must originate in exactly one of these three components. Attribution is therefore possible by logical necessity of the modular decomposition, not by empirical observation [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_framework_proposed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8a6a91139d7c0dd",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_unifies_settings",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_4217436e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_framework_proposed",
+              "github:2604_00414::dc_unifies_settings"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The abstraction $(\\mathcal{A}, c, \\delta)$ in @dc_framework_proposed is generic enough to encompass model routing (where $\\mathcal{A}$ = candidate models, $c$ = query features + quality/cost signals, $\\delta$ = constrained utility maximizer) and adaptive inference scaling (where $\\mathcal{A}$ = inference strategies, $c$ = difficulty signals + budget constraints, $\\delta$ = same utility maximizer). Both instantiate the same three-component structure, confirming unification [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_framework_proposed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_342b5c9571012413",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_00414::sequential_setting_def"
+      ],
+      "conclusion": "github:2604_00414::sequential_makes_failures_attributable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_8d5555e2",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_framework_proposed",
+              "github:2604_00414::sequential_makes_failures_attributable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "The decision-centric framework (@dc_framework_proposed) separates signal estimation, policy, and execution. In the sequential setting, the decision context $c_t$ is explicit and the policy $\\delta$ is deterministic. It follows by construction that any failure to act correctly at turn $t$ must be attributable to one of: (a) incorrect $\\hat{p}_{\\text{suff},t}$ (signal error), (b) wrong policy mapping from correct signal (policy error), or (c) correct decision but poor execution (execution error). Structural constraints such as 'no-blind-retry' can be encoded as guards before policy branches [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_framework_proposed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cbd3ccccb2e168a6",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_00414::joint_signal_value",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_e63410c2",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::multi_signal_def",
+              "github:2604_00414::joint_signal_value"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The multi-signal instantiation (@multi_signal_def) exposes $\\hat{p}_{\\text{suff}}$ and $\\hat{p}_{\\text{corr}}$ as separate observable quantities available to the policy $\\delta$. Because $\\delta$ takes the full context (including both signals) as input, the action selected at a joint state $(p_s, p_c)$ can differ from the action at either marginal. The paper illustrates this concretely: the same low $\\hat{p}_{\\text{corr}}$ produces 'backtrack' in S3 (high $\\hat{p}_{\\text{suff}}$, few alternatives) and 'clarify' in S4 (low $\\hat{p}_{\\text{suff}}$, many alternatives) [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::multi_signal_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_91c8f37db2106b69",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::correlated_belief_update",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_0dfe6c9b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::joint_signal_value",
+              "github:2604_00414::multi_signal_def"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_beefba5e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_0dfe6c9b",
+              "github:2604_00414::correlated_belief_update"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "In the multi-signal setting (@multi_signal_def), both $\\hat{p}_{\\text{suff}}$ and $\\hat{p}_{\\text{corr}}$ are updated at each turn. @joint_signal_value establishes that actions update beliefs they were not primarily intended to target. A concrete mechanism: when the visited node in a graph search has a minority-valued hidden attribute (value shared by few peer candidates), all other candidates with that value are eliminated, raising $\\hat{p}_{\\text{suff}}$ (fewer candidates = higher sufficiency = $1/|\\text{candidates}|$) simultaneously with the decrease in $\\hat{p}_{\\text{corr}}$ from the failed match. This correlated update is only possible because both signals are maintained explicitly in the belief state [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::joint_signal_value",
+        "github:2604_00414::multi_signal_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_099eb7ad018cf898",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_granite_100pct_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_0e69c627",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_predicts_high_success",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The DC framework (@dc_predicts_high_success) predicts 100% success across all scenarios because the explicit sufficiency signal prevents premature execution and the no-blind-retry constraint prevents futile retries. The observation of 100% success at all k in Table 7 is exactly what @dc_predicts_high_success predicts [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_high_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cdd83c214fd87dad",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_granite_100pct_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_c285c6c5",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::prompt_predicts_degradation",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "Prompt-based degradation (@prompt_predicts_degradation) would predict low success at $k=2,3,4$, which is consistent with Prompt-Clarify's 50%, 60%, 10% but inconsistent with DC's 100% across all $k$. Alt explanation cannot explain DC's 100% success, since the prompt approach does not make this prediction [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::prompt_predicts_degradation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0ae009ceb90cd305",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_0186f707",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::dc_predicts_high_success",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_d1114c15",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::prompt_predicts_degradation",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__equivalence_result_d1114c15",
+              "github:2604_00414::__equivalence_result_0186f707"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "DC's prediction of 100% success (@dc_predicts_high_success) matches the observed outcome exactly. The prompt-based prediction of degradation (@prompt_predicts_degradation) matches the prompt baseline's behavior but not DC's. The 90 percentage-point gap at $k=4$ (DC: 100% vs Prompt: 10%) provides strong differentiation [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_high_success",
+        "github:2604_00414::prompt_predicts_degradation",
+        "github:2604_00414::dc_granite_100pct_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a4561facb909179a",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_000",
+      "metadata": {
+        "reason": "Both DC and prompt-based approaches attempt to explain the observed calendar scheduling outcomes on Granite 4 micro. The abduction evaluates which system architecture better explains the empirical performance pattern across 8 scenarios [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_high_success",
+        "github:2604_00414::prompt_predicts_degradation",
+        "github:2604_00414::dc_granite_100pct_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_680c07968a0f2c54",
+      "sub_strategies": [
+        "lcs_cdd83c214fd87dad",
+        "lcs_0ae009ceb90cd305",
+        "lcs_a4561facb909179a"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_llama_transfer",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_efa475be",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::k1_failure_localized",
+              "github:2604_00414::separation_enables_attribution"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_4fec142f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_efa475be",
+              "github:2604_00414::dc_llama_transfer"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The modular architecture of the DC framework (@separation_enables_attribution) enables the k=1 failure to be precisely localized to the question generator (@k1_failure_localized). A targeted fix to the question-generation prompt — leaving the estimator, policy, and executor unchanged — restores 100% success at $k=1$ absent and 95% at $k=3$ (Table 3). This demonstrates that the transfer of the approach across model families is preserved once the model-specific component failure is addressed through modular repair [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::k1_failure_localized",
+        "github:2604_00414::separation_enables_attribution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_151a5897519bb7b2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::s5_correlated_update_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_2ecf8bb6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_predicts_s5_success",
+              "github:2604_00414::s5_correlated_update_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "DC's prediction of success in S5 (@dc_predicts_s5_success) requires only that the explicit belief state be maintained and updated after each action, which is guaranteed by the architecture. The observed 100% DC success in S5 is fully consistent with this prediction [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_s5_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_86126b37095fddb7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::s5_correlated_update_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_4765e6ee",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::prompt_predicts_s5_failure",
+              "github:2604_00414::s5_correlated_update_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.45,
+        "reason": "The prompt-based prediction of failure (@prompt_predicts_s5_failure) is consistent with both Prompt (35%) and Prompt (w/ policy) (35%) results. However, this prediction cannot explain DC's 100% success, since both approaches receive the same state payload — the difference is purely architectural [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::prompt_predicts_s5_failure"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dafc240c4855e998",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_bce462ab",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::dc_predicts_s5_success",
+              "github:2604_00414::s5_correlated_update_result"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_2a9692ef",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::prompt_predicts_s5_failure",
+              "github:2604_00414::s5_correlated_update_result"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__equivalence_result_2a9692ef",
+              "github:2604_00414::__equivalence_result_bce462ab"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DC's prediction (@dc_predicts_s5_success) matches the S5 outcome (100% DC success), while the prompt-based prediction (@prompt_predicts_s5_failure) only explains the prompt baselines' 35% but not DC's 100%. The 65 percentage-point gap between DC and the prompt approaches (both receiving identical state payloads) provides strong differentiation in favor of explicit belief state maintenance [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_s5_success",
+        "github:2604_00414::prompt_predicts_s5_failure",
+        "github:2604_00414::s5_correlated_update_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_452563696aa0a650",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_001",
+      "metadata": {
+        "reason": "Both DC and prompt-based approaches attempt to explain the S5 correlated belief update scenario outcome. The abduction tests whether explicit belief state maintenance (DC) or implicit prompt-based state reasoning is the better explanation for the observed success rates [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_s5_success",
+        "github:2604_00414::prompt_predicts_s5_failure",
+        "github:2604_00414::s5_correlated_update_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d072eb384890a748",
+      "sub_strategies": [
+        "lcs_86126b37095fddb7",
+        "lcs_dafc240c4855e998",
+        "lcs_452563696aa0a650"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2604_00414::graph_dc_signals"
+      ],
+      "conclusion": "github:2604_00414::dc_graph_100pct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_755d71e6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::joint_signal_value",
+              "github:2604_00414::dc_graph_100pct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The joint signal value claim (@joint_signal_value) establishes that optimal action in multi-signal settings depends on the joint state $(\\hat{p}_{\\text{suff}}, \\hat{p}_{\\text{corr}})$. The graph DC implementation makes both signals explicit and updates them after each action. S4 demonstrates the joint dependence: same low $\\hat{p}_{\\text{corr}}$ produces 'backtrack' in S3 (high $\\hat{p}_{\\text{suff}}$) and 'clarify' in S4 (low $\\hat{p}_{\\text{suff}}$), while only DC tracks this joint state to achieve 100% across all scenarios [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::joint_signal_value"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7331a0b1f6874032",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::medium_bucket_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_21123f68",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_predicts_medium_expand",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "DC-LLM's prediction of high medium success (@dc_predicts_medium_expand) is borne out by the 88% success rate (vs Prompt's 14%). The 74 percentage-point improvement with identical LLM, passages, and action set — only differing in whether sufficiency is externalized — directly supports the DC prediction [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_medium_expand"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4d9791e7d9e41a74",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::medium_bucket_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_6ebc97fd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::prompt_predicts_medium_failure",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "The prompt failure prediction (@prompt_predicts_medium_failure) is consistent with Prompt's 14% medium success and the 64% correct-assessment-wrong-action rate. However, this prediction cannot explain DC-LLM's 88% success with the same LLM, since the only structural difference is signal externalization [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::prompt_predicts_medium_failure"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_19c00904e3d3ec7d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_002",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_e97b056a",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::dc_predicts_medium_expand",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__equivalence_result_468eb63a",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_00414::prompt_predicts_medium_failure",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::_anon_002",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__equivalence_result_468eb63a",
+              "github:2604_00414::__equivalence_result_e97b056a"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "DC-LLM's prediction (@dc_predicts_medium_expand) matches the 88% DC-LLM medium success exactly. The prompt prediction (@prompt_predicts_medium_failure) explains only Prompt's 14%. The 74pp gap with identical LLM, corpus, and action set provides strong evidence that signal externalization — not model capability — drives the difference [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_medium_expand",
+        "github:2604_00414::prompt_predicts_medium_failure",
+        "github:2604_00414::medium_bucket_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cbe16e415ebdcbbf",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_00414::_anon_002",
+      "metadata": {
+        "reason": "Both DC-LLM and Prompt use the same LLM and act over the same action set. The abduction tests whether the externalization of the sufficiency signal (DC-LLM) or its absence (Prompt) better explains the medium-bucket performance gap [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_predicts_medium_expand",
+        "github:2604_00414::prompt_predicts_medium_failure",
+        "github:2604_00414::medium_bucket_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f57397966932f22",
+      "sub_strategies": [
+        "lcs_4d9791e7d9e41a74",
+        "lcs_19c00904e3d3ec7d",
+        "lcs_cbe16e415ebdcbbf"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_reduces_wasted_calendar",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_1145272e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::explicit_control_law",
+              "github:2604_00414::dc_reduces_wasted_calendar"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The explicit decision layer law (@explicit_control_law) predicts that externalizing the sufficiency signal and policy will reduce wasted actions in calendar scheduling. The DC calendar policy achieves this by gating execution on $\\hat{p}_{\\text{suff}} = 1.0$ and enforcing no-blind-retry, confirming the law's prediction for this task [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::explicit_control_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6f7fb6e7e16faac8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_improves_graph_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_59db3328",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::explicit_control_law",
+              "github:2604_00414::dc_improves_graph_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The explicit decision layer law (@explicit_control_law) predicts that maintaining explicit belief state enables richer sequential control. Graph disambiguation's 100% DC success (vs 35% Prompt in S5) confirms the prediction for multi-signal settings with correlated belief updates [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::explicit_control_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a4be59a3bcdde9ab",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_improves_retrieval_medium",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_53aa11d4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::explicit_control_law",
+              "github:2604_00414::dc_improves_retrieval_medium"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The explicit decision layer law (@explicit_control_law) predicts improvement from externalizing sufficiency. The 74pp gap in medium bucket (DC-LLM 88% vs Prompt 14%) with identical LLM confirms the law's prediction for retrieval control under noisy signals [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::explicit_control_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_24dfe848df1a4618",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::explicit_control_law",
+      "metadata": {
+        "reason": "Calendar scheduling and graph disambiguation are independently designed tasks with different action spaces, signal types, and decision structures. They constitute independent observations supporting the explicit control law."
+      },
+      "premises": [
+        "github:2604_00414::dc_reduces_wasted_calendar",
+        "github:2604_00414::dc_improves_graph_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8381190a19b66a20",
+      "sub_strategies": [
+        "lcs_6f7fb6e7e16faac8",
+        "lcs_a4be59a3bcdde9ab"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_00414::explicit_control_law",
+      "metadata": {
+        "reason": "Retrieval control is a third independently designed task with a different domain (information retrieval vs structured task completion), different signal type (BM25 passages + embeddings), and noisy evidence. Together with the calendar and graph tasks, the three experiments provide independent converging support for the explicit control law [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_reduces_wasted_calendar",
+        "github:2604_00414::dc_improves_graph_success",
+        "github:2604_00414::dc_improves_retrieval_medium"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7b4d5743194e0f20",
+      "sub_strategies": [
+        "lcs_8381190a19b66a20",
+        "lcs_24dfe848df1a4618"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_00414::framework_is_general",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_c3ccb3b5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::dc_reduces_wasted_calendar",
+              "github:2604_00414::dc_improves_graph_success",
+              "github:2604_00414::dc_improves_retrieval_medium"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_be6e8ddb",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_c3ccb3b5",
+              "github:2604_00414::framework_is_general"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The three experiments jointly establish that the explicit decision layer benefit is task-general: @dc_reduces_wasted_calendar shows calendar scheduling improvement, @dc_improves_graph_success shows graph disambiguation improvement, and @dc_improves_retrieval_medium shows retrieval control improvement. All three use different signal types (structural completeness, graph beliefs, embedding similarity) and different action spaces, yet all show the same architectural benefit [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_reduces_wasted_calendar",
+        "github:2604_00414::dc_improves_graph_success",
+        "github:2604_00414::dc_improves_retrieval_medium"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_505a22b6090064c3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::prompt_fundamental_limit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_c458bb3d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::prompt_control_implicit",
+              "github:2604_00414::prompt_policy_insufficient_for_s5",
+              "github:2604_00414::prompt_correct_assessment_wrong_action"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_fef84be4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_c458bb3d",
+              "github:2604_00414::prompt_fundamental_limit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The fundamental limit claim is supported by three independent lines of evidence: (1) @prompt_control_implicit establishes the architectural entanglement, (2) @prompt_policy_insufficient_for_s5 shows that even explicit policy prompting fails in S5 (35%) because the belief state is unavailable, and (3) @prompt_correct_assessment_wrong_action shows that 64% of Prompt medium failures involve correct assessment but wrong action — the recognition-to-control mapping fails despite model capability [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::prompt_control_implicit",
+        "github:2604_00414::prompt_policy_insufficient_for_s5",
+        "github:2604_00414::prompt_correct_assessment_wrong_action"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_140fc06a94398338",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::explicit_control_law",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_4f8b77b3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::dc_granite_100pct_success",
+              "github:2604_00414::dc_graph_100pct",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_38d1b648",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_4f8b77b3",
+              "github:2604_00414::explicit_control_law"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The three experimental results — @dc_granite_100pct_success (100% calendar success vs Prompt's 10% at k=4), @dc_graph_100pct (100% graph success vs 35% in S5), and @medium_bucket_results (88% DC-LLM vs 14% Prompt retrieval) — jointly provide empirical grounding for @explicit_control_law. Each uses a different domain and signal type, providing independent converging evidence that the explicit control layer improves reliability across diverse settings [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_granite_100pct_success",
+        "github:2604_00414::dc_graph_100pct",
+        "github:2604_00414::medium_bucket_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2697b4ec6c8dfa38",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::implicit_control_problem",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_128b9614",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::dc_framework_proposed",
+              "github:2604_00414::prompt_calendar_degrades"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_8a4a8ad1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_128b9614",
+              "github:2604_00414::implicit_control_problem"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The prompt degradation observations (@prompt_calendar_degrades) empirically confirm the implicit control problem (@implicit_control_problem) at scale: as task complexity increases (more missing fields), the failure modes of entangled assessment and action become increasingly consequential. The DC framework (@dc_framework_proposed) addresses this by separating the decision layer [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_framework_proposed",
+        "github:2604_00414::prompt_calendar_degrades"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a087fcfdae2001a0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_granite_100pct_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_f4db0609",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::sufficiency_signal_def",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The explicit sufficiency signal (@sufficiency_signal_def) is the mechanism through which DC achieves 100% calendar success: by computing $\\hat{p}_{\\text{suff}} = |\\text{confirmed fields}|/4$ independently of action selection, the policy can reliably gate execution on $\\hat{p}_{\\text{suff}} = 1.0$ and prevent premature execution that causes Prompt-Clarify's failures at $k \\geq 2$ [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::sufficiency_signal_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2db3151c16e6c1eb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::framework_is_general",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_e37ee107",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::modularity_signal_isolation",
+              "github:2604_00414::failure_attribution_retrieval",
+              "github:2604_00414::k1_failure_localized"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_b7ccc49c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_e37ee107",
+              "github:2604_00414::framework_is_general"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Modularity evidence from three experiments: @modularity_signal_isolation shows that three DC retrieval variants with the same controller isolate signal quality; @failure_attribution_retrieval shows that medium vs hard failures have different root causes attributable to specific components; @k1_failure_localized shows that the LLaMA 3 k=1 failure is pinpointed to the question generator and fixed without touching any other component. All three demonstrate the modular diagnosis-and-repair benefit of the explicit decision layer [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::modularity_signal_isolation",
+        "github:2604_00414::failure_attribution_retrieval",
+        "github:2604_00414::k1_failure_localized"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fbb2ccd5c0241cea",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::modularity_signal_isolation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_d2bd79b7",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::threshold_robustness",
+              "github:2604_00414::modularity_signal_isolation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The offline threshold sweep (@threshold_robustness) confirms @modularity_signal_isolation: parameters $\\alpha$ and $\\tau$ were selected on a held-out validation set before test evaluation, and the sweep is computed offline by replaying saved per-round signal traces. This offline replayability is only possible because the sufficiency signal is externalized — with implicit Prompt control, no analog exists [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::threshold_robustness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_51f94e617208115e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::prompt_fundamental_limit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_001faddd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::retry_calendar_fails",
+              "github:2604_00414::s2_sufficiency_isolation"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_cf36d5be",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_001faddd",
+              "github:2604_00414::prompt_fundamental_limit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Retry failures confirm the structural nature of implicit control limitations: @retry_calendar_fails shows that without any explicit decision layer, the system exhausts its turn budget on repeated executions (0% success at k>=1), and @s2_sufficiency_isolation shows Retry drops to 45% (vs DC 100%) in S2 by executing blindly into a pool of 13 candidates. These are not model failures but control architecture failures [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::retry_calendar_fails",
+        "github:2604_00414::s2_sufficiency_isolation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c1de80753923ab43",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::modularity_signal_isolation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__conjunction_result_1995eb6f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_00414::easy_bucket_results",
+              "github:2604_00414::hard_bucket_results",
+              "github:2604_00414::medium_bucket_results"
+            ]
+          },
+          {
+            "conclusion": "github:2604_00414::__implication_result_6e849c09",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::__conjunction_result_1995eb6f",
+              "github:2604_00414::modularity_signal_isolation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The full three-bucket picture supports @modularity_signal_isolation: @easy_bucket_results shows DC-Dense over-expands (1.12 rounds vs DC-LLM's 0.62), which is attributable to the relevance-vs-answerability signal distinction; @hard_bucket_results shows all methods converge at ~18% due to corpus gaps rather than signal failures; @medium_bucket_results shows the maximal decision-point differentiation (14% Prompt vs 94% DC-Composite). Together they enable component-level diagnosis that matches the paper's attribution analysis [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::easy_bucket_results",
+        "github:2604_00414::hard_bucket_results",
+        "github:2604_00414::medium_bucket_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a73d9bdb9e90b089",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_granite_100pct_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_ccf085ab",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::unresolvable_widens_gap",
+              "github:2604_00414::dc_granite_100pct_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The unresolvable ambiguity condition (@unresolvable_widens_gap) provides a stricter test of DC's explicit control: when fields are referenced but not inferable, only an explicit sufficiency signal that distinguishes 'field present' from 'field usably specified' can prevent premature execution. DC achieves 100% even here by continuing to clarify until $\\hat{p}_{\\text{suff}} = 1.0$ [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::unresolvable_widens_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d0c3578579407adc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::framework_is_general",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_742a8ae7",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::framework_preserves_uncertainty",
+              "github:2604_00414::framework_is_general"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The framework's design (@framework_preserves_uncertainty) — maintaining uncertainty in the context while making action selection deterministic — enables applicability across diverse settings. Since the explicit decision layer does not require eliminating uncertainty (only externalizing the signals), it can accommodate any signal type: LLM-based estimates, embedding similarities, structural checks, or hard domain constraints [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::framework_preserves_uncertainty"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_be7d60fa5c7e7f92",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::dc_graph_100pct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_2a1ca478",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::multi_signal_def",
+              "github:2604_00414::dc_graph_100pct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The multi-signal instantiation (@multi_signal_def) is the mechanism enabling DC's 100% graph disambiguation success: by maintaining both $\\hat{p}_{\\text{suff}}$ and $\\hat{p}_{\\text{corr}}$ explicitly, the policy can distinguish between the S3 case (high $\\hat{p}_{\\text{suff}}$, low $\\hat{p}_{\\text{corr}}$ → backtrack) and S4 case (low $\\hat{p}_{\\text{suff}}$, low $\\hat{p}_{\\text{corr}}$ → clarify), and handle the S5 correlated belief update that prompt approaches miss [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::multi_signal_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_891e52472299bd9a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_00414::utility_maximization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_00414::__implication_result_c56a9ac9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_00414::dc_framework_proposed",
+              "github:2604_00414::utility_maximization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The decision-centric framework (@dc_framework_proposed) defines $\\delta$ as a deterministic function mapping context $c$ to action. The constrained utility maximization formulation (@utility_maximization) is the most common instantiation: $\\delta(c) = a^* = \\arg\\max_{a \\in \\mathcal{F}(c)} U(a, c)$. Given the framework provides the interface for $\\delta$, it follows that utility maximization is a valid and common concrete realization of that interface [@Sun2026]."
+      },
+      "premises": [
+        "github:2604_00414::dc_framework_proposed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_59853afe2df72c16",
+      "type": "support"
+    }
+  ]
+}
