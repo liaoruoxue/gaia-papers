@@ -1,0 +1,169 @@
+{
+  "exports": [
+    {
+      "content": "The unified framework is validated as complete and expressive: it successfully decomposes all ten representative agent memory methods into the four modular components (information extraction, memory management, memory storage, information retrieval) without requiring any component to be split or merged. The framework enables systematic comparison of design choices and the derivation of evidence-backed lessons.",
+      "content_hash": "f07ac303aee22af39a8c4766c6325731e35e3e5ff09084b27288931352609d0f",
+      "label": "framework_completeness_validated",
+      "qid": "github:2604_01707::framework_completeness_validated",
+      "type": "claim"
+    },
+    {
+      "content": "This paper proposes a unified modular framework that decomposes all representative agent memory methods into four components: (1) **Information Extraction** — identifies and extracts essential information from M suitable for downstream processing (filtering redundancies, transforming into knowledge types such as triples); (2) **Memory Management** — integrates newly extracted information with existing memory H through operations such as connecting, integrating, transforming, updating, and filtering; (3) **Memory Storage** — organizes and persists processed memory using vector-based, graph-based, or hybrid storage formats; (4) **Information Retrieval** — retrieves the most relevant information from H to support reasoning or response generation when a new query arrives.",
+      "content_hash": "a8db75cb41bada5c3c0567b5120eed67e7b103ec53c11102b6f9837190b03b8c",
+      "label": "framework_proposed",
+      "qid": "github:2604_01707::framework_proposed",
+      "type": "claim"
+    },
+    {
+      "content": "L2: Information completeness is fundamental to memory mechanisms. While structured representations like triples in graphs improve organization, retaining raw dialogue context is essential to prevent semantic loss during the information extraction or retrieval stage.",
+      "content_hash": "96f194ee5aced2a5cdb3b4f5aaf706e3a33a86879e911c7d06e0efaf785189fc",
+      "label": "lesson_completeness",
+      "qid": "github:2604_01707::lesson_completeness",
+      "type": "claim"
+    },
+    {
+      "content": "L3: Optimizing memory granularity by processing multiple dialogue turns as a single unit during the information extraction or memory management stage significantly reduces token consumption, while appropriate partitioning further maintains the coherence of retrieved information.",
+      "content_hash": "18a61e0130da954ce9e678d35d48f12a8abff2b9fac362eb139e88cb4a15b8e9",
+      "label": "lesson_granularity",
+      "qid": "github:2604_01707::lesson_granularity",
+      "type": "claim"
+    },
+    {
+      "content": "L1: Compared to flat memory structures, hierarchical organization is more effective in capturing structural relationships between information. This can be achieved by either employing tree-based indices (as in MemTree, MemOS) or designing multi-level storage (as in MemoryOS).",
+      "content_hash": "214c98f2207f9980bae4b2d485c1d925edcd0165f42f2bd20b909ac2112e8b99",
+      "label": "lesson_hierarchical",
+      "qid": "github:2604_01707::lesson_hierarchical",
+      "type": "claim"
+    },
+    {
+      "content": "The paper proposes a new memory framework combining: (1) Tree-based organization from MemTree and MemOS for hierarchical summarization; (2) Three-tier hierarchical storage from MemoryOS (short-term, mid-term, long-term). New messages are added to short-term memory, then migrated to mid-term as Segment Summaries via a FIFO policy, then to long-term storage for persistent user knowledge.",
+      "content_hash": "9111ee2a9f8741efc8b0b2d55e73275d815582ee23272fd9eddf38cb8b5d0aec",
+      "label": "new_method_design",
+      "qid": "github:2604_01707::new_method_design",
+      "type": "claim"
+    },
+    {
+      "content": "The newly designed memory method achieves state-of-the-art performance on both LOCOMO and LONGMEMEVAL benchmarks, surpassing all ten existing representative methods, while maintaining low computational overhead (<450 tokens/dialogue). On LONGMEMEVAL with Qwen2.5-7B-Instruct: overall F1 = 38.79 (best, +5.07% over MemTree at 36.92). On LOCOMO with Qwen2.5-7B-Instruct: overall F1 = 38.03 (best, +2.65% over MemOS at 37.05). On LOCOMO with Qwen2.5-72B-Instruct: overall F1 = 43.87 (best, +2.52% over MemOS at 42.79). The method demonstrates robust generalization across LLM backbones (Qwen2.5-7B/72B, LLaMA3.1-8B, GPT-4o-mini).",
+      "content_hash": "23e8dc43b67bce5761cb836ee469a773a8c24c04a61cae07c121f8c1c14611f8",
+      "label": "new_method_sota",
+      "qid": "github:2604_01707::new_method_sota",
+      "type": "claim"
+    },
+    {
+      "content": "Experimental results validate that connecting-type memory management significantly improves multi-hop and multi-session reasoning performance. MemoryBank (no connecting) achieves only 19.41 F1 on Multi-Session LONGMEMEVAL; Mem0 (implicit connecting via concurrent updates) achieves 23.02 F1 — an 18.60% relative F1 improvement — and a 26.19% BLEU-1 improvement. Similarly, on LOCOMO Multi-Hop, methods with explicit connecting (Zep: 30.97, MemOS: 34.04) outperform methods without (MemoryBank: 16.63, MemGPT: 18.92).",
+      "content_hash": "24972caceb1e4b9734b26cc3c5b7b4577563c16894e2f18c96f70575a250074f",
+      "label": "obs_connecting_multihop_validated",
+      "qid": "github:2604_01707::obs_connecting_multihop_validated",
+      "type": "claim"
+    },
+    {
+      "content": "Preserving information completeness is crucial for effective memory persistence. Retaining raw messages during information extraction and incorporating original conversations during final response generation is essential. Methods that exclusively extract graph-based triples may suffer from information loss compared to those preserving raw dialogue fragments. Evidence: Mem0 (direct archive + summarization) outperforms Mem0g (graph-based extraction only) on LONGMEMEVAL overall F1 at both 7B scale (32.46 vs 30.66) and 72B scale (37.85 vs 38.47, with Mem0g slightly higher at 72B), and on several sub-tasks.",
+      "content_hash": "7582d5bceeee19eccdd3ff08309ec1422b56184bb021cfe9fb9625ad9e109c50",
+      "label": "obs_info_completeness_crucial",
+      "qid": "github:2604_01707::obs_info_completeness_crucial",
+      "type": "claim"
+    },
+    {
+      "content": "Temporal reasoning tasks remain highly sensitive to the reasoning capacity of the backbone LLM. MemoryOS and MemoChat exhibit a performance leap exceeding 2× on LOCOMO temporal tasks as the backbone LLM scales from 7B to 72B: MemoryOS improves from 17.65 to 37.36 F1, MemoChat from 5.33 to 16.64 F1 — both more than doubling. To improve robustness, specialized architectural components for temporal information processing are needed rather than relying solely on LLM in-context reasoning.",
+      "content_hash": "5df16e464c640cd1e8dbb8128d9e65e8ba6be9f88922995148c92201557e51f3",
+      "label": "obs_temporal_backbone_dependent",
+      "qid": "github:2604_01707::obs_temporal_backbone_dependent",
+      "type": "claim"
+    },
+    {
+      "content": "Tree-based memory methods (MemTree and MemOS) generally achieve strong performance by organizing memory in a multi-layered, multi-granularity fashion. Specifically, MemTree attains the highest F1 score of 36.92 on LONGMEMEVAL at the 7B scale, while MemOS achieves the highest F1 scores of 37.05 (7B) and 42.79 (72B) on LOCOMO. Tree structures provide high-level conceptual summaries at upper layers while preserving fine-grained details at leaf nodes. A similar advantage is realized through well-designed hierarchical architectures such as MemoryOS and Zep.",
+      "content_hash": "e2843d895218f253b7614603777bf748df0f35d53c4d26b0c648c6967f00f201",
+      "label": "obs_tree_hierarchical_strong",
+      "qid": "github:2604_01707::obs_tree_hierarchical_strong",
+      "type": "claim"
+    },
+    {
+      "content": "O3: Existing hierarchical memory mechanisms primarily focus on consolidating short-term memory into long-term storage but do not support the reverse transformation. A promising direction is to design bidirectional memory transformation mechanisms that enable efficient consolidation and reconstruction across memory hierarchies.",
+      "content_hash": "5afe75de0a44f085045d3915faa6b1646e9b14de89adb4283c16690ae3c87302",
+      "label": "opportunity_bidirectional",
+      "qid": "github:2604_01707::opportunity_bidirectional",
+      "type": "claim"
+    },
+    {
+      "content": "O2: Existing competitive memory methods manage information in ways that lead to rapid storage growth and increasing management and retrieval overhead. How to compress memory without losing useful information remains a major challenge. This creates an opportunity to explore latent representations beyond explicit text and learned compression mechanisms to achieve high-density yet usable memory.",
+      "content_hash": "4d3e432cd395810ad83e6865309373d5583327483c3d78ef38ce404587e20229",
+      "label": "opportunity_compression",
+      "qid": "github:2604_01707::opportunity_compression",
+      "type": "claim"
+    },
+    {
+      "content": "O1: Real-world settings involve complex and diverse information sources including textual conversations, historical interaction traces, and multimodal signals (audio, images, videos). Existing memory mechanisms often focus on a single or limited form, constraining effective information utilization. A promising research direction is unified memory mechanisms that support heterogeneous and multimodal memory within a shared storage and retrieval framework.",
+      "content_hash": "ad599e7c00d529d0ea6a86b044009cfca923717d8646e8547c7b9d1a8a8b7f60",
+      "label": "opportunity_multimodal",
+      "qid": "github:2604_01707::opportunity_multimodal",
+      "type": "claim"
+    },
+    {
+      "content": "LLM backbone comparison on LOCOMO (F1 / BLEU-1):\n\n| Model | Metric | Zep | MemTree | MemoryOS | MemOS | Ours |\n|-------|--------|-----|---------|----------|-------|------|\n| Qwen2.5-7B | F1 | 33.82 | 29.68 | 28.34 | 37.05 | 38.03 |\n| Qwen2.5-7B | BLEU-1 | 27.42 | 23.95 | 23.11 | 30.30 | 31.73 |\n| Qwen2.5-72B | F1 | 37.45 | 34.85 | 39.63 | 42.79 | 43.87 |\n| Qwen2.5-72B | BLEU-1 | 30.46 | 28.49 | 32.62 | 35.16 | 37.30 |\n| LLaMA3.1-8B | F1 | — | 23.49 | 32.21 | 33.39 | 35.21 |\n| LLaMA3.1-8B | BLEU-1 | — | 18.19 | 25.56 | 26.24 | 28.40 |\n| GPT-4o-mini | F1 | 42.88 | 32.32 | 42.57 | 45.56 | 45.20 |\n| GPT-4o-mini | BLEU-1 | 36.09 | 25.89 | 34.75 | 38.06 | 38.52 |\n\nZep failed on LLaMA3.1-8B due to strict JSON formatting failures. Most methods achieve best performance with GPT-4o-mini. Scaling Qwen2.5 from 7B to 72B produces substantial gains for all methods.",
+      "content_hash": "1bb857103599f8c1d97dd130a356f2352177d9dc0ab113fde5bf68f04836ec04",
+      "label": "result_backbone_comparison",
+      "qid": "github:2604_01707::result_backbone_comparison",
+      "type": "claim"
+    },
+    {
+      "content": "Context scalability analysis (LONGMEMEVAL context expanded from 50% to 200%): Nearly all memory architectures exhibit a steady decline in F1 scores as context scale expands. This performance attrition is driven by increased irrelevant information density, lowering the signal-to-noise ratio during retrieval. MemOS and MemGPT (LLM-as-OS paradigm) suffer disproportionately at 200% scale due to higher tool-call failure rates and indexing conflicts as the candidate space expands. MemoryOS (rule-based hierarchical management) maintains higher stability by offloading organizational logic from the LLM to a deterministic framework.",
+      "content_hash": "6a6e183ece09325dd5033cdbd7aa562ae4957186f9826bb41bba0a1c7bc79372",
+      "label": "result_context_scalability",
+      "qid": "github:2604_01707::result_context_scalability",
+      "type": "claim"
+    },
+    {
+      "content": "Overall performance on LOCOMO with Qwen2.5-7B-Instruct backbone (F1 / BLEU-1):\n\n| Method | Single-Hop | Multi-Hop | Temporal | Open-Domain | Overall |\n|--------|-----------|----------|----------|-------------|--------|\n| A-MEM | 33.11/27.59 | 25.38/18.36 | 14.69/12.19 | 14.69/12.55 | 26.71/21.75 |\n| MemoryBank | 15.34/11.92 | 16.63/12.41 | 11.57/9.49 | 16.09/11.16 | 14.84/11.46 |\n| MemGPT | 21.31/16.57 | 18.92/13.64 | 17.37/13.61 | 11.14/8.06 | 19.42/15.51 |\n| Mem0 | 25.92/21.47 | 19.43/14.76 | 37.49/31.26 | 16.93/10.58 | 26.58/21.60 |\n| Mem0g | 27.90/23.45 | 21.14/13.98 | 35.70/30.54 | 18.67/13.44 | 27.71/22.57 |\n| MemoChat | 7.21/5.84 | 9.74/6.59 | 5.33/4.26 | 14.31/10.81 | 7.72/5.96 |\n| Zep | 40.42/34.59 | 30.97/20.31 | 22.64/17.82 | 21.79/17.57 | 33.82/27.42 |\n| MemTree | 33.36/27.91 | 26.40/17.59 | 25.62/21.45 | 20.67/16.23 | 29.68/23.95 |\n| MemoryOS | 33.14/28.33 | 28.52/19.90 | 17.65/14.09 | 22.05/16.95 | 28.34/23.11 |\n| MemOS | 39.55/33.58 | 34.04/23.38 | 37.55/31.90 | 22.55/16.51 | 37.05/30.30 |\n\nBest overall: MemOS at 37.05 F1.",
+      "content_hash": "72b850447effa8183ea45c2ee583bbffb9a2cc15e5adf646a9ad8cb10d677568",
+      "label": "result_locomo_7b",
+      "qid": "github:2604_01707::result_locomo_7b",
+      "type": "claim"
+    },
+    {
+      "content": "Overall performance on LONGMEMEVAL with Qwen2.5-7B-Instruct backbone (F1 / BLEU-1):\n\n| Method | Info-Ext-user | Info-Ext-asst | Info-Ext-pref | Multi-Session | Knowledge-Upd | Temporal | Overall |\n|--------|--------------|--------------|--------------|---------------|---------------|----------|--------|\n| A-MEM | 46.75/41.26 | 43.21/36.74 | 9.76/0.52 | 16.61/14.32 | 19.37/15.54 | 25.59/21.63 | 25.53/21.24 |\n| MemoryBank | 46.28/42.19 | 49.31/43.08 | 13.96/3.79 | 19.41/16.42 | 17.80/13.15 | 31.51/27.31 | 27.65/23.03 |\n| MemGPT | 52.82/47.54 | 52.26/44.56 | 13.61/2.90 | 18.61/16.71 | 21.65/14.81 | 28.09/24.85 | 29.16/24.08 |\n| Mem0 | 56.51/51.23 | 32.35/25.99 | 11.44/0.69 | 23.02/20.72 | 28.86/21.19 | 41.28/36.37 | 32.46/26.95 |\n| Mem0g | 53.21/47.39 | 18.18/13.82 | 10.23/0.79 | 24.42/22.04 | 29.16/21.60 | 40.43/35.51 | 30.66/25.38 |\n| MemoChat | 6.44/3.24 | 16.95/12.74 | 7.18/0.12 | 12.27/10.09 | 17.49/11.35 | 6.51/4.28 | 12.16/8.26 |\n| Zep | — | — | — | — | — | — | — |\n| MemTree | 68.48/61.85 | 57.79/46.73 | 9.50/1.00 | 21.96/19.88 | 29.97/21.77 | 41.49/38.56 | 36.92/31.05 |\n| MemoryOS | 56.85/53.49 | 61.32/52.71 | 12.40/1.18 | 19.35/17.80 | 26.34/21.61 | 30.62/27.97 | 32.50/28.31 |\n| MemOS | 65.48/56.02 | 49.40/42.44 | 12.17/0.77 | 22.81/19.72 | 21.34/15.65 | 33.99/27.75 | 32.48/26.38 |\n\nBest overall: MemTree at 36.92 F1. Zep failed to complete (>2 days).",
+      "content_hash": "e9824bda1f9c1a8df514369cfe1627c777a942eeec9c7dd4b59fb1644e86dd40",
+      "label": "result_longmemeval_7b",
+      "qid": "github:2604_01707::result_longmemeval_7b",
+      "type": "claim"
+    },
+    {
+      "content": "The new method on LOCOMO (F1 Score):\n\n| Category | Size | A-MEM | MemoryBank | MemGPT | Mem0 | Mem0g | Zep | MemTree | MemoryOS | MemOS | Ours |\n|----------|------|-------|------------|--------|------|-------|-----|---------|----------|-------|------|\n| Single-Hop | 7B | 33.11 | 15.34 | 21.31 | 25.92 | 27.90 | 40.42 | 33.36 | 33.14 | 39.55 | **45.11** |\n| Single-Hop | 72B | 42.24 | 24.54 | 28.78 | 32.83 | 29.58 | 42.46 | 38.73 | 43.56 | 44.30 | **48.01** |\n| Multi-Hop | 7B | 25.38 | 16.63 | 18.92 | 19.43 | 21.14 | 30.97 | 26.40 | 28.52 | 34.04 | 30.01 |\n| Multi-Hop | 72B | 27.87 | 23.28 | 24.21 | 25.35 | 30.22 | 33.11 | 33.01 | 36.32 | 36.67 | **38.08** |\n| Temporal | 7B | 14.69 | 11.57 | 17.37 | 37.49 | 35.70 | 22.64 | 25.62 | 17.65 | 37.55 | 32.23 |\n| Temporal | 72B | 28.01 | 13.21 | 20.28 | 40.76 | 43.89 | 34.58 | 29.81 | 37.36 | **49.59** | 43.97 |\n| Open-Domain | 7B | 14.69 | 16.09 | 11.14 | 16.93 | 18.67 | 21.79 | 20.67 | 22.05 | 22.55 | 18.92 |\n| Open-Domain | 72B | 23.27 | 19.12 | 16.42 | 21.04 | 20.37 | 15.87 | 23.02 | 22.57 | 24.88 | 24.27 |\n| **Overall** | 7B | 26.71 | 14.84 | 19.42 | 26.58 | 27.71 | 33.82 | 29.68 | 28.34 | 37.05 | **38.03** |\n| **Overall** | 72B | 30.35 | 21.61 | 25.40 | 32.38 | 32.07 | 37.45 | 34.85 | 39.63 | 42.79 | **43.87** |\n\nNew method achieves best overall on LOCOMO at both 7B (38.03) and 72B (43.87). Note: at 7B, the new method slightly underperforms MemOS on Multi-Hop (30.01 vs 34.04) and Open-Domain (18.92 vs 22.55), and on Temporal at 7B (32.23 vs 37.55 for MemOS).",
+      "content_hash": "623c29b49fa05818dfcf72ad697f1d27fcff3c8d51a07608b4341911aae28efc",
+      "label": "result_new_method_locomo",
+      "qid": "github:2604_01707::result_new_method_locomo",
+      "type": "claim"
+    },
+    {
+      "content": "The new method on LONGMEMEVAL with Qwen2.5-7B-Instruct (F1 Score):\n\n| Category | A-MEM | MemoryBank | MemGPT | Mem0 | Mem0g | MemTree | MemoryOS | MemOS | Ours |\n|----------|-------|------------|--------|------|-------|---------|----------|-------|------|\n| Info-Ext-user | 46.75 | 46.28 | 52.82 | 56.51 | 53.21 | 68.48 | 56.85 | 65.48 | 67.38 |\n| Info-Ext-asst | 43.21 | 49.31 | 52.26 | 32.35 | 18.18 | 57.79 | 61.32 | 49.40 | **69.34** |\n| Info-Ext-pref | 9.76 | 13.96 | 13.61 | 11.44 | 10.23 | 9.50 | 12.40 | 12.17 | 14.58 |\n| Multi-Session | 16.61 | 19.41 | 18.61 | 23.02 | 24.42 | 21.96 | 19.35 | 22.81 | 23.14 |\n| Knowledge-Upd | 19.37 | 17.80 | 21.65 | 28.86 | 29.16 | 29.97 | 26.34 | 21.34 | 29.22 |\n| Temporal | 25.59 | 31.51 | 28.09 | 41.28 | 40.43 | 41.49 | 30.62 | 33.99 | **43.53** |\n| **Overall** | 25.53 | 27.65 | 29.16 | 32.46 | 30.66 | 36.92 | 32.50 | 32.48 | **38.79** |\n\nNew method achieves best overall F1 of 38.79, ranking first or second across all categories. Compared to best existing method (MemTree at 36.92 overall), improvement is +5.07% relative F1. On Info-Ext-assistant, improvement over best existing (MemoryOS 61.32) is +13.08% relative F1.",
+      "content_hash": "9b3caf07fb54d2fc9420caf14ad96933c4bd552652ee823b78ec9d84c04fa54b",
+      "label": "result_new_method_longmemeval",
+      "qid": "github:2604_01707::result_new_method_longmemeval",
+      "type": "claim"
+    },
+    {
+      "content": "A clear recency bias is observed: most memory methods achieve higher F1 scores when ground-truth evidence is placed in late sessions rather than early sessions. Specific improvements (Late vs Early placement, overall F1): MemTree: 37.37 vs 34.13 F1 (+3.24); MemOS: 34.40 vs 29.10 F1 (+5.30). As more intervening dialogue accumulates after relevant evidence appears, maintaining long-range information consistency and retrieval becomes increasingly challenging.",
+      "content_hash": "1a0ce11e47c09f2d9ce55f94a88be83ca792a5ef4678e6999aa88f7f996d94de",
+      "label": "result_recency_bias",
+      "qid": "github:2604_01707::result_recency_bias",
+      "type": "claim"
+    },
+    {
+      "content": "Rule-based hierarchical memory management (as in MemoryOS) is more robust to context scaling than agent-based management (MemOS, MemGPT). MemoryOS offloads organizational logic from the LLM to a deterministic framework, reducing cognitive load on the LLM and maintaining high stability as context grows. The LLM-as-OS paradigm increases failure rates at scale because the expanded candidate space raises the difficulty for the LLM to accurately reason over and execute complex management instructions.",
+      "content_hash": "82d6e702a247df44dbc171629c02caffd7c40db1b460a1b36f02b1446264a381",
+      "label": "rule_based_stable_scaling",
+      "qid": "github:2604_01707::rule_based_stable_scaling",
+      "type": "claim"
+    },
+    {
+      "content": "Ten representative agent memory methods are classified under the unified framework by four dimensions:\n\n| Method | Information Extraction | Management Operations | Storage Structure | Retrieval Mechanism |\n|--------|----------------------|----------------------|-------------------|--------------------|\n| A-MEM | Direct archive, Summarization-based | Connect, Update | Flat, Vector | Vector-Based |\n| MemoryBank | Direct archive | Integrate, Update, Filter | Flat, Vector | Vector-Based |\n| MemGPT | Direct archive | Integrate, Transform, Update | Hierarchical, Vector | Lexical-Based, Vector-Based |\n| Mem0 | Direct archive, Summarization-based | Integrate, Update, Filter | Flat, Vector | Vector-Based |\n| Mem0g | Graph-based extract | Connect, Update, Filter | Flat, Graph | Vector-Based, Structure-Based |\n| MemoChat | Direct archive | Integrate | Flat | LLM-Assisted |\n| Zep | Direct archive, Graph-based extract | Connect, Transform, Update | Hierarchical, Graph | Lexical-Based, Vector-Based, Structure-Based |\n| MemTree | Direct archive | Connect, Integrate, Update | Flat, Tree | Vector-Based |\n| MemoryOS | Direct archive | Connect, Integrate, Transform, Update, Filter | Hierarchical, Vector | Lexical-Based, Vector-Based |\n| MemOS | Direct archive, Summarization-based | Connect, Integrate, Update | Hierarchical, Tree | Lexical-Based, Vector-Based |\n\n(Source: Table 1 of the paper)",
+      "content_hash": "3c62496c9d53603c8c090dd127e2d4b9977ca56fa5dcaceaf188ae3c5caa87fc",
+      "label": "ten_methods_classified",
+      "qid": "github:2604_01707::ten_methods_classified",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:674c2daf856418effeeae6be0e8805ef3e9877fff03c1645d7b7d937081834df",
+  "manifest_schema_version": 1,
+  "package": "2604-01707",
+  "version": "0.1.0"
+}
