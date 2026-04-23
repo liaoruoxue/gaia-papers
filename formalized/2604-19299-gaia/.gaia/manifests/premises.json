@@ -1,0 +1,176 @@
+{
+  "ir_hash": "sha256:b91d1546c39cb06450ddac2b170a713a64d03c5da7832b9dfe14b09468144ecc",
+  "manifest_schema_version": 1,
+  "package": "2604-19299",
+  "premises": [
+    {
+      "content": "Alternatively, SLMs may lack sufficient instruction-following capability to use tools correctly, predicting that SAS provides no reliable NRQ improvement and only adds latency overhead.",
+      "content_hash": "bdbf58027e0fa98d1748cb57c50191d987b7b67082ebc42e1c35ba817361646f",
+      "exported": false,
+      "interface_hash": "sha256:8ec495075bc5696a127d21a5893d5327c45160060e8873be2b81bf53d635e935",
+      "label": "alt_sas_ineffective",
+      "qid": "github:2604_19299::alt_sas_ineffective",
+      "required_by": [
+        "github:2604_19299::obs_sas_nrq"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The Base SLM remains competitive for classification and token-level tasks including named entity recognition (NER), sentiment analysis, and stock price prediction, especially in the Gemma and Phi model families. For Gemma-3-270M specifically, the Base SLM outperforms agent paradigms by a large margin on most tasks because agent paradigms fail to run correctly on this very small model (270M parameters).",
+      "content_hash": "79690e1aaa6e2c1811b2cc23c9d19a27b1d69c77aced543c3f8b584496a5f1b6",
+      "exported": false,
+      "interface_hash": "sha256:945027f942308cc83818d63ae07cb167fc7990b8cebc143efa9365de8a79e219",
+      "label": "obs_base_classification",
+      "qid": "github:2604_19299::obs_base_classification",
+      "required_by": [
+        "github:2604_19299::guideline_base_for_extraction",
+        "github:2604_19299::guideline_fallback",
+        "github:2604_19299::no_universal_winner"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Completion rates across architectures (Table 2):\n\n| Architecture | Completion Rate |\n|---|---|\n| Base SLM | 99.67% |\n| SAS | 79.92% |\n| MAS | 72.01% |\n\nReliability degrades substantially as architectural complexity increases, with MAS failing to return a valid response on roughly 28% of samples.",
+      "content_hash": "20116327aca39cde8de34a9f9a6a85b970bec5733cc2c0497adb61b23a185b13",
+      "exported": true,
+      "interface_hash": "sha256:41be50ba80fa15cc9666ae3edcf75611f8618ef1a94b29c1ce33beef07725e5d",
+      "label": "obs_completion_rates",
+      "qid": "github:2604_19299::obs_completion_rates",
+      "required_by": [
+        "github:2604_19299::guideline_fallback",
+        "github:2604_19299::mas_limited_gains",
+        "github:2604_19299::sas_best_overall_tradeoff"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Energy per token (in millijoules) decreases with architectural complexity: Base SLM = 1.83 mJ/token, SAS = 1.02 mJ/token, MAS = 0.52 mJ/token—a 71% reduction from Base to MAS. However, token count per sample increases 3.4x for SAS and 6.2x for MAS, so total energy per sample is higher for agent paradigms despite the lower per-token cost.",
+      "content_hash": "182e747be1d37ef4db1b35b9e561533473ce67b1e47ec8e99de6928ba85b1816",
+      "exported": false,
+      "interface_hash": "sha256:0ae4201d6900b1604f196b71be78efc85106f526a1668c2f946dcb89842cb4c1",
+      "label": "obs_energy_per_token",
+      "qid": "github:2604_19299::obs_energy_per_token",
+      "required_by": [
+        "github:2604_19299::mas_limited_gains"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Average latency nearly doubles for agent paradigms compared to the Base SLM (SAS: 23.27s, MAS: 22.76s vs. Base: 12.39s). Token usage per sample rises sharply: Base = 2,356 tokens, SAS = 8,040 tokens, MAS = 14,618 tokens. Tokens per second also increase (Base: 190 t/s, SAS: 345 t/s, MAS: 642 t/s), but this throughput gain does not offset the total latency increase.",
+      "content_hash": "a0c2a18ea0361d4cd9ceb01b53094ab37225dc54ff1d1acee8e5d546a348f1d3",
+      "exported": false,
+      "interface_hash": "sha256:1893497e9f03a9518e1ebb5546d424dd5c7ba09a3971e04c83459065c3840726",
+      "label": "obs_latency_tokens",
+      "qid": "github:2604_19299::obs_latency_tokens",
+      "required_by": [
+        "github:2604_19299::coordination_tax",
+        "github:2604_19299::mas_limited_gains",
+        "github:2604_19299::sas_best_overall_tradeoff"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "MAS performs best on bankruptcy prediction across most model scales, though often with a small leading advantage margin. This suggests that multi-agent coordination can specifically benefit high-risk financial classification tasks where multiple specialized perspectives add value despite coordination cost.",
+      "content_hash": "b620a1ebf085b04ca46d03fbfd1406cebc89eeec3eeaa9e28e82c9fe0f50548f",
+      "exported": false,
+      "interface_hash": "sha256:fdae47d30203b3f8559a575cc42b8486e182e3df65672f9af4cad2a0f115d4fa",
+      "label": "obs_mas_bankruptcy",
+      "qid": "github:2604_19299::obs_mas_bankruptcy",
+      "required_by": [
+        "github:2604_19299::guideline_fallback",
+        "github:2604_19299::guideline_mas_for_high_entropy",
+        "github:2604_19299::no_universal_winner"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In MAS, the dominant failure modes are (1) Delegation Failure — inter-agent handoffs fail — and (2) No Delegation — the supervisor fails to route the task. MAS avoids Timeout and Output Protocol Violation errors compared to SAS, but adds new coordination failure vectors such as infinite delegation loops.",
+      "content_hash": "3ce5a9ec7149286fa7fbee03d5bc6c69fa31301ef9d4e5ca8706dbad38e122cc",
+      "exported": false,
+      "interface_hash": "sha256:0eafe661075f4780dbf443c8d1f0a25b13a475616db476b79faa63f7f83ebe19",
+      "label": "obs_mas_failure_modes",
+      "qid": "github:2604_19299::obs_mas_failure_modes",
+      "required_by": [
+        "github:2604_19299::context_management_bottleneck",
+        "github:2604_19299::coordination_tax",
+        "github:2604_19299::guideline_base_for_extraction"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "MAS shows high variance in the efficiency–effectiveness trade-off space (Fig. 2): it can reach high effectiveness but often requires more energy due to coordination overhead, and smaller MAS configurations sometimes perform worse than equivalent SAS configurations.",
+      "content_hash": "3de5e3a8414a40162a2a1506e0cca0e4f19a1a6a7f88b4906954b7bd5e3dd0b9",
+      "exported": false,
+      "interface_hash": "sha256:c753b20998d46fd605febca0c5195a89a26a32421eaa53386946ef3544b070fb",
+      "label": "obs_mas_variance",
+      "qid": "github:2604_19299::obs_mas_variance",
+      "required_by": [
+        "github:2604_19299::coordination_tax"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In SAS, the dominant failure modes are (1) Context Length Exceeded — long iterative ReAct prompts exhaust the model's context window — and (2) No Delegation — the agent fails to produce a valid final answer. These are structural and budget-related failures arising from the think–act–observe loop.",
+      "content_hash": "bb47191cd75dc7f14634f3b26e8c1e373f87c709f3f342b62e3d3543b97cf751",
+      "exported": false,
+      "interface_hash": "sha256:ceb00c12d5ed2312e830e34c60c477d0a6a5a3b4bb4ff9de68ad81840c248230",
+      "label": "obs_sas_failure_modes",
+      "qid": "github:2604_19299::obs_sas_failure_modes",
+      "required_by": [
+        "github:2604_19299::context_management_bottleneck",
+        "github:2604_19299::guideline_base_for_extraction"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In the efficiency–effectiveness trade-off space (composite Z-score vs. energy/token on a log scale, Fig. 2), SAS consistently occupies the upper-left quadrant: achieving strong effectiveness (mostly $Z_c > 0.4$) at relatively low energy levels. This indicates SAS improves performance without large coordination cost.",
+      "content_hash": "0a0455f473942e95205a0c15948d12e9d97268f84bf887eb70adef9f70ab76ff",
+      "exported": false,
+      "interface_hash": "sha256:6b066c4cac7f5a645c11e3f94fb08f049a22cf69bda3b5d2409c2e10f94d8fcc",
+      "label": "obs_sas_pareto",
+      "qid": "github:2604_19299::obs_sas_pareto",
+      "required_by": [
+        "github:2604_19299::sas_best_overall_tradeoff"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "SAS performs best for reasoning and generation tasks including question answering, summarization, and credit risk prediction. For Qwen2.5-0.5B and Llama-2-7B, SAS achieves over 150% improvement compared to other setups, demonstrating that single-agent design significantly strengthens mid-sized model performance on complex tasks.",
+      "content_hash": "ebaffee0b321820ebb9a03337e9b5a9b8a62a95d80e2bd2ea441ba3d59f3d39e",
+      "exported": false,
+      "interface_hash": "sha256:4cc10b3a8b3736e6d9f06fb4036c04b1f5c4781e0111528384395b589432fe94",
+      "label": "obs_sas_reasoning_tasks",
+      "qid": "github:2604_19299::obs_sas_reasoning_tasks",
+      "required_by": [
+        "github:2604_19299::guideline_sas_for_complex",
+        "github:2604_19299::no_universal_winner"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The SAS paradigm, by providing tool access (calculator, wiki/web search) within a ReAct loop, predicts meaningful NRQ improvement over the Base SLM for financial tasks requiring external knowledge or multi-step computation.",
+      "content_hash": "d8e86ae300a03d65d840844e89af8d76e1d8c2d6f20998d9d250261480bd3e7b",
+      "exported": false,
+      "interface_hash": "sha256:67148186e0e1321ab7c83beaeff540f0e9da3d2560265277f467549f0486ae89",
+      "label": "pred_sas_effective",
+      "qid": "github:2604_19299::pred_sas_effective",
+      "required_by": [
+        "github:2604_19299::obs_sas_nrq"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Agent prompts enforce three principles to ensure stable deployment: (1) strict structural control via XML-style tags (<think>, <action>, <observation>, <final_answer>) to prevent format drift; (2) explicit tool governance with hard JSON formatting rules to prevent hallucinated tool calls; (3) task-grounded reasoning requiring the model to identify the required answer format before reasoning. SAS and MAS use identical tool definitions and structural constraints, differing only in reasoning decomposition (monolithic vs. delegated).",
+      "content_hash": "61aa2b9ccd94911ebf3269475ab6185cde9ba7892302dd882bfa65f9bd7ecae2",
+      "exported": false,
+      "interface_hash": "sha256:e0b8837dfcb63938bd2cae9f4a2064139e7a58597db1e8b191701e95ffaea9a8",
+      "label": "prompt_design",
+      "qid": "github:2604_19299::prompt_design",
+      "required_by": [
+        "github:2604_19299::architectural_fragility"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}
