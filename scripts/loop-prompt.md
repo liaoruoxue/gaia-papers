@@ -97,19 +97,30 @@ fully autonomous. No questions to the operator. If the skill would branch on
 a disambiguation, choose the option it marks as default (or, failing that,
 the first option listed) and proceed.
 
+**Run the entire six-pass process to completion, including the Critical
+Analysis pass.** The required deliverables after this step are:
+
+1. Gaia DSL modules under `src/<pkg>/`
+2. `priors.py` at the package root
+3. `ANALYSIS.md` at the package root (see SKILL.md § "Critical Analysis" for
+   the six required sections: statistics, summary, weak points, evidence gaps,
+   contradictions, confidence tiers)
+
 If the skill completes successfully, continue to Step 7. If it raises an
 error or produces no DSL output, execute the **Failure Branch** below.
 
-## Step 7 — Compile and check
+## Step 7 — Compile, check, and verify deliverables
 
 ```bash
 cd "/Users/risoliao/Code/gaia-lb/papers/formalized/$SLUG-gaia"
 source /Users/risoliao/Code/gaia-lb/venv/bin/activate
 gaia compile .
 gaia check .
+test -f ANALYSIS.md || { echo "MISSING ANALYSIS.md"; exit 1; }
 ```
 
-If either command exits non-zero, execute the **Failure Branch** below.
+If any command exits non-zero — including the `ANALYSIS.md` guard — execute
+the **Failure Branch** below. Do NOT proceed to Step 8 without ANALYSIS.md.
 
 ## Step 8 — Commit, tag, push
 
