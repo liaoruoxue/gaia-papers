@@ -1,0 +1,309 @@
+{
+  "exports": [
+    {
+      "content": "AgentTool and SkillTool sit alongside each other in the base tool pool as meta-tools, but they differ fundamentally: SkillTool injects instructions into the current context window (low context cost, same conversation), while AgentTool spawns a new, isolated context window (high isolation, separate conversation history). This distinction determines whether an extension operates within or across context boundaries.",
+      "content_hash": "1f623b06cd3061389e6ab3843b270b12940b848174da1758a69ca4daa50fecfe",
+      "label": "agent_tool_vs_skill_tool",
+      "qid": "github:2604_14228::agent_tool_vs_skill_tool",
+      "type": "claim"
+    },
+    {
+      "content": "The shift from suggestion-based to autonomous-action coding tools introduces architectural requirements with no counterpart in completion-based tools: requirements spanning safety, context management, extensibility, and delegation that every coding agent must navigate.",
+      "content_hash": "2a823d93a2f3e74424caeb299f9656bf2445a916d240d335e4a2d08f276ba066",
+      "label": "agentic_shift_introduces_new_requirements",
+      "qid": "github:2604_14228::agentic_shift_introduces_new_requirements",
+      "type": "claim"
+    },
+    {
+      "content": "The append-only JSONL transcript format is a deliberate choice favoring auditability and simplicity over query power. Every event is human-readable, version-controllable, and reconstructable without specialized tooling. Database-backed alternatives would enable richer queries over session history but introduce deployment dependencies and reduce transparency. The design applies two principles: 'Conversations Outlive Context' (a session's useful life cannot be capped by the model's context window — the transcript on disk records everything, so compaction can recycle the live view without ending the conversation) and 'Conversations Outgrow a Single Path' (the append-only transcript lets users rewind, resume, or fork into a new branch without losing prior work).",
+      "content_hash": "385f1dbdf49eb7595496de063015945f97c6ead9350383925751664564a725c8",
+      "label": "append_only_auditability",
+      "qid": "github:2604_14228::append_only_auditability",
+      "type": "claim"
+    },
+    {
+      "content": "Anthropic's auto-mode analysis (Hughes, 2026) found that users approve approximately 93% of permission prompts, indicating that approval fatigue renders interactive confirmation behaviorally unreliable as a sole safety mechanism. Because users habitually approve without careful review, the system must maintain safety independently of human vigilance.",
+      "content_hash": "c7d2676a44e04acc5a1f8cdfa1b03f675f8c8b0d7c86e96ef55a9b2a20cbd988",
+      "label": "approval_fatigue_observation",
+      "qid": "github:2604_14228::approval_fatigue_observation",
+      "type": "claim"
+    },
+    {
+      "content": "The architecture documented in this paper should be read as a snapshot of a co-evolving system rather than a fixed optimum. Anthropic's Managed Agents work (Martin et al., 2026) and the Harness Design essay (Rajasekaran, 2026) both point toward architectural decoupling where the tightly coupled local architecture analyzed here is one point on a spectrum. The harness boundary evolution question (where, when, what, with whom) is not resolved by the source-level analysis in Sections 3 to 9.",
+      "content_hash": "605e4926f0625950aa13fca8c1c37d4d53f59ea9cc768749218aefbaa7a57e9e",
+      "label": "architecture_as_snapshot",
+      "qid": "github:2604_14228::architecture_as_snapshot",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code's architectural choices form a coherent design point: the 1.6% decision logic / 98.4% operational harness ratio, the single queryLoop() for all surfaces, the deny-first safety posture, and the five-layer context pipeline all follow directly from the five values and thirteen design principles. The architecture consistently prioritizes model autonomy within deterministic harness constraints.",
+      "content_hash": "f578f5187c5510aef79ee2fd5b665ddb0a4c529f494982ab9cfb7cc84dd0ad75",
+      "label": "architecture_coherence",
+      "qid": "github:2604_14228::architecture_coherence",
+      "type": "claim"
+    },
+    {
+      "content": "The architectural properties documented in this paper generate testable predictions: agent-generated code will exhibit higher rates of pattern duplication and convention violation than code produced with full codebase visibility (due to bounded context), and parallel subagents can independently re-implement solutions that already exist elsewhere (due to subagent isolation with independently assembled tool pools). Claude Code's context management pipeline is specifically designed to mitigate these effects (graduated compression, cache-aware compaction, read-time projection, subagent summary isolation), but whether these mechanisms are sufficient to overcome structural limitations of bounded context is a directly measurable empirical question that source-level analysis cannot resolve.",
+      "content_hash": "7d0c9c08e16eef0d0855d97bf5267bb72837700f3d12f188f27f7e1cd06129d2",
+      "label": "bounded_context_code_quality_prediction",
+      "qid": "github:2604_14228::bounded_context_code_quality_prediction",
+      "type": "claim"
+    },
+    {
+      "content": "Because CLAUDE.md content is delivered as user context (a user message) rather than as system prompt content (context.ts), model compliance with CLAUDE.md instructions is probabilistic rather than guaranteed. This creates a deliberate separation between guidance (CLAUDE.md, probabilistic) and enforcement (permission rules, deterministic). The function setCachedClaudeMdContent() caches loaded content for the auto-mode classifier, avoiding an import cycle between the CLAUDE.md loader and the permission system.",
+      "content_hash": "8991a3efe1136e40629bbb7b4180dcb469236ddfae05eda986b719b88206390f",
+      "label": "claudemd_probabilistic_compliance",
+      "qid": "github:2604_14228::claudemd_probabilistic_compliance",
+      "type": "claim"
+    },
+    {
+      "content": "The compact_boundary mechanism uses UUID-based read-time chain patching rather than destructive history rewriting. annotateBoundaryWithPreservedSegment() records headUuid, anchorUuid, and tailUuid in the boundary event; the session loader patches the message chain at read time using this metadata. Preserved messages keep their original parentUuids on disk. This means compaction never modifies or deletes previously written transcript lines — it only appends new boundary and summary events, preserving the ability to reconstruct full history if needed.",
+      "content_hash": "9c7b80fcaf0a93f1e15118e409d8f66e425447ca16d05a1c4f034d35316696d4",
+      "label": "compact_boundary_read_time_patching",
+      "qid": "github:2604_14228::compact_boundary_read_time_patching",
+      "type": "claim"
+    },
+    {
+      "content": "The compositional relationship between Claude Code and OpenClaw is architecturally significant: OpenClaw can host Claude Code as an external coding harness via ACP (Agent Client Protocol), meaning the two systems are composable rather than exclusive alternatives. This suggests the design space of AI agents is not a flat taxonomy but a layered one, where gateway-level systems and task-level harnesses can compose. The three observations from the comparison: (1) the same recurring design questions apply beyond coding agents; (2) the systems make opposite bets on several dimensions following from different trust models and deployment topologies; (3) the compositional relationship between the two systems is architecturally significant.",
+      "content_hash": "b8be0332fd5dc9831751cd00ad6961c2ea0b594928f47102f273d60cfae9190a",
+      "label": "composable_layered_design_space",
+      "qid": "github:2604_14228::composable_layered_design_space",
+      "type": "claim"
+    },
+    {
+      "content": "The tool dispatch mechanism uses concurrent-read, serial-write execution: read-only operations execute in parallel via StreamingToolExecutor, while state-modifying operations like shell commands are serialized. This occupies a middle ground between fully serial dispatch and speculative pre-execution (PASTE approach). Results are buffered and emitted in the order tools were received, preserving the ordering the model expects for tool results.",
+      "content_hash": "f912383c6b358e63e0408858ead57fbe63fffc30cebb3db003b610ee0b6d2a1d",
+      "label": "concurrent_serial_tool_execution",
+      "qid": "github:2604_14228::concurrent_serial_tool_execution",
+      "type": "claim"
+    },
+    {
+      "content": "In Claude Code, the context window (200K tokens for older models, 1M tokens for the Claude 4.6 series) is the binding resource constraint. Five distinct context-reduction strategies execute before every model call (query.ts lines 365-453): budget reduction, snip, microcompact, context collapse, and auto-compact. Several subsystem decisions also exist to limit context consumption: CLAUDE.md lazy loading, deferred tool schemas, summary-only subagent returns, and per-tool-result budgets.",
+      "content_hash": "6897d9882e394707d040f5b95a49005bbd49441024c23ee5612ccbfe78872376",
+      "label": "context_window_as_binding_constraint",
+      "qid": "github:2604_14228::context_window_as_binding_constraint",
+      "type": "claim"
+    },
+    {
+      "content": "The defense-in-depth architecture rests on an independence assumption: if one layer fails, others catch the violation. However, several safety layers share common performance and economic constraints. Security researchers (Adversa.ai, 2026) have documented that commands with more than 50 subcommands fall back to a single generic approval prompt instead of running per-subcommand deny-rule checks, because per-subcommand parsing caused UI freezes. This demonstrates that defense-in-depth can degrade when its layers share failure modes — a structural tension between safety and performance.",
+      "content_hash": "e1d5a2e9aa3bcdc6ef2fe57418d02275b1d25580695657debc0dd4d45dc89a02",
+      "label": "defense_in_depth_shared_failure_modes",
+      "qid": "github:2604_14228::defense_in_depth_shared_failure_modes",
+      "type": "claim"
+    },
+    {
+      "content": "The architectural commitment to deny-first evaluation, blanket-deny pre-filtering, and sandboxing as independent layers that operate regardless of user attentiveness is motivated by the 93% approval rate demonstrating that interactive approval is behaviorally unreliable as a sole safety mechanism.",
+      "content_hash": "63ee0b3739d42f59a5ba12a03c1c3fc91e2ee23c6bde7464777f7b24db4874ea",
+      "label": "deny_first_motivated_by_approval_fatigue",
+      "qid": "github:2604_14228::deny_first_motivated_by_approval_fatigue",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code's default safety posture is deny-first with human escalation: deny rules override ask rules override allow rules, and unrecognized actions are escalated to the user rather than allowed silently (permissions.ts). Multiple independent safety layers apply in parallel: permission rules, PreToolUse hooks, the auto-mode classifier when enabled, and optional shell sandboxing. Any single layer can block an action.",
+      "content_hash": "6ce00ad90b649d254d3ef47646a54ac5244c7010afc5e97c07bf0f606113754e",
+      "label": "deny_first_safety_posture",
+      "qid": "github:2604_14228::deny_first_safety_posture",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code's principle set is distinctive in combining minimal decision scaffolding with layered policy enforcement, values-based judgment with deny-first defaults, and progressive context management with composable extensibility. This distinguishes it from three major alternative design families: rule-based orchestration (LangGraph), container-isolated execution (SWE-Agent, OpenHands), and version-control-as-safety (Aider).",
+      "content_hash": "f77a4d5914f5cac468c63cf938c5a8633f1f3f619055d282936bd8e033bff003",
+      "label": "design_principles_distinguish_from_alternatives",
+      "qid": "github:2604_14228::design_principles_distinguish_from_alternatives",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code and OpenClaw place the trust boundary at fundamentally different points. Claude Code places the trust boundary between the model and the execution environment, evaluating every tool invocation via a deny-first permission system with ML-based classification. OpenClaw places the trust boundary at the gateway perimeter: security begins with identity and access control (DM pairing, sender allowlists, gateway authentication), and per-action classification is replaced by per-agent allow/deny lists. These represent genuinely different architectural bets that follow from different deployment contexts: Claude Code assumes an untrusted model on a trusted developer machine; OpenClaw assumes a single trusted operator per gateway.",
+      "content_hash": "7e7a621a702b45be4c0aabb8900d9d5b401e5c38dc0816066b7ee01e5ee799ed",
+      "label": "different_trust_boundaries",
+      "qid": "github:2604_14228::different_trust_boundaries",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code uses a file-based transparent memory architecture (CLAUDE.md files as plain-text Markdown) rather than structured configuration, opaque databases, or embedding-based retrieval. This trades expressiveness for auditability: users can read, edit, version-control, and delete any instruction the agent sees. The system does not use embeddings or a vector similarity index for memory retrieval.",
+      "content_hash": "3d7b767a459e5f855693fe48744dfba6187453199232e05679880bab838057a7",
+      "label": "file_based_memory_vs_alternatives",
+      "qid": "github:2604_14228::file_based_memory_vs_alternatives",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code's architecture is motivated by five human values: human decision authority, safety and security, reliable execution, capability amplification, and contextual adaptability. These values are operationalized through thirteen design principles, each answering a recurring question that production coding agents must resolve.",
+      "content_hash": "ebe61e52b547cf6c92f32ce422a05dd65c2d9e52491039d6190b719f58f22582",
+      "label": "five_values_motivate_architecture",
+      "qid": "github:2604_14228::five_values_motivate_architecture",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code uses four distinct extension mechanisms (MCP, plugins, skills, hooks) rather than a single unified mechanism because different kinds of extensibility impose different costs on the context window. A single mechanism cannot span the full range from zero-context lifecycle hooks to schema-heavy tool servers without forcing unnecessary trade-offs on extension authors. The graduated context-cost ordering (zero for hooks, low for skills, medium for plugins, high for MCP) means cheap extensions can scale widely without exhausting the context window, while expensive ones are reserved for cases that genuinely require new tool surfaces.",
+      "content_hash": "2872d2ce625449742515b98c530cb9ab4118cc18d578faf48e3b6e2b53f18817",
+      "label": "four_mechanisms_justified",
+      "qid": "github:2604_14228::four_mechanisms_justified",
+      "type": "claim"
+    },
+    {
+      "content": "Emerging AI regulation adds an external constraint on agent architectures. The EU AI Act (fully applicable August 2026), the GPAI Code of Practice, and the MIT AI Agent Index (finding only 13.3% of indexed agentic systems publish agent-specific safety cards) create compliance requirements. The deny-first evaluation documented in Section 5 is internally auditable through session transcripts but not yet externally auditable in the forms that emerging frameworks contemplate. Whether the values-over-rules principle admits the kind of explicit rule articulation that compliance review calls for is an open question lying within the harness rather than the model.",
+      "content_hash": "0178df5abd1d1bdca05331cd30f1a0525404af10e85e276e7c0921bcf3082253",
+      "label": "governance_external_constraint",
+      "qid": "github:2604_14228::governance_external_constraint",
+      "type": "claim"
+    },
+    {
+      "content": "The five-layer compaction pipeline implements a lazy-degradation principle: apply the least disruptive compression first (budget reduction, always active), then snip, microcompact, context collapse, and finally auto-compact (which triggers a full model-generated summary). Earlier, cheaper layers run before costlier ones. Each layer operates at a different cost-benefit tradeoff, and no single strategy addresses all types of context pressure. The cost of this approach is complexity: five interacting compression layers, several gated by feature flags, create behavior difficult for users to fully predict. Context collapse operates without user-visible output.",
+      "content_hash": "6110cec9735662a90f42978f5a04adb641157826feb679f0bef99fea58b2ab04",
+      "label": "graduated_compaction_claim",
+      "qid": "github:2604_14228::graduated_compaction_claim",
+      "type": "claim"
+    },
+    {
+      "content": "The seven permission modes span a graduated autonomy spectrum from plan (user approves all plans before execution) through default and acceptEdits to bypassPermissions (minimal prompting). This gradient reflects a recurring design tension: as autonomy increases, the system must shift from interactive approval to automated safety checks. Longitudinal usage data (McCain et al., 2026) shows that auto-approve rates increase from approximately 20% at fewer than 50 sessions to over 40% by 750 sessions, suggesting the gradient is navigated by gradual habituation rather than deliberate mode selection. Sandboxing reduced permission prompt frequency by an estimated 84% (Dworken and Weller-Davies, 2025).",
+      "content_hash": "1ae7c1bab2f8d11664791796657c0962c627b22944bd91b63d292f518b005ff7",
+      "label": "graduated_trust_spectrum_claim",
+      "qid": "github:2604_14228::graduated_trust_spectrum_claim",
+      "type": "claim"
+    },
+    {
+      "content": "The architecture documented in Sections 3 to 9 is overwhelmingly deterministic infrastructure (permission gates, tool routing, context management, recovery logic), with the LLM invoked as a stateless completion endpoint. An estimated 1.6% of the codebase constitutes decision logic; the remaining 98.4% is the operational harness. This ratio is not accidental — it is predicted by the five values and thirteen design principles of Section 2. The design gives the model maximum decision latitude within a rich operational harness, running counter to framework-heavy approaches (LangGraph's explicit graph nodes, Devin's multi-step planner). For agent builders, the implication is that investing in deterministic infrastructure such as context management, safety layering, and recovery mechanisms may yield greater reliability gains than adding planning scaffolding.",
+      "content_hash": "159082d23271ffafe3bc9a06d1ccac6cd46b70db59aaa28cb3a955ca0e1c6adf",
+      "label": "infrastructure_over_decision_scaffolding",
+      "qid": "github:2604_14228::infrastructure_over_decision_scaffolding",
+      "type": "claim"
+    },
+    {
+      "content": "Subagents operate in isolated context windows with rebuilt permission context and independent tool sets. The default path does not inherit the parent's conversation history (the fork-subagent path is an exception). This means most subagent invocations require a self-contained prompt, because the subagent cannot use the parent's context for disambiguation. Conversation-based frameworks that share full transcript histories avoid this cost but risk context explosion as the number of agents grows.",
+      "content_hash": "c7feb4f7745e1a414cca5b047e451db0eb218756a9de94b541475c7a2c2ee08d",
+      "label": "isolated_context_boundaries",
+      "qid": "github:2604_14228::isolated_context_boundaries",
+      "type": "claim"
+    },
+    {
+      "content": "Long-term human capability preservation is applied as an evaluative lens rather than a co-equal design value: Anthropic's own study of 132 engineers and researchers documents a 'paradox of supervision' in which overreliance on AI risks atrophying the skills needed to supervise it, and independent research finds that developers in AI-assisted conditions score 17% lower on comprehension tests. This concern is not prominently reflected as a design driver in Claude Code's architecture.",
+      "content_hash": "574fd71702576293d9cef697fddc11dc19d5fdbeec4224bb66de6c33f7277709",
+      "label": "long_term_capability_preservation_lens",
+      "qid": "github:2604_14228::long_term_capability_preservation_lens",
+      "type": "claim"
+    },
+    {
+      "content": "Two additional tensions surface through the evaluative lens of long-term capability preservation (Section 2.4). A randomized controlled trial of 16 experienced developers across 246 tasks (Becker et al., 2025) found that AI tools made developers 19% slower despite a perceived 20% improvement. An EEG study of 54 participants (Kosmyna et al., 2025) found that LLM users showed weakened neural connectivity that persisted after AI was removed. A 25% decline in entry-level tech hiring between 2023 and 2024 (Rak, 2025) suggests the tension between capability amplification and long-term sustainability extends beyond individual productivity to the broader developer pipeline. This evidence motivates the evaluative lens but does not target Claude Code's architecture specifically.",
+      "content_hash": "d80df72bfbe173f1e0d111eaec1601bfdf621b6b43de82577b2db6fc64656027",
+      "label": "long_term_sustainability_gap",
+      "qid": "github:2604_14228::long_term_sustainability_gap",
+      "type": "claim"
+    },
+    {
+      "content": "In Claude Code, the queryLoop() async generator is the architectural center: all interfaces feed into it, and it directly manages context assembly, model calls, tool dispatch, and recovery. In OpenClaw, the agent runtime (an embedded Pi-agent core) sits inside a larger gateway dispatch layer. The gateway's agent RPC validates parameters and returns immediately; the embedded runner then executes the agentic loop while emitting lifecycle and stream events back through the gateway protocol. Both systems follow the ReAct pattern, but OpenClaw's loop is a component within a control plane rather than the control plane itself.",
+      "content_hash": "a8d06b02a835a36ce064ee79f1d8c346cd15320a7645c3542fd9fa7adacf696d",
+      "label": "loop_vs_control_plane",
+      "qid": "github:2604_14228::loop_vs_control_plane",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code currently exposes the factual memory tier (CLAUDE.md, auto memory) and the working memory tier (the conversation window), but lacks the experiential tier: accumulated, automatically curated playbooks of strategies learned from past sessions. The context-engineering literature (Zhang et al., 2025a) has started to provide mechanisms for that accumulation, and the memory survey of Hu et al. (2025) identifies it as an open frontier alongside automated memory management, RL-driven memory, and trustworthy memory (privacy, explainability, and hallucination robustness).",
+      "content_hash": "d6379d446e0b33d738e6823b5108a18aa8713ef05256dff72750753cb7d77bd2",
+      "label": "memory_experiential_tier_gap",
+      "qid": "github:2604_14228::memory_experiential_tier_gap",
+      "type": "claim"
+    },
+    {
+      "content": "Resume and fork do not restore session-scoped permissions; users must grant them again in the new session. This is a deliberate safety-conservative design choice: sessions are treated as isolated trust domains. Restoring previously granted permissions on resume would create a convenience benefit but risk carrying stale trust decisions into a changed context. The architecture opts for re-granting over implicit persistence, accepting user friction as the cost of maintaining the safety invariant that trust is always established in the current session.",
+      "content_hash": "ea3a7815dde74f2ee44c5300002bdef1a9aab11f30f2669da60c27b6f4a13b82",
+      "label": "no_permission_restore_on_resume",
+      "qid": "github:2604_14228::no_permission_restore_on_resume",
+      "type": "claim"
+    },
+    {
+      "content": "Independent security research reveals a temporal ordering property not captured in the permission pipeline diagram: code executing during project initialization (hooks, MCP server connections, and settings file resolution) runs before the interactive trust dialog is presented to the user. Two independently verified vulnerabilities share this root cause: CVE-2025-59536 (CVSS 8.7) and CVE-2026-21852 (CVSS 5.3), discovered by Check Point Research (Donenfeld and Vanunu, 2026). All four related CVEs were patched within weeks of disclosure.",
+      "content_hash": "4e1905bfdaecb528bf556b00a1ec1132d77ba1ec8d7a541f90089cc524d008e8",
+      "label": "pre_trust_ordering_vulnerability",
+      "qid": "github:2604_14228::pre_trust_ordering_vulnerability",
+      "type": "claim"
+    },
+    {
+      "content": "Anthropic's internal survey of 132 engineers and researchers (Huang et al., 2025) reports that approximately 27% of Claude Code-assisted tasks were work that would not have been attempted without the tool, suggesting the architecture enables qualitatively new workflows rather than merely accelerating existing ones.",
+      "content_hash": "373d2c66a8278e9766246074486e095d65c7a4a0c70efee0a08e6595cbd83fdc",
+      "label": "qualitatively_new_workflows",
+      "qid": "github:2604_14228::qualitatively_new_workflows",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code's core loop follows the ReAct pattern: the model generates reasoning and tool invocations, the harness executes actions, and results feed the next iteration. This reactive design trades search completeness for simplicity and latency: each turn commits to one action sequence without backtracking. Among Anthropic's five composable workflow patterns (prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer), Claude Code primarily uses the orchestrator-workers pattern for subagent delegation while keeping the core loop reactive.",
+      "content_hash": "4307f6da81d01a5525c3661b3e1488de3e9e786010bc36247d10562a15c48d4f",
+      "label": "react_orchestration_claim",
+      "qid": "github:2604_14228::react_orchestration_claim",
+      "type": "claim"
+    },
+    {
+      "content": "In Claude Code, the model reasons about what to do while the harness executes actions. The model emits tool_use blocks; the harness (query.ts) parses them, checks permissions, dispatches them to tool implementations, and collects results. The model never directly accesses the filesystem, runs shell commands, or makes network requests. Community analysis of the extracted source estimates that only approximately 1.6% of Claude Code's codebase constitutes AI decision logic, with the remaining 98.4% being operational infrastructure.",
+      "content_hash": "ce485542c0bcff584d594b0af4d4540b22664b0f52bbe3170f6d617d396c55bb",
+      "label": "reasoning_separation_claim",
+      "qid": "github:2604_14228::reasoning_separation_claim",
+      "type": "claim"
+    },
+    {
+      "content": "The query loop implements five recovery mechanisms for edge cases: (1) max output tokens escalation — retry with escalated limit, up to three attempts (MAX_OUTPUT_TOKENS_RECOVERY_LIMIT = 3); (2) reactive compaction (gated by REACTIVE_COMPACT) — summarize just enough to free space, fires at most once per turn; (3) prompt-too-long handling — attempt context-collapse overflow recovery and reactive compaction before terminating; (4) streaming fallback — retry with different strategy via onStreamingFallback callback; (5) fallback model — switch to alternative model if primary fails via fallbackModel parameter.",
+      "content_hash": "1f4b72faa727fd3ffe820105859d47325a4857d3bc690319ac3b72da32bab3af",
+      "label": "recovery_mechanisms_claim",
+      "qid": "github:2604_14228::recovery_mechanisms_claim",
+      "type": "claim"
+    },
+    {
+      "content": "The safety-by-default principle is implemented through seven independent layers. A request must pass through all applicable layers, and any single layer can block it: (1) Tool pre-filtering (tools.ts) — blanket-denied tools removed before any call; (2) Deny-first rule evaluation (permissions.ts) — deny always overrides allow; (3) Permission mode constraints (types/permissions.ts) — active mode sets baseline; (4) Auto-mode classifier (yoloClassifier.ts) — ML-based evaluation; (5) Shell sandboxing (shouldUseSandbox.ts) — filesystem and network isolation; (6) Not restoring permissions on resume (conversationRecovery.ts); (7) Hook-based interception (types/hooks.ts) — PreToolUse and PermissionRequest hooks.",
+      "content_hash": "0dcc38fb90491f0e17160499893ef241967c21f829f71b42a59e16d1796cc520",
+      "label": "seven_independent_safety_layers",
+      "qid": "github:2604_14228::seven_independent_safety_layers",
+      "type": "claim"
+    },
+    {
+      "content": "Claude Code uses a single queryLoop() function that executes regardless of whether the user is interacting through an interactive terminal, a headless CLI invocation (claude -p), the Agent SDK, or an IDE integration (query.ts). Only the rendering and user-interaction layer varies. This is distinct from mode-specific engines that trade uniformity for surface-specific optimization.",
+      "content_hash": "7afc87f146fa593c68829278ab5d7787e6ce8be6826369d5c79259b4f230bf13",
+      "label": "single_query_loop_claim",
+      "qid": "github:2604_14228::single_query_loop_claim",
+      "type": "claim"
+    },
+    {
+      "content": "Subagents return only summary text to the parent, not their full conversation history. Sidechain transcripts store each subagent's conversation in a separate file, preventing subagent content from inflating the parent context. This is a deliberate context-conservation choice: conversation-based frameworks that share full transcript histories between agents risk context explosion as the number of agents grows. The 7x token consumption for agent teams in plan mode makes summary-only return especially critical when subagents are also in isolated contexts.",
+      "content_hash": "d6377b4b342feb010f327933fa9f9b4cd053af69f08dad5986513c9fde206199",
+      "label": "summary_only_return",
+      "qid": "github:2604_14228::summary_only_return",
+      "type": "claim"
+    },
+    {
+      "content": "Future systems could treat the long-term human capability sustainability gap as a first-class design problem, not a downstream evaluation metric. The harness documented in this paper provides limited mechanisms that explicitly preserve long-term human understanding, codebase coherence, or the developer pipeline. Whether architecture can respond to session-granularity measurements of comprehension or convention drift — through comprehension-preserving surfaces, generator-evaluator separation applied to the human loop, or mechanisms not yet named — is an open design question the paper does not adjudicate.",
+      "content_hash": "995cb8c7a671de539d7c94d527f218a59dca4e21cd35fa7dc7ac542d9af15913",
+      "label": "sustainability_as_first_class_design",
+      "qid": "github:2604_14228::sustainability_as_first_class_design",
+      "type": "claim"
+    },
+    {
+      "content": "Blanket-denied tools are removed from the model's view before any call via filterToolsByDenyRules() at tool pool assembly time. This pre-filtering uses the same matcher as the runtime permission check, so MCP server-prefix rules like mcp__server strip all tools from that server before the model sees them. This prevents the model from attempting to invoke forbidden tools, so the model does not waste context on tool_use requests that would be denied.",
+      "content_hash": "001ea4c486b2561b5c75bd7a15a232f2621cb6f9ebb0e13a476b8d330e9c9ce3",
+      "label": "tool_pool_pre_filtering",
+      "qid": "github:2604_14228::tool_pool_pre_filtering",
+      "type": "claim"
+    },
+    {
+      "content": "When allowedTools is explicitly provided to runAgent(), a two-tier permission scoping model applies: SDK-level permissions from --allowedTools are preserved ('explicit permissions from the SDK consumer that should apply to all agents'), but session-level rules are replaced with the subagent's declared allowedTools. When allowedTools is not provided (the common AgentTool path), the parent's session-level rules are inherited without replacement.",
+      "content_hash": "37b675424d631c1d3122c8da0698b5d6993a27b0b8986688884fe378bf385303",
+      "label": "two_tier_permission_scoping",
+      "qid": "github:2604_14228::two_tier_permission_scoping",
+      "type": "claim"
+    },
+    {
+      "content": "The five values identified in Section 2 generate tensions where pursuing one value constrains another. These tensions are structural consequences of pursuing multiple values simultaneously, not design failures. The empirically strongest tensions are: (1) Authority vs. Safety: 93% approval fatigue means safety cannot rely on human vigilance; (2) Safety vs. Capability: >50-subcommand fallback shows defense-in-depth degrades under performance pressure; (3) Adaptability vs. Safety: CVEs exploit extensibility's pre-trust initialization window; (4) Capability vs. Adaptability: proactivity increases task completion 12-18% but reduces preference at high frequencies; (5) Capability vs. Reliability: bounded context prevents full codebase awareness, while complexity increases in adjacent tools suggest bounded-context limitations compound over time.",
+      "content_hash": "a343075896344455982c2d595d2371026e153702941faf8c829f5c4e6dc9a215",
+      "label": "value_tensions_are_structural",
+      "qid": "github:2604_14228::value_tensions_are_structural",
+      "type": "claim"
+    },
+    {
+      "content": "Worktree-based isolation provides filesystem-level separation with zero external dependencies, using Git's built-in mechanism rather than container orchestration. This occupies a middle point in the isolation design space: stronger than context-only isolation (used by conversation-based frameworks like AutoGen) but simpler than container-based isolation (used by SWE-Agent and OpenHands), which provides stronger resource boundaries but requires container infrastructure.",
+      "content_hash": "78ae51df4a594348c7aa01bbe8b0d679c2559cc735ab1bd2bbffef091ae11ad0",
+      "label": "worktree_isolation_design",
+      "qid": "github:2604_14228::worktree_isolation_design",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:f76a0cd01eca427a2c68ca55b7f76251e4f07baffddf050f2ab0a9bb331a0e83",
+  "manifest_schema_version": 1,
+  "package": "2604-14228",
+  "version": "0.1.0"
+}
