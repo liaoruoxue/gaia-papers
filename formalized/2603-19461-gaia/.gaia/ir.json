@@ -1,0 +1,2179 @@
+{
+  "ir_hash": "sha256:45ed060ff3f572e53a3d9539c8aa6b3edad6d96f8aef023d4f5d09ea0c536945",
+  "knowledges": [
+    {
+      "content": "The Darwin Gödel Machine (DGM) (Zhang et al., 2025) demonstrates open-ended self-improvement in coding by maintaining an archive of agent variants. A coding agent generates and evaluates self-modified variants; successful ones are retained as stepping stones for further improvement. Both evaluation and self-modification are coding tasks, so gains in coding ability can translate into gains in self-improvement ability.",
+      "content_hash": "e7ccb12c56266f1f653927475f5bf4212f57da9b3ed92e603b60756886886e36",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_19461::setup_dgm",
+      "label": "setup_dgm",
+      "module": "motivation",
+      "parameters": [],
+      "title": "DGM background",
+      "type": "setting"
+    },
+    {
+      "content": "In this work, an agent is any computable program, optionally including calls to foundation models (FMs), external tools, or learned components. A task agent solves a given task. A meta agent modifies existing agents and generates new ones.",
+      "content_hash": "4fb69b0094a75c767fbd7f6ae37f93495d8e3c4bdaef9795957f07b653b0cc35",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_19461::setup_agent_def",
+      "label": "setup_agent_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agent and meta-agent definitions",
+      "type": "setting"
+    },
+    {
+      "content": "A hyperagent is a self-referential agent that integrates a task agent and a meta agent within a single editable program. The meta agent is part of the same editable codebase and can rewrite itself. Implemented in Python (Turing-complete), a hyperagent can in principle build any computable machine.",
+      "content_hash": "d5d58500ec63d262fe5c5e56658999c70f0996e75fbb327f8af1f96d5ed87078",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_19461::setup_hyperagent_def",
+      "label": "setup_hyperagent_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Hyperagent definition",
+      "type": "setting"
+    },
+    {
+      "content": "Metacognitive self-modification is the process by which a hyperagent improves not only the task-performing agent responsible for solving the given task, but also the meta agent that determines how subsequent hyperagents are generated. The self-improvement mechanism is itself subject to modification.",
+      "content_hash": "7f61744385cda695e561e107ce105fd616560873b881653889113a5234aaf073",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_19461::setup_metacognitive",
+      "label": "setup_metacognitive",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Metacognitive self-modification definition",
+      "type": "setting"
+    },
+    {
+      "content": "Can a self-improving AI system improve both task performance and its own self-improvement mechanism, without relying on domain-specific engineering, across any computable task?",
+      "content_hash": "08d9e123db19b77e1f65a97ca097a12cdf1ead8143dd856c2cc9db47928d2b05",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_19461::q_general_self_improvement",
+      "label": "q_general_self_improvement",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core research question",
+      "type": "question"
+    },
+    {
+      "content": "The Darwin Gödel Machine (DGM) relies on a handcrafted, fixed mechanism to produce self-improvement instructions. This mechanism is not modifiable. The DGM's capacity for self-improvement is therefore bottlenecked by this fixed instruction-generation step. The DGM's ability to improve at self-improving depends on an alignment assumption: that the skills required to solve evaluation tasks are the same as those required for effective self-reflection and self-modification.",
+      "content_hash": "853a259cc9aec48a226a8014b245eb2418fd59767e02b7473f4bfbf8b3bc6884",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_19461::dgm_limitation",
+      "label": "dgm_limitation",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Well-established in the original DGM paper (Zhang et al. 2025): the instruction-generation mechanism is described as handcrafted and not modifiable. High confidence in this characterization."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "DGM's fixed meta-level limitation",
+      "type": "claim"
+    },
+    {
+      "content": "The alignment assumption underlying the DGM (that task-solving skills are the same as self-modification skills) is unlikely to hold outside coding domains, where task-solving skills may differ substantially from the skills needed to analyze failures, propose effective self-improvements, and implement them.",
+      "content_hash": "7419413106d0a900108343c7643c414cb9603c263d1e677fb0a418493c28a55c",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_19461::alignment_assumption_limits_dgm",
+      "label": "alignment_assumption_limits_dgm",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Argued in the paper and plausible given domain differences between coding and other tasks. Somewhat uncertain because it is a design-level claim rather than a direct measurement."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Alignment assumption breaks outside coding",
+      "type": "claim"
+    },
+    {
+      "content": "Hyperagents do not assume alignment between task-solving skills and self-modification skills, because the meta agent is part of the same editable program and can rewrite itself. Hence, hyperagents can improve both task performance and the process of improvement across any computable task.",
+      "content_hash": "286ce75bfaba9855f30911de3dbbe0b5243298f2dfbc759b8a2c43737aacb984",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_19461::hyperagent_advantage",
+      "label": "hyperagent_advantage",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alignment_assumption_limits_dgm",
+              "dgm_limitation",
+              "setup_hyperagent_def"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Hyperagents eliminate alignment assumption",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H maintains an archive of generated hyperagents, initialized with a single hyperagent and expanded over time by continuously accumulating generated variants. The process alternates between two phases: metacognitive self-modification and evaluation.",
+      "content_hash": "492fdbac1a49462e94d3d0376a10d1f2541310b61770531b234a720b0b4a57a0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_19461::setup_archive",
+      "label": "setup_archive",
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "DGM-H archive structure",
+      "type": "setting"
+    },
+    {
+      "content": "Parent selection in DGM-H is probabilistic and proportional to a hyperagent's performance, and inversely proportional to the number of children that successfully compiled. This biases sampling toward hyperagents that perform well and generate strong descendants while preserving exploration.",
+      "content_hash": "7e15b05e42a3100c48021a636771da646c4e47a7e552d6e76e69a68f8418179c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_19461::setup_parent_selection",
+      "label": "setup_parent_selection",
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "Parent selection mechanism",
+      "type": "setting"
+    },
+    {
+      "content": "All runs start from the same initial agent, which directly outputs the response from a single foundation model (FM) call with no task-specific parsing or post-processing.",
+      "content_hash": "4156984d876fcd6a4f93c760310c95bde9d8e8d85040acb0db632f23b867b9d0",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_19461::setup_initial_agent",
+      "label": "setup_initial_agent",
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "Initial agent definition",
+      "type": "setting"
+    },
+    {
+      "content": "For each domain, agents are first evaluated on a small subset of training tasks to estimate effectiveness. Only agents that demonstrate sufficient performance are subsequently evaluated on the remaining training tasks. Agents that do not pass are treated as having zero performance on unevaluated tasks. Only the best agents (selected via validation scores, or training scores when validation tasks do not exist) are evaluated on the test set.",
+      "content_hash": "e8e625a52dc5b7e8a8c0b993267c191bf17a3131ba6b9b1604d5c26862bf984c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_19461::setup_evaluation_protocol",
+      "label": "setup_evaluation_protocol",
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "Staged evaluation protocol",
+      "type": "setting"
+    },
+    {
+      "content": "For each experiment, each method is run 5 times. Results report medians with 95% bootstrap confidence intervals (CI) computed from 1,000 resamples. Statistical significance uses the Wilcoxon signed-rank test.",
+      "content_hash": "0aac8ea84ebff4c955e775c2f57ffabeb807a4c8ef01fcda6bd4278b8d854450",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_19461::setup_statistical",
+      "label": "setup_statistical",
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "Statistical methodology",
+      "type": "setting"
+    },
+    {
+      "content": "DGM-Hyperagents (DGM-H) augments the original DGM with hyperagents. DGM-H employs the open-ended exploration process in the DGM (archive, parent selection, evaluation) while adding metacognitive self-modification: the meta agent that generates modifications is itself part of the editable hyperagent codebase and can be modified.",
+      "content_hash": "3fa18d666097dfb8fab3987e28b30e14154bc2a7307b6d92a17842d5dd8f2412",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_extends_dgm",
+      "label": "dgmh_extends_dgm",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Definitional/architectural claim about DGM-H: it augments DGM with hyperagents. Described in the Methods section; high confidence."
+      },
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "DGM-H as extension of DGM",
+      "type": "claim"
+    },
+    {
+      "content": "By allowing the improvement procedure to evolve, DGM-H eliminates the assumption of domain-specific alignment between task performance and self-modification skill. This enables DGM-H to potentially support self-accelerating progress on any computable task.",
+      "content_hash": "b01a45579daa3ae17296e70bedc917878fd66463c080cda13c3d270ab46f248c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_no_domain_alignment",
+      "label": "dgmh_no_domain_alignment",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgmh_extends_dgm",
+              "hyperagent_advantage"
+            ]
+          }
+        }
+      },
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "DGM-H removes alignment assumption",
+      "type": "claim"
+    },
+    {
+      "content": "The open-ended exploration process in DGM-H maintains an archive of diverse hyperagent variants, mitigating premature convergence and avoiding local optima by using past agents as stepping stones for future improvement.",
+      "content_hash": "0dba560ffb8746d2665571bf705cbb3d6092694bfacb37568bc1da77ba06e06d",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_19461::open_ended_mitigates_convergence",
+      "label": "open_ended_mitigates_convergence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "setup_archive",
+              "setup_parent_selection"
+            ]
+          }
+        }
+      },
+      "module": "s3_methods",
+      "parameters": [],
+      "title": "Open-ended exploration prevents premature convergence",
+      "type": "claim"
+    },
+    {
+      "content": "On the Polyglot coding benchmark (50-task training subset), the initial agent achieves a training score of 0.140 and a full-benchmark score of 0.084.",
+      "content_hash": "723c1bc7c200af65acc006cc1263d7f5fb3cf06137e2a22b93c50ef11c0be3cb",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_19461::coding_initial_score",
+      "label": "coding_initial_score",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Directly reported initial scores (0.140 on 50-task subset, 0.084 on full Polyglot). Factual measurement from the experimental setup.",
+        "source_figure": "artifacts/2603.19461.pdf, Section 5.1"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Coding initial agent score",
+      "type": "claim"
+    },
+    {
+      "content": "On the Polyglot coding benchmark, DGM-H improves its training score on the 50-task subset from 0.140 (initial agent) to 0.340 (CI: 0.300–0.380) over 80 iterations. On the full Polyglot benchmark (largely unseen tasks), performance increases from 0.084 (initial) to 0.267 (CI: 0.231–0.280).",
+      "content_hash": "654324ad906ba70c49b1af13ab8da4e006f1c5a89759f635f9e0cbeff8d5e2d3",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_coding_result",
+      "label": "dgmh_coding_result",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Directly reported DGM-H Polyglot results (0.340 CI: 0.300-0.380 on subset; 0.267 CI: 0.231-0.280 on full benchmark), backed by 5 experimental runs. High confidence.",
+        "source_figure": "artifacts/2603.19461.pdf, Section 5.1"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H coding benchmark performance",
+      "type": "claim"
+    },
+    {
+      "content": "The original DGM (Zhang et al., 2025) achieves coding improvements from 0.140 to 0.380 on the 50-task Polyglot training subset and from 0.142 to 0.307 on the full Polyglot benchmark, using a handcrafted instruction-generation mechanism specifically designed for coding.",
+      "content_hash": "6ee376a5d1326831e0003166b3b35291638aaf402d35ae1e24cfc31b1d1ac1ce",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_19461::dgm_coding_result",
+      "label": "dgm_coding_result",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Reported from the original DGM paper and replicated in this work. Consistent results across publications.",
+        "source_figure": "artifacts/2603.19461.pdf, Section 5.1"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Original DGM coding benchmark performance",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H achieves coding improvement comparable to the original DGM (DGM-H: 0.084→0.267 on full benchmark; DGM: 0.142→0.307), despite DGM-H not being handcrafted specifically for coding tasks.",
+      "content_hash": "3ddb273783657a955764dbdb9d12eeac616797982ab24edda5a0b8bb18337d0c",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_coding_comparable_to_dgm",
+      "label": "dgmh_coding_comparable_to_dgm",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_initial_score",
+              "dgm_coding_result",
+              "dgmh_coding_result"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H coding performance comparable to DGM",
+      "type": "claim"
+    },
+    {
+      "content": "On paper review (test set), the initial agent achieves a score of 0.0, because it fails to produce outputs in the required format due to the absence of task-specific parsing or post-processing.",
+      "content_hash": "f6fd021005184c8b1852293f9b5eaaa2dc07a7cb7540c44d8148b08080f22b50",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_19461::paper_review_initial",
+      "label": "paper_review_initial",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Initial agent score of 0.0 on paper review is a factual observation with clear causal explanation (no task-specific formatting)."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Paper review initial agent score",
+      "type": "claim"
+    },
+    {
+      "content": "On paper review (test set), DGM-H improves performance from 0.0 (initial agent) to 0.710 (CI: 0.590–0.750) over 100 iterations. Several top-performing agents outperform the open-sourced static baseline (Yamada et al., 2025) which achieves 0.630.",
+      "content_hash": "0d83b53bc0e5c74e859ab6a641a863e7a0900ab287fba4824d4e2584d15c8b76",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_paper_review_result",
+      "label": "dgmh_paper_review_result",
+      "metadata": {
+        "source_figure": "artifacts/2603.19461.pdf, Figure 2"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H paper review test performance",
+      "type": "claim"
+    },
+    {
+      "content": "The original DGM (designed for coding), when applied without domain customization, achieves paper review test-set performance of 0.0 (CI: 0.0–0.510). When manually customized (DGM-custom), it achieves 0.590 (CI: 0.570–0.650).",
+      "content_hash": "d3bab5c72d760d75e87240600a1865fc05e9dcfd337760fed50326d1639cf47d",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_19461::dgm_paper_review_result",
+      "label": "dgm_paper_review_result",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Directly reported DGM and DGM-custom paper review scores with confidence intervals; 5 runs each. High confidence in reported values.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 2"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Original DGM paper review performance",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H (metacognitive self-modification) predicts paper review performance of ~0.710 on test.",
+      "content_hash": "127c873a123aa202b43dc2a06530b2d0538b2d85f6a99b3c90d52adf4d710160",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_19461::pred_dgmh_paper",
+      "label": "pred_dgmh_paper",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Prior that DGM-H would improve paper review: consistent with the design goals and the general self-improvement mechanism, but the specific domain was a new test."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H prediction for paper review",
+      "type": "claim"
+    },
+    {
+      "content": "DGM without domain customization predicts paper review performance ~0.0 on test, because its fixed instruction-generation mechanism is not suited to non-coding tasks.",
+      "content_hash": "5902527a88cfc1ada4ce4044e81a28fdaa94e31521212508b3578bcf3d2b99f9",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_19461::pred_dgm_paper",
+      "label": "pred_dgm_paper",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Prior that uncustomized DGM would fail on paper review (score ~0): highly consistent with the DGM's coding-specific instruction-generation mechanism."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM prediction for paper review",
+      "type": "claim"
+    },
+    {
+      "content": "compare(DGM-H (metacognitive self-modification) predicts paper review performance of ~0.710 on test., DGM without domain customization predicts paper review performance ~0.0 on test, because its fixed instruction-generation mechanism is not suited to non-coding tasks., On paper review (test set), DGM-H improves performance from 0.0 (initial agent) to 0.710 (CI: 0.590–0.750) over 100 iterations. Several top-performing agents outperform the open-sourced static baseline (Yamada et al., 2025) which achieves 0.630.)",
+      "content_hash": "3f06bb7be59a48921e2d6aff60794d75d1d65f4bab5ddb4023fbcc106287b090",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_19461::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgm_paper_review_result",
+              "paper_review_initial"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "On robotics reward design (test set), the initial agent achieves a score of 0.060, because the initial agent occasionally produces a minimally functional reward function.",
+      "content_hash": "510148bcaae133516b1c6bec4a28e0f6a63cc2e56747f7dca8e4aab71bef6fa8",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2603_19461::robotics_initial",
+      "label": "robotics_initial",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Initial agent score of 0.060 on robotics reward design is a factual observation with clear causal explanation (occasional valid reward function)."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Robotics reward design initial agent score",
+      "type": "claim"
+    },
+    {
+      "content": "On robotics reward design (test set), DGM-H improves performance from 0.060 (initial) to 0.372 (CI: 0.355–0.436) over 100 iterations, surpassing the default reward function that directly optimizes the evaluation metric (0.348). DGM-H almost always generates agents that induce jumping behaviors (optimal) rather than getting stuck at standing tall (local optimum).",
+      "content_hash": "9d8862f113fa536e6d97fbbeddf07f14fd4bce30002ae5f3d0c0a18f544b1f2f",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_robotics_result",
+      "label": "dgmh_robotics_result",
+      "metadata": {
+        "source_figure": "artifacts/2603.19461.pdf, Figure 2"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H robotics reward design test performance",
+      "type": "claim"
+    },
+    {
+      "content": "The original DGM (without domain customization) achieves robotics reward design test performance of 0.0 (CI: 0.0–0.090). DGM-custom achieves 0.348 (CI: 0.305–0.385).",
+      "content_hash": "ebd053905d62cf5423e7577fa34d5357388a230be8cca3a02ac721f8fc77d94c",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2603_19461::dgm_robotics_result",
+      "label": "dgm_robotics_result",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Directly reported DGM and DGM-custom robotics reward design scores with confidence intervals. 5 runs each.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 2"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Original DGM robotics reward design performance",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H significantly outperforms the original DGM on robotics reward design test tasks (p < 0.05). DGM-H achieves higher median performance (0.372) than DGM-custom (0.348) on test tasks, though the difference is not statistically significant (p > 0.05).",
+      "content_hash": "b23c138145cb7c04ee038258dfd7b7c2f0aeac880d9305d17ef95968f78f8cf4",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_outperforms_dgm_robotics",
+      "label": "dgmh_outperforms_dgm_robotics",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgm_robotics_result",
+              "dgmh_robotics_result",
+              "robotics_initial"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H vs DGM on robotics",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H without self-improving meta agents (DGM-H w/o self-improve), which fixes the meta agent throughout the run (replicating the ADAS approach), achieves test-set performance of 0.0 (CI: 0.0–0.130) on paper review and 0.213 (CI: 0.180–0.348) on robotics reward design. DGM-H significantly outperforms this baseline (p < 0.05) in both domains.",
+      "content_hash": "77695e82daac3917f8775785da4c5555c53383e9a78724cd992ae89619ab334b",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_wout_self_improve",
+      "label": "dgmh_wout_self_improve",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly reported DGM-H w/o self-improve baseline performance (0.0 on paper review, 0.213 on robotics), backed by 5 runs with CIs and p-values.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 2"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H w/o self-improve baseline performance",
+      "type": "claim"
+    },
+    {
+      "content": "Metacognitive self-modification (the ability to improve the meta agent) is necessary for the observed performance gains of DGM-H. The gains are not solely due to task-level optimization under a fixed meta agent.",
+      "content_hash": "8f1a3bc3aaba61f65ba9d1b67099b3955b10547b2703cedf7126833484c7135a",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2603_19461::metacognition_necessary",
+      "label": "metacognition_necessary",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgm_paper_review_result",
+              "paper_review_initial"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Metacognition is necessary for DGM-H gains",
+      "type": "claim"
+    },
+    {
+      "content": "imp@50 measures an agent's ability to generate improved agents. Starting from a given initial agent, a generation algorithm is run for 50 iterations; imp@50 is the performance gain of the best generated agent over the starting agent on the task.",
+      "content_hash": "7a006e7f868c799cb6be3b3f90409e055ca11208bc510461f657cc157b059f1a",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2603_19461::imp50_metric",
+      "label": "imp50_metric",
+      "module": "s5_results",
+      "parameters": [],
+      "title": "imp@50 metric definition",
+      "type": "setting"
+    },
+    {
+      "content": "Transfer hyperagents from prior DGM-H runs on paper review + robotics reward design achieve initial test-set score of 0.0 (CI: 0.0–0.0) on Olympiad-level math grading, reflecting the domain shift.",
+      "content_hash": "c259ca9435038e95e99daacea58b39d496b938ed8219676b5d2e64e5e6c15567",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_transfer_agents_score",
+      "label": "dgmh_transfer_agents_score",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Directly reported transfer hyperagent initial scores (0.0 CI: 0.0-0.0) on math grading, a factual measurement."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Transfer hyperagent initial score on math grading",
+      "type": "claim"
+    },
+    {
+      "content": "After 50 iterations of DGM-H w/o self-improve starting from transfer hyperagents, the best generated agents achieve a test-set score of 0.630 (CI: 0.540–0.630) on Olympiad-level math grading. This corresponds to imp@50 = 0.630 (CI: 0.540–0.630). The transfer agents are significantly more effective at generating improved agents than the initial agent (p < 0.05).",
+      "content_hash": "7a0bc734f0db8347e50908280e44ce8177328adb501573ce2059d65d94e97bd5",
+      "declaration_index": 19,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_transfer_imp50",
+      "label": "dgmh_transfer_imp50",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "pred_dgm_transfer",
+              "pred_dgmh_transfer"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2603.19461.pdf, Figure 3"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H transfer imp@50 on math grading",
+      "type": "claim"
+    },
+    {
+      "content": "Transfer agents from DGM-custom runs achieve imp@50 ≈ 0.0 (CI: 0.0–0.010) on Olympiad-level math grading when using DGM w/o self-improve as the generation algorithm. This shows DGM-custom does not learn transferable meta-level improvements.",
+      "content_hash": "376951a7bbc12da2188adc3b206d63ddb551b61e9ccfe893d91ed5be72b9c578",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2603_19461::dgm_transfer_imp50",
+      "label": "dgm_transfer_imp50",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly reported DGM-custom transfer imp@50 ≈ 0.0 (CI: 0.0-0.010) on math grading. Consistent with DGM-custom's domain-specific design.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 3"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-custom transfer imp@50 on math grading",
+      "type": "claim"
+    },
+    {
+      "content": "Meta-level improvements learned by DGM-H transfer across domains. Hyperagents acquire general-purpose meta-level capabilities (e.g., performance tracking, persistent memory) that enable rapid self-adaptation to previously unseen tasks.",
+      "content_hash": "277c2330c0ed82dbfb47eadb1fa1628dc4c3ba2ab231a6ef655a941d35be1c2e",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2603_19461::meta_improvements_transfer",
+      "label": "meta_improvements_transfer",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgm_transfer_imp50",
+              "dgmh_transfer_agents_score",
+              "dgmh_transfer_imp50"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H meta-improvements are transferable",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H predicts that hyperagents encode transferable self-improvement mechanisms enabling imp@50 > 0 in a new domain when starting from transfer hyperagents.",
+      "content_hash": "7fde3d68c54d79ff79fe463fa7ad1a4b331e5be4a07391d405cbef6ac34c2b4f",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2603_19461::pred_dgmh_transfer",
+      "label": "pred_dgmh_transfer",
+      "metadata": {
+        "prior": 0.72,
+        "prior_justification": "Prior that hyperagents learn transferable self-improvement strategies: motivated by the theoretical design but uncertain because general meta-learning is hard."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H prediction for transfer",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-custom predicts that task-level improvements transfer, but meta-level improvements do not, so imp@50 ≈ 0 when starting from DGM-custom transfer agents.",
+      "content_hash": "400071ffd18dba35a7adbc98fd3b0d3e1290d9690d4f6428cd63e04d4d619fbc",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2603_19461::pred_dgm_transfer",
+      "label": "pred_dgm_transfer",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Prior that DGM-custom lacks transferable meta-improvements: consistent with its domain-specific customization design."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM prediction for transfer",
+      "type": "claim"
+    },
+    {
+      "content": "compare(DGM-H predicts that hyperagents encode transferable self-improvement mechanisms enabling imp@50 > 0 in a new domain when starting from transfer hyperagents., DGM-custom predicts that task-level improvements transfer, but meta-level improvements do not, so imp@50 ≈ 0 when starting from DGM-custom transfer agents., After 50 iterations of DGM-H w/o self-improve starting from transfer hyperagents, the best generated agents achieve a test-set score of 0.630 (CI: 0.540–0.630) on Olympiad-level math grading. This corresponds to imp@50 = 0.630 (CI: 0.540–0.630). The transfer agents are significantly more effective at generating improved agents than the initial agent (p < 0.05).)",
+      "content_hash": "8477e625f0addbd7459813225fb6f88c1ea7e98559109fcfac220e4ae310a204",
+      "declaration_index": 24,
+      "exported": false,
+      "id": "github:2603_19461::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgm_transfer_imp50",
+              "dgmh_transfer_agents_score",
+              "dgmh_transfer_imp50"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H run on Olympiad-level math grading, initialized from transfer hyperagents, achieves faster progress and higher final performance compared to DGM-H initialized from the initial agent, indicating previously learned self-improvements remain useful and compound in a new domain.",
+      "content_hash": "8bc734a0199e65b846606e183bb68ed924c1bc800278458fb5a4a40ef784d584",
+      "declaration_index": 26,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_compound_faster",
+      "label": "dgmh_compound_faster",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Described in Figure 4 and its caption: transfer initialization leads to faster progress. Qualitative claim supported by the figure but without explicit numerical comparison of rates, introducing some uncertainty.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 4"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Transfer hyperagents enable faster compounding progress",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H initialized with ProofAutoGrader as the task agent and a transfer meta agent from prior DGM-H runs achieves a test-set score of 0.700 on Olympiad-level math grading after 200 iterations, compared to ProofAutoGrader's score of 0.670. On the full IMO-GradingBench, DGM-H improves accuracy from 0.561 to 0.601 and reduces mean absolute error from 0.178 to 0.175.",
+      "content_hash": "021942179254ba9799a7c4b37268ef8c23c678a1eb0b48bf473e88f1ec5b9654",
+      "declaration_index": 27,
+      "exported": true,
+      "id": "github:2603_19461::dgmh_proofautograder_result",
+      "label": "dgmh_proofautograder_result",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "Directly reported (0.700 vs. 0.670 on 200-iteration test; 0.601 vs. 0.561 and 0.175 vs. 0.178 MAE on full IMO-GradingBench). Well-specified experimental result.",
+        "source_figure": "artifacts/2603.19461.pdf, Figure 4"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H improves ProofAutoGrader on IMO-GradingBench",
+      "type": "claim"
+    },
+    {
+      "content": "Self-improvements learned by DGM-H in one setting can accumulate and compound across runs. The system can build on strong existing solutions (like ProofAutoGrader) and further improve their performance in a new domain.",
+      "content_hash": "941d59e2892875eea04718ebd9b7875f55424e11b255f756c54b40893c94db5a",
+      "declaration_index": 28,
+      "exported": true,
+      "id": "github:2603_19461::self_improvements_compound",
+      "label": "self_improvements_compound",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dgmh_compound_faster",
+              "dgmh_proofautograder_result"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H self-improvements compound across runs",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H achieves substantial and generalizable task-performance gains across diverse computable tasks, without domain-specific engineering of the self-improvement mechanism.",
+      "content_hash": "208d19bba9a0757f654730b4290542654892b7286716b1738348ddd18b94bdf9",
+      "declaration_index": 29,
+      "exported": true,
+      "id": "github:2603_19461::law_dgmh_improves",
+      "label": "law_dgmh_improves",
+      "module": "s5_results",
+      "parameters": [],
+      "title": "DGM-H general self-improvement law",
+      "type": "claim"
+    },
+    {
+      "content": "In this work, all experiments are conducted under strict safety constraints: agent-generated code is executed within carefully sandboxed environments with enforced resource limits (timeouts, restricted internet access). Evaluation uses predefined tasks and metrics, and human oversight is maintained throughout.",
+      "content_hash": "63e784fd5f026fb91505f5cefeb572466b4abca622b6c835b7f3096f1667f484",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_19461::setup_safety_constraints",
+      "label": "setup_safety_constraints",
+      "module": "s6_safety",
+      "parameters": [],
+      "title": "Safety constraints in DGM-H experiments",
+      "type": "setting"
+    },
+    {
+      "content": "As AI systems gain the ability to modify themselves in increasingly open-ended ways, they can potentially evolve far more rapidly than humans can audit or interpret. At the cusp of such explosive capability growth, existing human oversight mechanisms may become increasingly strained or infeasible.",
+      "content_hash": "e822d108c438edfbe6a557e72f5e09e1ccde01141d205483604bbc6e07d9336a",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2603_19461::safety_concern_oversight",
+      "label": "safety_concern_oversight",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_dgmh_improves",
+              "meta_improvements_transfer",
+              "self_improvements_compound",
+              "setup_hyperagent_def",
+              "setup_metacognitive"
+            ]
+          }
+        }
+      },
+      "module": "s6_safety",
+      "parameters": [],
+      "title": "Safety concern: self-improving systems may outpace human oversight",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H operates with a fixed task distribution. The current implementation does not co-evolve the task distribution by generating new tasks and curricula that adapt to the agent's capabilities.",
+      "content_hash": "afccfa9b1b1ac14fbf1d8ddb957d79e735e3ed3e988b186852f08418bc27324c",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_19461::limitation_fixed_task_dist",
+      "label": "limitation_fixed_task_dist",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Explicitly stated in Section 7 as a limitation. Factual about the system design. Near-certain."
+      },
+      "module": "s6_safety",
+      "parameters": [],
+      "title": "Limitation: fixed task distribution",
+      "type": "claim"
+    },
+    {
+      "content": "Components of the DGM-H open-ended exploration loop (parent selection, evaluation protocols) remain fixed. Hyperagents cannot alter the outer process that determines which agents are selected or how they are evaluated. This limits full self-modifiability.",
+      "content_hash": "08add85cad9c24d8343e93a01678e9e14af27bd5d4640efbcb15ebfd712ca861",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_19461::limitation_fixed_outer_loop",
+      "label": "limitation_fixed_outer_loop",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Explicitly stated in Section 7 as a limitation. Factual about the system design. Near-certain."
+      },
+      "module": "s6_safety",
+      "parameters": [],
+      "title": "Limitation: fixed outer exploration loop",
+      "type": "claim"
+    },
+    {
+      "content": "DGM-H does not achieve fully unbounded self-modifiability. Two constraints limit it: (1) it operates with a fixed task distribution, and (2) outer-loop components (parent selection, evaluation protocols) remain fixed and cannot be modified by hyperagents. These constraints improve experimental stability and safety but limit the system's theoretical ceiling for open-ended improvement.",
+      "content_hash": "5e357291b58674a5f49a1e414d17c216cf7393350df6269ed5c10dec63c78af9",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_19461::dgmh_not_fully_self_modifiable",
+      "label": "dgmh_not_fully_self_modifiable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "limitation_fixed_outer_loop",
+              "limitation_fixed_task_dist"
+            ]
+          }
+        }
+      },
+      "module": "s6_safety",
+      "parameters": [],
+      "title": "DGM-H not fully self-modifiable",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::alignment_assumption_limits_dgm,github:2603_19461::dgm_limitation)",
+      "content_hash": "03fcb8d458a0669da24c44aa97389c470a0da2518368dfd5d1663f70d5d31173",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_1b516b21",
+      "label": "__conjunction_result_1b516b21",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::alignment_assumption_limits_dgm,github:2603_19461::dgm_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ee0c6ead6725c5f9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_1b516b21,github:2603_19461::hyperagent_advantage)",
+      "content_hash": "8c561d2af3870e80f1ccd0c51a8e5e15dfd2b042d26d27811acde0049499b09b",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_5872b114",
+      "label": "__implication_result_5872b114",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_1b516b21,github:2603_19461::hyperagent_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ee0c6ead6725c5f9",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_extends_dgm,github:2603_19461::hyperagent_advantage)",
+      "content_hash": "e1f7dce5e3e592716aded85ef9aed7fc99a7065349cc2e886ee87996357ef569",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_c1185a88",
+      "label": "__conjunction_result_c1185a88",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_extends_dgm,github:2603_19461::hyperagent_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bff146146ea014e4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_c1185a88,github:2603_19461::dgmh_no_domain_alignment)",
+      "content_hash": "aef9767dbbca4e6f09d1e3302471c45e94e5e222dd3b1bef81e73d56353bf572",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_14511924",
+      "label": "__implication_result_14511924",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_c1185a88,github:2603_19461::dgmh_no_domain_alignment)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bff146146ea014e4",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::dgmh_extends_dgm,github:2603_19461::open_ended_mitigates_convergence)",
+      "content_hash": "d7d8bd358dee03c6c8216a6024c506a0789def459589029ee34fe7682f041878",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_b80ea062",
+      "label": "__implication_result_b80ea062",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::dgmh_extends_dgm,github:2603_19461::open_ended_mitigates_convergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_adb281e1a99abfbc",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_coding_result,github:2603_19461::dgm_coding_result,github:2603_19461::coding_initial_score)",
+      "content_hash": "2b0e9b57b94f3458218d3fe68b92f31d52a30e09fd5bc39fed6147daf034c14a",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_3354ebb7",
+      "label": "__conjunction_result_3354ebb7",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_coding_result,github:2603_19461::dgm_coding_result,github:2603_19461::coding_initial_score)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c3c98c29e7e55d9d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_3354ebb7,github:2603_19461::dgmh_coding_comparable_to_dgm)",
+      "content_hash": "0516e0c8fac6cdfcec20fb1a218d3f695a67a4b9fbbeb3bdc65d19a82795cb48",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_d4ff2282",
+      "label": "__implication_result_d4ff2282",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_3354ebb7,github:2603_19461::dgmh_coding_comparable_to_dgm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3c98c29e7e55d9d",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_19461::pred_dgmh_paper,github:2603_19461::dgmh_paper_review_result)",
+      "content_hash": "b74c27953448366396a7af7c0a7b498c24c54b67df6bbc5f5b81e254be2e5ce3",
+      "exported": false,
+      "id": "github:2603_19461::__equivalence_result_f6a98785",
+      "label": "__equivalence_result_f6a98785",
+      "metadata": {
+        "canonical_name": "matches(github:2603_19461::pred_dgmh_paper,github:2603_19461::dgmh_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_e508ebb8a7df4574",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_19461::pred_dgm_paper,github:2603_19461::dgmh_paper_review_result)",
+      "content_hash": "e28af840057bcb992d146cdc87098c93af7158bf004ec886d3452b2606ecbd80",
+      "exported": false,
+      "id": "github:2603_19461::__equivalence_result_209ef383",
+      "label": "__equivalence_result_209ef383",
+      "metadata": {
+        "canonical_name": "matches(github:2603_19461::pred_dgm_paper,github:2603_19461::dgmh_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_e508ebb8a7df4574",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::pred_dgmh_paper,github:2603_19461::dgmh_paper_review_result)",
+      "content_hash": "cc6c1de65aed7f837f066cbf53f15befbf82f23a37e5badf51d9acf5b677d02a",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_79dc4e69",
+      "label": "__implication_result_79dc4e69",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::pred_dgmh_paper,github:2603_19461::dgmh_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e593e0cdb9afdf39",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::pred_dgm_paper,github:2603_19461::dgmh_paper_review_result)",
+      "content_hash": "19f7b672c86ce660144de4c32e0b8ee52ab57693f485c69daec4cb221bedf3c1",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_a2600f18",
+      "label": "__implication_result_a2600f18",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::pred_dgm_paper,github:2603_19461::dgmh_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_be321c3d7bfb4b2d",
+        "owning_strategy_type": "support",
+        "prior": 0.2,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_robotics_result,github:2603_19461::dgm_robotics_result,github:2603_19461::robotics_initial)",
+      "content_hash": "dfc84d855c26db20c49508d3990d5bea56ec71f97d75d0453603c9a7d3ee0c58",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_08b9cddf",
+      "label": "__conjunction_result_08b9cddf",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_robotics_result,github:2603_19461::dgm_robotics_result,github:2603_19461::robotics_initial)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6e13b7089ea9d2a6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_08b9cddf,github:2603_19461::dgmh_outperforms_dgm_robotics)",
+      "content_hash": "a44f969d1bda83a2b406e0c4994334d52ac78708b8bc2fbe24cab0dab3a3c3e9",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_f51073a3",
+      "label": "__implication_result_f51073a3",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_08b9cddf,github:2603_19461::dgmh_outperforms_dgm_robotics)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6e13b7089ea9d2a6",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_wout_self_improve,github:2603_19461::paper_review_initial,github:2603_19461::dgm_paper_review_result)",
+      "content_hash": "14636284a0acd0ce2d214afcd4035e068bb607152f2682f752fdbbc34b2d3b25",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_43ebd205",
+      "label": "__conjunction_result_43ebd205",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_wout_self_improve,github:2603_19461::paper_review_initial,github:2603_19461::dgm_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_34250f4756a42678",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_43ebd205,github:2603_19461::metacognition_necessary)",
+      "content_hash": "e058d2525fcf66c1fc144c67d3870c070022e87ea586bf032f295520e206f6cf",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_108fba61",
+      "label": "__implication_result_108fba61",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_43ebd205,github:2603_19461::metacognition_necessary)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_34250f4756a42678",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_19461::pred_dgmh_transfer,github:2603_19461::dgmh_transfer_imp50)",
+      "content_hash": "cc7fb0a2c52b88e59bf30a5f99c90ff4746a715988fa8cfb64ddab5e40a1ce0c",
+      "exported": false,
+      "id": "github:2603_19461::__equivalence_result_deb8286a",
+      "label": "__equivalence_result_deb8286a",
+      "metadata": {
+        "canonical_name": "matches(github:2603_19461::pred_dgmh_transfer,github:2603_19461::dgmh_transfer_imp50)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_73b03dddd9f291b7",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_19461::pred_dgm_transfer,github:2603_19461::dgmh_transfer_imp50)",
+      "content_hash": "232026e682584dd136b26a7dffe257414a38f751522d61938bc515a43a788f2c",
+      "exported": false,
+      "id": "github:2603_19461::__equivalence_result_bf0c68c4",
+      "label": "__equivalence_result_bf0c68c4",
+      "metadata": {
+        "canonical_name": "matches(github:2603_19461::pred_dgm_transfer,github:2603_19461::dgmh_transfer_imp50)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_73b03dddd9f291b7",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::pred_dgmh_transfer,github:2603_19461::dgmh_transfer_imp50)",
+      "content_hash": "711a780d2142fee357c2c3047d9be88839ebb7098d943a9ad7e7fc4dc19f2d25",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_9321ea12",
+      "label": "__implication_result_9321ea12",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::pred_dgmh_transfer,github:2603_19461::dgmh_transfer_imp50)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fa52b88d7e9f333e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::pred_dgm_transfer,github:2603_19461::dgmh_transfer_imp50)",
+      "content_hash": "69985028db42371adfc64b3adecff40072679baa3b1e4064085652b794671ead",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_1000bdae",
+      "label": "__implication_result_1000bdae",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::pred_dgm_transfer,github:2603_19461::dgmh_transfer_imp50)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3ad7d115bb47d5b6",
+        "owning_strategy_type": "support",
+        "prior": 0.1,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_transfer_imp50,github:2603_19461::dgm_transfer_imp50,github:2603_19461::dgmh_transfer_agents_score)",
+      "content_hash": "1d3ed331813bc432d195270a2c2c5e07b57575a94caba52122bb071f626a9f7c",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_0fea0c7b",
+      "label": "__conjunction_result_0fea0c7b",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_transfer_imp50,github:2603_19461::dgm_transfer_imp50,github:2603_19461::dgmh_transfer_agents_score)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8e41fb1c40f12928",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_0fea0c7b,github:2603_19461::meta_improvements_transfer)",
+      "content_hash": "41c02f757e35d0874bc38690517f33589806326ab833fae366b468ba7f822fff",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_0acf6c23",
+      "label": "__implication_result_0acf6c23",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_0fea0c7b,github:2603_19461::meta_improvements_transfer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8e41fb1c40f12928",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::dgmh_compound_faster,github:2603_19461::dgmh_proofautograder_result)",
+      "content_hash": "cdfb831d41b9c19f32e42a56e6d41db10ade7868014d0ec93681e761e8853777",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_66445200",
+      "label": "__conjunction_result_66445200",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::dgmh_compound_faster,github:2603_19461::dgmh_proofautograder_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_78f6cee4bfbe0e8c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_66445200,github:2603_19461::self_improvements_compound)",
+      "content_hash": "366316e26d6b8af1472b6ba45ab07ced98b99755d20bb3998b63c1677fbf76db",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_88fdf463",
+      "label": "__implication_result_88fdf463",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_66445200,github:2603_19461::self_improvements_compound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_78f6cee4bfbe0e8c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_coding_comparable_to_dgm)",
+      "content_hash": "9aa8539ab976261f5b682ff3f7b0ae516f08c3ecd6353059bbce0bce5ec605cc",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_f4baf9b2",
+      "label": "__implication_result_f4baf9b2",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_coding_comparable_to_dgm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e74de29c2645d16c",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_paper_review_result)",
+      "content_hash": "ce377dc7b71e32d4261e9b5e73bc9e5027dfabc0181a91ea3898b386a16138f9",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_034f800e",
+      "label": "__implication_result_034f800e",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_paper_review_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3301d66ba05c03b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_robotics_result)",
+      "content_hash": "9c9b9a6d9a489e2f258fe1a1207fc4512c5ad71d4b679923f67d6255e4473cbf",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_78bab534",
+      "label": "__implication_result_78bab534",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::law_dgmh_improves,github:2603_19461::dgmh_robotics_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_daa13763bff76aa7",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::limitation_fixed_task_dist,github:2603_19461::limitation_fixed_outer_loop)",
+      "content_hash": "d7a370fe9b88443dd1da13ea640d455190be5e2ca231feb1535293249b1d46e6",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_1a21e124",
+      "label": "__conjunction_result_1a21e124",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::limitation_fixed_task_dist,github:2603_19461::limitation_fixed_outer_loop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ef16f71a0286dbfd",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_1a21e124,github:2603_19461::dgmh_not_fully_self_modifiable)",
+      "content_hash": "4dae1dc79530fc8a9ec4f5c069f699de1b4be276f032d4a4e0b7c3583fee8c35",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_09ad4755",
+      "label": "__implication_result_09ad4755",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_1a21e124,github:2603_19461::dgmh_not_fully_self_modifiable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef16f71a0286dbfd",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_19461::law_dgmh_improves,github:2603_19461::meta_improvements_transfer,github:2603_19461::self_improvements_compound)",
+      "content_hash": "fd19da6396319aa8e6ecaa43713a793b7bb1c5aa1f2e03c519692b1f641d73ab",
+      "exported": false,
+      "id": "github:2603_19461::__conjunction_result_3f0190ca",
+      "label": "__conjunction_result_3f0190ca",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_19461::law_dgmh_improves,github:2603_19461::meta_improvements_transfer,github:2603_19461::self_improvements_compound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b8daedd655f9b46b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_19461::__conjunction_result_3f0190ca,github:2603_19461::safety_concern_oversight)",
+      "content_hash": "3fbb7e671c701d705cf6ea343eb1c5fc3829e1f32d3872c0c166c6dd257c8c9c",
+      "exported": false,
+      "id": "github:2603_19461::__implication_result_740e2cf7",
+      "label": "__implication_result_740e2cf7",
+      "metadata": {
+        "canonical_name": "implies(github:2603_19461::__conjunction_result_3f0190ca,github:2603_19461::safety_concern_oversight)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8daedd655f9b46b",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_methods",
+    "s5_results",
+    "s6_safety"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation — HyperAgents",
+    "s3_methods": "Section 3: Methods — DGM-Hyperagents (DGM-H) Framework",
+    "s5_results": "Section 5: Results — Task Performance, Transfer, and Compounding",
+    "s6_safety": "Section 6 & 7: Safety Discussion and Limitations"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2603_19461",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2603_19461::hyperagent_advantage",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_1b516b21",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::alignment_assumption_limits_dgm",
+              "github:2603_19461::dgm_limitation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_5872b114",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_1b516b21",
+              "github:2603_19461::hyperagent_advantage"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because the DGM's self-improvement is limited by domain-specific alignment (@alignment_assumption_limits_dgm) and a fixed handcrafted mechanism (@dgm_limitation), making the meta agent itself editable (@setup_hyperagent_def) is the logical solution: hyperagents decouple task performance from meta-level skill, eliminating the alignment assumption that constrains the DGM."
+      },
+      "premises": [
+        "github:2603_19461::alignment_assumption_limits_dgm",
+        "github:2603_19461::dgm_limitation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ee0c6ead6725c5f9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_no_domain_alignment",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_c1185a88",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_extends_dgm",
+              "github:2603_19461::hyperagent_advantage"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_14511924",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_c1185a88",
+              "github:2603_19461::dgmh_no_domain_alignment"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because DGM-H (@dgmh_extends_dgm) integrates the meta agent into the editable codebase (@hyperagent_advantage), the self-improvement procedure is no longer fixed. Both task agents and meta agents evolve, decoupling the requirements for task performance from meta-level modification skill, so domain-specific alignment is not assumed."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_extends_dgm",
+        "github:2603_19461::hyperagent_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bff146146ea014e4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::open_ended_mitigates_convergence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_b80ea062",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::dgmh_extends_dgm",
+              "github:2603_19461::open_ended_mitigates_convergence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "DGM-H retains all previously generated hyperagents in an archive (@setup_archive) and uses probabilistic parent selection biased toward high performance and strong descendants (@setup_parent_selection). This population-based diversity preservation prevents the system from converging to a single solution path."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_extends_dgm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_adb281e1a99abfbc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_coding_comparable_to_dgm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_3354ebb7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_coding_result",
+              "github:2603_19461::dgm_coding_result",
+              "github:2603_19461::coding_initial_score"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_d4ff2282",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_3354ebb7",
+              "github:2603_19461::dgmh_coding_comparable_to_dgm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Both DGM-H and DGM start from the same initial coding performance (@coding_initial_score). The full-benchmark scores are similar in magnitude: DGM-H reaches 0.267 vs DGM's 0.307 (@dgmh_coding_result, @dgm_coding_result). The DGM is purpose-built for coding, while DGM-H uses a general self-modification framework. Near-parity indicates DGM-H has not sacrificed coding ability for generality."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_coding_result",
+        "github:2603_19461::dgm_coding_result",
+        "github:2603_19461::coding_initial_score"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c3c98c29e7e55d9d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__equivalence_result_f6a98785",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_19461::pred_dgmh_paper",
+              "github:2603_19461::dgmh_paper_review_result"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__equivalence_result_209ef383",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_19461::pred_dgm_paper",
+              "github:2603_19461::dgmh_paper_review_result"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__equivalence_result_209ef383",
+              "github:2603_19461::__equivalence_result_f6a98785"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DGM-H achieves 0.710 on test (CI: 0.590–0.750), substantially outperforming DGM-without-customization (0.0, starting from @paper_review_initial) and matching or exceeding DGM-custom (0.590) (@dgm_paper_review_result). The deviation from DGM (non-customized) is statistically significant (p < 0.05)."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_paper",
+        "github:2603_19461::pred_dgm_paper",
+        "github:2603_19461::dgmh_paper_review_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e508ebb8a7df4574",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_paper_review_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_79dc4e69",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::pred_dgmh_paper",
+              "github:2603_19461::dgmh_paper_review_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DGM-H's metacognitive self-modification enables domain adaptation without manual engineering, predicting high paper review performance."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_paper"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e593e0cdb9afdf39",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_paper_review_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_a2600f18",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::pred_dgm_paper",
+              "github:2603_19461::dgmh_paper_review_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.2,
+        "reason": "DGM without customization predicts near-zero performance; this does not explain 0.710."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgm_paper"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_be321c3d7bfb4b2d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::_anon_000",
+      "metadata": {
+        "reason": "Both DGM-H and baseline DGM attempt to solve the same paper review task from the same initial agent. The outcome (DGM-H: 0.710 vs DGM: 0.0) provides evidence about which approach better explains the observed performance gains."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_paper",
+        "github:2603_19461::pred_dgm_paper",
+        "github:2603_19461::dgmh_paper_review_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_95e5e0874920ba84",
+      "sub_strategies": [
+        "lcs_e593e0cdb9afdf39",
+        "lcs_be321c3d7bfb4b2d",
+        "lcs_e508ebb8a7df4574"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_outperforms_dgm_robotics",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_08b9cddf",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_robotics_result",
+              "github:2603_19461::dgm_robotics_result",
+              "github:2603_19461::robotics_initial"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_f51073a3",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_08b9cddf",
+              "github:2603_19461::dgmh_outperforms_dgm_robotics"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "DGM-H reaches 0.372 vs DGM's 0.0 on test (@dgmh_robotics_result, @dgm_robotics_result), both starting from the same initial score of 0.060 (@robotics_initial). The difference between DGM-H and DGM (non-customized) is statistically significant (p < 0.05, Wilcoxon signed-rank test). DGM-H also outperforms DGM-custom (0.348) in median but not significantly. The qualitative difference (DGM-H escapes the local optimum of standing vs. jumping) further differentiates the methods."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_robotics_result",
+        "github:2603_19461::dgm_robotics_result",
+        "github:2603_19461::robotics_initial"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6e13b7089ea9d2a6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::metacognition_necessary",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_43ebd205",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_wout_self_improve",
+              "github:2603_19461::paper_review_initial",
+              "github:2603_19461::dgm_paper_review_result"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_108fba61",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_43ebd205",
+              "github:2603_19461::metacognition_necessary"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "DGM-H w/o self-improve fixes the meta agent and still allows task-level optimization. Its substantially lower performance (0.0 on paper review, 0.213 on robotics) compared to full DGM-H (0.710 and 0.372), both starting from the same initial agent (@paper_review_initial), indicates that the meta-level improvement is not redundant. Even DGM-custom (@dgm_paper_review_result, 0.590) does not achieve DGM-H's performance, showing manual engineering is also not sufficient."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_wout_self_improve",
+        "github:2603_19461::paper_review_initial",
+        "github:2603_19461::dgm_paper_review_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_34250f4756a42678",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__equivalence_result_deb8286a",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_19461::pred_dgmh_transfer",
+              "github:2603_19461::dgmh_transfer_imp50"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__equivalence_result_bf0c68c4",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_19461::pred_dgm_transfer",
+              "github:2603_19461::dgmh_transfer_imp50"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__equivalence_result_bf0c68c4",
+              "github:2603_19461::__equivalence_result_deb8286a"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DGM-H achieves imp@50 = 0.630 starting from transfer hyperagents (which had initial score 0.0, @dgmh_transfer_agents_score) vs. imp@50 ≈ 0 for DGM-custom transfer agents (@dgmh_transfer_imp50, @dgm_transfer_imp50). The difference is statistically significant (p < 0.05). DGM-H's prediction is confirmed; DGM-custom's prediction is also confirmed (their transfers don't work)."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_transfer",
+        "github:2603_19461::pred_dgm_transfer",
+        "github:2603_19461::dgmh_transfer_imp50"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_73b03dddd9f291b7",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_transfer_imp50",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_9321ea12",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::pred_dgmh_transfer",
+              "github:2603_19461::dgmh_transfer_imp50"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "DGM-H predicts hyperagents encode transferable self-improvement mechanisms (@pred_dgmh_transfer), directly predicting that a transfer hyperagent can generate improved agents in a new domain with imp@50 > 0."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fa52b88d7e9f333e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_transfer_imp50",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_1000bdae",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::pred_dgm_transfer",
+              "github:2603_19461::dgmh_transfer_imp50"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.1,
+        "reason": "DGM-custom's prediction (@pred_dgm_transfer) is that meta-level improvements do not transfer, so imp@50 ≈ 0. This alternative cannot explain the observed DGM-H imp@50 of 0.630."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgm_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3ad7d115bb47d5b6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::_anon_001",
+      "metadata": {
+        "reason": "Both DGM-H and DGM-custom attempt transfer to math grading from paper-review and robotics-optimized agents. The large difference in imp@50 (0.630 vs. ~0) disambiguates whether observed gains arise from general meta-level skill or domain-specific tuning."
+      },
+      "premises": [
+        "github:2603_19461::pred_dgmh_transfer",
+        "github:2603_19461::pred_dgm_transfer",
+        "github:2603_19461::dgmh_transfer_imp50"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_95f45d690cbdf154",
+      "sub_strategies": [
+        "lcs_fa52b88d7e9f333e",
+        "lcs_3ad7d115bb47d5b6",
+        "lcs_73b03dddd9f291b7"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2603_19461::meta_improvements_transfer",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_0fea0c7b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_transfer_imp50",
+              "github:2603_19461::dgm_transfer_imp50",
+              "github:2603_19461::dgmh_transfer_agents_score"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_0acf6c23",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_0fea0c7b",
+              "github:2603_19461::meta_improvements_transfer"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "DGM-H's transfer imp@50 of 0.630 vs. DGM-custom's 0.0 (@dgmh_transfer_imp50, @dgm_transfer_imp50) directly shows that DGM-H learns something that transfers while DGM-custom does not. Critically, both started from agents with similar initial scores in the new domain (near 0.0, @dgmh_transfer_agents_score), controlling for initial advantage. The qualitative analysis attributes this to general capabilities such as performance tracking and persistent memory that the hyperagents autonomously acquired."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_transfer_imp50",
+        "github:2603_19461::dgm_transfer_imp50",
+        "github:2603_19461::dgmh_transfer_agents_score"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8e41fb1c40f12928",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::self_improvements_compound",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_66445200",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::dgmh_compound_faster",
+              "github:2603_19461::dgmh_proofautograder_result"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_88fdf463",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_66445200",
+              "github:2603_19461::self_improvements_compound"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Two pieces of evidence jointly support compounding: (1) transfer hyperagents lead to faster progress and higher ceiling vs. initial-agent initialization (@dgmh_compound_faster), showing prior meta-improvements are reusable; (2) starting from a strong artifact (ProofAutoGrader) and a transfer meta agent yields further improvement (0.561→0.601) (@dgmh_proofautograder_result), showing the system can build on strong existing solutions."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_compound_faster",
+        "github:2603_19461::dgmh_proofautograder_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_78f6cee4bfbe0e8c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_coding_comparable_to_dgm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_f4baf9b2",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::law_dgmh_improves",
+              "github:2603_19461::dgmh_coding_comparable_to_dgm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The general law predicts coding improvement; DGM-H achieves comparable coding gains."
+      },
+      "premises": [
+        "github:2603_19461::law_dgmh_improves"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e74de29c2645d16c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_paper_review_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_034f800e",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::law_dgmh_improves",
+              "github:2603_19461::dgmh_paper_review_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The general law predicts paper review improvement; DGM-H achieves 0.710 from 0.0."
+      },
+      "premises": [
+        "github:2603_19461::law_dgmh_improves"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c3301d66ba05c03b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_robotics_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__implication_result_78bab534",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::law_dgmh_improves",
+              "github:2603_19461::dgmh_robotics_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The general law predicts robotics improvement; DGM-H achieves 0.372 from 0.060."
+      },
+      "premises": [
+        "github:2603_19461::law_dgmh_improves"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_daa13763bff76aa7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::law_dgmh_improves",
+      "metadata": {
+        "reason": "Coding and paper review are independent domains with different skill requirements."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_coding_comparable_to_dgm",
+        "github:2603_19461::dgmh_paper_review_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7b98533e16c0fc11",
+      "sub_strategies": [
+        "lcs_e74de29c2645d16c",
+        "lcs_c3301d66ba05c03b"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2603_19461::law_dgmh_improves",
+      "metadata": {
+        "reason": "Robotics reward design adds an independent domain requiring interaction with a physics simulator."
+      },
+      "premises": [
+        "github:2603_19461::dgmh_coding_comparable_to_dgm",
+        "github:2603_19461::dgmh_paper_review_result",
+        "github:2603_19461::dgmh_robotics_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3a580ba2c9c6064e",
+      "sub_strategies": [
+        "lcs_7b98533e16c0fc11",
+        "lcs_daa13763bff76aa7"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2603_19461::dgmh_not_fully_self_modifiable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_1a21e124",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::limitation_fixed_task_dist",
+              "github:2603_19461::limitation_fixed_outer_loop"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_09ad4755",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_1a21e124",
+              "github:2603_19461::dgmh_not_fully_self_modifiable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Two concrete limitations constrain DGM-H's self-modifiability: the task distribution is fixed (@limitation_fixed_task_dist), so the agent cannot generate new tasks or curricula; and the outer exploration loop components are fixed (@limitation_fixed_outer_loop), so hyperagents cannot alter parent selection or evaluation protocols. Together, these prevent truly unbounded recursive self-improvement."
+      },
+      "premises": [
+        "github:2603_19461::limitation_fixed_task_dist",
+        "github:2603_19461::limitation_fixed_outer_loop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef16f71a0286dbfd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_19461::safety_concern_oversight",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_19461::__conjunction_result_3f0190ca",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_19461::law_dgmh_improves",
+              "github:2603_19461::meta_improvements_transfer",
+              "github:2603_19461::self_improvements_compound"
+            ]
+          },
+          {
+            "conclusion": "github:2603_19461::__implication_result_740e2cf7",
+            "operator": "implication",
+            "variables": [
+              "github:2603_19461::__conjunction_result_3f0190ca",
+              "github:2603_19461::safety_concern_oversight"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The hyperagent framework (@setup_hyperagent_def) enables metacognitive self-modification (@setup_metacognitive), which accelerates capability gains. The empirical observation that DGM-H achieves substantial performance gains (@law_dgmh_improves), meta-improvements transfer across domains (@meta_improvements_transfer), and self-improvements compound across runs (@self_improvements_compound) collectively support the concern that self-improving systems can evolve faster than human oversight mechanisms can adapt."
+      },
+      "premises": [
+        "github:2603_19461::law_dgmh_improves",
+        "github:2603_19461::meta_improvements_transfer",
+        "github:2603_19461::self_improvements_compound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8daedd655f9b46b",
+      "type": "support"
+    }
+  ]
+}
