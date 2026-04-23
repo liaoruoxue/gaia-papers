@@ -1,0 +1,2200 @@
+{
+  "ir_hash": "sha256:ede9e2c9a98bcc7dde730a9c2157688f0a4459a370a86bcd00699e63a4e0e14b",
+  "knowledges": [
+    {
+      "content": "The RL fine-tuning task is formalized as an MDP $\\mathcal{M}=(\\mathcal{S},\\mathcal{A},\\mathcal{T},\\mathcal{R})$ where $\\mathcal{A}$ is the vocabulary (one token per step), states $s_t \\in \\mathcal{S}$ represent generated text sequences, the reward $\\mathcal{R}$ is 1 for a correct final answer and 0 otherwise (sparse reward), and the goal is to find $\\pi^* = \\arg\\max_{\\pi} \\mathbb{E}[\\sum_t \\mathcal{R}(s_t)]$.",
+      "content_hash": "7a05356b9bb778172f162a7d945c8ed0754e103f17c0c6192b72736c42363e8c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2502_06533::mdp_formulation",
+      "label": "mdp_formulation",
+      "module": "motivation",
+      "parameters": [],
+      "title": "MDP formulation of LLM RL fine-tuning",
+      "type": "setting"
+    },
+    {
+      "content": "The standard KL penalty in RL fine-tuning of language models is $\\mathcal{L}_{\\mathrm{KL}} = \\mathbb{E}[\\log(\\pi_\\theta(a|s)/\\pi_{\\theta_{\\mathrm{old}}}(a|s))]$, which penalizes divergence of the current policy $\\pi_\\theta$ from the reference (old) policy $\\pi_{\\theta_{\\mathrm{old}}}$ and is commonly approximated as $(\\log p(x) - \\log q(x))^2/2$.",
+      "content_hash": "dac04f24a49e1065d3e813c7f818b450511fcadd92c9614b3f42ba367255118e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2502_06533::kl_penalty_def",
+      "label": "kl_penalty_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Standard KL penalty definition",
+      "type": "setting"
+    },
+    {
+      "content": "The normalized negentropy (confidence measure) for a policy $\\pi$ at state $s$ is defined as $\\hat{J}_{\\theta_{\\mathrm{old}}}(s) = (H_{\\mathrm{max}} - H(\\pi_{\\theta_{\\mathrm{old}}}(\\cdot|s))) / H_{\\mathrm{max}}$, where $H$ denotes Shannon entropy and $H_{\\mathrm{max}} = \\log|\\mathcal{A}|$ is the maximum possible entropy over the vocabulary $\\mathcal{A}$. This measure is bounded in $[0,1]$: it equals 1 when the model is maximally confident (deterministic) and 0 when maximally uncertain (uniform).",
+      "content_hash": "1668a8bdd74555076bf58d4802330686b8c5a6def80fa9d51e60485fbea8edbd",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2502_06533::negentropy_def",
+      "label": "negentropy_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Normalized negentropy definition",
+      "type": "setting"
+    },
+    {
+      "content": "Experiments use GPT-2 (85M parameters) with a character-level tokenizer trained on N-digit addition problems. Pre-training uses supervised learning on additions with operand lengths 1 to N digits; RL fine-tuning is performed on N+1 or N+2 digit additions (out-of-distribution with respect to pre-training). Two evaluation modes are used: (1) fixed-digit: both operands have exactly N digits; (2) varying-digit: one operand has N digits, the other has fewer. The RL algorithm is A2C (Advantage Actor-Critic).",
+      "content_hash": "deec1c034b1a7e199a281467013667aab6efd942967025fd250ceff5ac21c114",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2502_06533::arithmetic_task_setup",
+      "label": "arithmetic_task_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Experimental setup: GPT-2 arithmetic task",
+      "type": "setting"
+    },
+    {
+      "content": "Fine-tuning large language models (LLMs) with reinforcement learning (RL) to achieve long-term goals is challenging because it requires balancing exploration of novel solutions against preservation of pre-trained capabilities. Standard KL divergence penalties are used to prevent the policy from deviating too far from the reference model, but this constrains exploration in out-of-distribution situations.",
+      "content_hash": "ba893d4318322cf29d95dfa73d2cb1aa1760f735241462784cdc0633d32727ea",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2502_06533::rl_finetuning_challenge",
+      "label": "rl_finetuning_challenge",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_finetuning_challenge",
+              "sparse_reward_difficulty"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RL fine-tuning exploration challenge",
+      "type": "claim"
+    },
+    {
+      "content": "The breadth of pre-training (i.e., the range of operand digit lengths seen during supervised pre-training) plays an ambivalent role in RL exploration: more extensive pre-training improves baseline generalization but may reduce the incentive to explore during RL fine-tuning because fewer errors are initially encountered.",
+      "content_hash": "6735ba0699340d5638f1060a927ce7d80863213105b9f89a63e54bb823fc4b9d",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2502_06533::pretrain_breadth_impacts_exploration",
+      "label": "pretrain_breadth_impacts_exploration",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "larger_pretrain_fewer_rl_errors",
+              "larger_pretrain_qualitatively_different_errors",
+              "pretrain_breadth_generalization_law",
+              "pretrain_breadth_impacts_exploration"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Pre-training breadth has ambivalent effect on exploration",
+      "type": "claim"
+    },
+    {
+      "content": "Sparse reward settings—where the model only receives a reward of 1 for a fully correct answer and 0 otherwise—make credit assignment difficult in LLM RL fine-tuning, because many intermediate steps contribute to the final outcome but receive no intermediate reward signal.",
+      "content_hash": "c1433f734c512dacd9b117efd088fa9517e587a9b6320262842d4461614e24ae",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2502_06533::sparse_reward_difficulty",
+      "label": "sparse_reward_difficulty",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Well-established in the LLM RL fine-tuning literature. The paper's MDP formulation explicitly defines reward as 1 for correct answer, 0 otherwise. This is an accurately described and widely recognized challenge in the field."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Sparse reward complicates credit assignment",
+      "type": "claim"
+    },
+    {
+      "content": "Which tokens in a language model's output are 'critical'—i.e., decisive for whether the final answer is correct—and can a modified KL penalty that focuses exploration on these critical tokens improve RL fine-tuning efficiency?",
+      "content_hash": "5a63dc4e13fb33e9bb1a968bfe9b8466c04a6dbc973d83e4e02d621457f4b1b9",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2502_06533::rq_critical_tokens",
+      "label": "rq_critical_tokens",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "A 'critical token' is defined as a generated token that satisfies two criteria: (1) Decisiveness: if the model predicts this token incorrectly, the final answer will most likely be wrong; (2) Uncertainty: the pre-trained model shows substantially more uncertainty (lower confidence / higher entropy) on these tokens than on non-critical tokens. In the N-digit addition task, critical tokens correspond to digit positions that lie beyond the pre-training distribution (e.g., the carry and high-order digits when adding N+1 digit numbers after being trained only on up to N-digit numbers).",
+      "content_hash": "7a57774df1712932568b4103c9b6c3f6fdc30f6aa865bfd2aec060f93eeea8d4",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2502_06533::critical_token_def",
+      "label": "critical_token_def",
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Critical token definition",
+      "type": "setting"
+    },
+    {
+      "content": "Empirical measurements of the normalized negentropy change $\\Delta\\hat{J}$ show a large gap between critical and non-critical tokens across pre-training lengths $N$:\\n\\n| Token type | $N=3$ | $N=5$ | $N=7$ |\\n|------------|-------|-------|-------|\\n| Critical ($\\Delta\\hat{J}$) | $-0.33 \\pm 0.01$ | $-0.21 \\pm 0.18$ | $-0.13 \\pm 0.04$ |\\n| Non-critical ($\\Delta\\hat{J}$) | $0.0012 \\pm 0.0001$ | $0.0002 \\pm 0.0001$ | $0.0004 \\pm 0.0001$ |\\n\\nNegative $\\Delta\\hat{J}$ indicates the model becomes less confident after RL fine-tuning on the out-of-distribution (longer) addition task; non-critical tokens show essentially no change.",
+      "content_hash": "cd7924cdb1335356dce40422dabdaef5bd71dd7e404920b28a721216bdf783c4",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2502_06533::critical_token_uncertainty_gap",
+      "label": "critical_token_uncertainty_gap",
+      "metadata": {
+        "source_table": "Table 1"
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Critical tokens have large uncertainty gap vs non-critical",
+      "type": "claim"
+    },
+    {
+      "content": "Failures in N+1-digit addition by a model pre-trained on up to N digits can be localized to specific critical token positions—primarily the carry digit and high-order digit positions. Errors at critical token positions (e.g., incorrect carry propagation or digit omission) cause the entire answer to be wrong, while errors at non-critical positions are rare and do not systematically affect the final answer.",
+      "content_hash": "d03da8bbb2284725da4b165f098779e7255763211c59f675e6fe0d0888a6df65",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2502_06533::critical_tokens_localize_failure",
+      "label": "critical_tokens_localize_failure",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 5",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_def",
+              "critical_token_uncertainty_gap",
+              "critical_tokens_localize_failure"
+            ]
+          }
+        }
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Task failures localize to critical token positions",
+      "type": "claim"
+    },
+    {
+      "content": "GPT-2 models pre-trained on additions with operand lengths 1 to $N$ digits achieve the following accuracy on out-of-distribution (longer) additions (varying-digit evaluation mode):\\n\\n| Pre-training $N$ | Accuracy on $N+1$ | Accuracy on $N+2$ | Accuracy on $N+3$ |\\n|------------------|-------------------|-------------------|-------------------|\\n| 7 | ~49% | 0% | 0% |\\n| 9 | ~79% | ~1% | 0% |\\n| 11 | ~75% | ~31% | ~0% |\\n| 13 | ~89% | ~68% | ~20% |\\n\\nThese results are from supervised pre-training alone, without RL fine-tuning. Confidence intervals are based on 1,000 test examples with resampling.",
+      "content_hash": "17d4b99db47a4f6bddc57ed988f55b4dae313f47ac371a2b77bdde9cf4a557d4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2502_06533::pretrain_generalization_results",
+      "label": "pretrain_generalization_results",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 2",
+        "prior": 0.93,
+        "prior_justification": "Directly measured accuracy values from experiments on 1,000 test examples with resampling confidence intervals. Results reproducible from public code (github.com/jvasso/llm-rl-arithmetic). Straightforward classification accuracy measurements from controlled experiments. Very high confidence."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Pre-training generalization accuracy by digit length",
+      "type": "claim"
+    },
+    {
+      "content": "Pre-training on a broader range of digit lengths (larger $N$) consistently improves out-of-distribution generalization: a GPT-2 model trained up to $N=13$ achieves $88.9\\% \\pm 2.1\\%$ accuracy on $N+1=14$-digit addition and $67.7\\% \\pm 3.1\\%$ on $N+2=15$-digit addition (identical-digit evaluation), compared to near-zero for $N=7$ on $N+2$.",
+      "content_hash": "f9d63fb46672db8d3fbee968d430a02521722d1638ddfdee1fe96b4739b54780",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2502_06533::pretrain_breadth_generalization_law",
+      "label": "pretrain_breadth_generalization_law",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "pretrain_breadth_generalization_law",
+              "pretrain_generalization_results"
+            ]
+          }
+        },
+        "source_table": "Table 4 (Appendix D)"
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Broader pre-training improves OOD generalization",
+      "type": "claim"
+    },
+    {
+      "content": "Models pre-trained on larger digit ranges (larger $N$) make fewer initial errors on the RL fine-tuning task (N+1-digit addition), which reduces the exploration incentive during RL because the model encounters fewer distinct failure modes to learn from.",
+      "content_hash": "224ec362fd3b350e1663a4baa081fc7c3a8f6f2e54d3ad6d6f509408b226138f",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2502_06533::larger_pretrain_fewer_rl_errors",
+      "label": "larger_pretrain_fewer_rl_errors",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Observational claim that follows directly from pre-training accuracy data: models with higher baseline accuracy necessarily make fewer errors on the same task. The causal link to exploration incentive is an interpretation, but the core observation is well-grounded in the empirical results."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Larger pre-training → fewer RL-time errors → less exploration pressure",
+      "type": "claim"
+    },
+    {
+      "content": "Models pre-trained on larger digit ranges tend to make qualitatively different types of errors during RL fine-tuning—generic mistakes such as token duplication and digit copying—rather than the critical-token errors (carry propagation failures) seen in models with less extensive pre-training. These generic errors are harder to correct through RL exploration than critical-token errors.",
+      "content_hash": "f3b4892accf8abf625cf5b23c6d47da4c5c2c3509617192bab3bb9f5f2eb1efb",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2502_06533::larger_pretrain_qualitatively_different_errors",
+      "label": "larger_pretrain_qualitatively_different_errors",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 3",
+        "prior": 0.72,
+        "prior_justification": "Based on qualitative analysis of error types from Figure 3 (token duplication, digit copying vs carry propagation failures). Involves subjective categorization of errors. The 'harder to fix by RL' part is a plausibility argument without direct quantification. Moderate confidence."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Larger pre-training shifts error type to generic, harder-to-fix mistakes",
+      "type": "claim"
+    },
+    {
+      "content": "At pre-training length $N=3$, the normalized negentropy change $\\Delta\\hat{J}$ is $-0.33 \\pm 0.01$ for critical tokens and $0.0012 \\pm 0.0001$ for non-critical tokens.",
+      "content_hash": "713d6962997d93e63aaa8b44c6a289736d33fc14281c4a28f59907ef18689d60",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2502_06533::obs_ct_n3",
+      "label": "obs_ct_n3",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 1: Delta_J_hat = -0.33 +/- 0.01 for critical tokens vs 0.0012 +/- 0.0001 for non-critical at N=3. Precise numerical values with narrow confidence intervals. Very high credence."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Critical token negentropy gap at N=3",
+      "type": "claim"
+    },
+    {
+      "content": "At pre-training length $N=5$, the normalized negentropy change $\\Delta\\hat{J}$ is $-0.21 \\pm 0.18$ for critical tokens and $0.0002 \\pm 0.0001$ for non-critical tokens.",
+      "content_hash": "707610e1fbb22f9836768ae622e6fd8ef3d38e74c9925932ad69352eb825096b",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2502_06533::obs_ct_n5",
+      "label": "obs_ct_n5",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap"
+            ]
+          }
+        },
+        "prior": 0.89,
+        "prior_justification": "Direct measurement from Table 1: Delta_J_hat = -0.21 +/- 0.18 for critical tokens vs 0.0002 +/- 0.0001 for non-critical at N=5. High credence; note the wider CI for critical tokens (0.18) indicating more variability at N=5."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Critical token negentropy gap at N=5",
+      "type": "claim"
+    },
+    {
+      "content": "At pre-training length $N=7$, the normalized negentropy change $\\Delta\\hat{J}$ is $-0.13 \\pm 0.04$ for critical tokens and $0.0004 \\pm 0.0001$ for non-critical tokens.",
+      "content_hash": "76f1636ad1e7bc067b7aa88845e8418c610303d66c44b59e1cb6a4a6208a7bfc",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2502_06533::obs_ct_n7",
+      "label": "obs_ct_n7",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap"
+            ]
+          }
+        },
+        "prior": 0.91,
+        "prior_justification": "Direct measurement from Table 1: Delta_J_hat = -0.13 +/- 0.04 for critical tokens vs 0.0004 +/- 0.0001 for non-critical at N=7. High credence; the narrowing gap at larger N is consistent with better pre-training on longer sequences."
+      },
+      "module": "s3_critical_tokens",
+      "parameters": [],
+      "title": "Critical token negentropy gap at N=7",
+      "type": "claim"
+    },
+    {
+      "content": "The paper proposes a 'Prioritized KL Penalty' that modifies the standard KL penalty by weighting each token's contribution by the pre-trained model's confidence (normalized negentropy) at that token position:\\n\\n$$\\tilde{\\mathcal{L}}_{\\mathrm{KL}} = \\mathbb{E}\\left[\\hat{J}_{\\theta_{\\mathrm{old}}}(s)^\\beta \\cdot \\log\\left(\\frac{\\pi_\\theta(a|s)}{\\pi_{\\theta_{\\mathrm{old}}}(a|s)}\\right)\\right]$$\\n\\nwhere $\\hat{J}_{\\theta_{\\mathrm{old}}}(s)$ is the normalized negentropy (confidence) of the pre-trained (reference) model at state $s$, and $\\beta > 0$ is a hyperparameter controlling the strength of confidence weighting. When the reference model is highly confident ($\\hat{J} \\approx 1$), the penalty is nearly unchanged from the standard KL penalty. When the reference model is uncertain ($\\hat{J} \\approx 0$, i.e., near-critical tokens), the penalty is reduced toward zero, allowing greater policy divergence.",
+      "content_hash": "3f850c1e8b62a3637ab12558b41ff48fc653c106f27bb614dd07ef823ccb2bae",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2502_06533::prioritized_kl_method",
+      "label": "prioritized_kl_method",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap",
+              "critical_tokens_localize_failure",
+              "negentropy_def",
+              "prioritized_kl_method"
+            ]
+          }
+        }
+      },
+      "module": "s4_method",
+      "parameters": [],
+      "title": "Prioritized KL penalty formula",
+      "type": "claim"
+    },
+    {
+      "content": "The intuition behind the Prioritized KL Penalty is that the standard KL penalty uniformly constrains the policy across all tokens, including critical tokens where the pre-trained model is uncertain and where exploration is most needed. By reducing the KL penalty on uncertain (critical) tokens and preserving it on confident (non-critical) tokens, the method enables targeted exploration at decision points that determine task success, without destabilizing the policy at positions where the pre-trained model already has reliable behavior.",
+      "content_hash": "f9c4970ce85984cc0f84604a8a7b37b4729e37e6a5a7410db356fea501cf8631",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2502_06533::prioritized_kl_intuition",
+      "label": "prioritized_kl_intuition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "prioritized_kl_intuition",
+              "prioritized_kl_method"
+            ]
+          }
+        }
+      },
+      "module": "s4_method",
+      "parameters": [],
+      "title": "Prioritized KL penalty: intuition for targeted exploration",
+      "type": "claim"
+    },
+    {
+      "content": "The hyperparameter $\\beta$ in the Prioritized KL Penalty controls the sharpness of confidence-based weighting. The method was tested across $\\beta \\in \\{10, 50, 100, 150, 200, 300, 500, 1000, 10000\\}$. Performance is robust across $\\beta \\in [10, 500]$, with optimal performance at $\\beta = 500$; degradation occurs at $\\beta = 1000$ and drastic failure at $\\beta = 10000$ (excessive penalty reduction leading to instability). The primary experiments use $\\beta = 150$.",
+      "content_hash": "32648a46c958ba94d46214d21007b7b156f0a8b437362dee2ebe6afd1c8b91c6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2502_06533::beta_hyperparameter",
+      "label": "beta_hyperparameter",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 6 (Appendix C)",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "prioritized_kl_method"
+            ]
+          }
+        }
+      },
+      "module": "s4_method",
+      "parameters": [],
+      "title": "Beta hyperparameter robustness range [10, 500]",
+      "type": "claim"
+    },
+    {
+      "content": "On the N+1=8-digit addition task (RL fine-tuning of a GPT-2 model pre-trained up to N=7 digits), the Prioritized KL Penalty achieves approximately 60–70% accuracy after 2,000 training episodes, compared to approximately 40–50% for the standard KL penalty. The improvement is consistent across multiple training runs.",
+      "content_hash": "e8eef4a003a61f0896fff2f012ffaf7ebb9e98182ca8b555cc99b977a36911ba",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2502_06533::prioritized_kl_outperforms_standard",
+      "label": "prioritized_kl_outperforms_standard",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 4",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_standard_kl_sufficient",
+              "critical_tokens_localize_failure",
+              "prioritized_kl_method"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Prioritized KL penalty outperforms standard KL on 8-digit addition",
+      "type": "claim"
+    },
+    {
+      "content": "During RL fine-tuning with the Prioritized KL Penalty, the model maintains high success probabilities on critical tokens throughout training (above 80%), whereas with the standard KL penalty, the model frequently reverts to near-baseline critical-token success probabilities (~20–40%), suggesting the standard penalty prevents effective exploration at these token positions.",
+      "content_hash": "d6807259b65e6885c926926c898d45b678818f00fa8f55f885ed94b5737340e3",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2502_06533::prioritized_kl_maintains_critical_token_success",
+      "label": "prioritized_kl_maintains_critical_token_success",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 4",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap",
+              "prioritized_kl_method"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Prioritized KL maintains high critical-token success, standard KL reverts",
+      "type": "claim"
+    },
+    {
+      "content": "The standard KL penalty acts as a barrier to exploration on critical tokens: because the pre-trained model is uncertain at critical token positions, the KL penalty penalizes any policy divergence there, which prevents the model from discovering correct strategies for these tokens even when the reward signal indicates improvement is needed.",
+      "content_hash": "21511db1ddf2fd334f6f94a8a93f5075f28091c2ac815d606441ab6e3a0337a6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2502_06533::standard_kl_blocks_critical_exploration",
+      "label": "standard_kl_blocks_critical_exploration",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "critical_token_uncertainty_gap",
+              "prioritized_kl_maintains_critical_token_success"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Standard KL penalty blocks exploration at critical tokens",
+      "type": "claim"
+    },
+    {
+      "content": "An alternative explanation is that the standard KL penalty is sufficient for RL fine-tuning and the performance gap between prioritized and standard KL is due to other factors (e.g., hyperparameter sensitivity, reward shaping, or architectural choices) rather than fundamentally different exploration behavior at critical tokens.",
+      "content_hash": "673baf21999155719dbff1ea5d3d2c43aefba8ce603d3738020ec59f82e65789",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2502_06533::alt_standard_kl_sufficient",
+      "label": "alt_standard_kl_sufficient",
+      "metadata": {
+        "prior": 0.22,
+        "prior_justification": "This alternative claims standard KL is sufficient and the performance gap is from other factors. Prior reflects explanatory power for the observation (20pp accuracy gap): the standard KL prediction (comparable accuracy) does NOT explain the observed gap, so pi(Alt) should be low. The theoretical argument against standard KL being sufficient is also compelling, further reducing this prior."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Alternative: standard KL penalty sufficient, performance gap from other factors",
+      "type": "claim"
+    },
+    {
+      "content": "Increasing pre-training breadth (larger $N$) improves baseline accuracy but does not proportionally improve RL fine-tuning gains. Models pre-trained on larger digit ranges plateau in RL improvement relative to their pre-training baseline, because they make fewer initial errors and therefore experience weaker exploration pressure.",
+      "content_hash": "15916d6ea9b95f50688eb26d5cbd21d14e089026595fb67e0a53c76e74b5f0d9",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2502_06533::pretrain_breadth_ambivalent_rl",
+      "label": "pretrain_breadth_ambivalent_rl",
+      "metadata": {
+        "figure": "artifacts/2502.06533.pdf, Figure 3",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "larger_pretrain_fewer_rl_errors",
+              "larger_pretrain_qualitatively_different_errors",
+              "pretrain_breadth_generalization_law"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Pre-training breadth improves baseline but has diminishing RL fine-tuning gains",
+      "type": "claim"
+    },
+    {
+      "content": "RL fine-tuning (with either standard or prioritized KL penalty) does improve accuracy on out-of-distribution (N+1-digit) addition tasks compared to pre-training alone, demonstrating that RL can successfully drive exploration beyond the pre-training distribution in this arithmetic setting.",
+      "content_hash": "41f0c6b817d336f8d67a71e429bf16289e36744beb7d7743c4b4af472a6418da",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2502_06533::rl_finetuning_does_improve_accuracy",
+      "label": "rl_finetuning_does_improve_accuracy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "pretrain_generalization_results",
+              "rl_finetuning_does_improve_accuracy"
+            ]
+          }
+        }
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "RL fine-tuning improves OOD accuracy beyond pre-training",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2502_06533::not_both_effective",
+      "label": "not_both_effective",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.92
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The Prioritized KL Penalty predicts higher accuracy than standard KL on N+1=8-digit addition because it reduces the KL constraint specifically on critical tokens, enabling the policy to explore at token positions that determine task success.",
+      "content_hash": "320297464e53030f907f4bd47887d37ce632a54bd91bd46185c8404d865d9770",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2502_06533::pred_prioritized",
+      "label": "pred_prioritized",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Before seeing results, the prioritized KL prediction is theoretically motivated: targeting uncertain tokens for exploration is coherent with the critical-token characterization. The prediction is specific and testable. High prior."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Prediction: Prioritized KL should outperform standard KL",
+      "type": "claim"
+    },
+    {
+      "content": "The standard KL penalty predicts comparable accuracy to the Prioritized KL Penalty because any uniform reduction of exploration constraint at uncertain tokens is dominated by the reward signal, and the confidence-weighting provides no additional benefit.",
+      "content_hash": "1e31011109e23635ee423a946fabfb98ee082da01450be722b4b85caf012a6ba",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2502_06533::pred_alt_standard",
+      "label": "pred_alt_standard",
+      "metadata": {
+        "prior": 0.28,
+        "prior_justification": "Before seeing results, the prediction that standard KL achieves comparable accuracy is plausible only if confidence-weighting provides no additional benefit. Given the theoretical argument, this prediction is less supported. Low prior."
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "title": "Alternative prediction: standard KL achieves comparable accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The Prioritized KL Penalty predicts higher accuracy than standard KL on N+1=8-digit addition because it reduces the KL constraint specifically on critical tokens, enabling the policy to explore at token positions that determine task success., The standard KL penalty predicts comparable accuracy to the Prioritized KL Penalty because any uniform reduction of exploration constraint at uncertain tokens is dominated by the reward signal, and the confidence-weighting provides no additional benefit., On the N+1=8-digit addition task (RL fine-tuning of a GPT-2 model pre-trained up to N=7 digits), the Prioritized KL Penalty achieves approximately 60–70% accuracy after 2,000 training episodes, compared to approximately 40–50% for the standard KL penalty. The improvement is consistent across multiple training runs.)",
+      "content_hash": "b86ce0d10f949d4a089a15504320c2437c3bb0dd2138f7b68cbea4df72d223ff",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2502_06533::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_standard_kl_sufficient",
+              "prioritized_kl_method"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The Prioritized KL Penalty approach is proposed to generalize beyond arithmetic tasks: any RL fine-tuning scenario where a language model must act outside its pre-training distribution and where critical tokens can be identified by the reference model's uncertainty could benefit from the same confidence-weighted KL penalty modification.",
+      "content_hash": "1097ea1cfaaee1ecb343523ba6542c144ea269c36e4b6a5cbee509018162fa94",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2502_06533::prioritized_kl_generalizes",
+      "label": "prioritized_kl_generalizes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "limitation_fixed_reference",
+              "limitation_scratchpad",
+              "limitation_simple_task",
+              "limitation_small_model",
+              "prioritized_kl_generalizes",
+              "prioritized_kl_method",
+              "standard_kl_blocks_critical_exploration"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Prioritized KL penalty proposed to generalize to other RL fine-tuning tasks",
+      "type": "claim"
+    },
+    {
+      "content": "The experimental evaluation is restricted to GPT-2 (85M parameters), which is far smaller than modern large language models used in practice (e.g., 7B–70B parameter models). It is unclear whether the critical-token phenomenon and the benefits of the Prioritized KL Penalty scale to much larger models.",
+      "content_hash": "4853b3796935d73c4f59cf5275240fb017ac8a8b0c5ac28634a1479833cd1d90",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2502_06533::limitation_small_model",
+      "label": "limitation_small_model",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Stated fact: GPT-2 has 85M parameters; modern production LLMs are 7B-70B+. This limitation is straightforwardly true and not debatable."
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Limitation: experiments restricted to small GPT-2 model",
+      "type": "claim"
+    },
+    {
+      "content": "The arithmetic addition task used in the experiments is far simpler than standard LLM benchmarks (e.g., mathematical reasoning, code generation, dialogue). The extent to which critical tokens can be identified and exploited in more complex tasks with longer reasoning chains is not demonstrated.",
+      "content_hash": "e7e2a35faf3f8951b36ac3a43c581dbdb9e79f550cad7a79f17a935e88578f5d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2502_06533::limitation_simple_task",
+      "label": "limitation_simple_task",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "N-digit addition is objectively simpler than standard LLM benchmarks (MMLU, HumanEval, GSM8K, etc.). Factually accurate characterization."
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Limitation: arithmetic task is simpler than practical LLM benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "The experimental setup uses formatted scratchpads (step-by-step intermediate computations) to enable fine-grained token-level analysis. This architectural choice may not generalize to tasks without structured scratchpad outputs, where critical tokens are harder to identify.",
+      "content_hash": "eb5df851aad8993e752cef58702fe98b1963f40bad0c3bf32d3f56b0460472a4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2502_06533::limitation_scratchpad",
+      "label": "limitation_scratchpad",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Paper explicitly states it uses scratchpad-based reasoning for token-level analysis. The generalizability concern about tasks without scratchpads is real and acknowledged by the authors. High confidence this limitation is genuine."
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Limitation: results tied to scratchpad-based reasoning format",
+      "type": "claim"
+    },
+    {
+      "content": "The method assumes a fixed reference (pre-trained) model and uses its token-level entropy as the confidence signal. No Bayesian uncertainty over model parameters is considered, which means the method cannot distinguish between epistemic uncertainty (lack of training data) and aleatoric uncertainty (inherent task ambiguity).",
+      "content_hash": "4530e892b356267cd24c563c45dac36c44d4a752bfb14f1bd81d708e8f3ff110",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2502_06533::limitation_fixed_reference",
+      "label": "limitation_fixed_reference",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The method uses a fixed reference model's entropy without Bayesian uncertainty. This is a real methodological choice. The epistemic vs aleatoric uncertainty concern is technically valid. High confidence this limitation exists."
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Limitation: no Bayesian uncertainty over model parameters",
+      "type": "claim"
+    },
+    {
+      "content": "More precisely balancing the trade-off between old and new policies—by reducing the KL penalty specifically on tokens where the pre-trained model is uncertain—can substantially improve a model's exploration capabilities during RL fine-tuning, as evidenced by ~20 percentage point accuracy improvements on out-of-distribution arithmetic tasks.",
+      "content_hash": "f2c02740bf36b33597497b775e82efae7ebb187b72b7544d276a874f02409a95",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2502_06533::main_conclusion",
+      "label": "main_conclusion",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "main_conclusion",
+              "prioritized_kl_maintains_critical_token_success",
+              "prioritized_kl_outperforms_standard",
+              "standard_kl_blocks_critical_exploration"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Main conclusion: confidence-weighted KL penalty improves RL exploration",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::sparse_reward_difficulty,github:2502_06533::rl_finetuning_challenge)",
+      "content_hash": "65f1d464b11530f5bb394220fd0c304b02e493df44dd21ce6b067b398723a5dd",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_0f705e9d",
+      "label": "__implication_result_0f705e9d",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::sparse_reward_difficulty,github:2502_06533::rl_finetuning_challenge)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5203eb804c859220",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n3)",
+      "content_hash": "81f94beaf16f28f23ead0aea649a53839c19a9e2a79af6fafff3e2dcb66bfec0",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_02d7706b",
+      "label": "__implication_result_02d7706b",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n3)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_24bc54b81415d283",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n5)",
+      "content_hash": "c59d759d296ad14b24983e717591676702f3a1c7c6f3fb1484310a0cb28d4bd6",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_f8c6c9b4",
+      "label": "__implication_result_f8c6c9b4",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n5)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b603e9b035ef5719",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n7)",
+      "content_hash": "4180292826193c2bc48af66649f11dc21ad32ec71b4ed9ce1cba7bd8e4926090",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_dbb33a31",
+      "label": "__implication_result_dbb33a31",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::obs_ct_n7)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_43ed7f2d885e5dce",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::pretrain_generalization_results,github:2502_06533::pretrain_breadth_generalization_law)",
+      "content_hash": "b61f890990d23a1b6478acff2b95ef4609f8476a292cbedd1e96810250230223",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_aa070225",
+      "label": "__implication_result_aa070225",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::pretrain_generalization_results,github:2502_06533::pretrain_breadth_generalization_law)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_03560f2516da4bdf",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::pretrain_breadth_generalization_law,github:2502_06533::larger_pretrain_fewer_rl_errors,github:2502_06533::larger_pretrain_qualitatively_different_errors)",
+      "content_hash": "72865bbcdbe87dd83fc330b8c208691ec012c6086540ad0805d47bda8634931c",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_db9ebf90",
+      "label": "__conjunction_result_db9ebf90",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::pretrain_breadth_generalization_law,github:2502_06533::larger_pretrain_fewer_rl_errors,github:2502_06533::larger_pretrain_qualitatively_different_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5f85677b25f13e29",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_db9ebf90,github:2502_06533::pretrain_breadth_impacts_exploration)",
+      "content_hash": "861552ffd829eafff57a1670c9a79fd7e9b7d5d530c8c2fd0d0c60f8780e26ae",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_a6899242",
+      "label": "__implication_result_a6899242",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_db9ebf90,github:2502_06533::pretrain_breadth_impacts_exploration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5f85677b25f13e29",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::critical_tokens_localize_failure)",
+      "content_hash": "1346c9124b69b932e7124a9c99a793cc51b741edaf489faf277bf557e140b3d6",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_fc558a65",
+      "label": "__implication_result_fc558a65",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::critical_tokens_localize_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e265417bee85d054",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::critical_tokens_localize_failure)",
+      "content_hash": "2cf6a5f5359e68ac3ef605ee2cf245f228ea9c3d3f79b44cb0476ae6f4fd8685",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_16bea1ff",
+      "label": "__conjunction_result_16bea1ff",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::critical_tokens_localize_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a05925f479ed94d6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_16bea1ff,github:2502_06533::prioritized_kl_method)",
+      "content_hash": "385fbac81cd74f2ffb30083f3c48cafccb34ecdf88f991d61f8758d50615aead",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_f4c5d8c8",
+      "label": "__implication_result_f4c5d8c8",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_16bea1ff,github:2502_06533::prioritized_kl_method)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a05925f479ed94d6",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::beta_hyperparameter)",
+      "content_hash": "85f4545ad8139d6c25dce922b80e8e8a1bee11cc53e18ae5345c9cbfa6989d5b",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_2997fd4d",
+      "label": "__implication_result_2997fd4d",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::beta_hyperparameter)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_71d475c0d2280ade",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::prioritized_kl_intuition)",
+      "content_hash": "f60f085ef511a01e4397311bcc24c4d345bf0040db10f693488c6e69fda02822",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_15e645cd",
+      "label": "__implication_result_15e645cd",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::prioritized_kl_intuition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a294533a2a9f5dbd",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::prioritized_kl_outperforms_standard)",
+      "content_hash": "57365d09b316d2da69c70b385ef51ea580a5f2142576dd7fa337b90f12f7130f",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_a413ee17",
+      "label": "__implication_result_a413ee17",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::prioritized_kl_method,github:2502_06533::prioritized_kl_outperforms_standard)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d4aacb40ae9e2589",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::alt_standard_kl_sufficient,github:2502_06533::prioritized_kl_outperforms_standard)",
+      "content_hash": "32c7667f67f2da7acfe169ad69134b306b327c2023240b0ca6dfe0bc4f6b7fd7",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_4023d91a",
+      "label": "__implication_result_4023d91a",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::alt_standard_kl_sufficient,github:2502_06533::prioritized_kl_outperforms_standard)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ce782e2c8c6f67cd",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2502_06533::pred_prioritized,github:2502_06533::prioritized_kl_outperforms_standard)",
+      "content_hash": "93c6fc3f43c2cfdbfeb03302e860674a3061a432f49eb9e471af9e5b16fc4baa",
+      "exported": false,
+      "id": "github:2502_06533::__equivalence_result_5143cb0f",
+      "label": "__equivalence_result_5143cb0f",
+      "metadata": {
+        "canonical_name": "matches(github:2502_06533::pred_prioritized,github:2502_06533::prioritized_kl_outperforms_standard)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_000b61394613797a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2502_06533::pred_alt_standard,github:2502_06533::prioritized_kl_outperforms_standard)",
+      "content_hash": "17f0f1a63584e85cdacad4762072378099fe065e5ea3b21e3c21537c4698c07e",
+      "exported": false,
+      "id": "github:2502_06533::__equivalence_result_d0f741f5",
+      "label": "__equivalence_result_d0f741f5",
+      "metadata": {
+        "canonical_name": "matches(github:2502_06533::pred_alt_standard,github:2502_06533::prioritized_kl_outperforms_standard)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_000b61394613797a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::prioritized_kl_method,github:2502_06533::critical_token_uncertainty_gap)",
+      "content_hash": "91c6a21b870276565774f0d559cfaf4cc563b7f8ad7fb17b28e21d59f1d69416",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_15c1e068",
+      "label": "__conjunction_result_15c1e068",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::prioritized_kl_method,github:2502_06533::critical_token_uncertainty_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ae12736861fb1aa8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_15c1e068,github:2502_06533::prioritized_kl_maintains_critical_token_success)",
+      "content_hash": "d97ea210949b81920798468fda69da8c8ea719d992267e99986e0307650ca11e",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_85d36a41",
+      "label": "__implication_result_85d36a41",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_15c1e068,github:2502_06533::prioritized_kl_maintains_critical_token_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ae12736861fb1aa8",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::prioritized_kl_maintains_critical_token_success)",
+      "content_hash": "7ba422da064ff6693021cad2abda04ef4f61cbf90e5a767aded3eb0f52e7e9c0",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_b7bee1be",
+      "label": "__conjunction_result_b7bee1be",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::critical_token_uncertainty_gap,github:2502_06533::prioritized_kl_maintains_critical_token_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5d3bdc7a35b722b3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_b7bee1be,github:2502_06533::standard_kl_blocks_critical_exploration)",
+      "content_hash": "5bd62f8305a8ef107a6e8757f975a1854a37c2eb48e88e1e2f2b81550962e62c",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_52a95dc3",
+      "label": "__implication_result_52a95dc3",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_b7bee1be,github:2502_06533::standard_kl_blocks_critical_exploration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5d3bdc7a35b722b3",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::pretrain_generalization_results,github:2502_06533::rl_finetuning_does_improve_accuracy)",
+      "content_hash": "0f67cc487cabb4dd59e513dbde220848096dbd433e6c27f4e3ae985cdb389782",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_2340d490",
+      "label": "__implication_result_2340d490",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::pretrain_generalization_results,github:2502_06533::rl_finetuning_does_improve_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_41ceb8acf58e6908",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::larger_pretrain_fewer_rl_errors,github:2502_06533::larger_pretrain_qualitatively_different_errors,github:2502_06533::pretrain_breadth_generalization_law)",
+      "content_hash": "0482c9cc51e3a26abc3de6279abbf922454217cc65084f0a605a3b90ab3b18b2",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_c3d8e31f",
+      "label": "__conjunction_result_c3d8e31f",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::larger_pretrain_fewer_rl_errors,github:2502_06533::larger_pretrain_qualitatively_different_errors,github:2502_06533::pretrain_breadth_generalization_law)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9f77826ce085bbe0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_c3d8e31f,github:2502_06533::pretrain_breadth_ambivalent_rl)",
+      "content_hash": "f4b747d554cc8a4e8c87a362af4876699350bb8a125d1cc7167b3657cc7957f3",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_743a2321",
+      "label": "__implication_result_743a2321",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_c3d8e31f,github:2502_06533::pretrain_breadth_ambivalent_rl)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9f77826ce085bbe0",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::prioritized_kl_outperforms_standard,github:2502_06533::prioritized_kl_maintains_critical_token_success,github:2502_06533::standard_kl_blocks_critical_exploration)",
+      "content_hash": "8981688770bd8ac34354aa78fe3befea3b80b599ecff40d1da1d7837d53bb04c",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_de1cc9d2",
+      "label": "__conjunction_result_de1cc9d2",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::prioritized_kl_outperforms_standard,github:2502_06533::prioritized_kl_maintains_critical_token_success,github:2502_06533::standard_kl_blocks_critical_exploration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8260be22bc05c226",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_de1cc9d2,github:2502_06533::main_conclusion)",
+      "content_hash": "c543518f6b394bdf553561f588b3f62a46b275374984249087c2d394246e4c96",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_cf880f52",
+      "label": "__implication_result_cf880f52",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_de1cc9d2,github:2502_06533::main_conclusion)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8260be22bc05c226",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2502_06533::prioritized_kl_method,github:2502_06533::standard_kl_blocks_critical_exploration)",
+      "content_hash": "cefbea5f822a4b2c420a2bf4e3c8cfca4cb3eaa55a7685ab723b573742d2cad5",
+      "exported": false,
+      "id": "github:2502_06533::__conjunction_result_a268b84f",
+      "label": "__conjunction_result_a268b84f",
+      "metadata": {
+        "canonical_name": "all_true(github:2502_06533::prioritized_kl_method,github:2502_06533::standard_kl_blocks_critical_exploration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f3e5acd012af0975",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::__conjunction_result_a268b84f,github:2502_06533::prioritized_kl_generalizes)",
+      "content_hash": "ca376c750a9bfcd8668d7d7f7d895005e87a78b9e0ff1c2393b2265c10edb0f4",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_a112876f",
+      "label": "__implication_result_a112876f",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::__conjunction_result_a268b84f,github:2502_06533::prioritized_kl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f3e5acd012af0975",
+        "owning_strategy_type": "support",
+        "prior": 0.55,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::limitation_small_model,github:2502_06533::prioritized_kl_generalizes)",
+      "content_hash": "2d85f96d1c3d31c5d6b0c4e7f5574e2c40d235aa61b1d43b88af8270d4450568",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_9bc758e0",
+      "label": "__implication_result_9bc758e0",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::limitation_small_model,github:2502_06533::prioritized_kl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c480b1e2f7c10ea7",
+        "owning_strategy_type": "support",
+        "prior": 0.4,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::limitation_simple_task,github:2502_06533::prioritized_kl_generalizes)",
+      "content_hash": "fbb8331c411573261e1953d477c1856f5ef9341e4e8e46b6dbbaf9ef7f1adf02",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_7132a4a5",
+      "label": "__implication_result_7132a4a5",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::limitation_simple_task,github:2502_06533::prioritized_kl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1aa4a15513472116",
+        "owning_strategy_type": "support",
+        "prior": 0.4,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::limitation_scratchpad,github:2502_06533::prioritized_kl_generalizes)",
+      "content_hash": "17ec031c9295cab4eb4fb67ccc9ad487276f88b288e08e75abed3eec25cf0c1f",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_04727ed6",
+      "label": "__implication_result_04727ed6",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::limitation_scratchpad,github:2502_06533::prioritized_kl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c4f3fbe76cc3da9e",
+        "owning_strategy_type": "support",
+        "prior": 0.45,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2502_06533::limitation_fixed_reference,github:2502_06533::prioritized_kl_generalizes)",
+      "content_hash": "69776cd469d1b0ae7c1e2ea199acceee277dd2299a5074d11beb8af8eefe4af3",
+      "exported": false,
+      "id": "github:2502_06533::__implication_result_4527f6d3",
+      "label": "__implication_result_4527f6d3",
+      "metadata": {
+        "canonical_name": "implies(github:2502_06533::limitation_fixed_reference,github:2502_06533::prioritized_kl_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2f4d0dafbaa37136",
+        "owning_strategy_type": "support",
+        "prior": 0.5,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_critical_tokens",
+    "s4_method",
+    "s5_results",
+    "s6_conclusions"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation",
+    "s3_critical_tokens": "Section 3: Critical Tokens and Experimental Setup",
+    "s4_method": "Section 4: Prioritized KL Penalty Method",
+    "s5_results": "Section 5: Experimental Results",
+    "s6_conclusions": "Section 6: Conclusions and Limitations"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2502_06533::not_both_effective",
+      "metadata": {
+        "reason": "If the standard KL penalty fundamentally blocks critical-token exploration (@standard_kl_blocks_critical_exploration), then it cannot simultaneously be sufficient for effective RL fine-tuning (@alt_standard_kl_sufficient) in out-of-distribution settings. These two claims cannot both hold."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_af069dde6f4232b8",
+      "scope": "local",
+      "variables": [
+        "github:2502_06533::standard_kl_blocks_critical_exploration",
+        "github:2502_06533::alt_standard_kl_sufficient"
+      ]
+    }
+  ],
+  "package_name": "2502_06533",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2502_06533::mdp_formulation"
+      ],
+      "conclusion": "github:2502_06533::rl_finetuning_challenge",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_0f705e9d",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::sparse_reward_difficulty",
+              "github:2502_06533::rl_finetuning_challenge"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The @sparse_reward_difficulty (only correct final answers are rewarded) is a key driver of @rl_finetuning_challenge: without intermediate reward signals, the policy must explore widely to find any correct trajectory, and the KL penalty then limits this exploration. Sparse reward makes the exploration-preservation tradeoff acute."
+      },
+      "premises": [
+        "github:2502_06533::sparse_reward_difficulty"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5203eb804c859220",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup",
+        "github:2502_06533::negentropy_def"
+      ],
+      "conclusion": "github:2502_06533::obs_ct_n3",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_02d7706b",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::obs_ct_n3"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "If @critical_token_uncertainty_gap holds as a general law across pre-training lengths, it predicts a large negative $\\Delta\\hat{J}$ for critical tokens at $N=3$. The measured value $-0.33 \\pm 0.01$ vs $0.0012 \\pm 0.0001$ confirms this prediction."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_24bc54b81415d283",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup",
+        "github:2502_06533::negentropy_def"
+      ],
+      "conclusion": "github:2502_06533::obs_ct_n5",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_f8c6c9b4",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::obs_ct_n5"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If @critical_token_uncertainty_gap holds as a general law across pre-training lengths, it predicts a large negative $\\Delta\\hat{J}$ for critical tokens at $N=5$. The measured value $-0.21 \\pm 0.18$ vs $0.0002 \\pm 0.0001$ confirms this prediction."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b603e9b035ef5719",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup",
+        "github:2502_06533::negentropy_def"
+      ],
+      "conclusion": "github:2502_06533::obs_ct_n7",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_dbb33a31",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::obs_ct_n7"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "If @critical_token_uncertainty_gap holds as a general law across pre-training lengths, it predicts a large negative $\\Delta\\hat{J}$ for critical tokens at $N=7$. The measured value $-0.13 \\pm 0.04$ vs $0.0004 \\pm 0.0001$ confirms this prediction."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_43ed7f2d885e5dce",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::critical_token_uncertainty_gap",
+      "metadata": {
+        "reason": "N=3 and N=5 experiments use different pre-training datasets, providing independent evidence."
+      },
+      "premises": [
+        "github:2502_06533::obs_ct_n3",
+        "github:2502_06533::obs_ct_n5"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_05a43cd80cf2aebf",
+      "sub_strategies": [
+        "lcs_24bc54b81415d283",
+        "lcs_b603e9b035ef5719"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2502_06533::critical_token_uncertainty_gap",
+      "metadata": {
+        "reason": "N=7 experiment further extends the independent replications across pre-training lengths."
+      },
+      "premises": [
+        "github:2502_06533::obs_ct_n3",
+        "github:2502_06533::obs_ct_n5",
+        "github:2502_06533::obs_ct_n7"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e033348caddb520c",
+      "sub_strategies": [
+        "lcs_05a43cd80cf2aebf",
+        "lcs_43ed7f2d885e5dce"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::pretrain_breadth_generalization_law",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_aa070225",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::pretrain_generalization_results",
+              "github:2502_06533::pretrain_breadth_generalization_law"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The tabulated accuracy data in @pretrain_generalization_results shows a monotone trend: as $N$ increases from 7 to 13, accuracy on $N+1$ improves from ~49% to ~89%, and on $N+2$ from 0% to ~68%. This pattern supports the general law @pretrain_breadth_generalization_law that broader pre-training consistently improves OOD generalization."
+      },
+      "premises": [
+        "github:2502_06533::pretrain_generalization_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_03560f2516da4bdf",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::pretrain_breadth_impacts_exploration",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_db9ebf90",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::pretrain_breadth_generalization_law",
+              "github:2502_06533::larger_pretrain_fewer_rl_errors",
+              "github:2502_06533::larger_pretrain_qualitatively_different_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_a6899242",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_db9ebf90",
+              "github:2502_06533::pretrain_breadth_impacts_exploration"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Combining @pretrain_breadth_generalization_law (broader pre-training improves baseline) with @larger_pretrain_fewer_rl_errors (fewer RL-time errors) and @larger_pretrain_qualitatively_different_errors (harder-to-fix error types), the @pretrain_breadth_impacts_exploration claim follows: more pre-training helps baseline but reduces exploration incentive and shifts errors to harder-to-fix types."
+      },
+      "premises": [
+        "github:2502_06533::pretrain_breadth_generalization_law",
+        "github:2502_06533::larger_pretrain_fewer_rl_errors",
+        "github:2502_06533::larger_pretrain_qualitatively_different_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5f85677b25f13e29",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup",
+        "github:2502_06533::critical_token_def"
+      ],
+      "conclusion": "github:2502_06533::critical_tokens_localize_failure",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_fc558a65",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::critical_tokens_localize_failure"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Given the @critical_token_uncertainty_gap showing that the model is systematically less confident at critical token positions (as defined by @critical_token_def), errors concentrate at positions where the model is uncertain, and those errors propagate to cause the entire answer to be wrong, supporting @critical_tokens_localize_failure."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e265417bee85d054",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::kl_penalty_def",
+        "github:2502_06533::negentropy_def"
+      ],
+      "conclusion": "github:2502_06533::prioritized_kl_method",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_16bea1ff",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::critical_tokens_localize_failure"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_f4c5d8c8",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_16bea1ff",
+              "github:2502_06533::prioritized_kl_method"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given @critical_token_uncertainty_gap (the pre-trained model is systematically less confident on critical tokens) and @critical_tokens_localize_failure (these tokens determine task success), the @prioritized_kl_method follows: weight the KL penalty by $\\hat{J}^\\beta$ (normalized negentropy to the power $\\beta$) so that uncertain tokens receive a smaller penalty, enabling the policy to explore freely there while remaining constrained at confident (non-critical) positions. This directly translates the @negentropy_def into a penalty weighting scheme."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap",
+        "github:2502_06533::critical_tokens_localize_failure"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a05925f479ed94d6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::negentropy_def"
+      ],
+      "conclusion": "github:2502_06533::beta_hyperparameter",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_2997fd4d",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::prioritized_kl_method",
+              "github:2502_06533::beta_hyperparameter"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Given the @prioritized_kl_method, robustness across $\\beta$ values is expected because $\\hat{J}^\\beta$ is a smooth function of $\\beta$ that converges monotonically: for $\\hat{J} < 1$ (uncertain tokens), larger $\\beta$ suppresses the penalty more; for $\\hat{J} = 1$ (confident tokens), penalty is unchanged for any $\\beta$. Empirical testing across $\\beta \\in [10, 500]$ confirms this robustness."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_71d475c0d2280ade",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::kl_penalty_def",
+        "github:2502_06533::negentropy_def",
+        "github:2502_06533::critical_token_def"
+      ],
+      "conclusion": "github:2502_06533::prioritized_kl_intuition",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_15e645cd",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::prioritized_kl_method",
+              "github:2502_06533::prioritized_kl_intuition"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The @prioritized_kl_method formula directly implies the @prioritized_kl_intuition: when $\\hat{J} \\approx 0$ (uncertain token, matching the critical token definition), the weight $\\hat{J}^\\beta \\approx 0$, effectively removing the KL penalty; when $\\hat{J} \\approx 1$ (confident token), the penalty is unchanged. This mathematical property corresponds to the stated intuition."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a294533a2a9f5dbd",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::prioritized_kl_outperforms_standard",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_a413ee17",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::prioritized_kl_method",
+              "github:2502_06533::prioritized_kl_outperforms_standard"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The @prioritized_kl_method reduces the KL penalty on uncertain tokens, which are exactly the critical tokens that determine task success (@critical_tokens_localize_failure). This predicts that the model will more successfully explore and learn correct strategies at these positions, leading to higher accuracy compared to standard KL."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d4aacb40ae9e2589",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::prioritized_kl_outperforms_standard",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_4023d91a",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::alt_standard_kl_sufficient",
+              "github:2502_06533::prioritized_kl_outperforms_standard"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "If the standard KL penalty is sufficient (@alt_standard_kl_sufficient), there should be no performance gap, predicting comparable accuracy for both methods."
+      },
+      "premises": [
+        "github:2502_06533::alt_standard_kl_sufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ce782e2c8c6f67cd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__equivalence_result_5143cb0f",
+            "operator": "equivalence",
+            "variables": [
+              "github:2502_06533::pred_prioritized",
+              "github:2502_06533::prioritized_kl_outperforms_standard"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__equivalence_result_d0f741f5",
+            "operator": "equivalence",
+            "variables": [
+              "github:2502_06533::pred_alt_standard",
+              "github:2502_06533::prioritized_kl_outperforms_standard"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__equivalence_result_d0f741f5",
+              "github:2502_06533::__equivalence_result_5143cb0f"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Experimental results show prioritized KL achieves 60-70% vs standard KL's 40-50% on 8-digit addition—a ~20 percentage point gap—strongly matching the prioritized KL prediction and refuting the alternative."
+      },
+      "premises": [
+        "github:2502_06533::pred_prioritized",
+        "github:2502_06533::pred_alt_standard",
+        "github:2502_06533::prioritized_kl_outperforms_standard"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_000b61394613797a",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::_anon_000",
+      "metadata": {
+        "reason": "Both @prioritized_kl_method and the @alt_standard_kl_sufficient hypothesis attempt to explain the accuracy outcome on the 8-digit addition task."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method",
+        "github:2502_06533::alt_standard_kl_sufficient",
+        "github:2502_06533::pred_prioritized",
+        "github:2502_06533::pred_alt_standard",
+        "github:2502_06533::prioritized_kl_outperforms_standard"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4ae89ccebd1d8f3a",
+      "sub_strategies": [
+        "lcs_d4aacb40ae9e2589",
+        "lcs_ce782e2c8c6f67cd",
+        "lcs_000b61394613797a"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::prioritized_kl_maintains_critical_token_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_15c1e068",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::prioritized_kl_method",
+              "github:2502_06533::critical_token_uncertainty_gap"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_85d36a41",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_15c1e068",
+              "github:2502_06533::prioritized_kl_maintains_critical_token_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The @prioritized_kl_method reduces the KL penalty where $\\hat{J} \\approx 0$, i.e., exactly at critical tokens as identified by @critical_token_uncertainty_gap. This allows the policy to update freely at those positions. Empirical results confirm that the model trained with prioritized KL maintains >80% success on critical tokens while the standard KL model reverts to 20-40%."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method",
+        "github:2502_06533::critical_token_uncertainty_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ae12736861fb1aa8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::standard_kl_blocks_critical_exploration",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_b7bee1be",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::critical_token_uncertainty_gap",
+              "github:2502_06533::prioritized_kl_maintains_critical_token_success"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_52a95dc3",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_b7bee1be",
+              "github:2502_06533::standard_kl_blocks_critical_exploration"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Since @critical_token_uncertainty_gap shows the pre-trained model is uncertain at critical tokens, the standard KL penalty (which uniformly penalizes divergence) penalizes exploration exactly where it is needed most. @prioritized_kl_maintains_critical_token_success shows that removing this constraint on uncertain tokens does lead to better critical-token outcomes, implying the constraint was indeed the bottleneck."
+      },
+      "premises": [
+        "github:2502_06533::critical_token_uncertainty_gap",
+        "github:2502_06533::prioritized_kl_maintains_critical_token_success"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5d3bdc7a35b722b3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::rl_finetuning_does_improve_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_2340d490",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::pretrain_generalization_results",
+              "github:2502_06533::rl_finetuning_does_improve_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The @pretrain_generalization_results table shows accuracy for pre-training only. The RL fine-tuning results (Figure 4) show higher accuracy than these baselines, confirming @rl_finetuning_does_improve_accuracy—both standard and prioritized KL achieve better OOD accuracy than the pre-trained model alone."
+      },
+      "premises": [
+        "github:2502_06533::pretrain_generalization_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_41ceb8acf58e6908",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2502_06533::arithmetic_task_setup"
+      ],
+      "conclusion": "github:2502_06533::pretrain_breadth_ambivalent_rl",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_c3d8e31f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::larger_pretrain_fewer_rl_errors",
+              "github:2502_06533::larger_pretrain_qualitatively_different_errors",
+              "github:2502_06533::pretrain_breadth_generalization_law"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_743a2321",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_c3d8e31f",
+              "github:2502_06533::pretrain_breadth_ambivalent_rl"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Models with broader pre-training (@pretrain_breadth_generalization_law: better baseline) show diminishing RL improvement because: (1) @larger_pretrain_fewer_rl_errors — fewer initial errors reduce exploration incentive; (2) @larger_pretrain_qualitatively_different_errors — errors shift to generic mistakes that are harder to fix by RL. Together, broader pre-training improves baseline but yields weaker RL gains, making the pre-training effect ambivalent overall."
+      },
+      "premises": [
+        "github:2502_06533::larger_pretrain_fewer_rl_errors",
+        "github:2502_06533::larger_pretrain_qualitatively_different_errors",
+        "github:2502_06533::pretrain_breadth_generalization_law"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f77826ce085bbe0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::main_conclusion",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_de1cc9d2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::prioritized_kl_outperforms_standard",
+              "github:2502_06533::prioritized_kl_maintains_critical_token_success",
+              "github:2502_06533::standard_kl_blocks_critical_exploration"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_cf880f52",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_de1cc9d2",
+              "github:2502_06533::main_conclusion"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@prioritized_kl_outperforms_standard shows a ~20pp accuracy gain. @prioritized_kl_maintains_critical_token_success shows the mechanism: critical-token success is preserved under prioritized KL. @standard_kl_blocks_critical_exploration explains why standard KL fails: it prevents exploration where it is most needed. Together these three results support @main_conclusion."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_outperforms_standard",
+        "github:2502_06533::prioritized_kl_maintains_critical_token_success",
+        "github:2502_06533::standard_kl_blocks_critical_exploration"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8260be22bc05c226",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::prioritized_kl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__conjunction_result_a268b84f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2502_06533::prioritized_kl_method",
+              "github:2502_06533::standard_kl_blocks_critical_exploration"
+            ]
+          },
+          {
+            "conclusion": "github:2502_06533::__implication_result_a112876f",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::__conjunction_result_a268b84f",
+              "github:2502_06533::prioritized_kl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.55,
+        "reason": "The @prioritized_kl_method is defined in terms of the reference model's entropy (a property of any pre-trained LLM) and the KL penalty (used in virtually all RL fine-tuning frameworks). @standard_kl_blocks_critical_exploration demonstrates the mechanism is not specific to arithmetic. Therefore @prioritized_kl_generalizes to other tasks with similar structure."
+      },
+      "premises": [
+        "github:2502_06533::prioritized_kl_method",
+        "github:2502_06533::standard_kl_blocks_critical_exploration"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f3e5acd012af0975",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::prioritized_kl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_9bc758e0",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::limitation_small_model",
+              "github:2502_06533::prioritized_kl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.4,
+        "reason": "@limitation_small_model restricts confidence in @prioritized_kl_generalizes: without testing on larger models (7B+), it is uncertain whether the critical-token phenomenon scales. This premise weakens the generalization claim."
+      },
+      "premises": [
+        "github:2502_06533::limitation_small_model"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c480b1e2f7c10ea7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::prioritized_kl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_7132a4a5",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::limitation_simple_task",
+              "github:2502_06533::prioritized_kl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.4,
+        "reason": "@limitation_simple_task restricts confidence in @prioritized_kl_generalizes: arithmetic is far simpler than real LLM tasks (code, dialogue, math reasoning), and identifying critical tokens may be much harder in complex tasks."
+      },
+      "premises": [
+        "github:2502_06533::limitation_simple_task"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1aa4a15513472116",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::prioritized_kl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_04727ed6",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::limitation_scratchpad",
+              "github:2502_06533::prioritized_kl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.45,
+        "reason": "@limitation_scratchpad restricts confidence in @prioritized_kl_generalizes: the scratchpad format makes critical tokens easy to identify; without scratchpads, the confidence-weighting may not be applicable."
+      },
+      "premises": [
+        "github:2502_06533::limitation_scratchpad"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c4f3fbe76cc3da9e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2502_06533::prioritized_kl_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2502_06533::__implication_result_4527f6d3",
+            "operator": "implication",
+            "variables": [
+              "github:2502_06533::limitation_fixed_reference",
+              "github:2502_06533::prioritized_kl_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.5,
+        "reason": "@limitation_fixed_reference restricts @prioritized_kl_generalizes: the method uses a fixed reference model's entropy, which conflates epistemic and aleatoric uncertainty. In domains with more model uncertainty, this limitation becomes more significant."
+      },
+      "premises": [
+        "github:2502_06533::limitation_fixed_reference"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2f4d0dafbaa37136",
+      "type": "support"
+    }
+  ]
+}

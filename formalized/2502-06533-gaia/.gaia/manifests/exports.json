@@ -1,0 +1,50 @@
+{
+  "exports": [
+    {
+      "content": "Empirical measurements of the normalized negentropy change $\\Delta\\hat{J}$ show a large gap between critical and non-critical tokens across pre-training lengths $N$:\\n\\n| Token type | $N=3$ | $N=5$ | $N=7$ |\\n|------------|-------|-------|-------|\\n| Critical ($\\Delta\\hat{J}$) | $-0.33 \\pm 0.01$ | $-0.21 \\pm 0.18$ | $-0.13 \\pm 0.04$ |\\n| Non-critical ($\\Delta\\hat{J}$) | $0.0012 \\pm 0.0001$ | $0.0002 \\pm 0.0001$ | $0.0004 \\pm 0.0001$ |\\n\\nNegative $\\Delta\\hat{J}$ indicates the model becomes less confident after RL fine-tuning on the out-of-distribution (longer) addition task; non-critical tokens show essentially no change.",
+      "content_hash": "cd7924cdb1335356dce40422dabdaef5bd71dd7e404920b28a721216bdf783c4",
+      "label": "critical_token_uncertainty_gap",
+      "qid": "github:2502_06533::critical_token_uncertainty_gap",
+      "type": "claim"
+    },
+    {
+      "content": "More precisely balancing the trade-off between old and new policies—by reducing the KL penalty specifically on tokens where the pre-trained model is uncertain—can substantially improve a model's exploration capabilities during RL fine-tuning, as evidenced by ~20 percentage point accuracy improvements on out-of-distribution arithmetic tasks.",
+      "content_hash": "f2c02740bf36b33597497b775e82efae7ebb187b72b7544d276a874f02409a95",
+      "label": "main_conclusion",
+      "qid": "github:2502_06533::main_conclusion",
+      "type": "claim"
+    },
+    {
+      "content": "Increasing pre-training breadth (larger $N$) improves baseline accuracy but does not proportionally improve RL fine-tuning gains. Models pre-trained on larger digit ranges plateau in RL improvement relative to their pre-training baseline, because they make fewer initial errors and therefore experience weaker exploration pressure.",
+      "content_hash": "15916d6ea9b95f50688eb26d5cbd21d14e089026595fb67e0a53c76e74b5f0d9",
+      "label": "pretrain_breadth_ambivalent_rl",
+      "qid": "github:2502_06533::pretrain_breadth_ambivalent_rl",
+      "type": "claim"
+    },
+    {
+      "content": "During RL fine-tuning with the Prioritized KL Penalty, the model maintains high success probabilities on critical tokens throughout training (above 80%), whereas with the standard KL penalty, the model frequently reverts to near-baseline critical-token success probabilities (~20–40%), suggesting the standard penalty prevents effective exploration at these token positions.",
+      "content_hash": "d6807259b65e6885c926926c898d45b678818f00fa8f55f885ed94b5737340e3",
+      "label": "prioritized_kl_maintains_critical_token_success",
+      "qid": "github:2502_06533::prioritized_kl_maintains_critical_token_success",
+      "type": "claim"
+    },
+    {
+      "content": "The paper proposes a 'Prioritized KL Penalty' that modifies the standard KL penalty by weighting each token's contribution by the pre-trained model's confidence (normalized negentropy) at that token position:\\n\\n$$\\tilde{\\mathcal{L}}_{\\mathrm{KL}} = \\mathbb{E}\\left[\\hat{J}_{\\theta_{\\mathrm{old}}}(s)^\\beta \\cdot \\log\\left(\\frac{\\pi_\\theta(a|s)}{\\pi_{\\theta_{\\mathrm{old}}}(a|s)}\\right)\\right]$$\\n\\nwhere $\\hat{J}_{\\theta_{\\mathrm{old}}}(s)$ is the normalized negentropy (confidence) of the pre-trained (reference) model at state $s$, and $\\beta > 0$ is a hyperparameter controlling the strength of confidence weighting. When the reference model is highly confident ($\\hat{J} \\approx 1$), the penalty is nearly unchanged from the standard KL penalty. When the reference model is uncertain ($\\hat{J} \\approx 0$, i.e., near-critical tokens), the penalty is reduced toward zero, allowing greater policy divergence.",
+      "content_hash": "3f850c1e8b62a3637ab12558b41ff48fc653c106f27bb614dd07ef823ccb2bae",
+      "label": "prioritized_kl_method",
+      "qid": "github:2502_06533::prioritized_kl_method",
+      "type": "claim"
+    },
+    {
+      "content": "On the N+1=8-digit addition task (RL fine-tuning of a GPT-2 model pre-trained up to N=7 digits), the Prioritized KL Penalty achieves approximately 60–70% accuracy after 2,000 training episodes, compared to approximately 40–50% for the standard KL penalty. The improvement is consistent across multiple training runs.",
+      "content_hash": "e8eef4a003a61f0896fff2f012ffaf7ebb9e98182ca8b555cc99b977a36911ba",
+      "label": "prioritized_kl_outperforms_standard",
+      "qid": "github:2502_06533::prioritized_kl_outperforms_standard",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:ede9e2c9a98bcc7dde730a9c2157688f0a4459a370a86bcd00699e63a4e0e14b",
+  "manifest_schema_version": 1,
+  "package": "2502-06533",
+  "version": "0.1.0"
+}
