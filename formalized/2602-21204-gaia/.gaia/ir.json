@@ -1,0 +1,2092 @@
+{
+  "ir_hash": "sha256:23e3983f6c63018c6e6a6ccd86e5a06fa2d3c971dc6e3b7ff5e599b258c19986",
+  "knowledges": [
+    {
+      "content": "Test-Time Training (TTT) with KV binding is an architecture in which a neural network module learns to memorize key-value (KV) pairs at test time via an inner optimization loop. Given an input token at position t, the model treats it as a query, and the inner loop updates the model weights to minimize a loss that fits a mapping from keys to values within the current context window.",
+      "content_hash": "12c6687a052422b062617ebbf9f9f5d87716a6d660cb7b747b67fd84e190c9e3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_21204::ttt_definition",
+      "label": "ttt_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "TTT with KV binding definition",
+      "type": "setting"
+    },
+    {
+      "content": "Linear attention is a sequence modeling operator of the form: $o_t = \\phi_{t+1}(q_t) \\cdot S_t$, where $S_t = S_{t-1} + \\phi_t(k_t)^T v_t$ is a recurrently accumulated state matrix. Here $\\phi$ denotes a feature map (e.g., ELU+1 or identity), $q_t$ is the query, $k_t$ the key, $v_t$ the value, and $S_t$ the hidden state. Linear attention avoids the quadratic cost of softmax attention by maintaining a fixed-size recurrent state.",
+      "content_hash": "9057b201dd52e7901adb4e57d425b79d25f43c666df765b5dee3b7e160e52598",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::linear_attention_definition",
+      "label": "linear_attention_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear attention definition",
+      "type": "setting"
+    },
+    {
+      "content": "The conventional interpretation of TTT with KV binding is that it functions as 'online meta-learning that memorizes a key-value mapping': the inner-loop gradient updates write information into the model weights, and the forward pass retrieves this information via query-key matching, analogous to a learnable associative memory. Under this view, more inner-loop steps yield better memorization and thus better downstream performance.",
+      "content_hash": "42837fdf1553886e1d4add0ac8676b6c9ad2073a98fa92624d26449cf8c2b84f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::memorization_hypothesis",
+      "label": "memorization_hypothesis",
+      "metadata": {
+        "prior": 0.7,
+        "prior_justification": "The memorization interpretation was the prevailing view before this paper, adopted by multiple prior works (Zhang et al. 2025, Han et al. 2025, Behrouz 2024). It is initially plausible (0.7) given the design intent of the KV binding mechanism."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Conventional TTT memorization interpretation (hypothesis)",
+      "type": "claim"
+    },
+    {
+      "content": "Can TTT architectures with KV binding be formally rewritten as linear attention operators, and if so, what does this reveal about their mechanism?",
+      "content_hash": "cb2af53baa009deab8d474de5a9fe271018c8546692103a9aadef0ebdaf34520",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::q_equivalence",
+      "label": "q_equivalence",
+      "module": "motivation",
+      "parameters": [],
+      "title": "TTT-linear attention equivalence question",
+      "type": "question"
+    },
+    {
+      "content": "What practical simplifications follow from understanding TTT as learned linear attention, in terms of architectural design and inference efficiency?",
+      "content_hash": "40c44a412ddec0a5c8deecacf878b62fb6306540f266c35ddbadd5d66fdf1bb0",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_21204::q_implications",
+      "label": "q_implications",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Practical implications question",
+      "type": "question"
+    },
+    {
+      "content": "Multiple observed phenomena directly contradict the memorization-based interpretation of TTT with KV binding. Specifically: (1) increasing inner-loop iterations improves fitting loss but degrades downstream task performance; (2) replacing gradient descent with gradient ascent preserves or even slightly improves task performance; (3) t-SNE visualization reveals significant mismatch between query and key distributions in trained models; and (4) substituting keys for queries produces negligible performance degradation. None of these observations is consistent with a storage-and-retrieval system.",
+      "content_hash": "5f222ada477fc212c523d78dfc8ebed708e94cdaf1c594028024dfc0749bd1ce",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2602_21204::claim_memorization_contradicted",
+      "label": "claim_memorization_contradicted",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "memorization_hypothesis",
+              "obs_distributional_asymmetry",
+              "obs_gradient_ascent_llm",
+              "obs_gradient_ascent_nvs",
+              "obs_gradient_ascent_vitttt",
+              "obs_inner_loop_paradox",
+              "obs_query_redundancy_nvs",
+              "obs_query_redundancy_vitttt"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memorization interpretation contradicted by four phenomena",
+      "type": "claim"
+    },
+    {
+      "content": "A broad class of TTT architectures with KV binding can be formally expressed as learned linear attention operators. Under this reinterpretation, TTT is not a memorization mechanism but rather a learned linear attention with enhanced representational capacity achieved through expressive kernel functions and dynamic state updates.",
+      "content_hash": "ce141fd631cf84f0fb02c10ff7bd1ae20ec5fe9b6032e76ba0b19bb6b44481b2",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2602_21204::claim_ttt_is_linear_attention",
+      "label": "claim_ttt_is_linear_attention",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_lact_reduction",
+              "claim_vitttt_conv_reduction",
+              "claim_vitttt_glu_reduction",
+              "thm_momentum",
+              "thm_unrolled"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TTT is linear attention (core thesis)",
+      "type": "claim"
+    },
+    {
+      "content": "The linear attention interpretation of TTT explains all four empirical paradoxes that contradict the memorization view: more inner-loop steps cause train-test kernel mismatch (not better memorization); gradient sign flips are absorbed into learned projections; Q-K distributional asymmetry is expected since they determine distinct attention components; and query substitution tolerance reflects that the feature maps $\\phi_{t+1}(k)$ and $\\phi_t(k)$ remain functionally distinct.",
+      "content_hash": "a1bce1140fffa1cf1dffcf186f25894858b35370e867d046084d377d08ec8ccf",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_21204::claim_linear_view_explains_paradoxes",
+      "label": "claim_linear_view_explains_paradoxes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_gradient_sign_absorbed",
+              "claim_more_steps_mismatch",
+              "thm_unrolled"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear attention view explains empirical paradoxes",
+      "type": "claim"
+    },
+    {
+      "content": "The linear attention perspective enables principled architectural simplifications of TTT and fully parallel formulations that preserve performance while improving efficiency, demonstrated across language modeling, novel view synthesis, and image classification tasks.",
+      "content_hash": "04392429908f54764c5e6ac7b5749a2edfefba9037292b501b0b14a4678ce795",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_21204::claim_principled_simplifications",
+      "label": "claim_principled_simplifications",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_standard_la_speedup",
+              "claim_step1_final_layer_only",
+              "claim_training_speedup",
+              "claim_ttt_is_linear_attention",
+              "claim_variant2_parallel_speedup",
+              "parallelism_condition"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Linear attention view enables principled simplifications",
+      "type": "claim"
+    },
+    {
+      "content": "In TTT with KV binding, the inner-loop loss is typically a reconstruction objective: $\\ell_t = \\|f(k_t; W_t) - v_t\\|^2$, where $f(\\cdot; W_t)$ is the model parametrized by weights $W_t$, $k_t$ is the key at position $t$, and $v_t$ is the target value. The weights are updated by gradient descent: $W_{t+1} = W_t - \\eta \\nabla_{W_t} \\ell_t$, where $\\eta$ is the inner-loop learning rate.",
+      "content_hash": "80223a971004e6c890ce48db4c40fc1e59b92943cf902cf824589db91553c0d1",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_21204::inner_loop_setup",
+      "label": "inner_loop_setup",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Inner-loop optimization setup",
+      "type": "setting"
+    },
+    {
+      "content": "LaCT (Language Context TTT) uses a SwiGLU MLP as the model $f$ in the inner loop. The MLP has two linear layers $W_1, W_2$ and applies SwiGLU activations. The inner-loop loss uses a Frobenius inner product formulation. LaCT is trained on language modeling tasks with 760M parameters, using FineWeb-Edu data (100B tokens), sequence length 32k, and evaluated on Book-3 data (2.5B tokens).",
+      "content_hash": "5783a14b2b4749b289839b5218385d7c67793ea9367fcd6b001d0924ca4df25d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::lact_architecture",
+      "label": "lact_architecture",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "LaCT architecture definition",
+      "type": "setting"
+    },
+    {
+      "content": "ViTTT (Vision Transformer with TTT) applies TTT inside a Vision Transformer. It uses a GLU (gated linear unit) and depthwise convolution as the inner-loop model. ViTTT-B has 90M parameters and is evaluated on ImageNet-1K image classification.",
+      "content_hash": "4c25c150c44b1cf1c615c016ebcf9e3113f0d427b97816ac8326bcf799fc1f1c",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::vitttt_architecture",
+      "label": "vitttt_architecture",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "ViTTT architecture definition",
+      "type": "setting"
+    },
+    {
+      "content": "LaCT-NVS applies LaCT to novel view synthesis (NVS). It uses 114M parameters, trained on RealEstate10K dataset with 2 input views + 6 target views at 128×128 resolution, MSE loss, and evaluated using PSNR (peak signal-to-noise ratio).",
+      "content_hash": "5ada9e1fe70a9dc9e47a282d1b6b450285fa9d33540ba954777afd7da14bb227",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::lact_nvs_architecture",
+      "label": "lact_nvs_architecture",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "LaCT-NVS architecture definition",
+      "type": "setting"
+    },
+    {
+      "content": "Prior work on TTT with KV binding (e.g., Zhang et al. 2025, Han et al. 2025, Behrouz et al. 2024) consistently adopts the memorization interpretation: the inner loop writes KV associations into model weights, and inference retrieves them. This framing drives architectural choices such as multi-step inner loops, momentum, and weight normalization.",
+      "content_hash": "7cf24d2eabd3f5638b77a79893ae17380c08eca26d1aef123c1b9d20a7328930",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_21204::claim_ttt_kv_prior_work",
+      "label": "claim_ttt_kv_prior_work",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Prior TTT work universally adopted the memorization interpretation — this is a factual statement about published research and is well-documented."
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Prior TTT work adopts memorization framing",
+      "type": "claim"
+    },
+    {
+      "content": "Linear attention mechanisms (Katharopoulos et al. 2020) and their modern variants (e.g., Mamba/SSM by Gu & Dao 2024, RWKV by Peng et al. 2024) replace the softmax in standard attention with feature map dot products, enabling $O(1)$ recurrent inference. These methods are motivated by efficiency, not by a storage-and-retrieval interpretation.",
+      "content_hash": "098d96194d2f06b2ad290033b75e3fae6b89a1b991342e67d5f82813f4b18fb9",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_21204::claim_linear_attention_prior_work",
+      "label": "claim_linear_attention_prior_work",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Linear attention (Katharopoulos 2020) and its variants (Mamba, RWKV) are well-established methods in the literature. High prior as factual background."
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Linear attention prior work",
+      "type": "claim"
+    },
+    {
+      "content": "t-SNE (t-distributed stochastic neighbor embedding) is a dimensionality reduction technique used here to visualize the distribution of query vectors and key vectors in the learned TTT model's representation space.",
+      "content_hash": "26aa5b01396af0be2bb93254798191bf3f2e975593c58830015a1606c573703b",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_21204::tsne_setup",
+      "label": "tsne_setup",
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "t-SNE visualization setup",
+      "type": "setting"
+    },
+    {
+      "content": "Increasing the number of inner-loop gradient descent steps in LaCT improves the inner-loop reconstruction loss (better KV fitting), but simultaneously degrades downstream task performance on language modeling (higher perplexity). This inverse relationship between inner-loop optimization quality and task performance is measured on the LaCT-LLM (760M parameter) model.",
+      "content_hash": "8e58bfb40bb13320f116e1bfd2c739475058d6944bb1d1f7af5a0be7fb28cdc7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::obs_inner_loop_paradox",
+      "label": "obs_inner_loop_paradox",
+      "metadata": {
+        "caption": "Figure 1 (inferred from text)",
+        "figure": "artifacts/source.txt",
+        "prior": 0.9,
+        "prior_justification": "Empirically measured on the 760M LaCT-LLM model. The inner-loop loss vs. perplexity tradeoff is a direct experimental observation on a large model with clear results."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Inner-loop steps vs. performance paradox",
+      "type": "claim"
+    },
+    {
+      "content": "In LaCT-LLM (760M parameter language model), replacing gradient descent with gradient ascent in the inner loop (which worsens the KV fitting objective) degrades perplexity only marginally. The gradient ascent variant achieves comparable performance to the gradient descent baseline.",
+      "content_hash": "d65038b896ef08b2a57a4ca5d83fe474b1a575f9c72aac11d4145d61cf892bef",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::obs_gradient_ascent_llm",
+      "label": "obs_gradient_ascent_llm",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Direct experimental result on 760M LaCT-LLM. Gradient ascent comparability is surprising but clearly measured; slight uncertainty about whether effect is robust."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Gradient ascent in LaCT-LLM: comparable performance",
+      "type": "claim"
+    },
+    {
+      "content": "In LaCT-NVS (114M parameter novel view synthesis model), replacing gradient descent with gradient ascent achieves PSNR of 25.85 dB compared to the gradient descent baseline of 25.94 dB on RealEstate10K — a degradation of only 0.09 dB.",
+      "content_hash": "a642d045908fdfa67281d15329d90b8ded6577882dfd04a3f694916a8c3b044c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::obs_gradient_ascent_nvs",
+      "label": "obs_gradient_ascent_nvs",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Direct measurement: 25.85 vs 25.94 dB PSNR on RealEstate10K. Numerical precision makes this high confidence; 0.09 dB difference is within noise for NVS tasks."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Gradient ascent in LaCT-NVS: 25.85 vs 25.94 dB PSNR",
+      "type": "claim"
+    },
+    {
+      "content": "In ViTTT-B (90M parameter vision model), replacing gradient descent with gradient ascent in the inner loop achieves 79.61% top-1 accuracy on ImageNet-1K, which is slightly higher than the gradient descent baseline of 79.34%.",
+      "content_hash": "21c9b305e4b715f360accbeec4ca6c262c405f913a15ca9681e4a275873d28fa",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_21204::obs_gradient_ascent_vitttt",
+      "label": "obs_gradient_ascent_vitttt",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Direct measurement: 79.61% vs 79.34% on ImageNet-1K. Slight improvement with gradient ascent, clearly measured on standard benchmark."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Gradient ascent in ViTTT-B: 79.61% vs 79.34% accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "t-SNE visualization of learned TTT model representations reveals a significant distributional mismatch between query vectors and key vectors. The query and key distributions occupy distinct, non-overlapping regions of the representation space, making reliable retrieval-by-similarity implausible if TTT were a storage-and-retrieval mechanism.",
+      "content_hash": "fccdb8e47793a1dce68b878e4ce2e9bfea03bc3f37710abc9afea8cc96a655e6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_21204::obs_distributional_asymmetry",
+      "label": "obs_distributional_asymmetry",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "t-SNE visualization is qualitative rather than quantitative. The observation of distributional mismatch is clear from the figure, but t-SNE projections can distort distances in high dimensions, reducing confidence slightly."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Q-K distributional mismatch via t-SNE",
+      "type": "claim"
+    },
+    {
+      "content": "In LaCT-NVS (114M parameter novel view synthesis model), substituting the query vectors with key vectors (i.e., using keys as queries at inference time) produces negligible performance degradation, suggesting that the specific query values do not play the retrieval role assigned to them by the memorization interpretation.",
+      "content_hash": "e2b1ef0709ae0dd44474ad896ad1201be7b59c02612135efdcb792bd07d0cae4",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_21204::obs_query_redundancy_nvs",
+      "label": "obs_query_redundancy_nvs",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Direct measurement: negligible degradation when substituting keys for queries in LaCT-NVS. Clear experimental result on RealEstate10K."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Query substitution with keys: negligible NVS degradation",
+      "type": "claim"
+    },
+    {
+      "content": "In ViTTT-B (90M parameter vision model), substituting the query vectors with key vectors achieves 79.18% top-1 accuracy on ImageNet-1K, compared to the baseline of 79.34% — a degradation of only 0.16 percentage points.",
+      "content_hash": "1dfed327a6e8a6620bd17f5589ec499a0e323908baefd73ea8d1b49770651af4",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_21204::obs_query_redundancy_vitttt",
+      "label": "obs_query_redundancy_vitttt",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Direct measurement: 79.18% vs 79.34% (0.16 pp degradation) on ImageNet-1K. Precise numerical result on standard benchmark."
+      },
+      "module": "s3_empirical_contradictions",
+      "parameters": [],
+      "title": "Query substitution with keys: 79.18% vs 79.34% ViTTT accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Theorems 5.1-5.3 assume the TTT model's final layer is linear and bias-free: $f(x; W) = Wx$ where $W$ is the weight matrix of the final layer. This assumption is satisfied by LaCT and ViTTT when they are configured with linear final-layer projections (e.g., updating only $W_1$ in the MLP, with $W_2$ fixed and linear).",
+      "content_hash": "52e88cb5bcbedea88add17133652bf01e848637b281ad407638f5b76d795bd57",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_21204::linear_bias_free_assumption",
+      "label": "linear_bias_free_assumption",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Linear bias-free final layer assumption",
+      "type": "setting"
+    },
+    {
+      "content": "For the inner-loop loss $\\ell_t = \\|f(k_t; W_t) - v_t\\|^2$ with $f(x; W) = Wx$, the gradient of the loss with respect to the final-layer weight $W$ is: $\\nabla_W \\ell_t = (W_t k_t - v_t) k_t^T$. The effective value vector is defined as $g_t(k_t) = v_t - W_t k_t$ (negative gradient direction). After one gradient descent step with learning rate $\\eta$: $W_{t+1} = W_t + \\eta \\phi_t(k_t)^T g_t(k_t)$ (using feature-mapped keys $\\phi_t(k_t)$).",
+      "content_hash": "08f977cb0ef70f1467928808157221c65723afabd2c0fd2099010f5d8790f13e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::gradient_computation_setup",
+      "label": "gradient_computation_setup",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Gradient and effective value vector definition",
+      "type": "setting"
+    },
+    {
+      "content": "Gradient descent with momentum updates: $m_t = \\beta m_{t-1} + g_t(k_t)$ where $\\beta \\in [0,1)$ is the momentum coefficient and $m_t$ is the accumulated momentum vector. The weight update uses momentum: $W_{t+1} = W_t + \\eta \\phi_t(k_t)^T m_t$.",
+      "content_hash": "7446c3e6ab3866624e43987fdfe16c231a64b2192f0a436f08fd0823e22df547",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::momentum_definition",
+      "label": "momentum_definition",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Momentum update rule definition",
+      "type": "setting"
+    },
+    {
+      "content": "The notation $\\phi_t(\\cdot)$ refers to the feature map applied at step $t$, which may depend on the current model weights $W_t$ (making it a dynamic/history-dependent kernel). The notation $\\phi_{t+1}(q_t)$ refers to the feature map applied to the query using the updated weights $W_{t+1}$, reflecting the 'predict after update' forward pass order in TTT.",
+      "content_hash": "46f0c3203c4987fbfa2bdd141374feb617ca826a9108c50bb6eb4450d0231510",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::feature_map_notation",
+      "label": "feature_map_notation",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Dynamic feature map notation",
+      "type": "setting"
+    },
+    {
+      "content": "Theorem 5.1 (Linearization): For a TTT model with a linear, bias-free final layer, one gradient descent step on the inner-loop loss $\\ell_t = \\|f(k_t; W_t) - v_t\\|^2$ yields an output of the form: $$o_t = \\phi_{t+1}(q_t)(W_t + \\phi_t(k_t)^T g_t(k_t))$$where $g_t(k_t) = v_t - W_t k_t$ is the effective value vector, and $W_t$ is the accumulated state matrix. This matches the linear attention form $o_t = \\phi_{t+1}(q_t) S_t$ with $S_t = W_t + \\phi_t(k_t)^T g_t(k_t)$.",
+      "content_hash": "1e0a9b6fdea12446e76ef90c6356a7d2f2bbb971e2a7d5417bdfbf16a9260d0f",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2602_21204::thm_single_step",
+      "label": "thm_single_step",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Theorem 5.1 is a mathematical proof by direct algebraic substitution, given the linear bias-free assumption. The derivation is straightforward and the result follows necessarily from the definitions. High prior, but not 0.999 because the paper may omit edge cases or implicit assumptions."
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theorem 5.1: Single gradient step → linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "Theorem 5.2 (Unrolling): Sequential application of single gradient descent steps across a sequence of $T$ tokens yields: $$o_t = \\phi_{t+1}(q_t)\\left(S_0 + \\sum_{i=1}^{t} \\phi_i(k_i)^T g_i(k_i)\\right)$$where $S_0 = W_0$ is the initial weight matrix. This is the standard recurrent linear attention formula accumulated over the full context history up to position $t$.",
+      "content_hash": "5e78eb209cb4642e11b814998bf18e19f276c28433ee5727444b656662ae029e",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2602_21204::thm_unrolled",
+      "label": "thm_unrolled",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "thm_single_step"
+            ]
+          }
+        }
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theorem 5.2: Unrolled multi-step → full linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "Theorem 5.3 (Momentum): Gradient descent with momentum coefficient $\\beta$ in the inner loop maintains the linear attention structure, with momentum-weighted effective value vectors: $$o_t = \\phi_{t+1}(q_t)\\left(S_0 + \\sum_{i=1}^{t} \\phi_i(k_i)^T \\hat{v}_i\\right)$$where $\\hat{v}_i = g_i(k_i) \\cdot \\sum_{j=i}^{t} \\beta^{j-i}$ is the momentum-weighted effective value. The momentum coefficient introduces temporal weighting but does not break the linear attention form.",
+      "content_hash": "ef66f4a569a9cb3469cd8e0467ed1476fca673ef61d9536ea6f3d03c54920093",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2602_21204::thm_momentum",
+      "label": "thm_momentum",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "thm_unrolled"
+            ]
+          }
+        }
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theorem 5.3: Momentum → temporally-weighted linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "LaCT's SwiGLU MLP inner loop reduces to linear attention. The final output is: $$o_t = \\phi_{t+1}(q_t)\\left(W_{1,0} + \\sum_{i=1}^{t} M(\\phi_i(k_i)^T m_i)\\right)$$where $W_{1,0}$ is the initial first-layer weight, $M(\\cdot)$ applies gradient orthogonalization, and $m_i$ incorporates momentum-weighted effective values derived from the SwiGLU activations. The SwiGLU nonlinearity in intermediate layers is absorbed into the effective value vectors $m_i$.",
+      "content_hash": "b534bd50642488c5f2b191283e3104a6302a0a37634fab69ef322810353a1298",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_21204::claim_lact_reduction",
+      "label": "claim_lact_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "thm_momentum"
+            ]
+          }
+        }
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "LaCT SwiGLU MLP reduces to linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "The GLU (gated linear unit) component of ViTTT reduces to a linear attention form: $$\\phi_{t+1}(q_t) \\odot \\left(q_t(W_1 + k_t^T(v_t \\odot \\phi_t(k_t)))\\right)$$where $\\odot$ denotes element-wise multiplication. The gating in GLU is absorbed into the feature map $\\phi_{t+1}(q_t)$ applied to the query.",
+      "content_hash": "28f85ca9d780cee6caae8ce22ffb9db5431cd0b0c9f9cb8ac415b8f9e63a68c2",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_21204::claim_vitttt_glu_reduction",
+      "label": "claim_vitttt_glu_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "thm_single_step"
+            ]
+          }
+        }
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "ViTTT GLU component reduces to linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "The depthwise convolution component of ViTTT admits a sliding-window linear attention interpretation, where the convolution kernel defines a local attention window and the channel-wise depthwise operation corresponds to independent per-channel linear attention.",
+      "content_hash": "7f45483498e5b6e9db43d7335eef04b9d0b3fdfd5fa18ea60f84d08c6e7a78ce",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_21204::claim_vitttt_conv_reduction",
+      "label": "claim_vitttt_conv_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "thm_single_step"
+            ]
+          }
+        }
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "ViTTT depthwise convolution reduces to sliding-window linear attention",
+      "type": "claim"
+    },
+    {
+      "content": "Under the linear attention interpretation, increasing inner-loop gradient descent steps changes the effective kernel function $\\phi_t(\\cdot)$ applied to keys (since $\\phi_t$ depends on $W_t$ which changes with each step). At test time, the kernel used for queries differs from the kernel used during training (when fewer steps may have been applied), causing train-test kernel mismatch that degrades performance.",
+      "content_hash": "118ffcfb63670ec10b67dab4006196df14940ffbce7acdda718c87d86de82e5f",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_21204::claim_more_steps_mismatch",
+      "label": "claim_more_steps_mismatch",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "The train-test kernel mismatch explanation is theoretically well-motivated under the linear attention view. However, it is a mechanistic interpretation rather than a directly proven fact — requires that training and inference use different numbers of inner-loop steps."
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "More inner-loop steps cause train-test kernel mismatch",
+      "type": "claim"
+    },
+    {
+      "content": "Under the linear attention interpretation, flipping the sign of the gradient (gradient ascent) changes the sign of the effective value vectors $g_t(k_t) = -(v_t - W_t k_t)$ rather than $(v_t - W_t k_t)$. Since the learned projections $W_1, W_2$ can adapt to account for this sign flip during training, the model can compensate via learned parameters, explaining why gradient ascent performs comparably.",
+      "content_hash": "e2a36b071786ec2dd02a5a058aad5fba09b6b538c3db06c36d958128ef426d6e",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2602_21204::claim_gradient_sign_absorbed",
+      "label": "claim_gradient_sign_absorbed",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "The gradient sign absorption into learned projections is plausible under the linear attention view, but relies on the model actually learning to compensate during training. This is an explanatory claim, not a theorem, reducing confidence."
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Gradient sign flip absorbed into learned projections",
+      "type": "claim"
+    },
+    {
+      "content": "The ablation study progressively simplifies TTT components across six steps, evaluated on three tasks: language modeling (LaCT-LLM, 760M params, perplexity metric), novel view synthesis (LaCT-NVS, 114M params, PSNR metric), and image classification (ViTTT-B, 90M params, ImageNet-1K top-1 accuracy). All variants use the same training setup as the baselines. Table 2 reports the results.",
+      "content_hash": "951f9206823350044647a1b89f8502d2cb025cacd618731d84c4166fe1d779cd",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_21204::ablation_setup",
+      "label": "ablation_setup",
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation study setup (Table 2)",
+      "type": "setting"
+    },
+    {
+      "content": "Parallel computation via prefix scan is possible for linear attention if and only if the kernel function $\\phi(\\cdot)$ is static (history-independent). A history-dependent kernel (one that changes as $W_t$ is updated during the inner loop) prevents batching across sequence positions because each position's computation depends on all previous position outputs.",
+      "content_hash": "35aa655ea239a6328cc5f79ebde2f567d98bf1c018d5ed4e331a56810de3dbb9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::parallelism_condition",
+      "label": "parallelism_condition",
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Parallelism condition: static kernel function",
+      "type": "setting"
+    },
+    {
+      "content": "Ablation Step 1: Restricting inner-loop updates to the final layer only (instead of all MLP layers) improves performance on language modeling (perplexity: 15.93 vs. 16.43 baseline) and novel view synthesis (PSNR: 25.97 vs. 25.94 dB baseline), with image classification accuracy unchanged at 79.63% vs. 79.34% baseline. This is the best-performing variant overall.",
+      "content_hash": "2482053f8344045d55acf65b575bc26b9a8fb143a789514365ed8995d2d673d6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::claim_step1_final_layer_only",
+      "label": "claim_step1_final_layer_only",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2: perplexity 15.93, PSNR 25.97, accuracy 79.63%. Best-performing variant — this is a clear experimental result.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 1: Final-layer-only updates — best performance",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation Step 2: Removing weight normalization from Step 1 (final-layer updates only, no weight normalization) gives: perplexity 16.31, PSNR 25.93 dB, accuracy 79.63%. Performance degrades slightly vs. Step 1 on LLM and NVS but remains above or near baseline.",
+      "content_hash": "9b03dbb3ee408eb64a3da5aaa6a586d076f79b21039144531bce157a954ebf49",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::claim_step2_no_weight_norm",
+      "label": "claim_step2_no_weight_norm",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 2 result: perplexity 16.31, PSNR 25.93, accuracy 79.63%. Direct ablation measurement.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 2: No weight normalization",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation Step 3: Replacing the multi-layer MLP with a single linear layer (Step 2 + single linear layer MLP) gives: perplexity 16.23, PSNR 25.71 dB, accuracy 79.39%. Performance on NVS degrades by 0.22 dB from Step 2, while LLM perplexity slightly improves.",
+      "content_hash": "0e41165d69d30edb43f2df8689541a91a23d917d4870b22ac2844d4094175f0c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_21204::claim_step3_single_linear",
+      "label": "claim_step3_single_linear",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 2 result: perplexity 16.23, PSNR 25.71, accuracy 79.39%. Direct ablation measurement.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 3: Single linear layer MLP",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation Step 4: Removing per-token learning rates (Step 3 + no per-token LR) gives: perplexity 16.12, PSNR 25.70 dB, accuracy 79.39%. Performance is comparable to Step 3, indicating per-token learning rates contribute minimally.",
+      "content_hash": "e2f4054390fc6daee99986b73c9bc233e618134f2b9714f2c2c956b5d41e5cd1",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_21204::claim_step4_no_per_token_lr",
+      "label": "claim_step4_no_per_token_lr",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 2 result: perplexity 16.12, PSNR 25.70, accuracy 79.39%. Direct ablation measurement.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 4: No per-token learning rates",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation Step 5: Removing momentum (Step 4 + no momentum) gives: perplexity 15.97, PSNR 25.70 dB, accuracy 79.39%. Performance on LLM improves slightly vs. Step 4, suggesting momentum contributes little in this simplified configuration.",
+      "content_hash": "661e7843eebb651adb2d288f4b170bad9ca57813cc4db4d500739c98c15bf7a1",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_21204::claim_step5_no_momentum",
+      "label": "claim_step5_no_momentum",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 2 result: perplexity 15.97, PSNR 25.70, accuracy 79.39%. Direct ablation measurement.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 5: No momentum",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation Step 6: Full reduction to standard linear attention (Step 5 + standard linear attention, using a fixed static kernel $\\phi$) gives: perplexity 16.80, PSNR 25.73 dB, accuracy 79.54%. Compared to the original baseline (16.43, 25.94, 79.34%), the final linear attention form incurs +0.37 perplexity on LLM, −0.21 dB on NVS, and +0.20 accuracy points on vision.",
+      "content_hash": "a5cf32f3f97ebb7515240511a201a2ba8e645327a0ead9d3a53dc2982e14d8d2",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_21204::claim_step6_standard_linear_attn",
+      "label": "claim_step6_standard_linear_attn",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 2 result: perplexity 16.80, PSNR 25.73, accuracy 79.54%. Final ablation step — marginal degradation is directly measured.",
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation Step 6: Standard linear attention — marginal degradation",
+      "type": "claim"
+    },
+    {
+      "content": "Variant 2 (Step 2: final-layer updates, no weight normalization) enables parallel prefix scan computation because removing weight normalization makes the kernel function $\\phi(\\cdot)$ static (history-independent). Inference throughput on attention calculation: recurrent TTT baseline achieves 4.30M tokens/second, while Variant 2 in parallel mode achieves 30.18M tokens/second — a 7.0× speedup.",
+      "content_hash": "71ee4f9fb750d2ae0e0eef03c2ef89b78edf6d9a89e9c80670162cce45732917",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_21204::claim_variant2_parallel_speedup",
+      "label": "claim_variant2_parallel_speedup",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Throughput measurement: 30.18M vs 4.30M tokens/s (7.0× speedup). Hardware benchmarks on a single hardware configuration; may vary across setups."
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Variant 2 parallel: 30.18M vs 4.30M tokens/s (7.0× speedup)",
+      "type": "claim"
+    },
+    {
+      "content": "Standard linear attention (Ablation Step 6) achieves 124.6M tokens/second in parallel mode — a 29× speedup over recurrent TTT (4.30M tokens/second). This is the theoretical upper bound for the parallel formulation.",
+      "content_hash": "88c398a1597eed4e7669d376012274232113d609a062ad56d2b5dce05750b8db",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_21204::claim_standard_la_speedup",
+      "label": "claim_standard_la_speedup",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Throughput measurement: 124.6M tokens/s (29× speedup). Direct measurement, but represents an upper bound for a specific hardware configuration."
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Standard linear attention parallel: 124.6M tokens/s (29× speedup)",
+      "type": "claim"
+    },
+    {
+      "content": "The simplified TTT variants (combining final-layer-only updates, no weight normalization, and simplified MLP structure) yield a 1.19× end-to-end training speedup without degrading model quality, measured on the LaCT-LLM training setup.",
+      "content_hash": "c15144cdfc33472982cbf7b2ddde5361ae95820015c97ce4992e0d9da1f16407",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2602_21204::claim_training_speedup",
+      "label": "claim_training_speedup",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "End-to-end training speedup of 1.19× measured on the LaCT-LLM setup. Moderate confidence as end-to-end speedup depends on many system factors."
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "1.19× end-to-end training speedup with simplifications",
+      "type": "claim"
+    },
+    {
+      "content": "Weight normalization in the inner loop makes the kernel function $\\phi_t(\\cdot)$ history-dependent: normalizing the weights $W_t$ at each step changes the effective feature map applied to subsequent keys and queries. This history-dependence breaks the associativity required for parallel prefix scan, forcing sequential recurrent computation.",
+      "content_hash": "3163a82424e8f87a2969fc72c3f358b3f6c25a7bde60f834e722beb112668067",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2602_21204::claim_weight_norm_breaks_parallel",
+      "label": "claim_weight_norm_breaks_parallel",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_ttt_is_linear_attention"
+            ]
+          }
+        }
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Weight normalization destroys parallelizability",
+      "type": "claim"
+    },
+    {
+      "content": "The six-step ablation study reveals: (1) per-token learning rates, weight normalization, and momentum each contribute minimally to TTT performance; (2) final-layer-only updates are sufficient or better; (3) the gap from full LaCT/ViTTT to standard linear attention is small: +0.37 perplexity (LLM), −0.21 dB (NVS), +0.20 accuracy points (vision). Most of the performance benefit attributed to TTT's complex inner loop is actually attributable to the linear attention mechanism, not the memorization components.",
+      "content_hash": "08b30b14cc3f3ae8a6a7283f687cfd5fe9f80d556694fbb3ae1c154652ce7be9",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2602_21204::claim_ablation_summary",
+      "label": "claim_ablation_summary",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_step1_final_layer_only",
+              "claim_step6_standard_linear_attn"
+            ]
+          }
+        },
+        "source_table": "Table 2"
+      },
+      "module": "s5_simplifications",
+      "parameters": [],
+      "title": "Ablation summary: TTT complexity contributes minimally",
+      "type": "claim"
+    },
+    {
+      "content": "The theoretical analysis (Theorems 5.1-5.3) requires the TTT model's final layer to be linear and bias-free. Extending the linear attention equivalence to TTT architectures with nonlinear final layers (e.g., full MLP with nonlinear activations in all layers without fixing any as linear) remains an open problem.",
+      "content_hash": "ad717593d27f322c371b0d884794a399aeaa5227148a1a765a8106caa11069e5",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2602_21204::claim_linear_layer_limitation",
+      "label": "claim_linear_layer_limitation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "The limitation (nonlinear final layers not covered) is a direct consequence of the theorem assumptions, making it a high-confidence factual statement."
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Limitation: nonlinear final-layer architectures not covered",
+      "type": "claim"
+    },
+    {
+      "content": "Deeper bidirectional connections between TTT and modern linear attention mechanisms (e.g., Mamba, RWKV, GLA) beyond the unidirectional reduction shown remain unexplored. Whether insights from linear attention research can be directly transferred back to improve TTT training algorithms is an open question.",
+      "content_hash": "9fe5ead61393c69d4d2e46787ae4994fc13a5c39ea6c0633d23e7c05b8a2a25c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_21204::claim_bidirectional_connection_open",
+      "label": "claim_bidirectional_connection_open",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "The bidirectional connection as an open question is a factual statement about the paper's scope — clearly the paper only shows TTT→linear attention, not the reverse."
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Limitation: bidirectional TTT-linear attention connections unexplored",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_21204::not_both_interpretations",
+      "label": "not_both_interpretations",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The linear attention reinterpretation of TTT suggests that existing TTT research may have attributed performance gains to memorization that is actually explained by the expressive representational capacity of learned linear attention with dynamic kernel functions. Future TTT research should evaluate whether proposed improvements are due to memorization mechanisms or linear attention improvements.",
+      "content_hash": "112ac22da5629e621f5bc79259f1727dd62b20dd99a69343aa527bcc811be945",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_21204::claim_ttt_research_reframing",
+      "label": "claim_ttt_research_reframing",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_linear_view_explains_paradoxes",
+              "claim_memorization_contradicted",
+              "claim_ttt_is_linear_attention"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "TTT research needs reframing under linear attention lens",
+      "type": "claim"
+    },
+    {
+      "content": "The linear attention perspective provides principled guidance for TTT architectural design: (1) final-layer-only updates are sufficient; (2) static kernel functions enable parallel computation; (3) components such as weight normalization, per-token learning rates, and momentum are optional and may be removed without major performance loss. These guidelines are validated by the ablation study.",
+      "content_hash": "bc10172511117427d513d13742cbd6800fa940f4d142421b191d927fd7880b67",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_21204::claim_design_implications",
+      "label": "claim_design_implications",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_ablation_summary",
+              "claim_ttt_is_linear_attention",
+              "claim_variant2_parallel_speedup"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Linear attention view provides TTT design guidelines",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::obs_inner_loop_paradox,github:2602_21204::claim_memorization_contradicted)",
+      "content_hash": "05dfbf67a183e9fac654941dfd277b5d67573b3fd809e03ad2ccdf88ce6f7d02",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_3d03920c",
+      "label": "__implication_result_3d03920c",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::obs_inner_loop_paradox,github:2602_21204::claim_memorization_contradicted)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dc303c5301e9c331",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::obs_gradient_ascent_nvs,github:2602_21204::obs_gradient_ascent_vitttt,github:2602_21204::obs_gradient_ascent_llm)",
+      "content_hash": "4b43dda07c95e0a10f606054fa7f8ce57065e18d28714c46460128efc0b49bc7",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_20ededda",
+      "label": "__conjunction_result_20ededda",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::obs_gradient_ascent_nvs,github:2602_21204::obs_gradient_ascent_vitttt,github:2602_21204::obs_gradient_ascent_llm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0675564f3a037db1",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_20ededda,github:2602_21204::claim_memorization_contradicted)",
+      "content_hash": "4fd717a3a08196cfcc007771e5790af7df3a63a7da6364ea81c826c4843774ca",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_a51e7811",
+      "label": "__implication_result_a51e7811",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_20ededda,github:2602_21204::claim_memorization_contradicted)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0675564f3a037db1",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::obs_distributional_asymmetry,github:2602_21204::claim_memorization_contradicted)",
+      "content_hash": "35807065593cf5f96c93ad388bdc151f162c77ce91262e758cb70902cf8bc883",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_50226944",
+      "label": "__implication_result_50226944",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::obs_distributional_asymmetry,github:2602_21204::claim_memorization_contradicted)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_88e47fafe663b6b8",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::obs_query_redundancy_nvs,github:2602_21204::obs_query_redundancy_vitttt)",
+      "content_hash": "5d584290ec00bc2854702e5417f3613e18157bd4557a38d4424d53b2b7c476e4",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_99c2628b",
+      "label": "__conjunction_result_99c2628b",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::obs_query_redundancy_nvs,github:2602_21204::obs_query_redundancy_vitttt)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c75c64ea1599c6b2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_99c2628b,github:2602_21204::claim_memorization_contradicted)",
+      "content_hash": "917ed66188525fe26334d7ff1c47c7d2e970b545a11d559c2115006b7143b837",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_517fca37",
+      "label": "__implication_result_517fca37",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_99c2628b,github:2602_21204::claim_memorization_contradicted)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c75c64ea1599c6b2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::thm_single_step,github:2602_21204::thm_unrolled)",
+      "content_hash": "5a50c7aca84904e5fc9879be673d1438537d3cad0750cfc8bcf1ccf08c4bb86a",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_4e84cec1",
+      "label": "__implication_result_4e84cec1",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::thm_single_step,github:2602_21204::thm_unrolled)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ce842854e63a47f0",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::thm_unrolled,github:2602_21204::thm_momentum)",
+      "content_hash": "d8bc8279b335903493fb427d3a20ac1f31c7bc2ddd28b1faee64df63190e0162",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_29135e38",
+      "label": "__implication_result_29135e38",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::thm_unrolled,github:2602_21204::thm_momentum)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e0bca9ca6c7bb6d7",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::thm_momentum,github:2602_21204::claim_lact_reduction)",
+      "content_hash": "3a36d824e7a088b25fb006c9c8239e08fdcac87f0af59cb5e91e9a6c841089ff",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_14d4795f",
+      "label": "__implication_result_14d4795f",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::thm_momentum,github:2602_21204::claim_lact_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a7ef4ced36f977a9",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::thm_single_step,github:2602_21204::claim_vitttt_glu_reduction)",
+      "content_hash": "b623cf19d84fa26b321e1391bb6ead8745b0a2b9772f275380467c62a8d9ff62",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_9dd2d08e",
+      "label": "__implication_result_9dd2d08e",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::thm_single_step,github:2602_21204::claim_vitttt_glu_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_acb7c0a7b859b777",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::thm_single_step,github:2602_21204::claim_vitttt_conv_reduction)",
+      "content_hash": "c07052b99a92cab8a830a98fc23c551d0be7d46624debfc1ea1b8e00db96ba02",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_80db8b2e",
+      "label": "__implication_result_80db8b2e",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::thm_single_step,github:2602_21204::claim_vitttt_conv_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c7a66dd7a18986aa",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::thm_unrolled,github:2602_21204::thm_momentum,github:2602_21204::claim_lact_reduction,github:2602_21204::claim_vitttt_glu_reduction,github:2602_21204::claim_vitttt_conv_reduction)",
+      "content_hash": "260e26fc00391404915385c5d2ad07f5d6f013a188c0aae24bfe803aea265b1b",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_9e50f37d",
+      "label": "__conjunction_result_9e50f37d",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::thm_unrolled,github:2602_21204::thm_momentum,github:2602_21204::claim_lact_reduction,github:2602_21204::claim_vitttt_glu_reduction,github:2602_21204::claim_vitttt_conv_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_db9bd87aca702ca4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_9e50f37d,github:2602_21204::claim_ttt_is_linear_attention)",
+      "content_hash": "d57af68bb324564019f90bbc2610cc91d15f25bdffd3c8e6712204673e669de4",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_86736513",
+      "label": "__implication_result_86736513",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_9e50f37d,github:2602_21204::claim_ttt_is_linear_attention)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_db9bd87aca702ca4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_more_steps_mismatch,github:2602_21204::claim_gradient_sign_absorbed,github:2602_21204::thm_unrolled)",
+      "content_hash": "dda7360c8dd9689d5e57d4f87893b599bcd4155fc9a2dbadc9698bba2b0d5d80",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_635fe6d9",
+      "label": "__conjunction_result_635fe6d9",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_more_steps_mismatch,github:2602_21204::claim_gradient_sign_absorbed,github:2602_21204::thm_unrolled)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_169bd2c479574744",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_635fe6d9,github:2602_21204::claim_linear_view_explains_paradoxes)",
+      "content_hash": "9740ec31e225eb84f6d596726e215e8d827d3dc92a08039dc3d86338e904e913",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_f95be23a",
+      "label": "__implication_result_f95be23a",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_635fe6d9,github:2602_21204::claim_linear_view_explains_paradoxes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_169bd2c479574744",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_step1_final_layer_only)",
+      "content_hash": "1f317c8bca0df48e23529be6d5dd823fef293b0401c4281095e1225158f561c8",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_c0f7d166",
+      "label": "__conjunction_result_c0f7d166",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_step1_final_layer_only)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e66f33b5ed15d3b0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_c0f7d166,github:2602_21204::claim_principled_simplifications)",
+      "content_hash": "c15d991c8fd4cb3b7e4ee051363171c6e3a67e4a93f1bea0f3f85a6a3638ae4d",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_0758f952",
+      "label": "__implication_result_0758f952",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_c0f7d166,github:2602_21204::claim_principled_simplifications)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e66f33b5ed15d3b0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_variant2_parallel_speedup,github:2602_21204::claim_standard_la_speedup,github:2602_21204::claim_training_speedup)",
+      "content_hash": "01aad7cad18a998aa5e362d1165db1598266a047d88089df43ced8b718289c13",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_22fb2109",
+      "label": "__conjunction_result_22fb2109",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_variant2_parallel_speedup,github:2602_21204::claim_standard_la_speedup,github:2602_21204::claim_training_speedup)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e778104add21eea5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_22fb2109,github:2602_21204::claim_principled_simplifications)",
+      "content_hash": "e06e69a7ff61d949cca01ddf18bb2a2ea82bbe0153a1fdbe15e564f9a9ab9508",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_6050be99",
+      "label": "__implication_result_6050be99",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_22fb2109,github:2602_21204::claim_principled_simplifications)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e778104add21eea5",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_weight_norm_breaks_parallel)",
+      "content_hash": "fa6cb83e398748eb159f1695ed2723bd94585bf827547927df2fa7bf71be5f03",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_276fb1cd",
+      "label": "__implication_result_276fb1cd",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_weight_norm_breaks_parallel)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5a6573a92a6f6330",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_step1_final_layer_only,github:2602_21204::claim_step2_no_weight_norm,github:2602_21204::claim_step3_single_linear,github:2602_21204::claim_step4_no_per_token_lr,github:2602_21204::claim_step5_no_momentum,github:2602_21204::claim_step6_standard_linear_attn)",
+      "content_hash": "56b1908920da2fef48370c85d3424602a7e7f909ba3b6ea6f81d82beeaaa5c6c",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_56c56915",
+      "label": "__conjunction_result_56c56915",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_step1_final_layer_only,github:2602_21204::claim_step2_no_weight_norm,github:2602_21204::claim_step3_single_linear,github:2602_21204::claim_step4_no_per_token_lr,github:2602_21204::claim_step5_no_momentum,github:2602_21204::claim_step6_standard_linear_attn)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4e761d721b66fd6d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_56c56915,github:2602_21204::claim_ablation_summary)",
+      "content_hash": "23e873fb6b55dcb6927cf2bd66fd57dbc9d53ef44801a3df9fa982c6a03413eb",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_f72276d5",
+      "label": "__implication_result_f72276d5",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_56c56915,github:2602_21204::claim_ablation_summary)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4e761d721b66fd6d",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_ablation_summary,github:2602_21204::claim_variant2_parallel_speedup)",
+      "content_hash": "5b32d706bfa8b289c7cf1423ef2e00d43c172b9177e38805254fcd396560428d",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_8d49a458",
+      "label": "__conjunction_result_8d49a458",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_ablation_summary,github:2602_21204::claim_variant2_parallel_speedup)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bfa6850eab89eb96",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_8d49a458,github:2602_21204::claim_design_implications)",
+      "content_hash": "d6896507faa0a16c280cb738dcd7b76a6d246af55ad6d6258380d18fea1e8fff",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_f99479ad",
+      "label": "__implication_result_f99479ad",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_8d49a458,github:2602_21204::claim_design_implications)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bfa6850eab89eb96",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_21204::claim_memorization_contradicted,github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_linear_view_explains_paradoxes)",
+      "content_hash": "bd462bc963ceb2727376a3a17e950c68c210fd0f6dfd0a0dc8de9a1f00fe035a",
+      "exported": false,
+      "id": "github:2602_21204::__conjunction_result_1ddeff7f",
+      "label": "__conjunction_result_1ddeff7f",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_21204::claim_memorization_contradicted,github:2602_21204::claim_ttt_is_linear_attention,github:2602_21204::claim_linear_view_explains_paradoxes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_23eab265bc098389",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_21204::__conjunction_result_1ddeff7f,github:2602_21204::claim_ttt_research_reframing)",
+      "content_hash": "ba0ffc78ef137a6d105eb02096e4d7b00a7dd9fde3d20bc3fb3f35c586e85ac0",
+      "exported": false,
+      "id": "github:2602_21204::__implication_result_4519bc32",
+      "label": "__implication_result_4519bc32",
+      "metadata": {
+        "canonical_name": "implies(github:2602_21204::__conjunction_result_1ddeff7f,github:2602_21204::claim_ttt_research_reframing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_23eab265bc098389",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_background",
+    "s3_empirical_contradictions",
+    "s4_theory",
+    "s5_simplifications",
+    "s6_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: TTT with KV Binding Is Secretly Linear Attention",
+    "s2_background": "Section 2: Background — TTT Architecture and Prior Work",
+    "s3_empirical_contradictions": "Section 3: Empirical Contradictions to Memorization Interpretation",
+    "s4_theory": "Section 4-5: Theoretical Analysis — TTT as Linear Attention",
+    "s5_simplifications": "Section 6: Principled Simplifications and Parallel Formulations",
+    "s6_discussion": "Section 7: Discussion, Limitations, and Conclusions"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2602_21204::not_both_interpretations",
+      "metadata": {
+        "reason": "The memorization interpretation claims TTT functions via storage-and-retrieval of key-value associations, making the query-key similarity the core mechanism. The linear attention interpretation (@claim_ttt_is_linear_attention) shows TTT computes a learned linear projection over accumulated state, where query-key similarity plays no role in storage. These are mechanistically incompatible: in linear attention, Q and K determine distinct attention components (not retrieval indices), which is precisely why Q-K distributional mismatch and query substitution tolerance are observed. Both interpretations cannot simultaneously correctly characterize the same computation."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_b5601c93f9acfd30",
+      "scope": "local",
+      "variables": [
+        "github:2602_21204::memorization_hypothesis",
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ]
+    }
+  ],
+  "package_name": "2602_21204",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2602_21204::memorization_hypothesis",
+        "github:2602_21204::inner_loop_setup"
+      ],
+      "conclusion": "github:2602_21204::claim_memorization_contradicted",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_3d03920c",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::obs_inner_loop_paradox",
+              "github:2602_21204::claim_memorization_contradicted"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If TTT were a memorization mechanism (@memorization_hypothesis), more inner-loop steps should produce better memorization and hence better task performance. The observed inverse relationship (@obs_inner_loop_paradox) — better fitting loss but worse task performance — directly falsifies this prediction."
+      },
+      "premises": [
+        "github:2602_21204::obs_inner_loop_paradox"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dc303c5301e9c331",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::memorization_hypothesis"
+      ],
+      "conclusion": "github:2602_21204::claim_memorization_contradicted",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_20ededda",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::obs_gradient_ascent_nvs",
+              "github:2602_21204::obs_gradient_ascent_vitttt",
+              "github:2602_21204::obs_gradient_ascent_llm"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_a51e7811",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_20ededda",
+              "github:2602_21204::claim_memorization_contradicted"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The memorization interpretation (@memorization_hypothesis) predicts that optimizing the KV fitting objective (gradient descent) should yield better performance than anti-optimizing it (gradient ascent). The observations (@obs_gradient_ascent_nvs, @obs_gradient_ascent_vitttt, @obs_gradient_ascent_llm) show gradient ascent performs comparably or better across all three tasks (NVS: 25.85 vs 25.94 dB; vision: 79.61% vs 79.34%; LLM: comparable perplexity). This is inexplicable under memorization."
+      },
+      "premises": [
+        "github:2602_21204::obs_gradient_ascent_nvs",
+        "github:2602_21204::obs_gradient_ascent_vitttt",
+        "github:2602_21204::obs_gradient_ascent_llm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0675564f3a037db1",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::memorization_hypothesis",
+        "github:2602_21204::tsne_setup"
+      ],
+      "conclusion": "github:2602_21204::claim_memorization_contradicted",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_50226944",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::obs_distributional_asymmetry",
+              "github:2602_21204::claim_memorization_contradicted"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "A storage-and-retrieval system requires that queries and keys occupy compatible representational spaces so that similarity-based lookup works. The significant distributional mismatch between query and key vectors revealed by t-SNE (@obs_distributional_asymmetry) renders reliable retrieval implausible, contradicting the memorization hypothesis (@memorization_hypothesis)."
+      },
+      "premises": [
+        "github:2602_21204::obs_distributional_asymmetry"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_88e47fafe663b6b8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::memorization_hypothesis"
+      ],
+      "conclusion": "github:2602_21204::claim_memorization_contradicted",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_99c2628b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::obs_query_redundancy_nvs",
+              "github:2602_21204::obs_query_redundancy_vitttt"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_517fca37",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_99c2628b",
+              "github:2602_21204::claim_memorization_contradicted"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "In a retrieval system, the query's specific value is critical: it determines what is looked up. If substituting keys for queries (@obs_query_redundancy_nvs, @obs_query_redundancy_vitttt) yields negligible performance degradation (NVS: 25.85 vs 25.94 dB; vision: 79.18% vs 79.34%), then the query is not performing a selective retrieval role, contradicting @memorization_hypothesis."
+      },
+      "premises": [
+        "github:2602_21204::obs_query_redundancy_nvs",
+        "github:2602_21204::obs_query_redundancy_vitttt"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c75c64ea1599c6b2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::linear_attention_definition"
+      ],
+      "conclusion": "github:2602_21204::thm_unrolled",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_4e84cec1",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::thm_single_step",
+              "github:2602_21204::thm_unrolled"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Theorem 5.2 follows from Theorem 5.1 (@thm_single_step) by induction over sequence positions $t = 1, \\ldots, T$. At each step, the accumulated state $S_t = S_{t-1} + \\phi_t(k_t)^T g_t(k_t)$ is updated by one linear attention increment. Substituting into the forward pass gives the sum form. The derivation is a direct telescoping of the recurrence, requiring no additional assumptions beyond Theorem 5.1."
+      },
+      "premises": [
+        "github:2602_21204::thm_single_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ce842854e63a47f0",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2602_21204::momentum_definition",
+        "github:2602_21204::linear_bias_free_assumption"
+      ],
+      "conclusion": "github:2602_21204::thm_momentum",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_29135e38",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::thm_unrolled",
+              "github:2602_21204::thm_momentum"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Starting from Theorem 5.2 (@thm_unrolled), incorporating the momentum update rule (momentum: $m_t = \\beta m_{t-1} + g_t(k_t)$) replaces each $g_i(k_i)$ with the accumulated momentum $m_i = \\sum_{j=1}^{i} \\beta^{i-j} g_j(k_j)$. Expanding this sum and reordering the double summation shows that each $g_i(k_i)$ contributes with weight $\\hat{v}_i = g_i(k_i) \\cdot \\sum_{j=i}^{t} \\beta^{j-i}$, which is absorbed into the effective value vector. The outer linear attention structure $o_t = \\phi_{t+1}(q_t) S_t$ is preserved. The derivation is algebraic."
+      },
+      "premises": [
+        "github:2602_21204::thm_unrolled"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e0bca9ca6c7bb6d7",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::momentum_definition",
+        "github:2602_21204::lact_architecture"
+      ],
+      "conclusion": "github:2602_21204::claim_lact_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_14d4795f",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::thm_momentum",
+              "github:2602_21204::claim_lact_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Applying Theorem 5.3 (@thm_momentum) to the LaCT architecture (LaCT uses a SwiGLU MLP with a linear bias-free final layer $W_1$ updated during the inner loop, and a fixed second layer $W_2$): The SwiGLU activation is absorbed into the computation of effective value vectors $g_i(k_i)$, which are then accumulated with momentum into $m_i$. Gradient orthogonalization (operator $M$) is a linear transformation on the outer product $\\phi_i(k_i)^T m_i$, preserving the linear attention form. The derivation follows the same algebraic structure as Theorem 5.3 but requires carefully tracking the SwiGLU output through the gradient computation, introducing the $M(\\cdot)$ operator."
+      },
+      "premises": [
+        "github:2602_21204::thm_momentum"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a7ef4ced36f977a9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::vitttt_architecture"
+      ],
+      "conclusion": "github:2602_21204::claim_vitttt_glu_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_9dd2d08e",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::thm_single_step",
+              "github:2602_21204::claim_vitttt_glu_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The GLU in ViTTT applies an element-wise gate: output = $\\sigma(Wq) \\odot Vq$ for some projections. Following Theorem 5.1 (@thm_single_step) applied to the linear final layer in ViTTT (ViTTT-B: 90M parameter Vision Transformer using GLU and depthwise convolution in the inner loop), the gradient update writes the effective KV outer product into the weight, and the GLU gate $\\sigma(Wq)$ is reinterpreted as the feature map $\\phi_{t+1}(q_t)$. This gives the stated linear attention form. The derivation requires identifying the correct feature map that absorbs the GLU gating."
+      },
+      "premises": [
+        "github:2602_21204::thm_single_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_acb7c0a7b859b777",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::vitttt_architecture"
+      ],
+      "conclusion": "github:2602_21204::claim_vitttt_conv_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_80db8b2e",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::thm_single_step",
+              "github:2602_21204::claim_vitttt_conv_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Depthwise convolution in ViTTT (90M parameter model, ImageNet-1K) operates independently per channel with a local kernel. Following Theorem 5.1 (@thm_single_step), each channel's convolution within a sliding window can be rewritten as a query-key-value attention computation restricted to a local neighborhood. The sliding window corresponds to the attention span, and the depthwise independence corresponds to per-channel linear attention. The reduction requires viewing the convolution weights as the accumulated state $S_t$ and the input features as keys/values."
+      },
+      "premises": [
+        "github:2602_21204::thm_single_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c7a66dd7a18986aa",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::ttt_definition",
+        "github:2602_21204::linear_attention_definition"
+      ],
+      "conclusion": "github:2602_21204::claim_ttt_is_linear_attention",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_9e50f37d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::thm_unrolled",
+              "github:2602_21204::thm_momentum",
+              "github:2602_21204::claim_lact_reduction",
+              "github:2602_21204::claim_vitttt_glu_reduction",
+              "github:2602_21204::claim_vitttt_conv_reduction"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_86736513",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_9e50f37d",
+              "github:2602_21204::claim_ttt_is_linear_attention"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The three theorems (@thm_unrolled, @thm_momentum) establish that any TTT model with a linear bias-free final layer and gradient descent (with or without momentum) is equivalent to a linear attention operator. The concrete reductions of LaCT (@claim_lact_reduction) and ViTTT (@claim_vitttt_glu_reduction, @claim_vitttt_conv_reduction) demonstrate this equivalence holds for the specific architectures studied. Together, these results support the claim that a broad class of TTT architectures can be expressed as learned linear attention."
+      },
+      "premises": [
+        "github:2602_21204::thm_unrolled",
+        "github:2602_21204::thm_momentum",
+        "github:2602_21204::claim_lact_reduction",
+        "github:2602_21204::claim_vitttt_glu_reduction",
+        "github:2602_21204::claim_vitttt_conv_reduction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_db9bd87aca702ca4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::ttt_definition",
+        "github:2602_21204::linear_attention_definition"
+      ],
+      "conclusion": "github:2602_21204::claim_linear_view_explains_paradoxes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_635fe6d9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_more_steps_mismatch",
+              "github:2602_21204::claim_gradient_sign_absorbed",
+              "github:2602_21204::thm_unrolled"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_f95be23a",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_635fe6d9",
+              "github:2602_21204::claim_linear_view_explains_paradoxes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The linear attention interpretation (@thm_unrolled) provides mechanistic explanations for the empirical paradoxes. More inner-loop steps cause train-test kernel mismatch (@claim_more_steps_mismatch) rather than improved memorization, explaining the inverse performance relationship. Gradient sign flips are absorbed into learned projections (@claim_gradient_sign_absorbed), explaining gradient ascent equivalence. Q-K distributional asymmetry is expected because queries and keys serve different roles in linear attention (query: projection direction; key: state accumulation). Query substitution tolerance reflects that the feature maps at different steps ($\\phi_{t+1}(k)$ vs. $\\phi_t(k)$) remain functionally distinct despite using the same input values."
+      },
+      "premises": [
+        "github:2602_21204::claim_more_steps_mismatch",
+        "github:2602_21204::claim_gradient_sign_absorbed",
+        "github:2602_21204::thm_unrolled"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_169bd2c479574744",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption",
+        "github:2602_21204::ablation_setup"
+      ],
+      "conclusion": "github:2602_21204::claim_principled_simplifications",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_c0f7d166",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_ttt_is_linear_attention",
+              "github:2602_21204::claim_step1_final_layer_only"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_0758f952",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_c0f7d166",
+              "github:2602_21204::claim_principled_simplifications"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The linear attention interpretation (@claim_ttt_is_linear_attention) shows that only the final layer participates in the state accumulation $S_t += \\phi_t(k_t)^T g_t(k_t)$. Inner layers contribute only to the effective value vector computation and feature maps. Ablation Step 1 (@claim_step1_final_layer_only) empirically confirms that final-layer-only updates perform better (perplexity 15.93 vs. 16.43), validating that the linear attention view correctly identifies the architecturally essential component."
+      },
+      "premises": [
+        "github:2602_21204::claim_ttt_is_linear_attention",
+        "github:2602_21204::claim_step1_final_layer_only"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e66f33b5ed15d3b0",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::parallelism_condition",
+        "github:2602_21204::ablation_setup"
+      ],
+      "conclusion": "github:2602_21204::claim_principled_simplifications",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_22fb2109",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_ttt_is_linear_attention",
+              "github:2602_21204::claim_variant2_parallel_speedup",
+              "github:2602_21204::claim_standard_la_speedup",
+              "github:2602_21204::claim_training_speedup"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_6050be99",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_22fb2109",
+              "github:2602_21204::claim_principled_simplifications"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The linear attention equivalence (@claim_ttt_is_linear_attention) reveals that TTT can be parallelized via prefix scan when the kernel is static (@parallelism_condition). Removing weight normalization (which creates history-dependent kernels) enables this. Empirical results show 7× speedup for Variant 2 (@claim_variant2_parallel_speedup), 29× speedup for full linear attention (@claim_standard_la_speedup), and 1.19× end-to-end training speedup (@claim_training_speedup), demonstrating the practical value of the theoretical insight."
+      },
+      "premises": [
+        "github:2602_21204::claim_ttt_is_linear_attention",
+        "github:2602_21204::claim_variant2_parallel_speedup",
+        "github:2602_21204::claim_standard_la_speedup",
+        "github:2602_21204::claim_training_speedup"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e778104add21eea5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::parallelism_condition"
+      ],
+      "conclusion": "github:2602_21204::claim_weight_norm_breaks_parallel",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__implication_result_276fb1cd",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::claim_ttt_is_linear_attention",
+              "github:2602_21204::claim_weight_norm_breaks_parallel"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "From the linear attention equivalence (@claim_ttt_is_linear_attention), the kernel function $\\phi_t(\\cdot)$ in TTT depends on the current weight $W_t$. Weight normalization modifies $W_t$ at each step not just by the gradient but by renormalization: $W_t \\leftarrow W_t / \\|W_t\\|_F$. This renormalization is a nonlinear function of the full weight history, making $\\phi_t$ depend on all previous inputs. Parallel prefix scan requires a static kernel (one that is history-independent), so this history-dependence prevents parallel computation. The derivation follows directly from the definitions."
+      },
+      "premises": [
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5a6573a92a6f6330",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2602_21204::ablation_setup"
+      ],
+      "conclusion": "github:2602_21204::claim_ablation_summary",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_56c56915",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_step1_final_layer_only",
+              "github:2602_21204::claim_step2_no_weight_norm",
+              "github:2602_21204::claim_step3_single_linear",
+              "github:2602_21204::claim_step4_no_per_token_lr",
+              "github:2602_21204::claim_step5_no_momentum",
+              "github:2602_21204::claim_step6_standard_linear_attn"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_f72276d5",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_56c56915",
+              "github:2602_21204::claim_ablation_summary"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The progressive ablation (@claim_step1_final_layer_only through @claim_step6_standard_linear_attn) shows each removed component causes minimal degradation: Step 1 (final-layer only) actually improves performance; Steps 2-5 each incur small or negligible changes; Step 6 (full linear attention) incurs the largest but still modest change (+0.37 perplexity, −0.21 dB). The cumulative reduction from complex TTT to simple linear attention is marginal, supporting the conclusion that the linear attention mechanism is the primary contributor."
+      },
+      "premises": [
+        "github:2602_21204::claim_step1_final_layer_only",
+        "github:2602_21204::claim_step2_no_weight_norm",
+        "github:2602_21204::claim_step3_single_linear",
+        "github:2602_21204::claim_step4_no_per_token_lr",
+        "github:2602_21204::claim_step5_no_momentum",
+        "github:2602_21204::claim_step6_standard_linear_attn"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4e761d721b66fd6d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::linear_bias_free_assumption"
+      ],
+      "conclusion": "github:2602_21204::claim_design_implications",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_8d49a458",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_ttt_is_linear_attention",
+              "github:2602_21204::claim_ablation_summary",
+              "github:2602_21204::claim_variant2_parallel_speedup"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_f99479ad",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_8d49a458",
+              "github:2602_21204::claim_design_implications"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The linear attention equivalence (@claim_ttt_is_linear_attention) identifies which components are structurally essential (final layer state accumulation) vs. incidental (normalization, momentum, per-token LR). The ablation study (@claim_ablation_summary) empirically validates these theoretical predictions: the essential components (final layer) contribute most, while the incidental ones contribute minimally. The parallelization speedup (@claim_variant2_parallel_speedup) demonstrates that acting on these insights yields practical efficiency gains."
+      },
+      "premises": [
+        "github:2602_21204::claim_ttt_is_linear_attention",
+        "github:2602_21204::claim_ablation_summary",
+        "github:2602_21204::claim_variant2_parallel_speedup"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bfa6850eab89eb96",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_21204::memorization_hypothesis"
+      ],
+      "conclusion": "github:2602_21204::claim_ttt_research_reframing",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_21204::__conjunction_result_1ddeff7f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_21204::claim_memorization_contradicted",
+              "github:2602_21204::claim_ttt_is_linear_attention",
+              "github:2602_21204::claim_linear_view_explains_paradoxes"
+            ]
+          },
+          {
+            "conclusion": "github:2602_21204::__implication_result_4519bc32",
+            "operator": "implication",
+            "variables": [
+              "github:2602_21204::__conjunction_result_1ddeff7f",
+              "github:2602_21204::claim_ttt_research_reframing"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The combination of: (1) empirical evidence against memorization (@claim_memorization_contradicted), (2) formal equivalence to linear attention (@claim_ttt_is_linear_attention), and (3) mechanistic explanations of all paradoxes (@claim_linear_view_explains_paradoxes) collectively establishes that the memorization framing is mechanistically incorrect. If the mechanism is linear attention, prior TTT research that attributed improvements to memorization should be reinterpreted under the correct mechanistic lens."
+      },
+      "premises": [
+        "github:2602_21204::claim_memorization_contradicted",
+        "github:2602_21204::claim_ttt_is_linear_attention",
+        "github:2602_21204::claim_linear_view_explains_paradoxes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23eab265bc098389",
+      "type": "support"
+    }
+  ]
+}
