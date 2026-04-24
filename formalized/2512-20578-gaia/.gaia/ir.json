@@ -1,0 +1,3873 @@
+{
+  "ir_hash": "sha256:c6a65c4c48fd1962740676d816728db6a7fca23ca69b672531f70e6f09bf689b",
+  "knowledges": [
+    {
+      "content": "Large language models (LLMs) generate fluent and complex outputs but frequently produce hallucinations — plausible-sounding but incorrect responses.",
+      "content_hash": "4d109a7fb9e1ac1fd56182e7688f711278fbcc2d9c01e9d2f691ee60d3f9efd3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::llm_fluency",
+      "label": "llm_fluency",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM fluency vs. hallucination problem",
+      "type": "setting"
+    },
+    {
+      "content": "Existing approaches to LLM correctness verification include: (1) external judge models that score outputs post-hoc, (2) multi-sample consistency methods (e.g., self-consistency sampling), and (3) text-based self-critique where the model reflects on its own outputs. All three categories rely on additional inference calls or external scoring models.",
+      "content_hash": "2548fb1513d4b2362f17e841b82a4801ac22619a54d0bad35a94cd63c9e6d5d9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::existing_approaches",
+      "label": "existing_approaches",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Existing verification approach categories",
+      "type": "setting"
+    },
+    {
+      "content": "During LLM inference, each token generation produces hidden states (activations at each transformer layer) and attention patterns (L x H attention maps, where L is the number of layers and H is the number of heads). These internal traces are generated as a byproduct of inference and require no extra computation to observe.",
+      "content_hash": "05b0fc8d70ff9a17c7a176c9523870f0e61d3a0d316322235475bf44d0c249fd",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::internal_state_def",
+      "label": "internal_state_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM internal states during inference",
+      "type": "setting"
+    },
+    {
+      "content": "Can LLMs predict their own failures by inspecting internal states (hidden states and attention patterns) produced during inference, without external supervision?",
+      "content_hash": "9a0a8d6f0c4bef3a8f96ee345fcafc99c7c823d7ede207183f1b9b8369e0f9c8",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::research_question",
+      "label": "research_question",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core research question",
+      "type": "question"
+    },
+    {
+      "content": "External judge approaches to LLM correctness verification incur additional computational cost and often correlate weakly with true correctness. Specifically, large external judges such as Gemini 2.5 Pro (proprietary, multi-billion parameters) require full sequence processing, and open-source reward models such as Skywork-Reward-8B require 930ms latency for 12k-token responses and 2465ms for 24k-token responses.",
+      "content_hash": "ef45411bdaa84523d5c1edf8ff44237944e307bd44ab1a3a7b4a7f748b4f32f8",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20578::external_judge_weakness",
+      "label": "external_judge_weakness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "external_judge_weakness",
+              "reward_model_cost"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Well-documented: reward models and proprietary judges require significant extra compute. The paper provides concrete latency numbers (930ms, 2465ms) and AUROC comparisons.",
+        "source_section": "Introduction, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "External judge computational and accuracy limitations",
+      "type": "claim"
+    },
+    {
+      "content": "Multi-sample consistency approaches (e.g., self-consistency sampling) require generating multiple completions per prompt, multiplying inference cost proportionally to the number of samples. They also correlate weakly with per-instance correctness when the model is confidently wrong across samples.",
+      "content_hash": "18386164611f72a7f6b6b87c564f757ac3ff46091cb99b97d9ccbebd4ec1de93",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20578::multi_sample_weakness",
+      "label": "multi_sample_weakness",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "Self-consistency sampling cost is trivially verifiable (k completions = k× cost). Correlation weakness with per-instance correctness acknowledged in prior literature.",
+        "source_section": "Introduction, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Multi-sample consistency limitations",
+      "type": "claim"
+    },
+    {
+      "content": "Text-based self-critique (asking the LLM to reflect on its own outputs) correlates weakly with true correctness because the surface-level verbalized confidence of LLMs is poorly calibrated: models can express high confidence while being factually wrong.",
+      "content_hash": "a74555de8357f75e67b761c730721b6a8e81be90decdbecb92379e3a9f5a3e53",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_20578::text_critique_weakness",
+      "label": "text_critique_weakness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "text_critique_weakness",
+              "verbalized_conf_weakness"
+            ]
+          }
+        },
+        "prior": 0.8,
+        "prior_justification": "Verbalized confidence calibration failure is well-documented. The paper does not provide its own ablation; relies on prior work.",
+        "source_section": "Introduction, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Text-based self-critique limitations",
+      "type": "claim"
+    },
+    {
+      "content": "Reliable correctness cues are intrinsic to the LLM generation process and are encoded in hidden states and attention patterns, meaning these internal signals can discriminate correct from incorrect outputs without external supervision.",
+      "content_hash": "2eeb23921f5df083cb3232f9c2afb9bdb94bcf9bd5ebe574586e3324df7c7432",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_20578::internal_cues_exist",
+      "label": "internal_cues_exist",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "chain_of_embedding_weakness",
+              "external_judge_weakness",
+              "internal_cues_exist",
+              "internal_probe_weakness",
+              "multi_sample_weakness",
+              "text_critique_weakness"
+            ]
+          }
+        },
+        "source_section": "Introduction, Abstract"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Internal correctness cues hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis is a lightweight (~5 million parameters) self-awareness mechanism that enables frozen LLMs to perform intrinsic self-verification by decoding signals from hidden states and attention patterns. Gnosis passively observes internal traces, compresses them into fixed-budget descriptors, and predicts correctness with negligible inference overhead (~25ms constant latency, independent of sequence length), adding only ~5M parameters on top of any frozen backbone LLM.",
+      "content_hash": "6ffb17045f21c2cbce83a9ecbce72979b76640aa08b7597ed67b2201550db88f",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_proposal",
+      "label": "gnosis_proposal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "backbone_accuracy_stats",
+              "gnosis_proposal",
+              "internal_cues_exist",
+              "proprietary_model_limitation",
+              "transfer_fails_cross_family"
+            ]
+          }
+        },
+        "source_section": "Introduction, Abstract"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Gnosis mechanism proposal",
+      "type": "claim"
+    },
+    {
+      "content": "Verbalized confidence methods prompt LLMs to produce a numeric probability or qualitative uncertainty estimate alongside their answer. These probabilities are read from token logits or explicitly elicited via prompting, e.g., asking the model 'How confident are you?'",
+      "content_hash": "ad98085124f20c65b325245d5416a74237b357ce09d484468b3745b0c237f324",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::verbalized_confidence_setting",
+      "label": "verbalized_confidence_setting",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Verbalized confidence elicitation definition",
+      "type": "setting"
+    },
+    {
+      "content": "Internal probe methods train a lightweight classifier (e.g., linear probe or MLP) on intermediate hidden states of an LLM, typically using the final token's last-layer representation, to predict correctness without re-running the backbone.",
+      "content_hash": "cf36dc7b18b7fa6b9d5e1297af19c55273f030b7333be85a20d9bb6a1148d44e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::internal_probe_setting",
+      "label": "internal_probe_setting",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Internal probe methods definition",
+      "type": "setting"
+    },
+    {
+      "content": "Chain-of-Embedding (CoE) is a trajectory-based method that applies singular value decomposition (SVD) to the sequence of hidden state vectors produced during generation, capturing spectral features of the generation trajectory to detect hallucination.",
+      "content_hash": "d68bd7e90a1b3465577939190a963ce7d4aaf20fe5cb25a28a10484261b7f5ef",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::chain_of_embedding_setting",
+      "label": "chain_of_embedding_setting",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Chain-of-Embedding method definition",
+      "type": "setting"
+    },
+    {
+      "content": "Reward models (RMs) are models fine-tuned on human preference data to assign scalar quality scores to model outputs. They are typically applied as external judges post-hoc after generation completes, and scale linearly with output sequence length in inference cost.",
+      "content_hash": "ffc1b91d1517477d1c7e228ec607d6ab615bac1b7132482cb86149b9a49f456c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::reward_model_setting",
+      "label": "reward_model_setting",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Reward model definition",
+      "type": "setting"
+    },
+    {
+      "content": "Verbalized confidence methods are poorly calibrated: LLMs frequently express high confidence on incorrect answers and low confidence on correct ones. Studies find weak correlation between verbalized probabilities and true answer correctness, especially for factual questions where the model has memorized incorrect information [@Xiong2024].",
+      "content_hash": "83a69a2546338eaa0b1089ef6b07cb48c5060341eba8a8dbb3e427d740a05c61",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20578::verbalized_conf_weakness",
+      "label": "verbalized_conf_weakness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Xiong2024"
+            ]
+          }
+        },
+        "prior": 0.8,
+        "prior_justification": "Supported by existing literature (Xiong et al. 2024). Claimed without direct experiment in this paper.",
+        "source_section": "Section 2, Related Work"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Verbalized confidence calibration failure",
+      "type": "claim"
+    },
+    {
+      "content": "Simple internal probe methods (e.g., MLP on the final hidden state) capture only a snapshot of model state at one position and one layer, missing the temporal dynamics of reasoning trajectories and cross-layer/cross-head attention structure. This limits their discriminative power relative to methods that aggregate across the full generation.",
+      "content_hash": "ad584e9ef40612c1f5ad89de868e3e459d434a3d4d8d4c3386c881b995238ffb",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20578::internal_probe_weakness",
+      "label": "internal_probe_weakness",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "The limitation of single-snapshot probes is conceptually well-argued. Indirect evidence via MLP-Prob baseline comparison in the paper.",
+        "source_section": "Section 2, Related Work"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Simple internal probe limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Chain-of-Embedding (CoE) — which applies SVD to the sequence of hidden states — captures trajectory structure but uses unsupervised spectral decomposition without task-specific supervision. This limits its ability to learn the specific discriminative features that separate correct from incorrect responses in a task-adaptive manner.",
+      "content_hash": "962d214ac2010cdc08f6d8a0f793a63bf4db2b6be42c728bac1e382efab33dc4",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_20578::chain_of_embedding_weakness",
+      "label": "chain_of_embedding_weakness",
+      "metadata": {
+        "prior": 0.72,
+        "prior_justification": "CoE's limitation (no task-specific supervision) is a reasonable critique, but CoE is not directly ablated in the paper's main benchmarks.",
+        "source_section": "Section 2, Related Work"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Chain-of-Embedding limitation",
+      "type": "claim"
+    },
+    {
+      "content": "External reward models (e.g., Skywork-Reward-8B) require 930ms latency for 12,000-token responses and 2,465ms for 24,000-token responses, scaling linearly with sequence length. This makes them impractical for real-time or high-throughput inference pipelines.",
+      "content_hash": "6efb2c44403e52abe4ff21c07fafdedafe9ffa2eee1313dad81a8e805c29737a",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_20578::reward_model_cost",
+      "label": "reward_model_cost",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Concrete latency numbers from Table 4 are directly measured. High confidence in these empirical values.",
+        "source_section": "Section 4, Latency comparison",
+        "source_table": "Table 4"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Reward model latency scaling",
+      "type": "claim"
+    },
+    {
+      "content": "The completeness token is the final token of the LLM's generated response. Gnosis extracts the hidden states from ALL transformer layers at the position of this completeness token, producing a matrix of shape [L, d_model] where L is the number of transformer layers and d_model is the hidden dimension.",
+      "content_hash": "16e773eeacedd94402b10f0cb33224410f33c426ec1ed4c45fc1c5d433ad5bc4",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::completeness_token_setting",
+      "label": "completeness_token_setting",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Completeness token and hidden state extraction",
+      "type": "setting"
+    },
+    {
+      "content": "Gnosis extracts all attention maps from the completeness token position across all L layers and H attention heads, yielding L*H attention maps each of shape [1, T] where T is the sequence length. These are spatially resampled to a fixed grid (default 256x256) for processing.",
+      "content_hash": "3e029fac7d6ca93c3ee48986e881cfd7fe28940ac4d523285e096478e24797db",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::attention_map_setting",
+      "label": "attention_map_setting",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Attention map extraction definition",
+      "type": "setting"
+    },
+    {
+      "content": "Set Attention Block (SAB) and Pooling by Multi-head Attention (PMA) are components from Set Transformer [@Lee2024SAB]. SAB applies self-attention within a set of elements (permutation-equivariant). PMA uses a fixed set of seed vectors to pool an arbitrary-size input set into a fixed-size output (permutation-invariant). Together they enable order-invariant aggregation over variable-length sequences.",
+      "content_hash": "0f1c3234b684434d3389f3a1c4d32ddf9912245434d8f8b19f8c47ee24c99870",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::sab_pma_setting",
+      "label": "sab_pma_setting",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Lee2024SAB"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "SAB and PMA definitions",
+      "type": "setting"
+    },
+    {
+      "content": "Axial convolution applies 1D convolutions separately along each dimension of a 2D feature map (e.g., along the layer axis and along the head axis), capturing structure within each dimension while sharing parameters across the other. This is more parameter-efficient than full 2D convolution.",
+      "content_hash": "7184f7d9f20dc90cfacd7bd1ff996235bfb5acfcdbf9aff36a6daf5bd88aec56",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::axial_conv_setting",
+      "label": "axial_conv_setting",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Axial convolution definition",
+      "type": "setting"
+    },
+    {
+      "content": "The Hidden Circuit Encoder in Gnosis processes the hidden states matrix [L, d_model] in two phases: (1) Local temporal processing — multi-scale temporal convolutions with gating and squeeze-and-excitation (SE) channel attention extract local patterns across the layer sequence, with 2.6M total parameters. (2) Global aggregation — Set Attention Blocks (SAB) followed by Pooling by Multi-head Attention (PMA) aggregate the sequence into a fixed-size representation, independent of sequence length. The final hidden circuit output is a fixed-dimensional descriptor regardless of L or T.",
+      "content_hash": "66d2f648f5dc6501714711fe46840fcb37c880cad27e7759dc17dcc79f2230f9",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_20578::hidden_circuit_arch",
+      "label": "hidden_circuit_arch",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Architecture description from paper Section 3.1. High confidence it accurately describes the implemented system.",
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Hidden Circuit Encoder architecture",
+      "type": "claim"
+    },
+    {
+      "content": "The Attention Circuit Encoder in Gnosis processes L*H attention maps through two stages: (1) Per-map feature extraction — each attention map is processed by a hybrid CNN + statistics extractor that combines learned convolutional features with handcrafted statistics (entropy, max, variance, etc.), producing a feature vector per map. (2) Cross-map integration — the resulting [L, H, features] array is processed by axial convolutions (separate 1D convolutions along layer and head axes) plus layer/head positional embeddings, then aggregated via PMA to a fixed-size descriptor. Total parameters: 1.4M.",
+      "content_hash": "7ba305c9e62edf54ec1e771c33d8c7e03d8d28d73301e521ba9ded08155feafb",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_20578::attention_circuit_arch",
+      "label": "attention_circuit_arch",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_circuit_arch",
+              "attention_grid_ablation",
+              "attention_topology_ablation"
+            ]
+          }
+        },
+        "source_section": "Section 3.2"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Attention Circuit Encoder architecture",
+      "type": "claim"
+    },
+    {
+      "content": "A gated MLP fusion head combines the hidden-circuit and attention-circuit fixed-size descriptors into a scalar correctness probability. The fusion uses a learned gate to weight the relative contribution of each stream before the final scalar prediction. Total fusion parameters: ~0.5M.",
+      "content_hash": "b08ac5e8f44dc1ec308e82ae301c4a583f2c15c8757cfccec9f9a5c9e6d43a0d",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_20578::gated_fusion_arch",
+      "label": "gated_fusion_arch",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Architecture description from Section 3.3. High confidence.",
+        "source_section": "Section 3.3"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Gated fusion head architecture",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis totals approximately 5 million parameters: ~2.6M in the Hidden Circuit Encoder, ~1.4M in the Attention Circuit Encoder, and ~0.5M in the gated fusion head. This is approximately 1,600× smaller than the Skywork-Reward-8B external judge (8 billion parameters).",
+      "content_hash": "beebc1ec70c23d32ad5069b17bbddaa629e05061c037cd9f08881d4aea3f0dcb",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_20578::total_params",
+      "label": "total_params",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_circuit_arch",
+              "gated_fusion_arch",
+              "hidden_circuit_arch",
+              "total_params"
+            ]
+          }
+        },
+        "source_section": "Section 3, Abstract"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Total Gnosis parameter count",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis maintains approximately constant latency (~25ms) regardless of the output sequence length (tested at 12,000 and 24,000 tokens). This is because PMA-based aggregation compresses variable-length sequences into fixed-budget descriptors before scoring.",
+      "content_hash": "fe8e8117c71624524837aaaa6307f9d51c66f282d92fac26ab19f079e5c22769",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2512_20578::constant_latency",
+      "label": "constant_latency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_circuit_arch",
+              "hidden_circuit_arch"
+            ]
+          }
+        },
+        "source_section": "Section 4, Table 4"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Constant latency regardless of sequence length",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis trains only its own ~5M parameters while keeping the LLM backbone completely frozen. No gradient flows through the backbone during training. The mechanism is thus compatible with any backbone whose hidden states and attention maps are accessible (i.e., open-weight models).",
+      "content_hash": "9439ee7f04949389522eb0da5f3778d2012a71e541097e0a27a68d43896776d8",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2512_20578::frozen_backbone",
+      "label": "frozen_backbone",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "frozen_backbone",
+              "training_protocol"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Frozen backbone training protocol",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis training uses automatic correctness labels (no human annotation): (1) Generate 2 completions per math prompt (~14k DAPO-Math competition problems) and 1 completion per trivia prompt (40k subsampled from 118k TriviaQA questions). (2) Label each completion correct/incorrect by ground-truth comparison. (3) Optimize binary cross-entropy with frozen backbone for 2 epochs using Adam optimizer (learning rate 1×10⁻⁴). Training the largest backbone (OpenAI gpt-oss-20B) costs approximately $25 and takes ~12 hours on 2× A100 80GB GPUs.",
+      "content_hash": "f4bc239942774de85b9c6f2d92d82c57d075e24e5b0d0a84d58391f18a20c35f",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2512_20578::training_protocol",
+      "label": "training_protocol",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Training details from Section 3.4 and Appendix. Dataset sizes and cost figures are directly reported. Slight uncertainty on full reproducibility.",
+        "source_section": "Section 3.4"
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Gnosis training protocol",
+      "type": "claim"
+    },
+    {
+      "content": "Evaluation is conducted on three disjoint test domains, none overlapping with training data: (1) Math Reasoning: AMC12, AIME24, AIME25, HMMT Feb 2025 competition problems. (2) Open-Domain QA: 18k held-out TriviaQA questions. (3) Academic Knowledge: MMLU-Pro across 14 subject domains. The math and trivia training data are entirely disjoint from these test sets.",
+      "content_hash": "0451483cad74b5b39957fb76eec784b7035892be4cc44b1bc096a11b1c6e422d",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::eval_domains",
+      "label": "eval_domains",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Evaluation domains and test sets",
+      "type": "setting"
+    },
+    {
+      "content": "Primary metrics: (1) AUROC — Area Under ROC Curve; higher is better, 1.0 is perfect. (2) AUPR-c — Area Under Precision-Recall Curve (correct-positive framing). (3) AUPR-e — Area Under Precision-Recall Curve (error-positive framing). (4) BSS — Brier Skill Score; measures calibration relative to a naive baseline; higher is better, 1.0 is perfect. (5) ECE — Expected Calibration Error; lower is better, 0.0 is perfect.",
+      "content_hash": "2bdd0e35aceafa8991dcbd04e92e4057c05fe802b51f5b9ac7fe94d13a797a4d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::metrics_setting",
+      "label": "metrics_setting",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Evaluation metrics",
+      "type": "setting"
+    },
+    {
+      "content": "Gnosis is evaluated on four frozen backbone LLMs: (1) Qwen3 1.7B-Hybrid, (2) Qwen3 4B-Thinking, (3) Qwen3 4B-Instruct, (4) OpenAI gpt-oss-20B (20 billion parameters). These span a range of 1.7B to 20B parameters.",
+      "content_hash": "4fd0301d856a60be35354dae3328203c28df63dde2b987a90e40641ad5d76871",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::backbones_setting",
+      "label": "backbones_setting",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Backbone LLMs evaluated",
+      "type": "setting"
+    },
+    {
+      "content": "Baselines compared: (1) MLP-Prob: simple MLP probe on the final hidden state (internal, training-free variant). (2) Skywork-Reward-Gemma2-27B: large external reward model (27B parameters). (3) Skywork-Reward-Llama3.1-8B: 8B external reward model. (4) Gemini 2.5 Pro: proprietary large external judge model. Baselines span training-free probes, open-source reward models, and proprietary judges.",
+      "content_hash": "a0f159f8c63e48f25ee6110b1f25706af338f21ee1e14d953f10344ddbfc4e1f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::baselines_setting",
+      "label": "baselines_setting",
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Baselines compared against Gnosis",
+      "type": "setting"
+    },
+    {
+      "content": "Gnosis self-judge performance on math reasoning (AMC12 + AIME + HMMT) for each backbone:\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.95 | 0.95 | 0.94 | 0.59 | 0.09 |\n| Qwen3 4B-Thinking | 0.96 | 0.98 | 0.91 | 0.65 | 0.05 |\n| Qwen3 4B-Instruct | 0.93 | 0.96 | 0.89 | 0.51 | 0.08 |\n| OpenAI gpt-oss-20B | 0.85 | 0.86 | 0.86 | 0.38 | 0.04 |",
+      "content_hash": "cde363f0e582a8ba6401748eae1681a9e4df1bab7ab693d1c62d7fb090612749",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_math_perf",
+      "label": "gnosis_math_perf",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 1 data directly reported. High confidence in accuracy of transcription. Small residual uncertainty on evaluation methodology details.",
+        "source_section": "Section 4.1",
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis math reasoning performance (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis self-judge performance on open-domain QA (TriviaQA held-out, 18k questions):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.87 | 0.79 | 0.92 | 0.34 | 0.10 |\n| Qwen3 4B-Thinking | 0.89 | 0.89 | 0.88 | 0.45 | 0.05 |\n| Qwen3 4B-Instruct | 0.86 | 0.87 | 0.84 | 0.38 | 0.05 |\n| OpenAI gpt-oss-20B | 0.83 | 0.90 | 0.73 | 0.19 | 0.17 |",
+      "content_hash": "227edda78ebbae53498b22f7c8de3e2eb6fd3b75eaa420384459fa698871f416",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_trivia_perf",
+      "label": "gnosis_trivia_perf",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 1 data directly reported. High confidence.",
+        "source_section": "Section 4.1",
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis TriviaQA performance (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis self-judge performance on academic knowledge (MMLU-Pro, 14 domains):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.80 | 0.90 | 0.56 | 0.15 | 0.11 |\n| Qwen3 4B-Thinking | 0.82 | 0.93 | 0.55 | 0.21 | 0.05 |\n| Qwen3 4B-Instruct | 0.74 | 0.87 | 0.51 | 0.10 | 0.05 |\n| OpenAI gpt-oss-20B | 0.75 | 0.84 | 0.51 | 0.07 | 0.06 |",
+      "content_hash": "96486bfdec371da7e6d8a4c481738178e542bb324cdb5a9bf6f1360abe238ca8",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_mmlu_perf",
+      "label": "gnosis_mmlu_perf",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 1 data directly reported. Slightly lower confidence for MMLU-Pro as AUPR-e is notably weaker (0.56) indicating harder error detection task.",
+        "source_section": "Section 4.1",
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis MMLU-Pro performance (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "External baseline performance on math reasoning for Qwen3 1.7B evaluation: Skywork-Reward-8B AUROC 0.90; Gemini 2.5 Pro AUROC 0.91. On TriviaQA: Gemini 2.5 Pro AUROC 0.90. Skywork-Reward-27B achieves similar results to 8B variant. These external judges each have billions of parameters and require separate inference passes.",
+      "content_hash": "c063b300d5644ed87d5c9a98a6ac51132a89f37c79b9f177e4a4e0be69c17a10",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_20578::external_judge_perf",
+      "label": "external_judge_perf",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "External baseline data from Table 1. High confidence in reported numbers.",
+        "source_section": "Section 4.1",
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "External baseline performance (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "MLP-Prob baseline (simple MLP on pooled final hidden state) performance on Qwen3 1.7B:\n\n| Domain | MLP-Prob AUROC | Gnosis AUROC | MLP-Prob ECE | Gnosis ECE |\n|--------|---------------|--------------|--------------|------------|\n| Math   | 0.86          | 0.95         | 0.19         | 0.09       |\n| TriviaQA | 0.71        | 0.87         | 0.21         | 0.10       |\n| MMLU-Pro | 0.69        | 0.80         | 0.23         | 0.11       |",
+      "content_hash": "ce802e1af74ca0374526534a658fa3ede0c75d020a40a1eb59b4fff42e3d885c",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_20578::mlp_probe_perf",
+      "label": "mlp_probe_perf",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 2 data directly reported. MLP-Prob baseline implemented by same authors; numbers are highly reliable.",
+        "source_section": "Section 4.1",
+        "source_table": "Table 2"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "MLP-Prob vs Gnosis performance (Table 2)",
+      "type": "claim"
+    },
+    {
+      "content": "Latency comparison for self-judgment at 12k and 24k token response lengths (Qwen3 1.7B, Math):\n\n| Method | 12k tokens latency | 12k AUROC | 24k tokens latency | 24k AUROC |\n|--------|---------------------|-----------|---------------------|-----------|\n| Gnosis | 25ms | 0.95 | 25ms | 0.94 |\n| Skywork-Reward-8B | 930ms | 0.90 | 2,465ms | 0.88 |\n\nGnosis achieves 37× speedup over Skywork-8B at 12k tokens and 99× at 24k tokens, while also achieving higher AUROC.",
+      "content_hash": "99f0bb281b0145e4a3cc28b1fbdeffc84eeed05aba99daee755c508c27d0a5e0",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2512_20578::latency_comparison",
+      "label": "latency_comparison",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "constant_latency",
+              "latency_comparison",
+              "total_params"
+            ]
+          }
+        },
+        "source_section": "Section 4.2",
+        "source_table": "Table 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis latency vs. reward model (Table 4)",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis produces sharp, bimodal score distributions: scores cluster near 0 for incorrect and near 1 for correct responses, with minimal overlap. External judges and reward models produce diffuse, overlapping score distributions with poor discrimination at the tails. Gnosis Brier Skill Score (BSS) on math (Qwen3 1.7B) is 0.59 vs. near-zero BSS for external baselines, indicating substantially better calibrated probability estimates.",
+      "content_hash": "fda4dddea45372628efe1c8d363b4803a2178ec8eef104ac013198ad3f88c7bf",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2512_20578::calibration_quality",
+      "label": "calibration_quality",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "calibration_quality",
+              "gnosis_math_perf",
+              "mlp_probe_perf"
+            ]
+          }
+        },
+        "source_section": "Section 4.1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis calibration superiority (bimodal distributions)",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis (trained on the target backbone's internal states) predicts AUROC 0.95, BSS 0.59, ECE 0.09 for math reasoning on Qwen3 1.7B, using only ~5M parameters and 25ms latency.",
+      "content_hash": "3fe4d6bd654b4c38a406e6fa6f5dc8f4db669df7e1d3ade87360a05acb3e99be",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2512_20578::pred_gnosis_math",
+      "label": "pred_gnosis_math",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Prediction about Gnosis math performance. High prior because this prediction is directly confirmed by Table 1."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis math prediction for Qwen3 1.7B",
+      "type": "claim"
+    },
+    {
+      "content": "External judges (Skywork-Reward-8B at 0.90, Gemini 2.5 Pro at 0.91 AUROC) require billions of parameters and hundreds to thousands of milliseconds latency for the same math reasoning self-judgment task on Qwen3 1.7B.",
+      "content_hash": "1bffeee8e849c46e1392f88c977b43ee6ee46f6a333e0fe9a11078c12db9de2b",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2512_20578::pred_ext_math",
+      "label": "pred_ext_math",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Prediction about external judge performance. High prior — directly confirmed by Table 1 baselines."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "External judge math performance for Qwen3 1.7B",
+      "type": "claim"
+    },
+    {
+      "content": "The observed self-judgment accuracy on math reasoning (Qwen3 1.7B) is: Gnosis AUROC 0.95 vs. Skywork-8B AUROC 0.90 vs. Gemini 2.5 Pro AUROC 0.91, with Gnosis also achieving superior BSS (0.59) and ECE (0.09).",
+      "content_hash": "3b3a838fc09c4678b0eaaf3e03fb6455cad0c2e2218ee37303ad29e09f61725a",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2512_20578::obs_math",
+      "label": "obs_math",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_external_math",
+              "obs_math",
+              "pred_gnosis_math"
+            ]
+          }
+        },
+        "source_section": "Section 4.1",
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observed math judgment benchmark result",
+      "type": "claim"
+    },
+    {
+      "content": "External judges (reward models and proprietary LLMs) could explain the observed benchmark results at least as well as Gnosis, if their larger parameter counts provide richer scoring capability.",
+      "content_hash": "5bea5351f4b14778a35bc3ef52fb80403a2ea4ff36c0870756e2c1d2cd074435",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2512_20578::alt_external_math",
+      "label": "alt_external_math",
+      "metadata": {
+        "prior": 0.35,
+        "prior_justification": "Alternative: external judges explain math benchmark as well as Gnosis. Low prior because observed AUROC (0.90-0.91) is clearly below Gnosis (0.95). The alternative does not explain the observation as well as the hypothesis."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Alternative: external judges explain benchmark",
+      "type": "claim"
+    },
+    {
+      "content": "compare(Gnosis (trained on the target backbone's internal states) predicts AUROC 0.95, BSS 0.59, ECE 0.09 for math reasoning on Qwen3 1.7B, using only ~5M parameters and 25ms latency., External judges (Skywork-Reward-8B at 0.90, Gemini 2.5 Pro at 0.91 AUROC) require billions of parameters and hundreds to thousands of milliseconds latency for the same math reasoning self-judgment task on Qwen3 1.7B., The observed self-judgment accuracy on math reasoning (Qwen3 1.7B) is: Gnosis AUROC 0.95 vs. Skywork-8B AUROC 0.90 vs. Gemini 2.5 Pro AUROC 0.91, with Gnosis also achieving superior BSS (0.59) and ECE (0.09).)",
+      "content_hash": "9d2219adcdc1aae8edc1456c717c027ea93d35f1a7af6784f818a5434c09f658",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2512_20578::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis achieves higher AUROC than all compared baselines (MLP-Prob, Skywork-Reward-8B, Gemini 2.5 Pro) on math reasoning for Qwen3 1.7B: Gnosis 0.95 vs. best baseline 0.91.",
+      "content_hash": "763b4ee45613ad6e879e40d3390c03f866a53af9570b8713e9f78cd534417f68",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2512_20578::gnosis_outperforms_math",
+      "label": "gnosis_outperforms_math",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "external_judge_perf",
+              "gnosis_math_perf",
+              "gnosis_outperforms_math",
+              "gnosis_superior_overall",
+              "mlp_probe_perf"
+            ]
+          }
+        },
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis outperforms baselines on math",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis achieves higher AUROC than MLP-Prob on TriviaQA for Qwen3 1.7B (0.87 vs. 0.71), and achieves comparable AUROC to Gemini 2.5 Pro (0.87 vs. 0.90) while using negligible compute.",
+      "content_hash": "e38ce992089f4851bc8919e052f5dc4ab97da918362bc58ce62954c9a8790ede",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2512_20578::gnosis_outperforms_trivia",
+      "label": "gnosis_outperforms_trivia",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "gnosis_outperforms_trivia",
+              "gnosis_superior_overall",
+              "gnosis_trivia_perf",
+              "mlp_probe_perf"
+            ]
+          }
+        },
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis outperforms or matches baselines on TriviaQA",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis achieves higher AUROC than MLP-Prob on MMLU-Pro for Qwen3 1.7B (0.80 vs. 0.69), and outperforms or matches large external judges on this academic knowledge benchmark.",
+      "content_hash": "629843edbbe1170feff5422f84e4c147cec4965dd2361d0caa3555a4f22d3860",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2512_20578::gnosis_outperforms_mmlu",
+      "label": "gnosis_outperforms_mmlu",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "gnosis_mmlu_perf",
+              "gnosis_outperforms_mmlu",
+              "gnosis_superior_overall",
+              "mlp_probe_perf"
+            ]
+          }
+        },
+        "source_table": "Table 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis outperforms baselines on MMLU-Pro",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis consistently outperforms strong internal baselines (MLP-Prob) and large external judges (Skywork reward models, Gemini 2.5 Pro) in both accuracy (AUROC, AUPR) and calibration (BSS, ECE) across math reasoning, open-domain QA, and academic knowledge benchmarks, over frozen backbone LLMs ranging from 1.7B to 20B parameters.",
+      "content_hash": "40da040834515b49c3b4063843862ce5d0c017a66b9426445258da3b03d0d5e1",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_superior_overall",
+      "label": "gnosis_superior_overall",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "gnosis_superior_overall"
+            ]
+          }
+        },
+        "source_section": "Abstract, Section 4"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Gnosis overall superiority claim",
+      "type": "claim"
+    },
+    {
+      "content": "Sibling models are LLMs from the same model family (e.g., Qwen3) that share the same overall architecture and training procedure but differ in scale (number of parameters). For example, Qwen3 1.7B, 4B, and 8B are siblings within the Qwen3 family.",
+      "content_hash": "2f151533036d7d2de8929727f786566a11e7def0dacb1638234e8ef0074695b3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::sibling_model_setting",
+      "label": "sibling_model_setting",
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Sibling model definition",
+      "type": "setting"
+    },
+    {
+      "content": "Zero-shot transfer in this context means using a Gnosis head trained on one backbone (e.g., Qwen3 1.7B) to judge outputs from a different, larger backbone (e.g., Qwen3 4B or 8B) without any additional fine-tuning on the larger model. The head is applied directly.",
+      "content_hash": "646d14402cfb888efc0510d44a0c55bf28b6e77fecabaafa5a897c0e4282ddc4",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::zero_shot_transfer_setting",
+      "label": "zero_shot_transfer_setting",
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Zero-shot transfer evaluation setup",
+      "type": "setting"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to larger Qwen3 sibling models (math reasoning):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B (baseline) | 0.95 | 0.95 | 0.09 |\n| Gnosis self-judge 4B-Thinking | 0.96 | 0.98 | 0.05 |\n| Gnosis self-judge 8B-Hybrid | 0.97 | 0.97 | 0.08 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.97 | 0.99 | 0.07 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.97 | 0.98 | 0.10 |\n\nZero-shot transfer AUROC (0.97) matches or exceeds self-trained Gnosis heads, substantially outperforming Skywork-Reward-8B (0.81 AUROC on math).",
+      "content_hash": "0c3f3ee4ef147a89720e625b7ee8f6291ae438ce8e592bdab0af8d49511c6680",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::transfer_math_results",
+      "label": "transfer_math_results",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 3 transfer results directly reported. High confidence.",
+        "source_section": "Section 4.3",
+        "source_table": "Table 3"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Sibling model transfer results — math (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to Qwen3 4B and 8B siblings (TriviaQA):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B | 0.87 | 0.79 | 0.10 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.86 | 0.86 | 0.04 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.84 | 0.88 | 0.12 |\n\nTransfer AUROC (0.84-0.86) is comparable to self-judge AUROC (0.87), indicating robust generalization across model scale within a family.",
+      "content_hash": "20193dc8ca0f6edf8751e3e9868745de57778c055f8c4781503f94361f627994",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::transfer_trivia_results",
+      "label": "transfer_trivia_results",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "Table 3 transfer results directly reported. High confidence.",
+        "source_section": "Section 4.3",
+        "source_table": "Table 3"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Sibling model transfer results — TriviaQA (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to Qwen3 4B and 8B siblings (MMLU-Pro):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B | 0.80 | 0.90 | 0.11 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.81 | 0.93 | 0.16 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.83 | 0.94 | 0.15 |\n\nTransfer AUROC (0.81-0.83) is comparable to self-judge (0.80), suggesting the internal error-prediction circuits are shared across sibling model scales.",
+      "content_hash": "8b32a74dc76ab1176498a59d1015f925b1cfb0cfc3824163f9c529d1d9a79098",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20578::transfer_mmlu_results",
+      "label": "transfer_mmlu_results",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "Table 3 transfer results directly reported. High confidence.",
+        "source_section": "Section 4.3",
+        "source_table": "Table 3"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Sibling model transfer results — MMLU-Pro (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "A Gnosis head trained on a small 1.7B model transfers zero-shot to larger 4B and 8B sibling models (within the same model family), achieving AUROC on math reasoning (0.97) that matches or exceeds self-trained heads (0.96-0.97) and substantially outperforms the Skywork-Reward-8B external judge (0.81 AUROC).",
+      "content_hash": "20a01e5f18a48f6abe995c88a6b0173b2cf0d4bb7a7a925e5f4f63c76fd76b2b",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_20578::transfer_generalizes",
+      "label": "transfer_generalizes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_transfer_accidental",
+              "frozen_backbone",
+              "internal_cues_exist",
+              "pred_shared",
+              "shared_circuits_hypothesis",
+              "transfer_generalizes",
+              "transfer_math_results",
+              "transfer_mmlu_results",
+              "transfer_trivia_results"
+            ]
+          }
+        },
+        "source_section": "Section 4.3, Abstract"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Zero-shot transfer to sibling models generalizes",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis fails between architecturally different or stylistically divergent models (e.g., from a thinking-mode to an instruct-mode model, or between different model families). The internal circuit representations differ sufficiently that cross-family transfer yields substantially degraded performance.",
+      "content_hash": "dd7ff74a792ca7c085d28454a93a0539916ece76af213c340b415fae6ae7d667",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_20578::transfer_fails_cross_family",
+      "label": "transfer_fails_cross_family",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Cross-family transfer failure described in paper's limitations. Not directly tested with full ablation tables; some uncertainty remains.",
+        "source_section": "Section 5, Limitations"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Cross-family transfer limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Within a model family, sibling models share similar internal circuit structure for error prediction: the same features of hidden states and attention patterns that discriminate correct from incorrect outputs in a small model also discriminate them in larger siblings, reflecting a shared representational basis.",
+      "content_hash": "72b54f20cb5c8e128b9645a4cbfa40fd18767d93e7dfc366f712653aeed9daba",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_20578::shared_circuits_hypothesis",
+      "label": "shared_circuits_hypothesis",
+      "metadata": {
+        "prior": 0.68,
+        "prior_justification": "The shared internal circuit hypothesis is the paper's interpretation of transfer success. Plausible but not verified by direct circuit-level analysis. Transfer data supports it but alternative explanations exist.",
+        "source_section": "Section 4.3"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Shared error-prediction circuits within model family",
+      "type": "claim"
+    },
+    {
+      "content": "If sibling models share error-prediction circuits, a Gnosis head trained on a small sibling should transfer zero-shot with near-self-judge performance to larger siblings.",
+      "content_hash": "6e590d945f2ca327270e35513c5e19f5b6384879253acef641ab51c9d3570998",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_20578::pred_shared",
+      "label": "pred_shared",
+      "metadata": {
+        "prior": 0.72,
+        "prior_justification": "Prediction derived from shared_circuits_hypothesis. Moderate confidence matching the hypothesis's credibility."
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Shared circuit prediction: transfer should work",
+      "type": "claim"
+    },
+    {
+      "content": "If error-prediction circuits differ across scales, zero-shot transfer should fail (AUROC drops substantially below self-judge performance).",
+      "content_hash": "c0a54fc56baed89eccd7b9e4318ca365e5aa5fc8e057703190d580109a153bf2",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_20578::pred_no_shared",
+      "label": "pred_no_shared",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "Prediction that transfer would fail if circuits differ. Low prior because the paper's results contradict this prediction."
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "No-shared-circuit prediction: transfer should fail",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot transfer success could be due to domain-level statistical similarities (same evaluation domains) rather than shared internal circuits, i.e., the head memorized dataset-level patterns that coincidentally transfer.",
+      "content_hash": "01dbfcd5727c485d93822d19fdc78cd3691f1b22919ae833843526dee184044f",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2512_20578::alt_transfer_accidental",
+      "label": "alt_transfer_accidental",
+      "metadata": {
+        "prior": 0.28,
+        "prior_justification": "Alternative: transfer success due to dataset-level similarity not shared circuits. Low prior because this predicts random-level transfer on architecturally different models, which is not observed."
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "title": "Alternative: transfer due to dataset similarity, not circuits",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If sibling models share error-prediction circuits, a Gnosis head trained on a small sibling should transfer zero-shot with near-self-judge performance to larger siblings., If error-prediction circuits differ across scales, zero-shot transfer should fail (AUROC drops substantially below self-judge performance)., A Gnosis head trained on a small 1.7B model transfers zero-shot to larger 4B and 8B sibling models (within the same model family), achieving AUROC on math reasoning (0.97) that matches or exceeds self-trained heads (0.96-0.97) and substantially outperforms the Skywork-Reward-8B external judge (0.81 AUROC).)",
+      "content_hash": "c4f0e9e79bbd98eb731ee2283f19f8d9fad81a8b2670886a6f9aa58c77cbc4f2",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2512_20578::_anon_001",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_transfer",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "All ablation experiments use Qwen3 1.7B-Hybrid as the backbone unless stated otherwise. The math reasoning test set (AMC12 + AIME + HMMT) is used as the primary benchmark.",
+      "content_hash": "87da948e55fe85f38e2c21ff99a8c338a651829753492d20f55799abbcfefd38",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::ablation_backbone_setting",
+      "label": "ablation_backbone_setting",
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Ablation study setup",
+      "type": "setting"
+    },
+    {
+      "content": "Using only the Hidden Circuit Encoder (no attention circuit) achieves:\n\n| Domain | AUROC |\n|--------|-------|\n| Math | 0.92 |\n| TriviaQA | 0.87 |\n| MMLU-Pro | 0.78 |\n\nThe hidden-only variant provides a robust baseline, performing at 0.87 on TriviaQA (matching the full Gnosis model) but 0.03 below on math and 0.02 below on MMLU-Pro.",
+      "content_hash": "019357841b5efcc23cf88e96c08a6517e1bae27e656cea3ed625f6af464f539d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::hidden_only_perf",
+      "label": "hidden_only_perf",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 5 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 5"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Hidden-only stream performance (Table 5)",
+      "type": "claim"
+    },
+    {
+      "content": "Using only the Attention Circuit Encoder (no hidden circuit) achieves:\n\n| Domain | AUROC |\n|--------|-------|\n| Math | 0.92 |\n| TriviaQA | 0.78 |\n| MMLU-Pro | 0.80 |\n\nAttention-only performs 0.03 below full Gnosis on math, 0.09 below on TriviaQA (largest drop), and matches Gnosis on MMLU-Pro.",
+      "content_hash": "bff16f57dcc834c0d9bdf901e264fd5febd1f4681a7089dc1f9f0a4c134cbc3c",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::attention_only_perf",
+      "label": "attention_only_perf",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 5 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 5"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Attention-only stream performance (Table 5)",
+      "type": "claim"
+    },
+    {
+      "content": "The fused Gnosis model (hidden + attention circuits) achieves higher AUROC than either stream alone on math reasoning (0.95 vs. 0.92 for each individual stream), and outperforms attention-only on TriviaQA (0.87 vs. 0.78). The two streams provide complementary information: hidden states are most informative for TriviaQA, while attention maps add discriminative value for math reasoning tasks.",
+      "content_hash": "9597040dedc11f5daf90ffc7ff8fb6f0dfea650f7664cb3443ae7377dd9eae3f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::fusion_benefit",
+      "label": "fusion_benefit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_only_perf",
+              "cnn_stats_perf",
+              "fusion_benefit",
+              "hidden_only_perf"
+            ]
+          }
+        },
+        "source_section": "Section 4.4",
+        "source_table": "Table 5"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Fusion benefit: complementary information streams",
+      "type": "claim"
+    },
+    {
+      "content": "Per-map feature extraction ablation results for the Attention Circuit (Qwen3 1.7B):\n\n| Variant | Math AUROC | TriviaQA AUROC | MMLU-Pro AUROC |\n|---------|-----------|----------------|----------------|\n| CNN + Statistics (Gnosis) | 0.92 | 0.78 | 0.80 |\n| CNN only | 0.92 | 0.79 | 0.79 |\n| Statistics only | 0.92 | 0.75 | 0.76 |\n\nCNN + Statistics is the best overall; statistics-only drops by 0.03-0.04 AUROC on TriviaQA and MMLU-Pro, suggesting handcrafted attention statistics contribute meaningfully beyond learned CNN features.",
+      "content_hash": "8aba5671473f79f4a03203e02af9482137898537b4ccb0bc86a0c298ebf24d17",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20578::cnn_stats_perf",
+      "label": "cnn_stats_perf",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "Table 6 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 6"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Attention per-map feature extractor ablation (Table 6)",
+      "type": "claim"
+    },
+    {
+      "content": "Attention Circuit architectural component ablation (math reasoning, Qwen3 1.7B):\n\n| Variant | Params | AUROC |\n|---------|--------|-------|\n| Gnosis (Axial + PMA) | 1.4M | 0.92 |\n| Linear Projection Only | 1.1M | 0.84 |\n| Global Transformer | 4.5M | 0.92 |\n| Remove Layer/Head Embeddings | 1.4M | 0.90 |\n| Replace PMA with Mean Pooling | 0.9M | 0.85 |\n\nAxial convolutions + PMA achieve the same AUROC as a much larger Global Transformer (4.5M), while being 3.2× more parameter-efficient. Removing PMA (mean pooling) or positional embeddings drops AUROC by 0.02-0.07.",
+      "content_hash": "a39014c25383bf2bf5eed6ed007f6ea0233ef1a1a6f0b2afd3dd04828daf4179",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20578::attention_topology_ablation",
+      "label": "attention_topology_ablation",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "Table 7 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 7"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Attention circuit topology ablation (Table 7)",
+      "type": "claim"
+    },
+    {
+      "content": "Attention map spatial resolution ablation (math reasoning, Qwen3 1.7B):\n\n| Variant | AUROC |\n|---------|-------|\n| All layers, all maps | 0.91 |\n| First and last layers only | 0.64 |\n| Small grid (64×64 pixels) | 0.68 |\n| Large grid (512×512 pixels) | 0.92 |\n\nUsing only first and last layers drops AUROC by 0.27, confirming that middle-layer attention patterns carry important discriminative information. Resolution of 256×256 (Gnosis default) is sufficient; larger grids provide marginal improvement.",
+      "content_hash": "57537e4bf0d461328b07ea889b231604c2646dc3191efaa21b1357867015a94f",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_20578::attention_grid_ablation",
+      "label": "attention_grid_ablation",
+      "metadata": {
+        "prior": 0.91,
+        "prior_justification": "Table 8 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 8"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Attention map resolution and layer coverage ablation (Table 8)",
+      "type": "claim"
+    },
+    {
+      "content": "Hidden Circuit component ablation results (math reasoning, Qwen3 1.7B):\n\n| Variant | Params | AUROC | Drop |\n|---------|--------|-------|------|\n| Gnosis (full) | 2.6M | 0.92 | — |\n| Remove Phase 1 (local processing) | 2.4M | 0.89 | −0.03 |\n| Remove Gating/SE | 2.6M | 0.91 | −0.01 |\n| Remove Multi-scale convolutions | 2.4M | 0.90 | −0.02 |\n| Remove SAB (global aggregation) | 1.3M | 0.85 | −0.07 |\n| Replace PMA with Mean Pooling | 2.1M | 0.89 | −0.03 |\n| Pooled MLP baseline | 0.7M | 0.82 | −0.10 |\n\nRemoving SAB causes the largest drop (−0.07 AUROC), confirming that permutation-invariant global aggregation over layer representations is the most critical component. Local temporal processing (Phase 1) contributes −0.03; a simple pooled MLP baseline is 0.10 AUROC below full Gnosis.",
+      "content_hash": "d14e3c6a29ccfb03cce3cbb8a75dca165d083ec3245e9a8293fce65e96e796f3",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_20578::hidden_component_ablation",
+      "label": "hidden_component_ablation",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 9 ablation data directly reported. High confidence.",
+        "source_section": "Section 4.4",
+        "source_table": "Table 9"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "Hidden circuit component ablation (Table 9)",
+      "type": "claim"
+    },
+    {
+      "content": "The Set Attention Block (SAB) component in the Hidden Circuit Encoder is the single most important architectural component: removing it degrades math reasoning AUROC from 0.92 to 0.85 (−0.07 drop), more than removing any other individual component. This confirms that permutation-invariant aggregation over the layer sequence is essential for learning correctness-discriminating representations.",
+      "content_hash": "41246e64d7473f00b8263bd6a33460e8b31fe781c82708502cacc1c36f1ae8b6",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_20578::sab_critical",
+      "label": "sab_critical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "hidden_component_ablation",
+              "sab_critical"
+            ]
+          }
+        },
+        "source_table": "Table 9"
+      },
+      "module": "s6_ablations",
+      "parameters": [],
+      "title": "SAB as most critical hidden circuit component",
+      "type": "claim"
+    },
+    {
+      "content": "Partial generation evaluation applies Gnosis to incomplete responses: at k% completion, the model has generated k% of the final response tokens. Gnosis observes the hidden states and attention maps up to that point and predicts whether the full response will be correct. Gnosis is not re-trained for partial generation; it is applied zero-shot.",
+      "content_hash": "7a1984efb211f6e430ff95d96ed4af99cc49b23c5955be701ffa67dd35438e61",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::partial_gen_setting",
+      "label": "partial_gen_setting",
+      "module": "s7_early_detection",
+      "parameters": [],
+      "title": "Partial generation evaluation setup",
+      "type": "setting"
+    },
+    {
+      "content": "Compute-aware early termination uses Gnosis's partial-generation predictions to stop generation early when a reasoning trajectory is predicted to fail. This can reduce wasted compute on doomed responses and trigger compute reallocation (e.g., retry or switch strategy) before full generation completes.",
+      "content_hash": "f8ea7e984c4478e37ca43b04a8cbeea56a3ee4537e52bf80cc843cde9bfcf358",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::early_termination_setting",
+      "label": "early_termination_setting",
+      "module": "s7_early_detection",
+      "parameters": [],
+      "title": "Compute-aware early termination concept",
+      "type": "setting"
+    },
+    {
+      "content": "Gnosis applied to partial math reasoning generations (zero-shot, no retraining) achieves:\n\n| Completion % | Gnosis AUROC | MLP-Prob AUROC | Skywork-8B AUROC |\n|-------------|-------------|----------------|------------------|\n| 20% | ~0.88 | below 0.85 | below 0.85 |\n| 40% | ~0.92 | ~0.86 | ~0.90 |\n| 60% | ~0.93 | ~0.88 | ~0.91 |\n| 80% | ~0.94 | ~0.89 | ~0.91 |\n| 100% (full) | 0.95 | 0.86 | 0.90 |\n\nAt 40% completion, Gnosis matches or exceeds the full-completion performance of competing methods, enabling early stopping of failing trajectories.",
+      "content_hash": "09c9db06ef744a491155c03a409e3b10062335ce8503f286b1496fa85143631f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20578::early_detection_perf",
+      "label": "early_detection_perf",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "early_detection_perf",
+              "frozen_backbone",
+              "gnosis_generalizes_partial"
+            ]
+          }
+        },
+        "source_figure": "Figure 3",
+        "source_section": "Section 4.5"
+      },
+      "module": "s7_early_detection",
+      "parameters": [],
+      "title": "Early error detection performance at partial completions (Figure 3)",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis generalizes zero-shot to partial generations without additional training, enabling early detection of failing reasoning trajectories. After observing only 40% of a math reasoning completion, Gnosis achieves AUROC comparable to competing methods operating on full completions.",
+      "content_hash": "9fc9f55939f55a83ec2c1dbc4665aa20fa207e7f5635c731c74e661b12675203",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_20578::gnosis_generalizes_partial",
+      "label": "gnosis_generalizes_partial",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "constant_latency",
+              "gnosis_generalizes_partial",
+              "internal_cues_exist"
+            ]
+          }
+        },
+        "source_section": "Section 4.5, Abstract"
+      },
+      "module": "s7_early_detection",
+      "parameters": [],
+      "title": "Zero-shot generalization to partial generations",
+      "type": "claim"
+    },
+    {
+      "content": "Because Gnosis can predict correctness from partial generations, it enables compute-aware control: systems can terminate failing reasoning trajectories early and reallocate compute to retries or alternative strategies, reducing average inference cost for multi-step reasoning tasks.",
+      "content_hash": "5fa5ffbc37ce11b8048206942273c185ba52dc57d9037c6595187ea2ceacd4e2",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_20578::early_stopping_implication",
+      "label": "early_stopping_implication",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "early_stopping_implication",
+              "gnosis_generalizes_partial"
+            ]
+          }
+        },
+        "source_section": "Section 4.5"
+      },
+      "module": "s7_early_detection",
+      "parameters": [],
+      "title": "Early stopping enables compute-aware control",
+      "type": "claim"
+    },
+    {
+      "content": "Visualization of Gnosis learned representations reveals clear class separation between correct and incorrect responses. Hidden state features show the clearest separation, attention features show weaker but still discriminative separation, and the merged (fused) feature space provides the sharpest overall discrimination between correct and incorrect outputs.",
+      "content_hash": "a93307a07a5d4994a4d57cbfab9a58a11df35fcca06bc63099fc0eebb18d222d",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20578::feature_analysis",
+      "label": "feature_analysis",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "Visualization-based analysis. Results are qualitative ('clear separation') without statistical significance testing. Moderate confidence.",
+        "source_section": "Section 4, Feature Analysis"
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "title": "Feature space discrimination analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Backbone LLM outcome statistics on evaluation datasets:\n\n| Backbone | Domain | Accuracy | Hallucination | No-answer |\n|----------|--------|----------|---------------|-----------|\n| Qwen3 1.7B-Hybrid | Math | 44.87% | 47.76% | 7.37% |\n| Qwen3 1.7B-Hybrid | TriviaQA | 33.54% | 55.67% | 10.79% |\n| Qwen3 1.7B-Hybrid | MMLU-Pro | 66.09% | 31.53% | 2.39% |\n| Qwen3 4B-Thinking | Math | 63.27% | 25.31% | 11.42% |\n| Qwen3 4B-Instruct | Math | 57.51% | 29.26% | 13.22% |\n| OpenAI gpt-oss-20B | Math | 52.53% | 42.63% | 4.84% |\n\nHallucination rates of 25-56% across models confirm the practical importance of self-verification mechanisms.",
+      "content_hash": "265f986a56d7940ef8759e3b213b3fa34aa8f7cf02813d12fa316680536d27e0",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20578::backbone_accuracy_stats",
+      "label": "backbone_accuracy_stats",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 11 backbone outcome statistics directly reported. High confidence.",
+        "source_section": "Section 4, Appendix",
+        "source_table": "Table 11"
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "title": "Backbone outcome statistics (Table 11)",
+      "type": "claim"
+    },
+    {
+      "content": "Reliable correctness signals are demonstrably present in LLM internal states (hidden states and attention patterns) and can be extracted with high accuracy using a lightweight trained probe (~5M parameters), without any access to external reference answers, external judges, or additional LLM inference calls.",
+      "content_hash": "476875370d092feca96c73f4f8cf98503b3474ed95f7e5457191725e913f254a",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_20578::internal_signals_claim",
+      "label": "internal_signals_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "calibration_quality",
+              "feature_analysis",
+              "gnosis_superior_overall",
+              "internal_signals_claim",
+              "transfer_generalizes"
+            ]
+          }
+        },
+        "source_section": "Section 5, Conclusions"
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "title": "Internal signals are reliable and extractable",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis requires access to the model's hidden states and attention maps. This access is unavailable for proprietary API-only models (e.g., GPT-4, Claude), restricting Gnosis to open-weight models where internal activations are exposed.",
+      "content_hash": "d912e911b78619721b0b940b405231a4fb219c6143d46f0be23b4edda31b9795",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20578::proprietary_model_limitation",
+      "label": "proprietary_model_limitation",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Fundamental architectural constraint: proprietary API models do not expose internal activations. This is a hard constraint, not an empirical claim.",
+        "source_section": "Section 5, Limitations"
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "title": "Proprietary model access limitation",
+      "type": "claim"
+    },
+    {
+      "content": "External judges (reward models, proprietary LLMs) uniformly outperform internal probing mechanisms for LLM self-verification in accuracy and calibration.",
+      "content_hash": "440c27f07caf9efab8f0e2dc01090f3d9eb8434873960ca8c0542c15d082bda7",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20578::external_always_superior",
+      "label": "external_always_superior",
+      "metadata": {
+        "prior": 0.08,
+        "prior_justification": "The claim that external judges always outperform internal probes is refuted by the paper's results: Gnosis (internal, ~5M params) achieves AUROC 0.95 vs Skywork-8B (external, 8B params) at 0.90. The universal claim is very likely false."
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "title": "External judges always superior claim",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20578::not_both_internal_external",
+      "label": "not_both_internal_external",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s8_discussion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::external_judge_weakness,github:2512_20578::multi_sample_weakness,github:2512_20578::text_critique_weakness)",
+      "content_hash": "274ac389c473ec2e320a4de80e26f9eb2d160987736635827bf896acd0858914",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_8afd8e8d",
+      "label": "__conjunction_result_8afd8e8d",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::external_judge_weakness,github:2512_20578::multi_sample_weakness,github:2512_20578::text_critique_weakness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4960ec10f355c588",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_8afd8e8d,github:2512_20578::internal_cues_exist)",
+      "content_hash": "bfa30d40719e5f42a851051736c91ff63f599d1ffafd566dc03128a4156a9669",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_7e0279c7",
+      "label": "__implication_result_7e0279c7",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_8afd8e8d,github:2512_20578::internal_cues_exist)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4960ec10f355c588",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::internal_cues_exist,github:2512_20578::gnosis_proposal)",
+      "content_hash": "b204c5be55cb9f78bef7fee219690f38415a31559cdac6b8857191f5f7ddbac2",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_f4454080",
+      "label": "__implication_result_f4454080",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::internal_cues_exist,github:2512_20578::gnosis_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_24d02ab95a6500d8",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::internal_probe_weakness,github:2512_20578::chain_of_embedding_weakness)",
+      "content_hash": "e40c7343de422963ab0690dc3251b2c3e74b725623a0de5479cb1e5b9c687871",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_b22fcc9f",
+      "label": "__conjunction_result_b22fcc9f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::internal_probe_weakness,github:2512_20578::chain_of_embedding_weakness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e26a27e18d9e6285",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_b22fcc9f,github:2512_20578::internal_cues_exist)",
+      "content_hash": "44229f4ba3854beb11a712f02b287507798ba5bc1272a0c82cc2478397ac4257",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_17e73794",
+      "label": "__implication_result_17e73794",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_b22fcc9f,github:2512_20578::internal_cues_exist)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e26a27e18d9e6285",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::reward_model_cost,github:2512_20578::external_judge_weakness)",
+      "content_hash": "ffae7a42b09f15b2e60e716dfc86e3dbf41a52da8ecbd871515614b97dc1ae9f",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_456426b3",
+      "label": "__implication_result_456426b3",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::reward_model_cost,github:2512_20578::external_judge_weakness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_65ed5cfa5fcedfbb",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::verbalized_conf_weakness,github:2512_20578::text_critique_weakness)",
+      "content_hash": "4dbe9af32364ed9e99e753f7ba69151200ef752eb59d704fd9b216c387e669f2",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_f01f6e29",
+      "label": "__implication_result_f01f6e29",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::verbalized_conf_weakness,github:2512_20578::text_critique_weakness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aaf6dfdf838ee12c",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::hidden_circuit_arch,github:2512_20578::attention_circuit_arch)",
+      "content_hash": "c00f19bfdcbb921955dfa0d85468d90e8881cc5d54e8cc13ea0c226d5151a3c7",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_c16cc41b",
+      "label": "__conjunction_result_c16cc41b",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::hidden_circuit_arch,github:2512_20578::attention_circuit_arch)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7696d4e61a1b8700",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_c16cc41b,github:2512_20578::constant_latency)",
+      "content_hash": "e8d496a6aef10ce613b606ff2d7353fd8020f1c185c4ebf01034cf4a8729b5b1",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_4f85ce2d",
+      "label": "__implication_result_4f85ce2d",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_c16cc41b,github:2512_20578::constant_latency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7696d4e61a1b8700",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::hidden_circuit_arch,github:2512_20578::attention_circuit_arch,github:2512_20578::gated_fusion_arch)",
+      "content_hash": "57f4ce68e732e85f22fad09a1ffa7649eff7c5e8c1390cf1c3b0c5c368236585",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_54e21985",
+      "label": "__conjunction_result_54e21985",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::hidden_circuit_arch,github:2512_20578::attention_circuit_arch,github:2512_20578::gated_fusion_arch)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0ff884365b7d4d80",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_54e21985,github:2512_20578::total_params)",
+      "content_hash": "5714e157bfc3f33f9337181023f1a67bf8d24778de679d7619591cdd59e7eb21",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_92c6b24c",
+      "label": "__implication_result_92c6b24c",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_54e21985,github:2512_20578::total_params)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0ff884365b7d4d80",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::training_protocol,github:2512_20578::frozen_backbone)",
+      "content_hash": "5cfac108b11c43c6b4154d2c8e92b63f8d2d5812a25f5c94d05f4aa15cec09b8",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_507438a8",
+      "label": "__implication_result_507438a8",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::training_protocol,github:2512_20578::frozen_backbone)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0af800d294cab26c",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::pred_gnosis_math,github:2512_20578::obs_math)",
+      "content_hash": "b7cfbeb395b23759091180d62c9307fb47624d5635fc160dde27807062a2f53a",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_291cfafd",
+      "label": "__implication_result_291cfafd",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::pred_gnosis_math,github:2512_20578::obs_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b2e1a473c6b35a91",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::alt_external_math,github:2512_20578::obs_math)",
+      "content_hash": "4d9103b2ff1fa4be9d0c2d44fb004fcbfc8dd4f2fbf7dcf8dd26af9d9fe613d1",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_55aff500",
+      "label": "__implication_result_55aff500",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::alt_external_math,github:2512_20578::obs_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_034aaef3a565cc60",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_20578::pred_gnosis_math,github:2512_20578::obs_math)",
+      "content_hash": "27f46ad48922a9c77669e20a8c4024c97bdd2dda1782c49aa9074451555fe5b9",
+      "exported": false,
+      "id": "github:2512_20578::__equivalence_result_5d6df5af",
+      "label": "__equivalence_result_5d6df5af",
+      "metadata": {
+        "canonical_name": "matches(github:2512_20578::pred_gnosis_math,github:2512_20578::obs_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_c60c728a2d0df1ab",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_20578::pred_ext_math,github:2512_20578::obs_math)",
+      "content_hash": "e241c40376837a719be7047fa28f44c23fb559bb1adce6f3a5d12c287c785618",
+      "exported": false,
+      "id": "github:2512_20578::__equivalence_result_8eb06019",
+      "label": "__equivalence_result_8eb06019",
+      "metadata": {
+        "canonical_name": "matches(github:2512_20578::pred_ext_math,github:2512_20578::obs_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_c60c728a2d0df1ab",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_math)",
+      "content_hash": "adb1654fdac1b2d27849645be1d2726312047e7f6d185d8759161b73f539ea1f",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_912b4f53",
+      "label": "__implication_result_912b4f53",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_549ade7f01f47a33",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_trivia)",
+      "content_hash": "54dfc4ec10051060113b9dedcd86cb81cab5e97e3d548db9053a8adfe5621275",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_14c44b50",
+      "label": "__implication_result_14c44b50",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_trivia)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9415ad40ece6ac10",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_mmlu)",
+      "content_hash": "59b822bd47450fa61e6a881021e3b088a1bee5ad56cb23f0f328615f2da9eaf5",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_33ef5021",
+      "label": "__implication_result_33ef5021",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::gnosis_superior_overall,github:2512_20578::gnosis_outperforms_mmlu)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0f1f06448f3cd41f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::constant_latency,github:2512_20578::total_params)",
+      "content_hash": "8994609231ee86026b5b2ba572ed1116d455ebf26c972b7a0ef80f16050d800a",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_edd6072a",
+      "label": "__conjunction_result_edd6072a",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::constant_latency,github:2512_20578::total_params)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_77cc3e69ed22b0c5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_edd6072a,github:2512_20578::latency_comparison)",
+      "content_hash": "0623e2d495374fe4b682cbfec124138901959a14916a84f221f12af1f388de08",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_6bd83fd7",
+      "label": "__implication_result_6bd83fd7",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_edd6072a,github:2512_20578::latency_comparison)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_77cc3e69ed22b0c5",
+        "owning_strategy_type": "support",
+        "prior": 0.94,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_math_perf,github:2512_20578::external_judge_perf,github:2512_20578::mlp_probe_perf)",
+      "content_hash": "a85830d98993b4b99c54c07e38592ce050b84cbf1285f7a3027da9a9e6db6f96",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_ff90a99a",
+      "label": "__conjunction_result_ff90a99a",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_math_perf,github:2512_20578::external_judge_perf,github:2512_20578::mlp_probe_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_79a28a4330efc8e8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_ff90a99a,github:2512_20578::gnosis_outperforms_math)",
+      "content_hash": "e0bf7f8461145b0a55b378fc5e8ab97d0e0e8819d26c603523ea82233e94bf7b",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_3a2f9023",
+      "label": "__implication_result_3a2f9023",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_ff90a99a,github:2512_20578::gnosis_outperforms_math)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_79a28a4330efc8e8",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_trivia_perf,github:2512_20578::mlp_probe_perf)",
+      "content_hash": "10dd7ae2df391165fd8ad3574976897998106d1238c49134ffd25d55c897f0fc",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_57938939",
+      "label": "__conjunction_result_57938939",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_trivia_perf,github:2512_20578::mlp_probe_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6a43ed3b5faa8ca5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_57938939,github:2512_20578::gnosis_outperforms_trivia)",
+      "content_hash": "7f5ef67f69caed4066dd479caa4779f1f355a1ee39b3eabe752dbc8d5e6eb603",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_12624516",
+      "label": "__implication_result_12624516",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_57938939,github:2512_20578::gnosis_outperforms_trivia)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6a43ed3b5faa8ca5",
+        "owning_strategy_type": "support",
+        "prior": 0.96,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_mmlu_perf,github:2512_20578::mlp_probe_perf)",
+      "content_hash": "6765146e6cef30d0b732d9f91c11f29ec332c17f7fe81d22dc6add91e9e4dcfa",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_af7677cd",
+      "label": "__conjunction_result_af7677cd",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_mmlu_perf,github:2512_20578::mlp_probe_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bbdc2b73d3c4f292",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_af7677cd,github:2512_20578::gnosis_outperforms_mmlu)",
+      "content_hash": "64373af656a6f9e9fe20ad3ccf98636470321bbb763cf717e7b346e156d23f1c",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_07dd3a88",
+      "label": "__implication_result_07dd3a88",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_af7677cd,github:2512_20578::gnosis_outperforms_mmlu)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bbdc2b73d3c4f292",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_math_perf,github:2512_20578::mlp_probe_perf)",
+      "content_hash": "12a2aa3e9401a4bcdd15f5e53a1d02acd5586c4bab05ad09d5fcd6e186442ae4",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_d4d364da",
+      "label": "__conjunction_result_d4d364da",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_math_perf,github:2512_20578::mlp_probe_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_78760589dcef06db",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_d4d364da,github:2512_20578::calibration_quality)",
+      "content_hash": "b772cf2cf14fe27305ad264013c97775be51c44631b0d53eec3233e2c2f6f809",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_68c88de1",
+      "label": "__implication_result_68c88de1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_d4d364da,github:2512_20578::calibration_quality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_78760589dcef06db",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::shared_circuits_hypothesis,github:2512_20578::transfer_generalizes)",
+      "content_hash": "2652dd0bffb8f1c5abbf6c4367c373214508fba5069de0d329d6a8b56cb93f3f",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_f660b0bd",
+      "label": "__implication_result_f660b0bd",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::shared_circuits_hypothesis,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6f58e599988bae3c",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::alt_transfer_accidental,github:2512_20578::transfer_generalizes)",
+      "content_hash": "495fe724b74352222c676205099783ec316e22bb858893a9c5e77a8d5988efcb",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_de357292",
+      "label": "__implication_result_de357292",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::alt_transfer_accidental,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2126e4835cc3ac64",
+        "owning_strategy_type": "support",
+        "prior": 0.28,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_20578::pred_shared,github:2512_20578::transfer_generalizes)",
+      "content_hash": "39fcf331b740e176c00fe45950aa4a7b1e3849e999bbefd7b0c0db27efbcdc35",
+      "exported": false,
+      "id": "github:2512_20578::__equivalence_result_cff2c47e",
+      "label": "__equivalence_result_cff2c47e",
+      "metadata": {
+        "canonical_name": "matches(github:2512_20578::pred_shared,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a7f1138169f4c6ca",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_20578::pred_no_shared,github:2512_20578::transfer_generalizes)",
+      "content_hash": "aa2e15f7f63e8bc75613ede742a454b27a5636bd683dac45cf268fc5095759a5",
+      "exported": false,
+      "id": "github:2512_20578::__equivalence_result_5aea530d",
+      "label": "__equivalence_result_5aea530d",
+      "metadata": {
+        "canonical_name": "matches(github:2512_20578::pred_no_shared,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_a7f1138169f4c6ca",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::internal_cues_exist,github:2512_20578::frozen_backbone)",
+      "content_hash": "36d237090b163dbfe5b7a7bd8665c51f1ee43f5c3e7bf5fc74f786d7c587d2c6",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_d4047d6f",
+      "label": "__conjunction_result_d4047d6f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::internal_cues_exist,github:2512_20578::frozen_backbone)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_99a3f58f4f465dd2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_d4047d6f,github:2512_20578::transfer_generalizes)",
+      "content_hash": "fdb94c13c4ef733c759c83faad4d21326f616a54bb2ebd0f455bab843ccbdfaf",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_f9dbf4e8",
+      "label": "__implication_result_f9dbf4e8",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_d4047d6f,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_99a3f58f4f465dd2",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::transfer_math_results,github:2512_20578::transfer_trivia_results,github:2512_20578::transfer_mmlu_results)",
+      "content_hash": "7a97b17e8c5ee048b9604b42a7f94a03755d0a7109b1c435811dea1b5ac5a13f",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_4035bf1c",
+      "label": "__conjunction_result_4035bf1c",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::transfer_math_results,github:2512_20578::transfer_trivia_results,github:2512_20578::transfer_mmlu_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a007a699c0974bc8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_4035bf1c,github:2512_20578::transfer_generalizes)",
+      "content_hash": "78f81ea69829bfd54c15ecd5382893bff9a84f3de2f6c05df3e24f6450cb7155",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_bdc3bf73",
+      "label": "__implication_result_bdc3bf73",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_4035bf1c,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a007a699c0974bc8",
+        "owning_strategy_type": "support",
+        "prior": 0.96,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::hidden_only_perf,github:2512_20578::attention_only_perf)",
+      "content_hash": "9743ce6869a83f267e127ece2d81a08910f344006c8503308253d948bb3f930b",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_f0430fb1",
+      "label": "__conjunction_result_f0430fb1",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::hidden_only_perf,github:2512_20578::attention_only_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_37c949ff0f14e885",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_f0430fb1,github:2512_20578::fusion_benefit)",
+      "content_hash": "2dfbc801372c11f65adbcb4deebccb5907b7cb17fe12413ee3587b1b7656821d",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_48fb012b",
+      "label": "__implication_result_48fb012b",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_f0430fb1,github:2512_20578::fusion_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_37c949ff0f14e885",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::hidden_component_ablation,github:2512_20578::sab_critical)",
+      "content_hash": "5a927f283a2907353f3dd93be7b0f4fd32c668ef0dd38a3885705d5d374ee3f8",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_3a3c4e23",
+      "label": "__implication_result_3a3c4e23",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::hidden_component_ablation,github:2512_20578::sab_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_68b081bdc040d9c5",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::attention_topology_ablation,github:2512_20578::attention_circuit_arch)",
+      "content_hash": "2e07465e241e35e6200214e3d18cba796a31c1868eef6dac444deb23b6fea4c4",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_a9b9db06",
+      "label": "__implication_result_a9b9db06",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::attention_topology_ablation,github:2512_20578::attention_circuit_arch)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d8575016648b1f08",
+        "owning_strategy_type": "support",
+        "prior": 0.91,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::hidden_only_perf,github:2512_20578::attention_only_perf,github:2512_20578::cnn_stats_perf)",
+      "content_hash": "5e4ea2f650cf2d7265447b1a12a98f2e776e23341789c3793677193c4dabea80",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_995821b5",
+      "label": "__conjunction_result_995821b5",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::hidden_only_perf,github:2512_20578::attention_only_perf,github:2512_20578::cnn_stats_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_513606da4661cf3c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_995821b5,github:2512_20578::fusion_benefit)",
+      "content_hash": "b181925669257f7c718ce9b90c8f829298f7b0c73034c1496ccc4cf1454ac36b",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_9a7aef60",
+      "label": "__implication_result_9a7aef60",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_995821b5,github:2512_20578::fusion_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_513606da4661cf3c",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::attention_grid_ablation,github:2512_20578::attention_circuit_arch)",
+      "content_hash": "3e9ff77d7a6e14802689fa93c7c75c9d8a03cc26a44af391e5bd3500c43267df",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_e0ea7b30",
+      "label": "__implication_result_e0ea7b30",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::attention_grid_ablation,github:2512_20578::attention_circuit_arch)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_da5e73e3ed8e3ded",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::internal_cues_exist,github:2512_20578::constant_latency)",
+      "content_hash": "6bbc5bc1b9efce0b56335ecc9729fc2c46a22a047b78fc13014b8f091654da77",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_81a54524",
+      "label": "__conjunction_result_81a54524",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::internal_cues_exist,github:2512_20578::constant_latency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4aaa53dc53cd5514",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_81a54524,github:2512_20578::gnosis_generalizes_partial)",
+      "content_hash": "4c9d681cf28d9843ba53b7a96b303175abcfacf4c1f30b9707a701bb36f4be8d",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_33fd5e27",
+      "label": "__implication_result_33fd5e27",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_81a54524,github:2512_20578::gnosis_generalizes_partial)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4aaa53dc53cd5514",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::gnosis_generalizes_partial,github:2512_20578::early_stopping_implication)",
+      "content_hash": "ccd1773582a737522b221164d0cb4650e7c89f0f4f912f18bb10692117510431",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_cbb47a3e",
+      "label": "__implication_result_cbb47a3e",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::gnosis_generalizes_partial,github:2512_20578::early_stopping_implication)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_49f6e44afad0e5e3",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_generalizes_partial,github:2512_20578::frozen_backbone)",
+      "content_hash": "8dee65ba71da61380f26b0013d645692eead5c1addd6f5de25f66b77b1cd9ce8",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_8940627f",
+      "label": "__conjunction_result_8940627f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_generalizes_partial,github:2512_20578::frozen_backbone)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_19f226b077bc0b4d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_8940627f,github:2512_20578::early_detection_perf)",
+      "content_hash": "6b6260747ae1f29fcbece0af297b66164a26192e354ed5ba3cc269e0433d539b",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_61daeca1",
+      "label": "__implication_result_61daeca1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_8940627f,github:2512_20578::early_detection_perf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_19f226b077bc0b4d",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::gnosis_superior_overall,github:2512_20578::calibration_quality,github:2512_20578::transfer_generalizes)",
+      "content_hash": "3bc1172b833e38981ad837da610f40201cbadae43fc75a8c2437c7f1aa545f0e",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_58835b32",
+      "label": "__conjunction_result_58835b32",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::gnosis_superior_overall,github:2512_20578::calibration_quality,github:2512_20578::transfer_generalizes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d5215c77a18345c1",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_58835b32,github:2512_20578::internal_signals_claim)",
+      "content_hash": "af9cb7df756ea69fd8ea0a42056d2abb3b79e1c5298a173da30c5719b131060e",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_0f80737d",
+      "label": "__implication_result_0f80737d",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_58835b32,github:2512_20578::internal_signals_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d5215c77a18345c1",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20578::transfer_fails_cross_family,github:2512_20578::proprietary_model_limitation)",
+      "content_hash": "cf1558a2cb96e88129c7d7329d4b8993d1df849e483455ef732a5056e3526025",
+      "exported": false,
+      "id": "github:2512_20578::__conjunction_result_429030e1",
+      "label": "__conjunction_result_429030e1",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20578::transfer_fails_cross_family,github:2512_20578::proprietary_model_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7b4370e4c250d483",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::__conjunction_result_429030e1,github:2512_20578::gnosis_proposal)",
+      "content_hash": "952406fa77ff9ded84f040b2c8f19436193ebfc15c3ec1cd6fb81a71ae1ed87e",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_91586842",
+      "label": "__implication_result_91586842",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::__conjunction_result_429030e1,github:2512_20578::gnosis_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7b4370e4c250d483",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::feature_analysis,github:2512_20578::internal_signals_claim)",
+      "content_hash": "26b160f315939cd21f33316160980a1f0780e84a346e3b96e93868e5b8a9dd1e",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_1cea40bb",
+      "label": "__implication_result_1cea40bb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::feature_analysis,github:2512_20578::internal_signals_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d918d7b754fbe545",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20578::backbone_accuracy_stats,github:2512_20578::gnosis_proposal)",
+      "content_hash": "b9e33b8ba38a7ba4a2bb2a4f52ca5d5092b564345c85ea4b83def92e25737e18",
+      "exported": false,
+      "id": "github:2512_20578::__implication_result_3c1e7eb1",
+      "label": "__implication_result_3c1e7eb1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20578::backbone_accuracy_stats,github:2512_20578::gnosis_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1da911034a36b443",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_background",
+    "s3_architecture",
+    "s4_results",
+    "s5_transfer",
+    "s6_ablations",
+    "s7_early_detection",
+    "s8_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: LLM Self-Awareness and the Gnosis Mechanism",
+    "s2_background": "Section 2: Background and Related Work",
+    "s3_architecture": "Section 3: Gnosis Architecture",
+    "s4_results": "Section 4: Experimental Results — Main Performance Benchmarks",
+    "s5_transfer": "Section 5: Cross-Model Transfer and Generalization",
+    "s6_ablations": "Section 6: Ablation Studies",
+    "s7_early_detection": "Section 7: Early Error Detection and Partial Generation Generalization",
+    "s8_discussion": "Section 8: Discussion, Limitations, and Conclusions"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2512_20578::not_both_internal_external",
+      "metadata": {
+        "reason": "If external judges always outperformed internal probes, Gnosis could not achieve higher AUROC (0.95) and BSS (0.59) than Skywork-8B (0.90 AUROC) and Gemini 2.5 Pro (0.91 AUROC). The observed results are incompatible with a universal external-judge superiority claim."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_1206d1075a5b189b",
+      "scope": "local",
+      "variables": [
+        "github:2512_20578::external_always_superior",
+        "github:2512_20578::gnosis_superior_overall"
+      ]
+    }
+  ],
+  "package_name": "2512_20578",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2512_20578::internal_cues_exist",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_8afd8e8d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::external_judge_weakness",
+              "github:2512_20578::multi_sample_weakness",
+              "github:2512_20578::text_critique_weakness"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_7e0279c7",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_8afd8e8d",
+              "github:2512_20578::internal_cues_exist"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "All three existing approaches—external judges (@external_judge_weakness), multi-sample consistency (@multi_sample_weakness), and text-based self-critique (@text_critique_weakness)—have fundamental weaknesses: they incur extra compute or correlate weakly with true correctness. This motivates the hypothesis that reliable correctness signals must lie elsewhere—specifically in the internal representations that the model computes during generation, which are free to observe."
+      },
+      "premises": [
+        "github:2512_20578::external_judge_weakness",
+        "github:2512_20578::multi_sample_weakness",
+        "github:2512_20578::text_critique_weakness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4960ec10f355c588",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_f4454080",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::internal_cues_exist",
+              "github:2512_20578::gnosis_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If reliable correctness cues are encoded in internal states (@internal_cues_exist), then a lightweight probe trained to read these cues can serve as a self-verifier. Gnosis is proposed as the concrete realization of this idea: a ~5M-parameter head that operates on hidden states and attention patterns without modifying or re-running the backbone."
+      },
+      "premises": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_24d02ab95a6500d8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::internal_cues_exist",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_b22fcc9f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::internal_probe_weakness",
+              "github:2512_20578::chain_of_embedding_weakness"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_17e73794",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_b22fcc9f",
+              "github:2512_20578::internal_cues_exist"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "Both simple internal probes (@internal_probe_weakness) and CoE (@chain_of_embedding_weakness) fail to fully exploit internal signals: single-snapshot probes miss temporal dynamics, and CoE lacks task-specific supervision. The fact that both partially work (above-chance AUROC) yet fall short supports the hypothesis that internal cues exist (@internal_cues_exist) but require a more sophisticated extraction method—motivating Gnosis's multi-scale, supervised dual-stream architecture."
+      },
+      "premises": [
+        "github:2512_20578::internal_probe_weakness",
+        "github:2512_20578::chain_of_embedding_weakness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e26a27e18d9e6285",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::external_judge_weakness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_456426b3",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::reward_model_cost",
+              "github:2512_20578::external_judge_weakness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The concrete latency numbers in @reward_model_cost (930ms at 12k tokens, 2465ms at 24k tokens for Skywork-8B) quantify the computational overhead claimed in @external_judge_weakness."
+      },
+      "premises": [
+        "github:2512_20578::reward_model_cost"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_65ed5cfa5fcedfbb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::text_critique_weakness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_f01f6e29",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::verbalized_conf_weakness",
+              "github:2512_20578::text_critique_weakness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The observed calibration failure of verbalized confidence methods (@verbalized_conf_weakness) supports the claim that text-based self-critique correlates weakly with true correctness (@text_critique_weakness), since verbalized confidence is a key form of text-based self-critique."
+      },
+      "premises": [
+        "github:2512_20578::verbalized_conf_weakness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aaf6dfdf838ee12c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::constant_latency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_c16cc41b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::hidden_circuit_arch",
+              "github:2512_20578::attention_circuit_arch"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_4f85ce2d",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_c16cc41b",
+              "github:2512_20578::constant_latency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Both the Hidden Circuit Encoder (@hidden_circuit_arch) and Attention Circuit Encoder (@attention_circuit_arch) terminate with PMA (Pooling by Multi-head Attention), which maps variable-length inputs to a fixed number of seed vectors. Since the downstream scoring operates on fixed-size descriptors, the computation time does not grow with sequence length T, yielding constant latency."
+      },
+      "premises": [
+        "github:2512_20578::hidden_circuit_arch",
+        "github:2512_20578::attention_circuit_arch"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7696d4e61a1b8700",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_20578::total_params",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_54e21985",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::hidden_circuit_arch",
+              "github:2512_20578::attention_circuit_arch",
+              "github:2512_20578::gated_fusion_arch"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_92c6b24c",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_54e21985",
+              "github:2512_20578::total_params"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "The total parameter count is the sum of the three components: Hidden Circuit (@hidden_circuit_arch) 2.6M + Attention Circuit (@attention_circuit_arch) 1.4M + Gated Fusion Head (@gated_fusion_arch) 0.5M = ~5M total, as stated in @total_params."
+      },
+      "premises": [
+        "github:2512_20578::hidden_circuit_arch",
+        "github:2512_20578::attention_circuit_arch",
+        "github:2512_20578::gated_fusion_arch"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0ff884365b7d4d80",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_20578::frozen_backbone",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_507438a8",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::training_protocol",
+              "github:2512_20578::frozen_backbone"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The training protocol (@training_protocol) generates correctness labels automatically from ground-truth comparison, requiring no human annotation. This is consistent with the frozen backbone design (@frozen_backbone): since backbone weights are not updated, no backbone-level gradient computation is needed, enabling training to focus entirely on the lightweight Gnosis head."
+      },
+      "premises": [
+        "github:2512_20578::training_protocol"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0af800d294cab26c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::obs_math",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_291cfafd",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::pred_gnosis_math",
+              "github:2512_20578::obs_math"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Internal state access (@pred_gnosis_math) provides the backbone model's own discriminative signal, which should have direct access to the mechanisms causing errors — explaining the observation (@obs_math) of high AUROC."
+      },
+      "premises": [
+        "github:2512_20578::pred_gnosis_math"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b2e1a473c6b35a91",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::obs_math",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_55aff500",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::alt_external_math",
+              "github:2512_20578::obs_math"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "Large external models (@alt_external_math) have seen vast training data and could in principle judge correctness at least as well — yet they don't explain the observation since their AUROC (0.90-0.91) is below Gnosis (0.95)."
+      },
+      "premises": [
+        "github:2512_20578::alt_external_math"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_034aaef3a565cc60",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__equivalence_result_5d6df5af",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_20578::pred_gnosis_math",
+              "github:2512_20578::obs_math"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__equivalence_result_8eb06019",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_20578::pred_ext_math",
+              "github:2512_20578::obs_math"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__equivalence_result_8eb06019",
+              "github:2512_20578::__equivalence_result_5d6df5af"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Gnosis AUROC 0.95 exceeds external judges (0.90-0.91) while using 1,600× fewer parameters and 37-99× less latency. The observation matches Gnosis predictions more closely in both ranking quality and calibration."
+      },
+      "premises": [
+        "github:2512_20578::pred_gnosis_math",
+        "github:2512_20578::pred_ext_math",
+        "github:2512_20578::obs_math"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c60c728a2d0df1ab",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2512_20578::_anon_000",
+      "metadata": {
+        "reason": "Both Gnosis and external judges attempt to explain the same correctness discrimination task on math reasoning. Gnosis better explains the observed AUROC and calibration, supporting the hypothesis that internal state access provides superior correctness cues."
+      },
+      "premises": [
+        "github:2512_20578::pred_gnosis_math",
+        "github:2512_20578::alt_external_math",
+        "github:2512_20578::pred_ext_math",
+        "github:2512_20578::obs_math"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5e4d515e0bfb63b5",
+      "sub_strategies": [
+        "lcs_b2e1a473c6b35a91",
+        "lcs_034aaef3a565cc60",
+        "lcs_c60c728a2d0df1ab"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_math",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_912b4f53",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::gnosis_superior_overall",
+              "github:2512_20578::gnosis_outperforms_math"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The general claim of superiority (@gnosis_superior_overall) predicts that Gnosis should outperform baselines specifically on math reasoning, which is confirmed by @gnosis_outperforms_math."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_549ade7f01f47a33",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_trivia",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_14c44b50",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::gnosis_superior_overall",
+              "github:2512_20578::gnosis_outperforms_trivia"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The general superiority claim (@gnosis_superior_overall) predicts Gnosis should outperform baselines on TriviaQA, confirmed by @gnosis_outperforms_trivia."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9415ad40ece6ac10",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_mmlu",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_33ef5021",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::gnosis_superior_overall",
+              "github:2512_20578::gnosis_outperforms_mmlu"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The general superiority claim (@gnosis_superior_overall) predicts Gnosis should outperform baselines on MMLU-Pro, confirmed by @gnosis_outperforms_mmlu."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0f1f06448f3cd41f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_superior_overall",
+      "metadata": {
+        "reason": "Math and TriviaQA are independent domains (different knowledge types, different model behaviors), providing independent evidence for @gnosis_superior_overall."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_outperforms_math",
+        "github:2512_20578::gnosis_outperforms_trivia"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_03ff9548f3ffffa6",
+      "sub_strategies": [
+        "lcs_549ade7f01f47a33",
+        "lcs_9415ad40ece6ac10"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_superior_overall",
+      "metadata": {
+        "reason": "MMLU-Pro provides a third independent domain (academic multi-choice) that further confirms the general superiority law."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_outperforms_math",
+        "github:2512_20578::gnosis_outperforms_trivia",
+        "github:2512_20578::gnosis_outperforms_mmlu"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7997ec737c7f468b",
+      "sub_strategies": [
+        "lcs_03ff9548f3ffffa6",
+        "lcs_0f1f06448f3cd41f"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20578::latency_comparison",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_edd6072a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::constant_latency",
+              "github:2512_20578::total_params"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_6bd83fd7",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_edd6072a",
+              "github:2512_20578::latency_comparison"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.94,
+        "reason": "Gnosis's constant ~25ms latency (@constant_latency) regardless of sequence length follows directly from its fixed-budget descriptor design, and its small footprint (@total_params, ~5M parameters) requires negligible GPU computation. This architectural property directly causes the 37× speedup at 12k tokens and 99× speedup at 24k tokens shown in @latency_comparison."
+      },
+      "premises": [
+        "github:2512_20578::constant_latency",
+        "github:2512_20578::total_params"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_77cc3e69ed22b0c5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_math",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_ff90a99a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_math_perf",
+              "github:2512_20578::external_judge_perf",
+              "github:2512_20578::mlp_probe_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_3a2f9023",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_ff90a99a",
+              "github:2512_20578::gnosis_outperforms_math"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The tabulated Gnosis math performance (@gnosis_math_perf, AUROC 0.95 for Qwen3 1.7B) directly exceeds all baselines in @external_judge_perf (Skywork-8B 0.90, Gemini 0.91) and @mlp_probe_perf (MLP-Prob 0.86), confirming @gnosis_outperforms_math."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_math_perf",
+        "github:2512_20578::external_judge_perf",
+        "github:2512_20578::mlp_probe_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_79a28a4330efc8e8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_trivia",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_57938939",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_trivia_perf",
+              "github:2512_20578::mlp_probe_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_12624516",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_57938939",
+              "github:2512_20578::gnosis_outperforms_trivia"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.96,
+        "reason": "The tabulated Gnosis TriviaQA performance (@gnosis_trivia_perf, AUROC 0.87 for Qwen3 1.7B) exceeds MLP-Prob (0.71 per @mlp_probe_perf), confirming @gnosis_outperforms_trivia."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_trivia_perf",
+        "github:2512_20578::mlp_probe_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6a43ed3b5faa8ca5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_outperforms_mmlu",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_af7677cd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_mmlu_perf",
+              "github:2512_20578::mlp_probe_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_07dd3a88",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_af7677cd",
+              "github:2512_20578::gnosis_outperforms_mmlu"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The tabulated Gnosis MMLU-Pro performance (@gnosis_mmlu_perf, AUROC 0.80 for Qwen3 1.7B) exceeds MLP-Prob (0.69 per @mlp_probe_perf), confirming @gnosis_outperforms_mmlu."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_mmlu_perf",
+        "github:2512_20578::mlp_probe_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bbdc2b73d3c4f292",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::calibration_quality",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_d4d364da",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_math_perf",
+              "github:2512_20578::mlp_probe_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_68c88de1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_d4d364da",
+              "github:2512_20578::calibration_quality"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Gnosis BSS of 0.59 on math (@gnosis_math_perf) vs MLP-Prob near-zero (@mlp_probe_perf) and Gnosis ECE of 0.09 vs MLP-Prob ECE of 0.19 demonstrate the sharp, bimodal score distributions described in @calibration_quality."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_math_perf",
+        "github:2512_20578::mlp_probe_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_78760589dcef06db",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::transfer_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_f660b0bd",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::shared_circuits_hypothesis",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The shared circuit hypothesis (@shared_circuits_hypothesis) predicts that transfer should succeed (as in @pred_shared), because the same internal features encode correctness across scales. This is indeed observed in @transfer_generalizes where 1.7B→4B/8B transfer AUROC matches self-trained."
+      },
+      "premises": [
+        "github:2512_20578::shared_circuits_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6f58e599988bae3c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::transfer_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_de357292",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::alt_transfer_accidental",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.28,
+        "reason": "Dataset-level memorization (@alt_transfer_accidental) could produce transfer if the models perform similarly on the same test sets, but this doesn't explain why a 1.7B model's internal representation is predictive for an 8B model's errors."
+      },
+      "premises": [
+        "github:2512_20578::alt_transfer_accidental"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2126e4835cc3ac64",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__equivalence_result_cff2c47e",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_20578::pred_shared",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__equivalence_result_5aea530d",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_20578::pred_no_shared",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__equivalence_result_5aea530d",
+              "github:2512_20578::__equivalence_result_cff2c47e"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Observed AUROC of 0.97 on math (1.7B → 4B/8B transfer) versus self-judge 0.97 shows near-identical performance, strongly supporting shared circuits over scale-specific circuits."
+      },
+      "premises": [
+        "github:2512_20578::pred_shared",
+        "github:2512_20578::pred_no_shared",
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a7f1138169f4c6ca",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2512_20578::_anon_001",
+      "metadata": {
+        "reason": "Both the shared-circuits hypothesis and dataset-similarity alternative attempt to explain transfer success. The shared-circuits hypothesis better explains the observation because it predicts scale-invariant transfer, which is observed."
+      },
+      "premises": [
+        "github:2512_20578::shared_circuits_hypothesis",
+        "github:2512_20578::alt_transfer_accidental",
+        "github:2512_20578::pred_shared",
+        "github:2512_20578::pred_no_shared",
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_353e127d8d0f7a88",
+      "sub_strategies": [
+        "lcs_6f58e599988bae3c",
+        "lcs_2126e4835cc3ac64",
+        "lcs_a7f1138169f4c6ca"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2512_20578::transfer_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_d4047d6f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::internal_cues_exist",
+              "github:2512_20578::frozen_backbone"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_f9dbf4e8",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_d4047d6f",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "If reliable correctness cues are intrinsic to generation (@internal_cues_exist) and these cues are encoded in the same architectural components (hidden states, attention maps) across sibling models, then a frozen Gnosis head (@frozen_backbone) that reads these cues from a small model can do so from larger siblings without retraining, predicting the observed transfer success (@transfer_generalizes)."
+      },
+      "premises": [
+        "github:2512_20578::internal_cues_exist",
+        "github:2512_20578::frozen_backbone"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_99a3f58f4f465dd2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::transfer_generalizes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_4035bf1c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::transfer_math_results",
+              "github:2512_20578::transfer_trivia_results",
+              "github:2512_20578::transfer_mmlu_results"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_bdc3bf73",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_4035bf1c",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.96,
+        "reason": "Detailed transfer results (@transfer_math_results, @transfer_trivia_results, @transfer_mmlu_results) show zero-shot 1.7B→4B/8B transfer AUROC (0.97/0.86/0.81) closely matching self-trained heads (0.96/0.87/0.80), directly confirming @transfer_generalizes."
+      },
+      "premises": [
+        "github:2512_20578::transfer_math_results",
+        "github:2512_20578::transfer_trivia_results",
+        "github:2512_20578::transfer_mmlu_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a007a699c0974bc8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::fusion_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_f0430fb1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::hidden_only_perf",
+              "github:2512_20578::attention_only_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_48fb012b",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_f0430fb1",
+              "github:2512_20578::fusion_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Since hidden-only (@hidden_only_perf) achieves 0.92 AUROC on math while attention-only (@attention_only_perf) also achieves 0.92 AUROC on math, yet the fused model achieves 0.95, the streams contribute complementary, non-redundant information—otherwise fusion would not exceed either stream alone."
+      },
+      "premises": [
+        "github:2512_20578::hidden_only_perf",
+        "github:2512_20578::attention_only_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_37c949ff0f14e885",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::sab_critical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_3a3c4e23",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::hidden_component_ablation",
+              "github:2512_20578::sab_critical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The ablation (@hidden_component_ablation) shows that removing SAB causes a −0.07 AUROC drop, the largest single-component degradation. All other components individually cause at most −0.03. This identifies SAB as the most critical component in @sab_critical."
+      },
+      "premises": [
+        "github:2512_20578::hidden_component_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_68b081bdc040d9c5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::attention_circuit_arch",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_a9b9db06",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::attention_topology_ablation",
+              "github:2512_20578::attention_circuit_arch"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.91,
+        "reason": "The topology ablation (@attention_topology_ablation) shows that axial convolutions + PMA match a Global Transformer (0.92 vs 0.92 AUROC) at 1.4M vs 4.5M parameters (3.2× more parameter-efficient), validating the design choice in @attention_circuit_arch."
+      },
+      "premises": [
+        "github:2512_20578::attention_topology_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d8575016648b1f08",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::fusion_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_995821b5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::hidden_only_perf",
+              "github:2512_20578::attention_only_perf",
+              "github:2512_20578::cnn_stats_perf"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_9a7aef60",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_995821b5",
+              "github:2512_20578::fusion_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "Ablation data (@hidden_only_perf, @attention_only_perf, @cnn_stats_perf) shows both streams achieve 0.92 AUROC individually on math but 0.95 when fused, and the hybrid CNN+Statistics extractor outperforms either alone, confirming complementary contributions described in @fusion_benefit."
+      },
+      "premises": [
+        "github:2512_20578::hidden_only_perf",
+        "github:2512_20578::attention_only_perf",
+        "github:2512_20578::cnn_stats_perf"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_513606da4661cf3c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::attention_circuit_arch",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_e0ea7b30",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::attention_grid_ablation",
+              "github:2512_20578::attention_circuit_arch"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The grid and layer coverage ablation (@attention_grid_ablation) shows that using only first/last layers drops AUROC from 0.91 to 0.64, and small grids (64×64) drop to 0.68, validating the design choices (all-layer coverage, 256×256 grid) in @attention_circuit_arch."
+      },
+      "premises": [
+        "github:2512_20578::attention_grid_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_da5e73e3ed8e3ded",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_generalizes_partial",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_81a54524",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::internal_cues_exist",
+              "github:2512_20578::constant_latency"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_33fd5e27",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_81a54524",
+              "github:2512_20578::gnosis_generalizes_partial"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "If correctness cues are intrinsic to the generation process (@internal_cues_exist), they should be detectable even from partial generations—the internal signals accumulate as generation progresses. The constant-latency architecture (@constant_latency) that aggregates over all available positions via PMA naturally handles variable-length partial sequences without modification, enabling zero-shot partial generalization as observed in @gnosis_generalizes_partial."
+      },
+      "premises": [
+        "github:2512_20578::internal_cues_exist",
+        "github:2512_20578::constant_latency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4aaa53dc53cd5514",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::early_stopping_implication",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_cbb47a3e",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::gnosis_generalizes_partial",
+              "github:2512_20578::early_stopping_implication"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "If Gnosis can predict final correctness from 40% of the generation (@gnosis_generalizes_partial), then predictions at that point are actionable: a system can terminate the generation confidently when Gnosis signals failure, realizing the compute savings described in @early_stopping_implication."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_generalizes_partial"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_49f6e44afad0e5e3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::early_detection_perf",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_8940627f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_generalizes_partial",
+              "github:2512_20578::frozen_backbone"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_61daeca1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_8940627f",
+              "github:2512_20578::early_detection_perf"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The zero-shot partial generalization capability (@gnosis_generalizes_partial) and frozen backbone (@frozen_backbone) design together predict the specific numerical performance pattern in @early_detection_perf: AUROC should increase smoothly with completion percentage, starting above competing methods even at 20-40% completion."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_generalizes_partial",
+        "github:2512_20578::frozen_backbone"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_19f226b077bc0b4d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::internal_signals_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_58835b32",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::gnosis_superior_overall",
+              "github:2512_20578::calibration_quality",
+              "github:2512_20578::transfer_generalizes"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_0f80737d",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_58835b32",
+              "github:2512_20578::internal_signals_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Three lines of evidence jointly support the claim that internal signals are reliable: (1) Gnosis consistently outperforms external judges (@gnosis_superior_overall), (2) its calibration is demonstrably sharper (bimodal distributions, @calibration_quality), and (3) even transfer to new models succeeds (@transfer_generalizes), showing the signals generalize beyond training conditions."
+      },
+      "premises": [
+        "github:2512_20578::gnosis_superior_overall",
+        "github:2512_20578::calibration_quality",
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d5215c77a18345c1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__conjunction_result_429030e1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20578::transfer_fails_cross_family",
+              "github:2512_20578::proprietary_model_limitation"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20578::__implication_result_91586842",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::__conjunction_result_429030e1",
+              "github:2512_20578::gnosis_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The two identified limitations—cross-family transfer failure (@transfer_fails_cross_family) and proprietary model inaccessibility (@proprietary_model_limitation)—define the scope of @gnosis_proposal: it is a self-awareness mechanism for open-weight model families, not a universal correctness verifier. These limitations are acknowledged in the paper and do not invalidate the claims within the stated scope."
+      },
+      "premises": [
+        "github:2512_20578::transfer_fails_cross_family",
+        "github:2512_20578::proprietary_model_limitation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7b4370e4c250d483",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::internal_signals_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_1cea40bb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::feature_analysis",
+              "github:2512_20578::internal_signals_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Visualization showing clear class separation in learned Gnosis representations (@feature_analysis) provides direct evidence that the internal signals are reliably discriminative, supporting @internal_signals_claim."
+      },
+      "premises": [
+        "github:2512_20578::feature_analysis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d918d7b754fbe545",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20578::gnosis_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20578::__implication_result_3c1e7eb1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20578::backbone_accuracy_stats",
+              "github:2512_20578::gnosis_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Hallucination rates of 25-56% across backbone models (@backbone_accuracy_stats) confirm the practical significance of the problem that @gnosis_proposal addresses. High hallucination rates make self-verification a genuine need."
+      },
+      "premises": [
+        "github:2512_20578::backbone_accuracy_stats"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1da911034a36b443",
+      "type": "support"
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "exports": [
+    {
+      "content": "The Attention Circuit Encoder in Gnosis processes L*H attention maps through two stages: (1) Per-map feature extraction — each attention map is processed by a hybrid CNN + statistics extractor that combines learned convolutional features with handcrafted statistics (entropy, max, variance, etc.), producing a feature vector per map. (2) Cross-map integration — the resulting [L, H, features] array is processed by axial convolutions (separate 1D convolutions along layer and head axes) plus layer/head positional embeddings, then aggregated via PMA to a fixed-size descriptor. Total parameters: 1.4M.",
+      "content_hash": "7ba305c9e62edf54ec1e771c33d8c7e03d8d28d73301e521ba9ded08155feafb",
+      "label": "attention_circuit_arch",
+      "qid": "github:2512_20578::attention_circuit_arch",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis produces sharp, bimodal score distributions: scores cluster near 0 for incorrect and near 1 for correct responses, with minimal overlap. External judges and reward models produce diffuse, overlapping score distributions with poor discrimination at the tails. Gnosis Brier Skill Score (BSS) on math (Qwen3 1.7B) is 0.59 vs. near-zero BSS for external baselines, indicating substantially better calibrated probability estimates.",
+      "content_hash": "fda4dddea45372628efe1c8d363b4803a2178ec8eef104ac013198ad3f88c7bf",
+      "label": "calibration_quality",
+      "qid": "github:2512_20578::calibration_quality",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis maintains approximately constant latency (~25ms) regardless of the output sequence length (tested at 12,000 and 24,000 tokens). This is because PMA-based aggregation compresses variable-length sequences into fixed-budget descriptors before scoring.",
+      "content_hash": "fe8e8117c71624524837aaaa6307f9d51c66f282d92fac26ab19f079e5c22769",
+      "label": "constant_latency",
+      "qid": "github:2512_20578::constant_latency",
+      "type": "claim"
+    },
+    {
+      "content": "Because Gnosis can predict correctness from partial generations, it enables compute-aware control: systems can terminate failing reasoning trajectories early and reallocate compute to retries or alternative strategies, reducing average inference cost for multi-step reasoning tasks.",
+      "content_hash": "5fa5ffbc37ce11b8048206942273c185ba52dc57d9037c6595187ea2ceacd4e2",
+      "label": "early_stopping_implication",
+      "qid": "github:2512_20578::early_stopping_implication",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis trains only its own ~5M parameters while keeping the LLM backbone completely frozen. No gradient flows through the backbone during training. The mechanism is thus compatible with any backbone whose hidden states and attention maps are accessible (i.e., open-weight models).",
+      "content_hash": "9439ee7f04949389522eb0da5f3778d2012a71e541097e0a27a68d43896776d8",
+      "label": "frozen_backbone",
+      "qid": "github:2512_20578::frozen_backbone",
+      "type": "claim"
+    },
+    {
+      "content": "A gated MLP fusion head combines the hidden-circuit and attention-circuit fixed-size descriptors into a scalar correctness probability. The fusion uses a learned gate to weight the relative contribution of each stream before the final scalar prediction. Total fusion parameters: ~0.5M.",
+      "content_hash": "b08ac5e8f44dc1ec308e82ae301c4a583f2c15c8757cfccec9f9a5c9e6d43a0d",
+      "label": "gated_fusion_arch",
+      "qid": "github:2512_20578::gated_fusion_arch",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis generalizes zero-shot to partial generations without additional training, enabling early detection of failing reasoning trajectories. After observing only 40% of a math reasoning completion, Gnosis achieves AUROC comparable to competing methods operating on full completions.",
+      "content_hash": "9fc9f55939f55a83ec2c1dbc4665aa20fa207e7f5635c731c74e661b12675203",
+      "label": "gnosis_generalizes_partial",
+      "qid": "github:2512_20578::gnosis_generalizes_partial",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis self-judge performance on math reasoning (AMC12 + AIME + HMMT) for each backbone:\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.95 | 0.95 | 0.94 | 0.59 | 0.09 |\n| Qwen3 4B-Thinking | 0.96 | 0.98 | 0.91 | 0.65 | 0.05 |\n| Qwen3 4B-Instruct | 0.93 | 0.96 | 0.89 | 0.51 | 0.08 |\n| OpenAI gpt-oss-20B | 0.85 | 0.86 | 0.86 | 0.38 | 0.04 |",
+      "content_hash": "cde363f0e582a8ba6401748eae1681a9e4df1bab7ab693d1c62d7fb090612749",
+      "label": "gnosis_math_perf",
+      "qid": "github:2512_20578::gnosis_math_perf",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis self-judge performance on academic knowledge (MMLU-Pro, 14 domains):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.80 | 0.90 | 0.56 | 0.15 | 0.11 |\n| Qwen3 4B-Thinking | 0.82 | 0.93 | 0.55 | 0.21 | 0.05 |\n| Qwen3 4B-Instruct | 0.74 | 0.87 | 0.51 | 0.10 | 0.05 |\n| OpenAI gpt-oss-20B | 0.75 | 0.84 | 0.51 | 0.07 | 0.06 |",
+      "content_hash": "96486bfdec371da7e6d8a4c481738178e542bb324cdb5a9bf6f1360abe238ca8",
+      "label": "gnosis_mmlu_perf",
+      "qid": "github:2512_20578::gnosis_mmlu_perf",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis is a lightweight (~5 million parameters) self-awareness mechanism that enables frozen LLMs to perform intrinsic self-verification by decoding signals from hidden states and attention patterns. Gnosis passively observes internal traces, compresses them into fixed-budget descriptors, and predicts correctness with negligible inference overhead (~25ms constant latency, independent of sequence length), adding only ~5M parameters on top of any frozen backbone LLM.",
+      "content_hash": "6ffb17045f21c2cbce83a9ecbce72979b76640aa08b7597ed67b2201550db88f",
+      "label": "gnosis_proposal",
+      "qid": "github:2512_20578::gnosis_proposal",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis consistently outperforms strong internal baselines (MLP-Prob) and large external judges (Skywork reward models, Gemini 2.5 Pro) in both accuracy (AUROC, AUPR) and calibration (BSS, ECE) across math reasoning, open-domain QA, and academic knowledge benchmarks, over frozen backbone LLMs ranging from 1.7B to 20B parameters.",
+      "content_hash": "40da040834515b49c3b4063843862ce5d0c017a66b9426445258da3b03d0d5e1",
+      "label": "gnosis_superior_overall",
+      "qid": "github:2512_20578::gnosis_superior_overall",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis self-judge performance on open-domain QA (TriviaQA held-out, 18k questions):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.87 | 0.79 | 0.92 | 0.34 | 0.10 |\n| Qwen3 4B-Thinking | 0.89 | 0.89 | 0.88 | 0.45 | 0.05 |\n| Qwen3 4B-Instruct | 0.86 | 0.87 | 0.84 | 0.38 | 0.05 |\n| OpenAI gpt-oss-20B | 0.83 | 0.90 | 0.73 | 0.19 | 0.17 |",
+      "content_hash": "227edda78ebbae53498b22f7c8de3e2eb6fd3b75eaa420384459fa698871f416",
+      "label": "gnosis_trivia_perf",
+      "qid": "github:2512_20578::gnosis_trivia_perf",
+      "type": "claim"
+    },
+    {
+      "content": "The Hidden Circuit Encoder in Gnosis processes the hidden states matrix [L, d_model] in two phases: (1) Local temporal processing — multi-scale temporal convolutions with gating and squeeze-and-excitation (SE) channel attention extract local patterns across the layer sequence, with 2.6M total parameters. (2) Global aggregation — Set Attention Blocks (SAB) followed by Pooling by Multi-head Attention (PMA) aggregate the sequence into a fixed-size representation, independent of sequence length. The final hidden circuit output is a fixed-dimensional descriptor regardless of L or T.",
+      "content_hash": "66d2f648f5dc6501714711fe46840fcb37c880cad27e7759dc17dcc79f2230f9",
+      "label": "hidden_circuit_arch",
+      "qid": "github:2512_20578::hidden_circuit_arch",
+      "type": "claim"
+    },
+    {
+      "content": "Reliable correctness cues are intrinsic to the LLM generation process and are encoded in hidden states and attention patterns, meaning these internal signals can discriminate correct from incorrect outputs without external supervision.",
+      "content_hash": "2eeb23921f5df083cb3232f9c2afb9bdb94bcf9bd5ebe574586e3324df7c7432",
+      "label": "internal_cues_exist",
+      "qid": "github:2512_20578::internal_cues_exist",
+      "type": "claim"
+    },
+    {
+      "content": "Reliable correctness signals are demonstrably present in LLM internal states (hidden states and attention patterns) and can be extracted with high accuracy using a lightweight trained probe (~5M parameters), without any access to external reference answers, external judges, or additional LLM inference calls.",
+      "content_hash": "476875370d092feca96c73f4f8cf98503b3474ed95f7e5457191725e913f254a",
+      "label": "internal_signals_claim",
+      "qid": "github:2512_20578::internal_signals_claim",
+      "type": "claim"
+    },
+    {
+      "content": "Latency comparison for self-judgment at 12k and 24k token response lengths (Qwen3 1.7B, Math):\n\n| Method | 12k tokens latency | 12k AUROC | 24k tokens latency | 24k AUROC |\n|--------|---------------------|-----------|---------------------|-----------|\n| Gnosis | 25ms | 0.95 | 25ms | 0.94 |\n| Skywork-Reward-8B | 930ms | 0.90 | 2,465ms | 0.88 |\n\nGnosis achieves 37× speedup over Skywork-8B at 12k tokens and 99× at 24k tokens, while also achieving higher AUROC.",
+      "content_hash": "99f0bb281b0145e4a3cc28b1fbdeffc84eeed05aba99daee755c508c27d0a5e0",
+      "label": "latency_comparison",
+      "qid": "github:2512_20578::latency_comparison",
+      "type": "claim"
+    },
+    {
+      "content": "Within a model family, sibling models share similar internal circuit structure for error prediction: the same features of hidden states and attention patterns that discriminate correct from incorrect outputs in a small model also discriminate them in larger siblings, reflecting a shared representational basis.",
+      "content_hash": "72b54f20cb5c8e128b9645a4cbfa40fd18767d93e7dfc366f712653aeed9daba",
+      "label": "shared_circuits_hypothesis",
+      "qid": "github:2512_20578::shared_circuits_hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis totals approximately 5 million parameters: ~2.6M in the Hidden Circuit Encoder, ~1.4M in the Attention Circuit Encoder, and ~0.5M in the gated fusion head. This is approximately 1,600× smaller than the Skywork-Reward-8B external judge (8 billion parameters).",
+      "content_hash": "beebc1ec70c23d32ad5069b17bbddaa629e05061c037cd9f08881d4aea3f0dcb",
+      "label": "total_params",
+      "qid": "github:2512_20578::total_params",
+      "type": "claim"
+    },
+    {
+      "content": "Gnosis training uses automatic correctness labels (no human annotation): (1) Generate 2 completions per math prompt (~14k DAPO-Math competition problems) and 1 completion per trivia prompt (40k subsampled from 118k TriviaQA questions). (2) Label each completion correct/incorrect by ground-truth comparison. (3) Optimize binary cross-entropy with frozen backbone for 2 epochs using Adam optimizer (learning rate 1×10⁻⁴). Training the largest backbone (OpenAI gpt-oss-20B) costs approximately $25 and takes ~12 hours on 2× A100 80GB GPUs.",
+      "content_hash": "f4bc239942774de85b9c6f2d92d82c57d075e24e5b0d0a84d58391f18a20c35f",
+      "label": "training_protocol",
+      "qid": "github:2512_20578::training_protocol",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis fails between architecturally different or stylistically divergent models (e.g., from a thinking-mode to an instruct-mode model, or between different model families). The internal circuit representations differ sufficiently that cross-family transfer yields substantially degraded performance.",
+      "content_hash": "dd7ff74a792ca7c085d28454a93a0539916ece76af213c340b415fae6ae7d667",
+      "label": "transfer_fails_cross_family",
+      "qid": "github:2512_20578::transfer_fails_cross_family",
+      "type": "claim"
+    },
+    {
+      "content": "A Gnosis head trained on a small 1.7B model transfers zero-shot to larger 4B and 8B sibling models (within the same model family), achieving AUROC on math reasoning (0.97) that matches or exceeds self-trained heads (0.96-0.97) and substantially outperforms the Skywork-Reward-8B external judge (0.81 AUROC).",
+      "content_hash": "20a01e5f18a48f6abe995c88a6b0173b2cf0d4bb7a7a925e5f4f63c76fd76b2b",
+      "label": "transfer_generalizes",
+      "qid": "github:2512_20578::transfer_generalizes",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:c6a65c4c48fd1962740676d816728db6a7fca23ca69b672531f70e6f09bf689b",
+  "manifest_schema_version": 1,
+  "package": "2512-20578",
+  "version": "0.1.0"
+}

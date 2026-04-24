@@ -1,0 +1,299 @@
+{
+  "ir_hash": "sha256:c6a65c4c48fd1962740676d816728db6a7fca23ca69b672531f70e6f09bf689b",
+  "manifest_schema_version": 1,
+  "package": "2512-20578",
+  "premises": [
+    {
+      "content": "Zero-shot transfer success could be due to domain-level statistical similarities (same evaluation domains) rather than shared internal circuits, i.e., the head memorized dataset-level patterns that coincidentally transfer.",
+      "content_hash": "01dbfcd5727c485d93822d19fdc78cd3691f1b22919ae833843526dee184044f",
+      "exported": false,
+      "interface_hash": "sha256:54c3edf033ab51fd41985ce12f632ffeac926e9c5d4aff67a25a80c5472f0d5a",
+      "label": "alt_transfer_accidental",
+      "qid": "github:2512_20578::alt_transfer_accidental",
+      "required_by": [
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Attention map spatial resolution ablation (math reasoning, Qwen3 1.7B):\n\n| Variant | AUROC |\n|---------|-------|\n| All layers, all maps | 0.91 |\n| First and last layers only | 0.64 |\n| Small grid (64×64 pixels) | 0.68 |\n| Large grid (512×512 pixels) | 0.92 |\n\nUsing only first and last layers drops AUROC by 0.27, confirming that middle-layer attention patterns carry important discriminative information. Resolution of 256×256 (Gnosis default) is sufficient; larger grids provide marginal improvement.",
+      "content_hash": "57537e4bf0d461328b07ea889b231604c2646dc3191efaa21b1357867015a94f",
+      "exported": false,
+      "interface_hash": "sha256:c1fcc2126b041959235d460b53a70a728731dba4430422324c061bd09d76ff8c",
+      "label": "attention_grid_ablation",
+      "qid": "github:2512_20578::attention_grid_ablation",
+      "required_by": [
+        "github:2512_20578::attention_circuit_arch"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Attention Circuit architectural component ablation (math reasoning, Qwen3 1.7B):\n\n| Variant | Params | AUROC |\n|---------|--------|-------|\n| Gnosis (Axial + PMA) | 1.4M | 0.92 |\n| Linear Projection Only | 1.1M | 0.84 |\n| Global Transformer | 4.5M | 0.92 |\n| Remove Layer/Head Embeddings | 1.4M | 0.90 |\n| Replace PMA with Mean Pooling | 0.9M | 0.85 |\n\nAxial convolutions + PMA achieve the same AUROC as a much larger Global Transformer (4.5M), while being 3.2× more parameter-efficient. Removing PMA (mean pooling) or positional embeddings drops AUROC by 0.02-0.07.",
+      "content_hash": "a39014c25383bf2bf5eed6ed007f6ea0233ef1a1a6f0b2afd3dd04828daf4179",
+      "exported": false,
+      "interface_hash": "sha256:237751979edbfca737fa72151eff4b1ce8f57dcdf940dd4ece31dc8b0ace316f",
+      "label": "attention_topology_ablation",
+      "qid": "github:2512_20578::attention_topology_ablation",
+      "required_by": [
+        "github:2512_20578::attention_circuit_arch"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Backbone LLM outcome statistics on evaluation datasets:\n\n| Backbone | Domain | Accuracy | Hallucination | No-answer |\n|----------|--------|----------|---------------|-----------|\n| Qwen3 1.7B-Hybrid | Math | 44.87% | 47.76% | 7.37% |\n| Qwen3 1.7B-Hybrid | TriviaQA | 33.54% | 55.67% | 10.79% |\n| Qwen3 1.7B-Hybrid | MMLU-Pro | 66.09% | 31.53% | 2.39% |\n| Qwen3 4B-Thinking | Math | 63.27% | 25.31% | 11.42% |\n| Qwen3 4B-Instruct | Math | 57.51% | 29.26% | 13.22% |\n| OpenAI gpt-oss-20B | Math | 52.53% | 42.63% | 4.84% |\n\nHallucination rates of 25-56% across models confirm the practical importance of self-verification mechanisms.",
+      "content_hash": "265f986a56d7940ef8759e3b213b3fa34aa8f7cf02813d12fa316680536d27e0",
+      "exported": false,
+      "interface_hash": "sha256:ffeca824676de51f7ef8cce68421fdeef34b3388cc5043116fc38da2b4451bbc",
+      "label": "backbone_accuracy_stats",
+      "qid": "github:2512_20578::backbone_accuracy_stats",
+      "required_by": [
+        "github:2512_20578::gnosis_proposal"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Chain-of-Embedding (CoE) — which applies SVD to the sequence of hidden states — captures trajectory structure but uses unsupervised spectral decomposition without task-specific supervision. This limits its ability to learn the specific discriminative features that separate correct from incorrect responses in a task-adaptive manner.",
+      "content_hash": "962d214ac2010cdc08f6d8a0f793a63bf4db2b6be42c728bac1e382efab33dc4",
+      "exported": false,
+      "interface_hash": "sha256:9fd927bfa482a59adf43525750a62cb0689878db1738c8cc4a6419579e04768a",
+      "label": "chain_of_embedding_weakness",
+      "qid": "github:2512_20578::chain_of_embedding_weakness",
+      "required_by": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "External baseline performance on math reasoning for Qwen3 1.7B evaluation: Skywork-Reward-8B AUROC 0.90; Gemini 2.5 Pro AUROC 0.91. On TriviaQA: Gemini 2.5 Pro AUROC 0.90. Skywork-Reward-27B achieves similar results to 8B variant. These external judges each have billions of parameters and require separate inference passes.",
+      "content_hash": "c063b300d5644ed87d5c9a98a6ac51132a89f37c79b9f177e4a4e0be69c17a10",
+      "exported": false,
+      "interface_hash": "sha256:aca10f2ebd37818002cb9512cb9d8ac4403825f776bc04ff4018e299af329619",
+      "label": "external_judge_perf",
+      "qid": "github:2512_20578::external_judge_perf",
+      "required_by": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Visualization of Gnosis learned representations reveals clear class separation between correct and incorrect responses. Hidden state features show the clearest separation, attention features show weaker but still discriminative separation, and the merged (fused) feature space provides the sharpest overall discrimination between correct and incorrect outputs.",
+      "content_hash": "a93307a07a5d4994a4d57cbfab9a58a11df35fcca06bc63099fc0eebb18d222d",
+      "exported": false,
+      "interface_hash": "sha256:1a5a876502113eb664de6987dc614ffef754c98047de926ec19e7b4342e63106",
+      "label": "feature_analysis",
+      "qid": "github:2512_20578::feature_analysis",
+      "required_by": [
+        "github:2512_20578::internal_signals_claim"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "A gated MLP fusion head combines the hidden-circuit and attention-circuit fixed-size descriptors into a scalar correctness probability. The fusion uses a learned gate to weight the relative contribution of each stream before the final scalar prediction. Total fusion parameters: ~0.5M.",
+      "content_hash": "b08ac5e8f44dc1ec308e82ae301c4a583f2c15c8757cfccec9f9a5c9e6d43a0d",
+      "exported": true,
+      "interface_hash": "sha256:3e8d49eed6fda87b0b1c3ce62305423b5df87f29065e78a7d7e68f131ef3d5fb",
+      "label": "gated_fusion_arch",
+      "qid": "github:2512_20578::gated_fusion_arch",
+      "required_by": [
+        "github:2512_20578::total_params"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Gnosis self-judge performance on math reasoning (AMC12 + AIME + HMMT) for each backbone:\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.95 | 0.95 | 0.94 | 0.59 | 0.09 |\n| Qwen3 4B-Thinking | 0.96 | 0.98 | 0.91 | 0.65 | 0.05 |\n| Qwen3 4B-Instruct | 0.93 | 0.96 | 0.89 | 0.51 | 0.08 |\n| OpenAI gpt-oss-20B | 0.85 | 0.86 | 0.86 | 0.38 | 0.04 |",
+      "content_hash": "cde363f0e582a8ba6401748eae1681a9e4df1bab7ab693d1c62d7fb090612749",
+      "exported": true,
+      "interface_hash": "sha256:884f55bf2036524f42fcf9760936a34397ee0e4b77cc0439bd4f2e088fd0c6f6",
+      "label": "gnosis_math_perf",
+      "qid": "github:2512_20578::gnosis_math_perf",
+      "required_by": [
+        "github:2512_20578::calibration_quality",
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Gnosis self-judge performance on academic knowledge (MMLU-Pro, 14 domains):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.80 | 0.90 | 0.56 | 0.15 | 0.11 |\n| Qwen3 4B-Thinking | 0.82 | 0.93 | 0.55 | 0.21 | 0.05 |\n| Qwen3 4B-Instruct | 0.74 | 0.87 | 0.51 | 0.10 | 0.05 |\n| OpenAI gpt-oss-20B | 0.75 | 0.84 | 0.51 | 0.07 | 0.06 |",
+      "content_hash": "96486bfdec371da7e6d8a4c481738178e542bb324cdb5a9bf6f1360abe238ca8",
+      "exported": true,
+      "interface_hash": "sha256:9522d741089d03766ee07fa718e6d6cbe5dbca422fe8f0119d06e8b9fb2dcb77",
+      "label": "gnosis_mmlu_perf",
+      "qid": "github:2512_20578::gnosis_mmlu_perf",
+      "required_by": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Gnosis self-judge performance on open-domain QA (TriviaQA held-out, 18k questions):\n\n| Backbone | AUROC | AUPR-c | AUPR-e | BSS | ECE |\n|----------|-------|--------|--------|-----|-----|\n| Qwen3 1.7B-Hybrid | 0.87 | 0.79 | 0.92 | 0.34 | 0.10 |\n| Qwen3 4B-Thinking | 0.89 | 0.89 | 0.88 | 0.45 | 0.05 |\n| Qwen3 4B-Instruct | 0.86 | 0.87 | 0.84 | 0.38 | 0.05 |\n| OpenAI gpt-oss-20B | 0.83 | 0.90 | 0.73 | 0.19 | 0.17 |",
+      "content_hash": "227edda78ebbae53498b22f7c8de3e2eb6fd3b75eaa420384459fa698871f416",
+      "exported": true,
+      "interface_hash": "sha256:801434e611a93d1f2500cac3cd8e7874fcfbbc5df7e2ccd1fdc80f87dde134ba",
+      "label": "gnosis_trivia_perf",
+      "qid": "github:2512_20578::gnosis_trivia_perf",
+      "required_by": [
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The Hidden Circuit Encoder in Gnosis processes the hidden states matrix [L, d_model] in two phases: (1) Local temporal processing — multi-scale temporal convolutions with gating and squeeze-and-excitation (SE) channel attention extract local patterns across the layer sequence, with 2.6M total parameters. (2) Global aggregation — Set Attention Blocks (SAB) followed by Pooling by Multi-head Attention (PMA) aggregate the sequence into a fixed-size representation, independent of sequence length. The final hidden circuit output is a fixed-dimensional descriptor regardless of L or T.",
+      "content_hash": "66d2f648f5dc6501714711fe46840fcb37c880cad27e7759dc17dcc79f2230f9",
+      "exported": true,
+      "interface_hash": "sha256:64c3cc706e137c98d706a4921c0c6bf1acb70fe2c16ad088ec4662f26d32370a",
+      "label": "hidden_circuit_arch",
+      "qid": "github:2512_20578::hidden_circuit_arch",
+      "required_by": [
+        "github:2512_20578::constant_latency",
+        "github:2512_20578::total_params"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Simple internal probe methods (e.g., MLP on the final hidden state) capture only a snapshot of model state at one position and one layer, missing the temporal dynamics of reasoning trajectories and cross-layer/cross-head attention structure. This limits their discriminative power relative to methods that aggregate across the full generation.",
+      "content_hash": "ad584e9ef40612c1f5ad89de868e3e459d434a3d4d8d4c3386c881b995238ffb",
+      "exported": false,
+      "interface_hash": "sha256:848a140e1d96bb5e7f4f550d6b5668a3cb157d87ca001ff4a1e5b51497d9b7b7",
+      "label": "internal_probe_weakness",
+      "qid": "github:2512_20578::internal_probe_weakness",
+      "required_by": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "MLP-Prob baseline (simple MLP on pooled final hidden state) performance on Qwen3 1.7B:\n\n| Domain | MLP-Prob AUROC | Gnosis AUROC | MLP-Prob ECE | Gnosis ECE |\n|--------|---------------|--------------|--------------|------------|\n| Math   | 0.86          | 0.95         | 0.19         | 0.09       |\n| TriviaQA | 0.71        | 0.87         | 0.21         | 0.10       |\n| MMLU-Pro | 0.69        | 0.80         | 0.23         | 0.11       |",
+      "content_hash": "ce802e1af74ca0374526534a658fa3ede0c75d020a40a1eb59b4fff42e3d885c",
+      "exported": false,
+      "interface_hash": "sha256:40278f6fc823247008e0c207dbcc79330c576b6695d518705795a268399a9de5",
+      "label": "mlp_probe_perf",
+      "qid": "github:2512_20578::mlp_probe_perf",
+      "required_by": [
+        "github:2512_20578::calibration_quality",
+        "github:2512_20578::gnosis_superior_overall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Multi-sample consistency approaches (e.g., self-consistency sampling) require generating multiple completions per prompt, multiplying inference cost proportionally to the number of samples. They also correlate weakly with per-instance correctness when the model is confidently wrong across samples.",
+      "content_hash": "18386164611f72a7f6b6b87c564f757ac3ff46091cb99b97d9ccbebd4ec1de93",
+      "exported": false,
+      "interface_hash": "sha256:fa3a169f6d89dbd08066337859dc8f32016beded13c53651fb0981917df7e4a6",
+      "label": "multi_sample_weakness",
+      "qid": "github:2512_20578::multi_sample_weakness",
+      "required_by": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Gnosis requires access to the model's hidden states and attention maps. This access is unavailable for proprietary API-only models (e.g., GPT-4, Claude), restricting Gnosis to open-weight models where internal activations are exposed.",
+      "content_hash": "d912e911b78619721b0b940b405231a4fb219c6143d46f0be23b4edda31b9795",
+      "exported": false,
+      "interface_hash": "sha256:c9d53f8372f3a5ceb10f12bc5ea48ebc319442cff01570f21be5d6ab110ab8a9",
+      "label": "proprietary_model_limitation",
+      "qid": "github:2512_20578::proprietary_model_limitation",
+      "required_by": [
+        "github:2512_20578::gnosis_proposal"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "External reward models (e.g., Skywork-Reward-8B) require 930ms latency for 12,000-token responses and 2,465ms for 24,000-token responses, scaling linearly with sequence length. This makes them impractical for real-time or high-throughput inference pipelines.",
+      "content_hash": "6efb2c44403e52abe4ff21c07fafdedafe9ffa2eee1313dad81a8e805c29737a",
+      "exported": false,
+      "interface_hash": "sha256:721673218341ed35ebb598507662d49fe85247ba13bac9613f81dd8730e1269c",
+      "label": "reward_model_cost",
+      "qid": "github:2512_20578::reward_model_cost",
+      "required_by": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Within a model family, sibling models share similar internal circuit structure for error prediction: the same features of hidden states and attention patterns that discriminate correct from incorrect outputs in a small model also discriminate them in larger siblings, reflecting a shared representational basis.",
+      "content_hash": "72b54f20cb5c8e128b9645a4cbfa40fd18767d93e7dfc366f712653aeed9daba",
+      "exported": true,
+      "interface_hash": "sha256:8c63502e04bbba91f58e0c80264fcccf8ec999d849464caff442cfb496f86179",
+      "label": "shared_circuits_hypothesis",
+      "qid": "github:2512_20578::shared_circuits_hypothesis",
+      "required_by": [
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Gnosis training uses automatic correctness labels (no human annotation): (1) Generate 2 completions per math prompt (~14k DAPO-Math competition problems) and 1 completion per trivia prompt (40k subsampled from 118k TriviaQA questions). (2) Label each completion correct/incorrect by ground-truth comparison. (3) Optimize binary cross-entropy with frozen backbone for 2 epochs using Adam optimizer (learning rate 1×10⁻⁴). Training the largest backbone (OpenAI gpt-oss-20B) costs approximately $25 and takes ~12 hours on 2× A100 80GB GPUs.",
+      "content_hash": "f4bc239942774de85b9c6f2d92d82c57d075e24e5b0d0a84d58391f18a20c35f",
+      "exported": true,
+      "interface_hash": "sha256:560a1eed73365d029741e963aff08ca228bfc49cf9d1529c25121aba359cb3bb",
+      "label": "training_protocol",
+      "qid": "github:2512_20578::training_protocol",
+      "required_by": [
+        "github:2512_20578::frozen_backbone"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis fails between architecturally different or stylistically divergent models (e.g., from a thinking-mode to an instruct-mode model, or between different model families). The internal circuit representations differ sufficiently that cross-family transfer yields substantially degraded performance.",
+      "content_hash": "dd7ff74a792ca7c085d28454a93a0539916ece76af213c340b415fae6ae7d667",
+      "exported": true,
+      "interface_hash": "sha256:f1830113981b67b8687beade60da2efaf2e5f0c3d9ae071031158fb7161e54bb",
+      "label": "transfer_fails_cross_family",
+      "qid": "github:2512_20578::transfer_fails_cross_family",
+      "required_by": [
+        "github:2512_20578::gnosis_proposal"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to larger Qwen3 sibling models (math reasoning):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B (baseline) | 0.95 | 0.95 | 0.09 |\n| Gnosis self-judge 4B-Thinking | 0.96 | 0.98 | 0.05 |\n| Gnosis self-judge 8B-Hybrid | 0.97 | 0.97 | 0.08 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.97 | 0.99 | 0.07 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.97 | 0.98 | 0.10 |\n\nZero-shot transfer AUROC (0.97) matches or exceeds self-trained Gnosis heads, substantially outperforming Skywork-Reward-8B (0.81 AUROC on math).",
+      "content_hash": "0c3f3ee4ef147a89720e625b7ee8f6291ae438ce8e592bdab0af8d49511c6680",
+      "exported": false,
+      "interface_hash": "sha256:785b59e8f843765c8bf12e25596a9847af5cfc31a3ce4af187289f0aa5518114",
+      "label": "transfer_math_results",
+      "qid": "github:2512_20578::transfer_math_results",
+      "required_by": [
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to Qwen3 4B and 8B siblings (MMLU-Pro):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B | 0.80 | 0.90 | 0.11 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.81 | 0.93 | 0.16 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.83 | 0.94 | 0.15 |\n\nTransfer AUROC (0.81-0.83) is comparable to self-judge (0.80), suggesting the internal error-prediction circuits are shared across sibling model scales.",
+      "content_hash": "8b32a74dc76ab1176498a59d1015f925b1cfb0cfc3824163f9c529d1d9a79098",
+      "exported": false,
+      "interface_hash": "sha256:e8dc4242707c1e2d8c5c0a689011fbdc5e3a479fcc421bd5ee43772f9e41147d",
+      "label": "transfer_mmlu_results",
+      "qid": "github:2512_20578::transfer_mmlu_results",
+      "required_by": [
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Zero-shot transfer of Gnosis head trained on Qwen3 1.7B to Qwen3 4B and 8B siblings (TriviaQA):\n\n| Setup | AUROC | AUPR-c | ECE |\n|-------|-------|--------|-----|\n| Gnosis self-judge 1.7B | 0.87 | 0.79 | 0.10 |\n| Gnosis-1.7B → 4B-Thinking (transfer) | 0.86 | 0.86 | 0.04 |\n| Gnosis-1.7B → 8B-Hybrid (transfer) | 0.84 | 0.88 | 0.12 |\n\nTransfer AUROC (0.84-0.86) is comparable to self-judge AUROC (0.87), indicating robust generalization across model scale within a family.",
+      "content_hash": "20193dc8ca0f6edf8751e3e9868745de57778c055f8c4781503f94361f627994",
+      "exported": false,
+      "interface_hash": "sha256:8a7034b96170b66e2315b2d5cd9f34d8a5b69e00429bd9429d1c4a690504cf29",
+      "label": "transfer_trivia_results",
+      "qid": "github:2512_20578::transfer_trivia_results",
+      "required_by": [
+        "github:2512_20578::transfer_generalizes"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Verbalized confidence methods are poorly calibrated: LLMs frequently express high confidence on incorrect answers and low confidence on correct ones. Studies find weak correlation between verbalized probabilities and true answer correctness, especially for factual questions where the model has memorized incorrect information [@Xiong2024].",
+      "content_hash": "83a69a2546338eaa0b1089ef6b07cb48c5060341eba8a8dbb3e427d740a05c61",
+      "exported": false,
+      "interface_hash": "sha256:eebd6f3d94b0efef683c12fbcd8a53e3883bed5cef8e94215e200f84bbb3dc3a",
+      "label": "verbalized_conf_weakness",
+      "qid": "github:2512_20578::verbalized_conf_weakness",
+      "required_by": [
+        "github:2512_20578::internal_cues_exist"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}
