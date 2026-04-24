@@ -1,0 +1,2420 @@
+{
+  "ir_hash": "sha256:d8126aea6634d6279b6e1a84ca6bc766f5edc7b28b6fe0db61d6da82b5369b04",
+  "knowledges": [
+    {
+      "content": "Chain-of-Thought (CoT) prompting is a technique where large language models (LLMs) are prompted to produce intermediate reasoning traces before giving a final answer. It improves accuracy on complex multi-step tasks such as mathematical reasoning.",
+      "content_hash": "a96fb3e9c2246742ef84930ae3019b1afa086bf11129c9a26485f267dd248a22",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_08462::cot_prompting_def",
+      "label": "cot_prompting_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Chain-of-Thought prompting definition",
+      "type": "setting"
+    },
+    {
+      "content": "Budget Forcing refers to methods that limit or penalize the length of chain-of-thought reasoning traces in LLMs, trading off inference-time computation against accuracy. Existing approaches include length penalties, target-length penalties, and early stopping.",
+      "content_hash": "665c498a9f50f3ef0ea2fe530580bc3f09d67ebff7635892f6da13f5e892def0",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_08462::budget_forcing_def",
+      "label": "budget_forcing_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Budget Forcing definition",
+      "type": "setting"
+    },
+    {
+      "content": "The standard Information Bottleneck (IB) principle [@Tishby2000] assumes a Markov chain structure Y ↔ X ↔ Z, where Z is a compressed representation that mediates all information flow from input X to output Y. The IB objective is: ℒ_IB = I(X;Z) − μ I(Y;Z).",
+      "content_hash": "ed3bbf34f73e5a2c055461eef190d6d30fa4e5493100d87084bfe4224213203b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_08462::ib_markov_def",
+      "label": "ib_markov_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Tishby2000"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Standard Information Bottleneck definition",
+      "type": "setting"
+    },
+    {
+      "content": "Transformer decoder architectures [@Vaswani2017] use causal self-attention, which allows the answer generation step to attend directly to both the input prompt X and the reasoning trace Z simultaneously via the key-value cache.",
+      "content_hash": "3e1169d3ad3af1029adfddc987d108246b33826b174e5cac87deb9764a0d5641",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_08462::transformer_attention_def",
+      "label": "transformer_attention_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Vaswani2017"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Transformer causal attention mechanism",
+      "type": "setting"
+    },
+    {
+      "content": "Chain-of-Thought (CoT) prompting improves LLM accuracy on complex tasks but significantly increases token usage and inference cost. Longer reasoning traces translate directly into higher computational expense at inference time.",
+      "content_hash": "eda4471b58094b26d7e1464460dcce2bc2dbb2b7842af394570e51acd948475a",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_08462::cot_cost_problem",
+      "label": "cot_cost_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "budget_forcing_heuristic"
+            ]
+          }
+        },
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "CoT accuracy-cost tradeoff",
+      "type": "claim"
+    },
+    {
+      "content": "Existing Budget Forcing methods impose heuristic length penalties on reasoning traces that treat all tokens uniformly (a 'flat tax' on token count). This approach indiscriminately suppresses both essential reasoning steps and redundant 'cognitive bloat', making it brittle with respect to semantic relevance.",
+      "content_hash": "84ff7a6d941269ccfa137e11902b0d44b36f33eecc475a45ca4718a5e78fc5d6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_08462::budget_forcing_heuristic",
+      "label": "budget_forcing_heuristic",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Broadly supported by literature on length penalties (L1, LCPO) treating all tokens equally regardless of semantic content. Multiple papers confirm this design choice.",
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Flat-tax budget forcing is heuristic and brittle",
+      "type": "claim"
+    },
+    {
+      "content": "Can efficient LLM reasoning be grounded in information-theoretic principles rather than heuristic token-length penalties, enabling a principled accuracy-efficiency trade-off?",
+      "content_hash": "96bf1b2d1802a1d88383c55872dddaccc11fab42a2a8d651cbcdb1a7d2bd1695",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_08462::q_principled_compression",
+      "label": "q_principled_compression",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question: principled compression of reasoning traces",
+      "type": "question"
+    },
+    {
+      "content": "Reinforcement Learning from Verifiable Rewards (RLVR) is a training paradigm for LLMs where the model is optimized using reinforcement learning with reward signals derived from verifiable correctness (e.g., whether the final answer is correct), rather than from human preferences. Examples include GRPO and PPO applied to math reasoning.",
+      "content_hash": "da83661be3dc0023699ddbea120f4d8e927d9c92314891fd84902edacb79d6f8",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_08462::rlvr_def",
+      "label": "rlvr_def",
+      "module": "s2_background",
+      "parameters": [],
+      "title": "RLVR definition",
+      "type": "setting"
+    },
+    {
+      "content": "Group Relative Policy Optimization (GRPO) [@Shao2024] is a reinforcement learning algorithm for LLMs that estimates the baseline from a group of sampled outputs rather than a separate value model. Used here with group size 16.",
+      "content_hash": "e233a7dba3f1f3a913fe26bcf743850b687851db7be48594299e41d5aa88eb10",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_08462::grpo_def",
+      "label": "grpo_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shao2024"
+            ]
+          }
+        }
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "GRPO definition",
+      "type": "setting"
+    },
+    {
+      "content": "Existing length-penalized training methods such as L1 [@Aggarwal2025] apply a penalty proportional to raw token count. These methods achieve token reduction but treat all tokens as equally costly regardless of their semantic contribution to the answer, leading to suboptimal accuracy-efficiency trade-offs.",
+      "content_hash": "1147b49e0f54891474718d10f08aecda2a2e18345a44a120fbdef39ced7fe115",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_08462::length_penalty_limitation",
+      "label": "length_penalty_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Aggarwal2025"
+            ],
+            "referenced_claims": [
+              "budget_forcing_heuristic",
+              "cot_cost_problem",
+              "length_penalty_limitation"
+            ]
+          }
+        },
+        "source_section": "Section 2.1"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Token-count length penalties are semantically blind",
+      "type": "claim"
+    },
+    {
+      "content": "Prior work has applied Information Bottleneck theory to LLM representation learning and compression, but standard IB was not used to directly optimize the reasoning trace generation process under the constraint of transformer attention architecture.",
+      "content_hash": "699447fc103399fb621171341b3167f64a64b03a53142475f090398ccf16a3d4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_08462::ib_prior_use_in_llms",
+      "label": "ib_prior_use_in_llms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cot_cost_problem",
+              "ib_prior_use_in_llms"
+            ]
+          }
+        },
+        "source_section": "Section 2.2"
+      },
+      "module": "s2_background",
+      "parameters": [],
+      "title": "Prior IB applications to LLMs did not address reasoning trace compression",
+      "type": "claim"
+    },
+    {
+      "content": "The Conditional Information Bottleneck (CIB) objective for reasoning trace optimization is: $$\\mathcal{L}_{\\text{CIB}}(\\theta) = I(Z;Y|X) - \\beta I(X;Z)$$\nwhere X is the input prompt, Z is the reasoning trace generated by policy $\\pi_\\theta$, Y is the correct answer, $\\beta > 0$ is the compression trade-off parameter, $I(Z;Y|X)$ is the conditional mutual information (sufficiency/accuracy term), and $I(X;Z)$ is the mutual information between prompt and trace (minimality/compression term).",
+      "content_hash": "d9df45ea56e48aba206faeaec5add2a769bae7832947e2adb2a4084410c8d300",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_08462::cib_objective_def",
+      "label": "cib_objective_def",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "CIB objective definition",
+      "type": "setting"
+    },
+    {
+      "content": "The variational lower bound for the sufficiency term $I(Z;Y|X)$ is derived using an auxiliary verifier distribution $Q_\\rho(y|x,z)$:\n$$I(Z;Y|X) \\geq \\sum_{i=1}^m \\mathbb{E}_{Z \\sim \\pi_\\theta(Z|x_i)}[\\log Q_\\rho(y_i|x_i, Z)]$$\nThis follows from the data processing inequality applied to the conditional mutual information.",
+      "content_hash": "6271c83a234375ae3e57eeeaec4adc995092e42a4100d351515781431cdd8260",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_08462::variational_sufficiency_def",
+      "label": "variational_sufficiency_def",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Variational lower bound for sufficiency term",
+      "type": "setting"
+    },
+    {
+      "content": "The $\\varepsilon$-smoothed verifier $\\tilde{Q}_\\rho(y|x,z)$ is defined as:\n$$\\tilde{Q}_\\rho(y|x,z) := \\varepsilon + (1-\\varepsilon) \\cdot \\mathbf{1}(\\hat{y}(x,z)=y)$$\nwhere $\\varepsilon > 0$ is a small constant and $\\hat{y}(x,z)$ is the predicted answer extracted from the reasoning trace z. This smoothing avoids $\\log(0)$ in the reward.",
+      "content_hash": "ebae3c961758c10c5e121ac87d2d2c5925e16cf9034e40b1ddae04aba98aedcb",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_08462::eps_smoothed_verifier_def",
+      "label": "eps_smoothed_verifier_def",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Epsilon-smoothed verifier definition",
+      "type": "setting"
+    },
+    {
+      "content": "The information cost $C(Z)$ of a reasoning trace Z is defined as:\n$$C(Z) := \\sum_{t=1}^{|Z|} -\\log Q_\\phi(z_t | z_{<t})$$\nwhere $Q_\\phi$ is a frozen base language model prior (not instruction-finetuned). This quantity equals the cross-entropy of Z under the prior model, i.e., the surprisal of each token given the preceding context.",
+      "content_hash": "570af74ce4d87edf636a5f0ade03f56889558c9fb17997662a7ae18000d996a9",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_08462::information_cost_def",
+      "label": "information_cost_def",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Information cost as token surprisal definition",
+      "type": "setting"
+    },
+    {
+      "content": "The combined reward function for CIB-based RL training is:\n$$R(X,Y,Z) := r_{\\text{acc}}(X,Y,Z) + \\beta \\cdot r_{\\text{min}}(X,Z)$$\nwhere $r_{\\text{acc}}(X,Y,Z) := \\mathbf{1}(\\hat{y}(x,z)=y)$ is the binary accuracy reward and $r_{\\text{min}}(X,Z) := \\sum_t \\log Q_\\phi(z_t | z_{<t})$ is the minimality reward (negative information cost). $\\beta$ controls the compression-accuracy trade-off.",
+      "content_hash": "5e31e128df276148ced4bdd49c4fe4b6f7731988d5c7624bd3c058b3a97a826a",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_08462::combined_reward_def",
+      "label": "combined_reward_def",
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Combined CIB reward function definition",
+      "type": "setting"
+    },
+    {
+      "content": "Standard Information Bottleneck (IB) assumes a Markov chain structure Y ↔ X ↔ Z, where the compressed representation Z mediates all information from input X to output Y. However, transformer decoder architectures violate this Markov assumption: via causal self-attention and the key-value cache, the answer generation directly attends to both the prompt X and reasoning trace Z simultaneously. This creates a collider structure (X,Z)→Y rather than the chain X→Z→Y. The authors term this inconsistency the 'Attention Paradox'.",
+      "content_hash": "0005d1eafdfd6f85ce370f1b7c7d7a3aebfd52e3bfc086111d82b65c8862b758",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_08462::attention_paradox",
+      "label": "attention_paradox",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "transformer_attention_violates_markov"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Attention Paradox: transformers violate IB Markov assumption",
+      "type": "claim"
+    },
+    {
+      "content": "Transformer decoder architectures use causal self-attention that allows the answer generation step to attend directly to both the input prompt X and the reasoning trace Z via the key-value cache. This means the Markov chain assumption Y↔X↔Z required by standard IB is violated: Y depends on (X,Z) jointly rather than on Z alone.",
+      "content_hash": "ce09d6e9ab3d55603f276456f403a2e8b89c992b4ad3cc3fc93c70c76e038f64",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_08462::transformer_attention_violates_markov",
+      "label": "transformer_attention_violates_markov",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly follows from the transformer architecture: causal attention allows answer generation to attend to both prompt X and trace Z via key-value cache, creating a collider structure (X,Z)→Y rather than Markov chain Y↔X↔Z. High confidence."
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Transformer attention directly violates IB Markov assumption",
+      "type": "claim"
+    },
+    {
+      "content": "The Conditional Information Bottleneck (CIB) framework resolves the Attention Paradox by treating the prompt X as side information always available to the answer generator. The CIB objective maximizes $I(Z;Y|X)$ (how much Z explains Y given X) while minimizing $I(X;Z)$ (how redundant Z is with X). This correctly accounts for the transformer's direct access to X during answer generation.",
+      "content_hash": "414c7433a724e4b01ce55a2c197098a83b7e9dc16cafac8ff3a1a794bc2df043",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_08462::cib_resolves_paradox",
+      "label": "cib_resolves_paradox",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "attention_paradox"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "CIB resolves Attention Paradox by conditioning on X",
+      "type": "claim"
+    },
+    {
+      "content": "The CIB accuracy reward $r_{\\text{acc}}(X,Y,Z) = \\mathbf{1}(\\hat{y}(x,z)=y)$ is derived from the variational lower bound on $I(Z;Y|X)$ via an $\\varepsilon$-smoothed binary verifier $\\tilde{Q}_\\rho$. Maximizing the lower bound $\\sum_i \\mathbb{E}[\\log \\tilde{Q}_\\rho(y_i|x_i,Z)]$ is equivalent (up to constants) to maximizing the indicator $\\mathbf{1}(\\hat{y}=y)$.",
+      "content_hash": "d6e47ceb580c7045f57aed635dc31dcb59a2c5234b0a85f15582a840081644df",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_08462::acc_reward_derivation",
+      "label": "acc_reward_derivation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cib_resolves_paradox",
+              "eps_smoothed_verifier_def",
+              "variational_sufficiency_def"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Binary accuracy reward derived from variational sufficiency bound",
+      "type": "claim"
+    },
+    {
+      "content": "The CIB minimality reward $r_{\\text{min}}(X,Z) = \\sum_t \\log Q_\\phi(z_t|z_{<t})$ is derived from the variational upper bound on $I(X;Z)$:\n$$I(X;Z) \\leq \\mathbb{E}_{X,Z}[-\\log Q_\\phi(Z)] - H(Z|X)$$\nMinimizing $I(X;Z)$ is upper-bounded by minimizing $\\mathbb{E}_{X,Z}[-\\log Q_\\phi(Z)]$, i.e., maximizing the log-likelihood of Z under the frozen base model prior $Q_\\phi$.",
+      "content_hash": "a09f4ec00f6bfee9cf65fa6b2f092efadc084c1e9ed9ff53c7bfc87739e51fef",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_08462::min_reward_derivation",
+      "label": "min_reward_derivation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cib_resolves_paradox",
+              "information_cost_def"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Semantic surprisal reward derived from variational minimality bound",
+      "type": "claim"
+    },
+    {
+      "content": "The semantic cost function $C(Z) = \\sum_t -\\log Q_\\phi(z_t|z_{<t})$ (token surprisal under a frozen base language model) assigns higher cost to task-specific, low-probability tokens and lower cost to generic, high-probability tokens. This distinguishes informative reasoning tokens from conversational filler, which uniform token-count penalties cannot do.",
+      "content_hash": "cd4c6109e117ead4db351ddbb2c334c8e3c05bea1e1437e699cd1fa0a6725653",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2603_08462::semantic_cost_advantage",
+      "label": "semantic_cost_advantage",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "budget_forcing_heuristic",
+              "min_reward_derivation"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Semantic surprisal cost distinguishes informative from filler tokens",
+      "type": "claim"
+    },
+    {
+      "content": "The CIB framework yields a principled reinforcement learning training objective: maximize task reward while compressing completions under a prior over reasoning traces. Concretely, the policy $\\pi_\\theta$ is trained using GRPO [@Shao2024] with the combined reward $R(X,Y,Z) = r_{\\text{acc}}(X,Y,Z) + \\beta \\cdot r_{\\text{min}}(X,Z)$, where $\\beta$ is the compression trade-off hyperparameter.",
+      "content_hash": "11f36c37015f10911704bcf6f18fc66682545ed943b0cf5c0c0e808424ce74fa",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2603_08462::rl_objective_formulation",
+      "label": "rl_objective_formulation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shao2024"
+            ],
+            "referenced_claims": [
+              "acc_reward_derivation",
+              "combined_reward_def",
+              "min_reward_derivation"
+            ]
+          }
+        },
+        "source_section": "Section 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "CIB yields RL objective: maximize accuracy minus compression cost",
+      "type": "claim"
+    },
+    {
+      "content": "A uniform (maximum entropy) prior $Q$ over the vocabulary assigns equal probability to every token at every position: $Q(z_t|z_{<t}) = 1/|V|$ for all $t$, where $|V|$ is the vocabulary size. Under this prior, $-\\log Q(z_t|z_{<t}) = \\log|V|$ is a constant, so the information cost $C(Z) = |Z| \\cdot \\log|V|$ is proportional to trace length $|Z|$.",
+      "content_hash": "1fba6b84f7878367c9cf50a9a19dfeb168917abad6bf67e5753a12cae6545616",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_08462::uniform_prior_def",
+      "label": "uniform_prior_def",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Uniform prior gives constant per-token cost",
+      "type": "setting"
+    },
+    {
+      "content": "A Laplace prior over trace length is a distribution that peaks at a target length $L^*$ and decays exponentially with distance from it. Under such a prior, the log-probability $\\log Q_\\phi(Z)$ approximates $-\\lambda |\\,|Z| - L^*\\,|$ for some rate $\\lambda$, yielding a penalty proportional to the absolute deviation from target length.",
+      "content_hash": "f253ca1c0f8787be7d15b938647fea8eb7176711f45e15f395875806ac4c2b11",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_08462::laplace_prior_def",
+      "label": "laplace_prior_def",
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Laplace prior gives target-length penalty",
+      "type": "setting"
+    },
+    {
+      "content": "Proposition 4.1: A standard length-based penalty $g(Z) = \\alpha f(|Z|)$ (applied in existing Budget Forcing methods) is equivalent to the CIB minimality reward $r_{\\text{min}}(X,Z) = \\sum_t \\log Q_\\phi(z_t|z_{<t})$ under the special case where $Q_\\phi$ is a maximum entropy (uniform) prior over the vocabulary. Under this prior, $-\\log Q_\\phi(z_t|z_{<t}) = \\log|V|$ is constant per token, so $C(Z) \\propto |Z|$.",
+      "content_hash": "6d9fd28e3a9998f766261935eaf1bd9ca4b84e3ea758c702519e648ba37c621a",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2603_08462::prop_length_penalty_equivalence",
+      "label": "prop_length_penalty_equivalence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "information_cost_def",
+              "rl_objective_formulation",
+              "uniform_prior_def"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Proposition 4.1: Length penalties are CIB with uniform prior",
+      "type": "claim"
+    },
+    {
+      "content": "Proposition 4.2: Target-length penalties, such as L1-Exact (LCPO-Exact) [@Aggarwal2025], which penalize deviation from a target length $L^*$, correspond to the CIB objective with a Laplace prior $Q_\\phi$ peaked at $L^*$. Under a Laplace prior, $\\log Q_\\phi(Z) \\approx -\\lambda ||Z| - L^*|$, matching the L1 penalty form.",
+      "content_hash": "fc95b90a3433522ed0738ee3d2ef57df81dd98ce05029d4a6e90fe7fe7594d19",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2603_08462::prop_target_length_equivalence",
+      "label": "prop_target_length_equivalence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Aggarwal2025"
+            ],
+            "referenced_claims": [
+              "information_cost_def",
+              "laplace_prior_def",
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Proposition 4.2: Target-length penalties are CIB with Laplace prior",
+      "type": "claim"
+    },
+    {
+      "content": "The CIB framework unifies all budget-forcing methods as special cases: length penalties correspond to CIB with uniform priors (Proposition 4.1), and target-length penalties correspond to CIB with Laplace priors (Proposition 4.2). Semantic priors (from a real language model $Q_\\phi$) strictly generalize these, capturing token-level relevance that length-only metrics cannot.",
+      "content_hash": "d9c9a10d2167105b05a2020259cca6e0a4a00ec22dc11d741f54227b8ae2f62e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2603_08462::cib_unifies_budget_forcing",
+      "label": "cib_unifies_budget_forcing",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "prop_length_penalty_equivalence",
+              "prop_target_length_equivalence"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "CIB unifies budget forcing methods as special cases",
+      "type": "claim"
+    },
+    {
+      "content": "Because a real (non-uniform, non-Laplace) language model prior $Q_\\phi$ captures the contextual probability distribution over tokens, it can assign differential costs to tokens based on their semantic content — penalizing generic filler tokens (high probability under $Q_\\phi$, low surprisal) more than task-specific reasoning tokens (low probability under $Q_\\phi$, high surprisal). This theoretical advantage translates to better accuracy-efficiency trade-offs than uniform or Laplace priors.",
+      "content_hash": "10cf80fcb00892349948ab8f6548a27c840e02357ab3e1d6a1525eee572c0317",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_08462::semantic_prior_superiority_theory",
+      "label": "semantic_prior_superiority_theory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cib_unifies_budget_forcing"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_theory",
+      "parameters": [],
+      "title": "Theoretical basis for semantic prior superiority over length priors",
+      "type": "claim"
+    },
+    {
+      "content": "Five math reasoning benchmarks are used for evaluation:\n- MATH500: 500 competition-level math problems\n- AIME24: 2024 American Invitational Mathematics Examination problems\n- AIME25: 2025 American Invitational Mathematics Examination problems\n- Minerva: science reasoning benchmark\n- OlympiadBench: olympiad-level math problems\nModels are evaluated on accuracy (higher is better) and average token count (lower is better).",
+      "content_hash": "f694e684fc5418fc74e378ad8d2d3c0eeef4b2d073e471d1e52558434a9fab37",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_08462::eval_benchmarks_def",
+      "label": "eval_benchmarks_def",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Evaluation benchmarks definition",
+      "type": "setting"
+    },
+    {
+      "content": "Two base models are evaluated: DeepScaleR-1.5B (Deepscaler) and DLER (1.5B and 7B variants). CIB training uses Qwen2.5-Base as the frozen prior model $Q_\\phi$ in two sizes: 1.5B and 7B. Training uses GRPO with group size 16, temperature 0.6, top_p 0.95, 16 generations per prompt. Two compression levels are tested: conservative ($\\beta^- = 5 \\times 10^{-5}$) and aggressive ($\\beta^+ = 1.5 \\times 10^{-4}$).",
+      "content_hash": "fa1e0591ba7fc5fff51cbda3d5cf596baec61a976b0869be557c6e2388e19b70",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_08462::base_models_def",
+      "label": "base_models_def",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Base models and training setup",
+      "type": "setting"
+    },
+    {
+      "content": "On DeepScaleR-1.5B with CIB using 1.5B prior ($\\beta^- = 5\\times10^{-5}$, conservative), average accuracy improves from 44.7% (baseline) to 45.9% (+1.2pp), while average token count decreases from 6,722 (baseline) to 5,045 tokens (−25%):\n\n| Benchmark | Acc (base) | Acc (CIB) | Tok (base) | Tok (CIB) |\n|-----------|-----------|-----------|-----------|----------|\n| MATH500   | 85.8%     | 87.6%     | 3,190     | 2,359    |\n| AIME24    | 38.1%     | 39.2%     | 9,269     | 7,156    |\n| AIME25    | 25.2%     | 27.3%     | 8,901     | 6,725    |\n| Minerva   | 19.9%     | 20.1%     | 6,375     | 4,512    |\n| Olympiad  | 54.7%     | 55.4%     | 5,875     | 4,473    |",
+      "content_hash": "b36f200043af289ed228af408508c6ae69433aeaef87af6dd486b8b6854196bc",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2603_08462::deepscaler_cib_conservative",
+      "label": "deepscaler_cib_conservative",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DeepScaleR: CIB conservative compression results (25% token reduction, +1.2pp accuracy)",
+      "type": "claim"
+    },
+    {
+      "content": "On DeepScaleR-1.5B with CIB using 1.5B prior ($\\beta^+ = 1.5\\times10^{-4}$, aggressive), average accuracy improves from 44.7% (baseline) to 46.0% (+1.3pp), while average token count decreases from 6,722 (baseline) to 4,797 tokens (−29%):\n\n| Benchmark | Acc (base) | Acc (CIB) | Tok (base) | Tok (CIB) |\n|-----------|-----------|-----------|-----------|----------|\n| MATH500   | 85.8%     | 87.8%     | 3,190     | 2,106    |\n| AIME24    | 38.1%     | 40.2%     | 9,269     | 6,857    |\n| AIME25    | 25.2%     | 26.3%     | 8,901     | 6,672    |\n| Minerva   | 19.9%     | 20.3%     | 6,375     | 4,144    |\n| Olympiad  | 54.7%     | 55.3%     | 5,875     | 4,208    |",
+      "content_hash": "75d91929017f8788698e1e20b606943128f6684fedf25dcc0f11cab2b30fa6f3",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2603_08462::deepscaler_cib_aggressive",
+      "label": "deepscaler_cib_aggressive",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured experimental result from Table 1. 29% average token reduction with +1.3pp accuracy is a concrete, verifiable empirical measurement.",
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DeepScaleR: CIB aggressive compression results (29% token reduction, +1.3pp accuracy)",
+      "type": "claim"
+    },
+    {
+      "content": "On DeepScaleR-1.5B with CIB using a larger 7B prior model, average accuracy decreases from 44.7% (baseline) to 44.0% (−0.7pp), while average token count decreases from 6,722 to 3,951 tokens (−41%). This demonstrates aggressive compression with minimal accuracy cost:\n\n| Benchmark | Acc (base) | Acc (CIB-7B) | Tok (base) | Tok (CIB-7B) |\n|-----------|-----------|-------------|-----------|-------------|\n| MATH500   | 85.8%     | 84.0%       | 3,190     | 1,548       |\n| AIME24    | 38.1%     | 35.2%       | 9,269     | 5,720       |\n| AIME25    | 25.2%     | 25.8%       | 8,901     | 5,362       |\n| Minerva   | 19.9%     | 19.6%       | 6,375     | 3,097       |\n| Olympiad  | 54.7%     | 55.2%       | 5,875     | 4,029       |",
+      "content_hash": "32ca84e3e5ac1a1ac4a60c5801520b138e89a7cec4158da1c4de5e8c3c94973c",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2603_08462::deepscaler_7b_prior",
+      "label": "deepscaler_7b_prior",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured experimental result from Table 1. 41% average token reduction with −0.7pp accuracy loss is a concrete, verifiable empirical measurement.",
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DeepScaleR: CIB with 7B prior achieves 41% token reduction with only −0.7pp accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "On DLER-7B with CIB using 7B prior ($\\beta^- = 5\\times10^{-5}$, conservative), average accuracy improves from 54.2% (baseline) to 54.3% (+0.1pp), while average token count decreases from 2,481 (baseline) to 2,285 tokens (−8%):\n\n| Benchmark | Acc (base) | Acc (CIB) | Tok (base) | Tok (CIB) |\n|-----------|-----------|-----------|-----------|----------|\n| MATH500   | 93.6%     | 94.0%     | 1,159     | 1,033    |\n| AIME24    | 48.5%     | 49.4%     | 3,261     | 3,003    |\n| AIME25    | 36.9%     | 37.1%     | 3,264     | 3,113    |\n| Minerva   | 27.2%     | 26.7%     | 1,872     | 1,643    |\n| Olympiad  | 65.0%     | 64.3%     | 2,851     | 2,632    |",
+      "content_hash": "da6915590c9a04eb05bf7ef9126b4ab64110920d9b5e9ddcc5dd25222bf403f0",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_08462::dler_7b_cib_conservative",
+      "label": "dler_7b_cib_conservative",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DLER-7B: CIB conservative compression (8% token reduction, +0.1pp accuracy)",
+      "type": "claim"
+    },
+    {
+      "content": "On DLER-7B with CIB using 7B prior ($\\beta^+ = 1.5\\times10^{-4}$, aggressive), average accuracy decreases from 54.2% (baseline) to 52.9% (−1.3pp), while average token count decreases from 2,481 (baseline) to 1,687 tokens (−32%):\n\n| Benchmark | Acc (base) | Acc (CIB) | Tok (base) | Tok (CIB) |\n|-----------|-----------|-----------|-----------|----------|\n| MATH500   | 93.6%     | 92.2%     | 1,159     | 678      |\n| AIME24    | 48.5%     | 48.3%     | 3,261     | 2,617    |\n| AIME25    | 36.9%     | 35.6%     | 3,264     | 2,580    |\n| Minerva   | 27.2%     | 25.8%     | 1,872     | 849      |\n| Olympiad  | 65.0%     | 62.6%     | 2,851     | 1,711    |",
+      "content_hash": "4f807d72af28f92a2a41612d0a7977ea4da3e25e8a0214738b7c7d146e7ca42a",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2603_08462::dler_7b_cib_aggressive",
+      "label": "dler_7b_cib_aggressive",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DLER-7B: CIB aggressive compression (32% token reduction, −1.3pp accuracy)",
+      "type": "claim"
+    },
+    {
+      "content": "L1-Exact (a token-count length-penalty baseline) on DLER-7B achieves: average accuracy 51.5% (−2.7pp from baseline 54.2%), average tokens 1,772 (−29% from baseline 2,481):\n\n| Benchmark | Acc (L1-Exact) | Tok (L1-Exact) |\n|-----------|---------------|---------------|\n| MATH500   | 92.0%         | 726           |\n| AIME24    | 46.5%         | 2,530         |\n| AIME25    | 30.8%         | 2,621         |\n| Minerva   | 26.2%         | 1,148         |\n| Olympiad  | 62.0%         | 1,833         |",
+      "content_hash": "49157bab5ed00673bcd12853fd184fed35abf8490a1163045afc7e71d32ce8f7",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_08462::l1_exact_dler7b",
+      "label": "l1_exact_dler7b",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "budget_forcing_heuristic"
+            ]
+          }
+        },
+        "source_section": "Section 5, Table 1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "L1-Exact baseline on DLER-7B: 29% token reduction but −2.7pp accuracy drop",
+      "type": "claim"
+    },
+    {
+      "content": "CIB with semantic prior achieves a superior Pareto frontier over L1-based length penalties on DLER-7B: at similar compression levels (~29-32%), CIB $\\beta^+$ achieves 52.9% average accuracy (−1.3pp from baseline) versus L1-Exact's 51.5% (−2.7pp from baseline). CIB obtains higher accuracy at slightly higher compression (32% vs 29%) than L1-Exact, confirming that semantic cost better preserves essential reasoning.",
+      "content_hash": "3da652e5ffbfcdcb37142db951ea53dc44e7b8bda8511f886bfe6782940ba41a",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2603_08462::cib_pareto_dominates_l1",
+      "label": "cib_pareto_dominates_l1",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "dler_7b_cib_aggressive",
+              "l1_exact_dler7b",
+              "pred_cib_better",
+              "pred_l1_worse"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "CIB Pareto-dominates L1-Exact: better accuracy at equal or higher compression",
+      "type": "claim"
+    },
+    {
+      "content": "CIB with semantic prior predicts higher accuracy than L1-Exact at comparable compression levels because semantic cost selectively removes low-information tokens while preserving task-critical reasoning steps.",
+      "content_hash": "fab734969e25848a19879720e640b56df8ab50f76f32222f38b04b8e954a7063",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2603_08462::pred_cib_better",
+      "label": "pred_cib_better",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "Theoretical prediction grounded in CIB framework — semantic surprisal cost should distinguish essential from filler tokens. Strong theoretical backing, but the empirical outcome was not guaranteed a priori."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "CIB prediction: semantic cost preserves accuracy better than length penalties",
+      "type": "claim"
+    },
+    {
+      "content": "L1-Exact predicts equal or greater compression at the cost of higher accuracy loss than CIB, because it cannot distinguish essential from redundant tokens.",
+      "content_hash": "b304624e81987908bba6bbf8428b93a5ac930c26492af477d214f1379e33c2ed",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2603_08462::pred_l1_worse",
+      "label": "pred_l1_worse",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "Theoretical prediction: uniform token penalty cannot distinguish essential reasoning from cognitive bloat. Moderate confidence — L1 methods may perform better than expected if training adapts to the penalty signal."
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "L1-Exact prediction: accuracy loss higher than CIB at comparable compression",
+      "type": "claim"
+    },
+    {
+      "content": "compare(CIB with semantic prior predicts higher accuracy than L1-Exact at comparable compression levels because semantic cost selectively removes low-information tokens while preserving task-critical reasoning steps., L1-Exact predicts equal or greater compression at the cost of higher accuracy loss than CIB, because it cannot distinguish essential from redundant tokens., CIB with semantic prior achieves a superior Pareto frontier over L1-based length penalties on DLER-7B: at similar compression levels (~29-32%), CIB $\\beta^+$ achieves 52.9% average accuracy (−1.3pp from baseline) versus L1-Exact's 51.5% (−2.7pp from baseline). CIB obtains higher accuracy at slightly higher compression (32% vs 29%) than L1-Exact, confirming that semantic cost better preserves essential reasoning.)",
+      "content_hash": "b293e7d20bc125425433a37ddf0b30216c5b2599b7089e72e84e3bac622ad010",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2603_08462::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cib_pareto_dominates_l1",
+              "pred_cib_better",
+              "pred_l1_worse"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Larger prior models ($Q_\\phi$) enable more aggressive compression. Using a 7B prior instead of 1.5B on DeepScaleR-1.5B increases token reduction from 29% to 41%, suggesting the 7B prior provides sharper estimates of semantic redundancy. However, accuracy degrades slightly (−0.7pp) with the 7B prior when using $\\beta^+$ settings tuned for the 1.5B prior, indicating hyperparameter re-tuning may be needed.",
+      "content_hash": "4016fb92adeec4404980f1bef83b0bb85da39a84ab49e49d3441d97d7fbce58d",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2603_08462::larger_prior_more_compression",
+      "label": "larger_prior_more_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "deepscaler_7b_prior",
+              "deepscaler_cib_aggressive"
+            ]
+          }
+        },
+        "source_section": "Section 5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Larger prior model enables more aggressive compression but may require re-tuning",
+      "type": "claim"
+    },
+    {
+      "content": "Qualitative analysis of compressed traces shows CIB systematically eliminates three categories of 'cognitive bloat': (1) conversational scaffolding (unnecessary verbal parsing of inputs), (2) redundant verification loops (tautological self-checks), and (3) inefficient exploration (trial-and-error branches). Compressed traces exhibit information density $\\gtrsim 0.2$ nats per token versus $\\approx 0.1$ nats for length-penalized baselines, confirming semantic rather than arbitrary compression.",
+      "content_hash": "a69b26c0fd493551c562cbd808a05b846473c887ceafb7dae70d12e0a4c397d0",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2603_08462::info_density_result",
+      "label": "info_density_result",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "semantic_cost_advantage"
+            ]
+          }
+        },
+        "source_section": "Section 5, Qualitative Comparison"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "CIB compressed traces: higher information density, systematic bloat removal",
+      "type": "claim"
+    },
+    {
+      "content": "The Conditional Information Bottleneck (CIB) framework provides a principled information-theoretic foundation for efficient LLM reasoning by: (1) identifying the Attention Paradox that invalidates standard IB for transformers, (2) deriving a semantically-grounded RL objective from CIB principles, (3) unifying existing budget-forcing methods as special cases with degenerate priors, and (4) empirically demonstrating Pareto improvements over token-count baselines across five math benchmarks.",
+      "content_hash": "7a34fd69a9d04c407eec79e4ddc9881b9cb5660171a79593d5a972374d45343e",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2603_08462::cib_principled_framework",
+      "label": "cib_principled_framework",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cib_pareto_dominates_l1",
+              "cib_resolves_paradox",
+              "cib_unifies_budget_forcing"
+            ]
+          }
+        },
+        "source_section": "Section 6"
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "CIB provides principled, theoretically-grounded efficient reasoning framework",
+      "type": "claim"
+    },
+    {
+      "content": "CIB accuracy degrades slightly (≤1.4 percentage points) when scaling the prior model from 1.5B to 7B parameters without re-tuning the $\\beta$ hyperparameter. This indicates that $\\beta$ values are not transferable across prior model sizes and must be re-calibrated when using a different prior.",
+      "content_hash": "afe9b23f0b8603a82fdc9bf9b9f54ac445f2e0bd0d1fd352fd076941a54a0488",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2603_08462::accuracy_degradation_at_scale",
+      "label": "accuracy_degradation_at_scale",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "larger_prior_more_compression"
+            ]
+          }
+        },
+        "source_section": "Section 6, Limitations"
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "Limitation: accuracy degradation without hyperparameter re-tuning across prior scales",
+      "type": "claim"
+    },
+    {
+      "content": "CIB training requires a frozen base language model $Q_\\phi$ during training but does not add any overhead at inference time. The trained policy $\\pi_\\theta$ generates compressed reasoning traces autonomously without needing to query $Q_\\phi$.",
+      "content_hash": "1cbbbeaa83ce03f37f2ece670277c8895e0584dfe7b15a1381f038b48daf5088",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2603_08462::no_inference_overhead",
+      "label": "no_inference_overhead",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 6"
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "CIB adds no inference-time overhead",
+      "type": "claim"
+    },
+    {
+      "content": "The CIB framework is general and instantiable with different verifiers $Q_\\rho$ and priors $Q_\\phi$ for task-specific optimization. While demonstrated on mathematical reasoning with binary correctness verifiers, the objective $R(X,Y,Z) = r_{\\text{acc}} + \\beta r_{\\text{min}}$ can accommodate other domains with appropriate verifier designs.",
+      "content_hash": "d967b4eb329402777d7802ad9ec193584d4b49019bb0fb2165e5f8afce85c6f4",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2603_08462::framework_generality",
+      "label": "framework_generality",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rl_objective_formulation"
+            ]
+          }
+        },
+        "source_section": "Section 6"
+      },
+      "module": "s6_conclusions",
+      "parameters": [],
+      "title": "CIB is general: adaptable to different verifiers and priors",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::budget_forcing_heuristic,github:2603_08462::cot_cost_problem)",
+      "content_hash": "a39dbf7c47d07c9a71175557b796f780f2a32724372d5c6bbd578f83ebbe49d1",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_6f79bd36",
+      "label": "__implication_result_6f79bd36",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::budget_forcing_heuristic,github:2603_08462::cot_cost_problem)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_03d808eb2643b955",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::cot_cost_problem,github:2603_08462::budget_forcing_heuristic)",
+      "content_hash": "644e7be255f55310a6c9cb0a7b55c9405b0e08bc2c29d21096a9f10927b89bfc",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_2351a7b0",
+      "label": "__conjunction_result_2351a7b0",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::cot_cost_problem,github:2603_08462::budget_forcing_heuristic)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4b1323e22bc16ea0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_2351a7b0,github:2603_08462::length_penalty_limitation)",
+      "content_hash": "2a3e30abac1847b5cd105cd93b79db79fdf3b973505624ada442b20e312804a7",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_7c7338c7",
+      "label": "__implication_result_7c7338c7",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_2351a7b0,github:2603_08462::length_penalty_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4b1323e22bc16ea0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::cot_cost_problem,github:2603_08462::ib_prior_use_in_llms)",
+      "content_hash": "8815b3229690446aa0dbd99571a0be2e67a3cef9d1b58ac9c5c7f25d8151589a",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_d5822930",
+      "label": "__implication_result_d5822930",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::cot_cost_problem,github:2603_08462::ib_prior_use_in_llms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9346ecbfa89e1ec3",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::transformer_attention_violates_markov,github:2603_08462::attention_paradox)",
+      "content_hash": "27acda025ffeee1903323b694e734756b587c9debd5f931127e35bb9ebaf7ea0",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_3d40c7c9",
+      "label": "__implication_result_3d40c7c9",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::transformer_attention_violates_markov,github:2603_08462::attention_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0541dad9dbd9789d",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::attention_paradox,github:2603_08462::cib_resolves_paradox)",
+      "content_hash": "18cc2434980d7cf7787051ebe54222c3dba5bf84e5717b1d56458266121efde4",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_8ac832c7",
+      "label": "__implication_result_8ac832c7",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::attention_paradox,github:2603_08462::cib_resolves_paradox)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a1d42c29b6c03e22",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::cib_resolves_paradox,github:2603_08462::acc_reward_derivation)",
+      "content_hash": "95fef3f497914bc78fae71e9e16d5a21c81b6b1283f065ab76ed44cf2caf8fb4",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_e808fc36",
+      "label": "__implication_result_e808fc36",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::cib_resolves_paradox,github:2603_08462::acc_reward_derivation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_669d102cf9cffc38",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::cib_resolves_paradox,github:2603_08462::min_reward_derivation)",
+      "content_hash": "a31e059b5f99abe0de09e1fd172280a0d7a4cf166cdf1341dff2ab6ebeac4379",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_05fb5727",
+      "label": "__implication_result_05fb5727",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::cib_resolves_paradox,github:2603_08462::min_reward_derivation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6ad4cc3962565429",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::min_reward_derivation,github:2603_08462::budget_forcing_heuristic)",
+      "content_hash": "8f63608a0742da594e9f1353948eec4952beb53192fafb6a2d9897c667512d7a",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_f8d08d25",
+      "label": "__conjunction_result_f8d08d25",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::min_reward_derivation,github:2603_08462::budget_forcing_heuristic)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_65283081efe88596",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_f8d08d25,github:2603_08462::semantic_cost_advantage)",
+      "content_hash": "f432cdd57cdd3a5367cd4823b932ec51767baf95fa8e9f787cedb9af53f886aa",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_5e88f6c0",
+      "label": "__implication_result_5e88f6c0",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_f8d08d25,github:2603_08462::semantic_cost_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_65283081efe88596",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::acc_reward_derivation,github:2603_08462::min_reward_derivation)",
+      "content_hash": "c52b588d97fc91016fccfe5e268a932a6ad8e49e8f62f7bb1c9d46718bf1d367",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_81a1d36e",
+      "label": "__conjunction_result_81a1d36e",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::acc_reward_derivation,github:2603_08462::min_reward_derivation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fe8bd5bb1752f122",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_81a1d36e,github:2603_08462::rl_objective_formulation)",
+      "content_hash": "5038576642e5ea239c0f898a1ab62fcd3d83793bf8b9e5c7aa5b0aada3d94ade",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_36a96c40",
+      "label": "__implication_result_36a96c40",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_81a1d36e,github:2603_08462::rl_objective_formulation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fe8bd5bb1752f122",
+        "owning_strategy_type": "deduction",
+        "prior": 0.96,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::prop_length_penalty_equivalence)",
+      "content_hash": "2dde2d0200e2c31da847f58f9132692429a21c432db5ead4d3358d31ce1bc5c1",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_041ed01f",
+      "label": "__implication_result_041ed01f",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::prop_length_penalty_equivalence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1e90c6aeaf8de750",
+        "owning_strategy_type": "deduction",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::prop_target_length_equivalence)",
+      "content_hash": "02afcbf55b0290061bd202397b2a1d892b050b2124fce359c417350f44f4a867",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_14ab52f0",
+      "label": "__implication_result_14ab52f0",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::prop_target_length_equivalence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_545798715c83eb8b",
+        "owning_strategy_type": "deduction",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::prop_length_penalty_equivalence,github:2603_08462::prop_target_length_equivalence)",
+      "content_hash": "7a04bacd3599466a795762a9ab3d33707289aa27e0a7b3dc84625d7590124e9a",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_6111ae28",
+      "label": "__conjunction_result_6111ae28",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::prop_length_penalty_equivalence,github:2603_08462::prop_target_length_equivalence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1754dd0cbc4cc823",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_6111ae28,github:2603_08462::cib_unifies_budget_forcing)",
+      "content_hash": "3b442b0e6b8902a8c0bc1356702354c44f9e4d6beb0fb300570dbce783e38dc0",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_2c9b1a54",
+      "label": "__implication_result_2c9b1a54",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_6111ae28,github:2603_08462::cib_unifies_budget_forcing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1754dd0cbc4cc823",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::cib_unifies_budget_forcing,github:2603_08462::semantic_prior_superiority_theory)",
+      "content_hash": "41e87e76b74d47f9885bfbefb4d716be6f5ecfa679035cfcbbdbc1c67ec6f8d4",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_725c335c",
+      "label": "__implication_result_725c335c",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::cib_unifies_budget_forcing,github:2603_08462::semantic_prior_superiority_theory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0382d32f626c5fb6",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::pred_cib_better,github:2603_08462::cib_pareto_dominates_l1)",
+      "content_hash": "6bd0a8df21007469ec7fee20f1d91ceab31bbf70c9deea5653cecd3edb47f09b",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_17b6464b",
+      "label": "__implication_result_17b6464b",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::pred_cib_better,github:2603_08462::cib_pareto_dominates_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8b22cf0858f663ba",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::pred_l1_worse,github:2603_08462::cib_pareto_dominates_l1)",
+      "content_hash": "cdfd82c33c99126ec9c3f8c9a2b826597b3bfa86e2070e2e467be665034f0ddd",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_e2b527e8",
+      "label": "__implication_result_e2b527e8",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::pred_l1_worse,github:2603_08462::cib_pareto_dominates_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3759de73cc4f017f",
+        "owning_strategy_type": "support",
+        "prior": 0.6,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_08462::pred_cib_better,github:2603_08462::cib_pareto_dominates_l1)",
+      "content_hash": "5036fcbdf0350e2f41f2926a1e60e0911ab9fb6c111a1bf8ff17e08297a7d65a",
+      "exported": false,
+      "id": "github:2603_08462::__equivalence_result_ba9efd28",
+      "label": "__equivalence_result_ba9efd28",
+      "metadata": {
+        "canonical_name": "matches(github:2603_08462::pred_cib_better,github:2603_08462::cib_pareto_dominates_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_7a0519eb41308fc5",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_08462::pred_l1_worse,github:2603_08462::cib_pareto_dominates_l1)",
+      "content_hash": "3126b0f794b37d0c0efcbefd8216904e27dd708db9668f1c01ad2c8d4722d614",
+      "exported": false,
+      "id": "github:2603_08462::__equivalence_result_c3330303",
+      "label": "__equivalence_result_c3330303",
+      "metadata": {
+        "canonical_name": "matches(github:2603_08462::pred_l1_worse,github:2603_08462::cib_pareto_dominates_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_7a0519eb41308fc5",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::deepscaler_cib_aggressive,github:2603_08462::deepscaler_7b_prior)",
+      "content_hash": "990b8b84f2cebe29cf49b7468d0a060f233fa5ee74eba9ad253b5f37b32396ae",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_39d7cb44",
+      "label": "__conjunction_result_39d7cb44",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::deepscaler_cib_aggressive,github:2603_08462::deepscaler_7b_prior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e78ada5cb875587c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_39d7cb44,github:2603_08462::larger_prior_more_compression)",
+      "content_hash": "3f228e357940bf5ead6629f6dce45e085fe6727edbdc3ae94320a4a09e0bebb1",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_1a8d69bd",
+      "label": "__implication_result_1a8d69bd",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_39d7cb44,github:2603_08462::larger_prior_more_compression)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e78ada5cb875587c",
+        "owning_strategy_type": "support",
+        "prior": 0.84,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::deepscaler_cib_conservative)",
+      "content_hash": "f6f7f4a5f994434925cb2d8b14969a7d297484c87b83d68105e4444c3d728f1c",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_91c2bd9d",
+      "label": "__implication_result_91c2bd9d",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::deepscaler_cib_conservative)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_265da02c8c028eb9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::dler_7b_cib_conservative)",
+      "content_hash": "869be7132d62f16bed06bbb60b552907cc0782685d4c9fb6d63e80e7078784d1",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_0a82d4ee",
+      "label": "__implication_result_0a82d4ee",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::dler_7b_cib_conservative)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f34be0aa4af3e515",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::dler_7b_cib_aggressive)",
+      "content_hash": "6f5e1b65e1b80a5611fdabf8738f8862a080b37eb2b76bade139600bb5fc21fe",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_a3e5264f",
+      "label": "__implication_result_a3e5264f",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::dler_7b_cib_aggressive)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d5fa36fc81576d97",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::budget_forcing_heuristic,github:2603_08462::l1_exact_dler7b)",
+      "content_hash": "40cfd973ea28ee052a9818aba599a6350d64bbffd160480d23832b27f6707337",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_ca4f98ab",
+      "label": "__implication_result_ca4f98ab",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::budget_forcing_heuristic,github:2603_08462::l1_exact_dler7b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ce42b049035e5960",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::semantic_cost_advantage,github:2603_08462::info_density_result)",
+      "content_hash": "553e9cc4b4be4c787255308de4f260fcf5dcdb06a4c82600c081990b00c602d5",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_ce306241",
+      "label": "__implication_result_ce306241",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::semantic_cost_advantage,github:2603_08462::info_density_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8884aec748bd6794",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_08462::cib_resolves_paradox,github:2603_08462::cib_unifies_budget_forcing,github:2603_08462::cib_pareto_dominates_l1)",
+      "content_hash": "c8d98c825a33b239689de38568d764510190993b0eb36daf4d3077e2a23c9a72",
+      "exported": false,
+      "id": "github:2603_08462::__conjunction_result_13537e94",
+      "label": "__conjunction_result_13537e94",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_08462::cib_resolves_paradox,github:2603_08462::cib_unifies_budget_forcing,github:2603_08462::cib_pareto_dominates_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2ea6847877a60f72",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::__conjunction_result_13537e94,github:2603_08462::cib_principled_framework)",
+      "content_hash": "46b1f2c3594251d94d8d0cc4fb0520b3cf75267b3692734cb0094295b68cb24f",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_db507bba",
+      "label": "__implication_result_db507bba",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::__conjunction_result_13537e94,github:2603_08462::cib_principled_framework)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2ea6847877a60f72",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::larger_prior_more_compression,github:2603_08462::accuracy_degradation_at_scale)",
+      "content_hash": "48997d461f89fa9752293b380b293720a1336ba5c73d9bebd18be840dd618424",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_91933159",
+      "label": "__implication_result_91933159",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::larger_prior_more_compression,github:2603_08462::accuracy_degradation_at_scale)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dc9a7026f435b979",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::no_inference_overhead)",
+      "content_hash": "ad047d2f0a5921f7ec0cbc32a34375f0cd6d60cbc5032bd64acf0a824a8a855b",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_bbe89147",
+      "label": "__implication_result_bbe89147",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::no_inference_overhead)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bc74a271a8bb1745",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::framework_generality)",
+      "content_hash": "ee945c32c2360d539a273a3770c8847d47ed446efd45434f50cda967ebd07dbd",
+      "exported": false,
+      "id": "github:2603_08462::__implication_result_e769e4b2",
+      "label": "__implication_result_e769e4b2",
+      "metadata": {
+        "canonical_name": "implies(github:2603_08462::rl_objective_formulation,github:2603_08462::framework_generality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_75da99886f91b428",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_background",
+    "s3_methodology",
+    "s4_theory",
+    "s5_experiments",
+    "s6_conclusions"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation",
+    "s2_background": "Section 2: Related Work and Background",
+    "s3_methodology": "Section 3: Methodology — The Conditional Information Bottleneck Framework",
+    "s4_theory": "Section 4: Theoretical Analysis — Recovering Length Penalties as Special Cases",
+    "s5_experiments": "Section 5: Experimental Results",
+    "s6_conclusions": "Section 6: Conclusions and Limitations"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2603_08462",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2603_08462::cot_cost_problem",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_6f79bd36",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::budget_forcing_heuristic",
+              "github:2603_08462::cot_cost_problem"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The existence of @budget_forcing_heuristic (methods attempting to control CoT cost) presupposes the underlying problem: CoT accuracy gains come at the cost of more tokens. The flat-tax nature of existing methods implies the problem (CoT cost) is real and significant enough to motivate a class of solutions."
+      },
+      "premises": [
+        "github:2603_08462::budget_forcing_heuristic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_03d808eb2643b955",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::length_penalty_limitation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_2351a7b0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::cot_cost_problem",
+              "github:2603_08462::budget_forcing_heuristic"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_7c7338c7",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_2351a7b0",
+              "github:2603_08462::length_penalty_limitation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@cot_cost_problem establishes that CoT increases token cost, motivating compression. @budget_forcing_heuristic establishes that existing methods apply flat token-count taxes. Together these support @length_penalty_limitation: the specific existing approach (L1) fails because it cannot distinguish token semantic value."
+      },
+      "premises": [
+        "github:2603_08462::cot_cost_problem",
+        "github:2603_08462::budget_forcing_heuristic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4b1323e22bc16ea0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::ib_prior_use_in_llms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_d5822930",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::cot_cost_problem",
+              "github:2603_08462::ib_prior_use_in_llms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@cot_cost_problem motivates finding principled approaches to reasoning compression. Despite IB theory being applied to LLMs in other contexts, the gap identified in @ib_prior_use_in_llms — that standard IB was never applied to CoT generation optimization under transformer constraints — is the theoretical gap this paper fills."
+      },
+      "premises": [
+        "github:2603_08462::cot_cost_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9346ecbfa89e1ec3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::attention_paradox",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_3d40c7c9",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::transformer_attention_violates_markov",
+              "github:2603_08462::attention_paradox"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@transformer_attention_violates_markov establishes that transformer decoders condition Y on (X,Z) jointly — a collider structure — rather than on Z alone as required by the Markov chain Y↔X↔Z. This inconsistency between the IB assumption and the actual transformer architecture is precisely what the authors term the Attention Paradox: applying standard IB to transformer reasoning is theoretically misspecified."
+      },
+      "premises": [
+        "github:2603_08462::transformer_attention_violates_markov"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0541dad9dbd9789d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::cib_resolves_paradox",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_8ac832c7",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::attention_paradox",
+              "github:2603_08462::cib_resolves_paradox"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Since the Attention Paradox (@attention_paradox) arises because transformers condition Y on (X,Z) jointly rather than on Z alone, the correct information-theoretic objective must condition on X. The CIB sufficiency term I(Z;Y|X) measures how much Z contributes to Y beyond what X alone provides, directly matching the collider structure (X,Z)→Y. The minimality term I(X;Z) penalizes Z for repeating information already in X, discouraging redundant reasoning steps."
+      },
+      "premises": [
+        "github:2603_08462::attention_paradox"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a1d42c29b6c03e22",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2603_08462::variational_sufficiency_def",
+        "github:2603_08462::eps_smoothed_verifier_def"
+      ],
+      "conclusion": "github:2603_08462::acc_reward_derivation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_e808fc36",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::cib_resolves_paradox",
+              "github:2603_08462::acc_reward_derivation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Given the CIB objective (@cib_resolves_paradox), the variational lower bound on $I(Z;Y|X)$ (see @variational_sufficiency_def) yields the bound $\\sum_i \\mathbb{E}[\\log Q_\\rho(y_i|x_i,Z)]$. Using the $\\varepsilon$-smoothed verifier (see @eps_smoothed_verifier_def) $\\tilde{Q}_\\rho = \\varepsilon + (1-\\varepsilon)\\mathbf{1}(\\hat{y}=y)$, taking the log and discarding additive constants that do not depend on $\\theta$ gives $r_{\\text{acc}} = \\mathbf{1}(\\hat{y}=y)$ as the practical reward signal. The $\\varepsilon$ smoothing ensures the log is always defined even for wrong answers."
+      },
+      "premises": [
+        "github:2603_08462::cib_resolves_paradox"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_669d102cf9cffc38",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_08462::information_cost_def"
+      ],
+      "conclusion": "github:2603_08462::min_reward_derivation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_05fb5727",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::cib_resolves_paradox",
+              "github:2603_08462::min_reward_derivation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Given the CIB objective (@cib_resolves_paradox), the mutual information $I(X;Z)$ between prompt and trace can be upper bounded using a variational distribution $Q_\\phi$: $I(X;Z) \\leq \\mathbb{E}_{X,Z}[-\\log Q_\\phi(Z)] - H(Z|X)$. Since $H(Z|X)$ is not controlled by policy parameters, minimizing the upper bound is equivalent to minimizing $\\mathbb{E}[-\\log Q_\\phi(Z)]$, i.e., the average information cost $C(Z)$ (see @information_cost_def). This becomes the reward $r_{\\text{min}} = \\sum_t \\log Q_\\phi(z_t|z_{<t})$."
+      },
+      "premises": [
+        "github:2603_08462::cib_resolves_paradox"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6ad4cc3962565429",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::semantic_cost_advantage",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_f8d08d25",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::min_reward_derivation",
+              "github:2603_08462::budget_forcing_heuristic"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_5e88f6c0",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_f8d08d25",
+              "github:2603_08462::semantic_cost_advantage"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The minimality reward (@min_reward_derivation) uses surprisal under a general base model $Q_\\phi$ (not fine-tuned for math). Common discourse patterns ('let me think step by step', repeated phrases) have high probability under $Q_\\phi$ (low surprisal, low cost), so they are penalized more aggressively. Rare mathematical derivations have low probability (high surprisal, high cost) but are kept if they contribute to correctness (balanced by $r_{\\text{acc}}$). By contrast, @budget_forcing_heuristic shows flat token penalties cannot make this distinction."
+      },
+      "premises": [
+        "github:2603_08462::min_reward_derivation",
+        "github:2603_08462::budget_forcing_heuristic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_65283081efe88596",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::rl_objective_formulation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_81a1d36e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::acc_reward_derivation",
+              "github:2603_08462::min_reward_derivation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_36a96c40",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_81a1d36e",
+              "github:2603_08462::rl_objective_formulation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.96,
+        "reason": "Combining the variational lower bound on $I(Z;Y|X)$ maximized via @acc_reward_derivation and the variational upper bound on $I(X;Z)$ minimized via @min_reward_derivation yields the combined reward @combined_reward_def. This reward is then optimized with GRPO (a practical RL algorithm for LLMs). The trade-off $\\beta$ traverses the Pareto frontier between accuracy and compression."
+      },
+      "premises": [
+        "github:2603_08462::acc_reward_derivation",
+        "github:2603_08462::min_reward_derivation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fe8bd5bb1752f122",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2603_08462::uniform_prior_def",
+        "github:2603_08462::information_cost_def"
+      ],
+      "conclusion": "github:2603_08462::prop_length_penalty_equivalence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_041ed01f",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::prop_length_penalty_equivalence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Under the uniform prior (@uniform_prior_def), $-\\log Q(z_t|z_{<t}) = \\log|V|$ (constant) for all tokens. Substituting into the information cost definition (@information_cost_def): $C(Z) = \\sum_{t=1}^{|Z|} \\log|V| = |Z| \\cdot \\log|V|$, proportional to trace length $|Z|$. This is exactly the form of a standard length penalty $g(Z) = \\alpha|Z|$. The CIB minimality reward $r_{\\text{min}} = -C(Z)$ in @rl_objective_formulation therefore reduces to a length penalty when the prior is uniform."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1e90c6aeaf8de750",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2603_08462::laplace_prior_def",
+        "github:2603_08462::information_cost_def"
+      ],
+      "conclusion": "github:2603_08462::prop_target_length_equivalence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_14ab52f0",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::prop_target_length_equivalence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Under the Laplace prior (@laplace_prior_def), the log-probability of a trace of length $|Z|$ is $\\log Q_\\phi(Z) \\approx -\\lambda||Z|-L^*|$. Substituting into the information cost definition (@information_cost_def) gives $C(Z) \\approx \\lambda||Z|-L^*|$, which is exactly the L1 penalty on deviation from target length $L^*$. The CIB framework in @rl_objective_formulation with Laplace prior thus recovers LCPO-Exact and L1-Exact."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_545798715c83eb8b",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2603_08462::cib_unifies_budget_forcing",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_6111ae28",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::prop_length_penalty_equivalence",
+              "github:2603_08462::prop_target_length_equivalence"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_2c9b1a54",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_6111ae28",
+              "github:2603_08462::cib_unifies_budget_forcing"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Since @prop_length_penalty_equivalence shows length penalties arise from uniform priors, and @prop_target_length_equivalence shows target-length penalties arise from Laplace priors, the CIB framework with a general language model prior strictly includes both as special cases. This provides the theoretical justification for why semantic priors should outperform length-only baselines: they use strictly more information about token identity and context."
+      },
+      "premises": [
+        "github:2603_08462::prop_length_penalty_equivalence",
+        "github:2603_08462::prop_target_length_equivalence"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1754dd0cbc4cc823",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2603_08462::semantic_prior_superiority_theory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_725c335c",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::cib_unifies_budget_forcing",
+              "github:2603_08462::semantic_prior_superiority_theory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Since @cib_unifies_budget_forcing shows that length penalties are CIB with degenerate (uniform or Laplace) priors, any prior that is closer to the true token distribution will provide a strictly better estimate of semantic redundancy. A language model prior $Q_\\phi$ trained on natural language assigns probabilities that correlate with semantic content, enabling cost discrimination that length-only methods cannot achieve."
+      },
+      "premises": [
+        "github:2603_08462::cib_unifies_budget_forcing"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0382d32f626c5fb6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::cib_pareto_dominates_l1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_17b6464b",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::pred_cib_better",
+              "github:2603_08462::cib_pareto_dominates_l1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@pred_cib_better predicts CIB outperforms L1-Exact at comparable compression. Empirically, @dler_7b_cib_aggressive achieves 32% compression with −1.3pp accuracy, while @l1_exact_dler7b achieves only 29% compression with −2.7pp accuracy, confirming the prediction."
+      },
+      "premises": [
+        "github:2603_08462::pred_cib_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8b22cf0858f663ba",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::cib_pareto_dominates_l1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_e2b527e8",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::pred_l1_worse",
+              "github:2603_08462::cib_pareto_dominates_l1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.6,
+        "reason": "@pred_l1_worse predicts L1-Exact will underperform CIB on accuracy for similar compression. @l1_exact_dler7b shows −2.7pp vs CIB's −1.3pp at similar compression, matching the prediction that semantically blind penalties harm accuracy more."
+      },
+      "premises": [
+        "github:2603_08462::pred_l1_worse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3759de73cc4f017f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__equivalence_result_ba9efd28",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_08462::pred_cib_better",
+              "github:2603_08462::cib_pareto_dominates_l1"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__equivalence_result_c3330303",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_08462::pred_l1_worse",
+              "github:2603_08462::cib_pareto_dominates_l1"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__equivalence_result_c3330303",
+              "github:2603_08462::__equivalence_result_ba9efd28"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "CIB's prediction (@pred_cib_better) that semantic cost preserves accuracy better matches the observed Pareto dominance in @cib_pareto_dominates_l1. L1-Exact's prediction (@pred_l1_worse) of higher accuracy loss is also confirmed, but this is the unfavorable outcome for L1-Exact. CIB explains the observed data better."
+      },
+      "premises": [
+        "github:2603_08462::pred_cib_better",
+        "github:2603_08462::pred_l1_worse",
+        "github:2603_08462::cib_pareto_dominates_l1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7a0519eb41308fc5",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2603_08462::_anon_000",
+      "metadata": {
+        "reason": "Both approaches attempt to explain the Pareto frontier behavior of DLER-7B results"
+      },
+      "premises": [
+        "github:2603_08462::pred_cib_better",
+        "github:2603_08462::pred_l1_worse",
+        "github:2603_08462::cib_pareto_dominates_l1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23a6f00a241966a5",
+      "sub_strategies": [
+        "lcs_8b22cf0858f663ba",
+        "lcs_3759de73cc4f017f",
+        "lcs_7a0519eb41308fc5"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2603_08462::larger_prior_more_compression",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_39d7cb44",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::deepscaler_cib_aggressive",
+              "github:2603_08462::deepscaler_7b_prior"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_1a8d69bd",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_39d7cb44",
+              "github:2603_08462::larger_prior_more_compression"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.84,
+        "reason": "@deepscaler_cib_aggressive shows 29% compression with 1.5B prior. @deepscaler_7b_prior shows 41% compression with 7B prior (same $\\beta^+$ setting). The 7B model provides more informative surprisal estimates, assigning higher cost to more tokens, leading to stronger compression pressure. The small accuracy drop (−0.7pp) suggests the $\\beta$ value optimal for 1.5B prior is too aggressive for 7B."
+      },
+      "premises": [
+        "github:2603_08462::deepscaler_cib_aggressive",
+        "github:2603_08462::deepscaler_7b_prior"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e78ada5cb875587c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::deepscaler_cib_conservative",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_91c2bd9d",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::deepscaler_cib_conservative"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The CIB RL objective (@rl_objective_formulation) trained on DeepScaleR-1.5B with conservative $\\beta^- = 5\\times10^{-5}$ and 1.5B prior produces compressed traces while maintaining accuracy. The 25% token reduction with +1.2pp accuracy gain is consistent with the theory that semantic cost removes redundancy while preserving correctness-critical content."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_265da02c8c028eb9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::dler_7b_cib_conservative",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_0a82d4ee",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::dler_7b_cib_conservative"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The CIB RL objective (@rl_objective_formulation) trained on DLER-7B with conservative $\\beta^- = 5\\times10^{-5}$ and 7B prior achieves 8% token reduction with negligible accuracy change (+0.1pp). The 7B prior on a 7B model provides conservative but effective compression at this $\\beta$ level."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f34be0aa4af3e515",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::dler_7b_cib_aggressive",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_a3e5264f",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::dler_7b_cib_aggressive"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The CIB RL objective (@rl_objective_formulation) trained on DLER-7B with aggressive $\\beta^+ = 1.5\\times10^{-4}$ and 7B prior achieves 32% token reduction with −1.3pp accuracy loss. This represents a more aggressive point on the Pareto frontier, trading some accuracy for substantial token savings."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d5fa36fc81576d97",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::l1_exact_dler7b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_ca4f98ab",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::budget_forcing_heuristic",
+              "github:2603_08462::l1_exact_dler7b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "L1-Exact (@budget_forcing_heuristic illustrates the flat-tax approach) applies a uniform token-count penalty to DLER-7B. The result — 29% compression with −2.7pp accuracy loss — is empirically measured and serves as the comparison baseline for CIB performance on the same model."
+      },
+      "premises": [
+        "github:2603_08462::budget_forcing_heuristic"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ce42b049035e5960",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::info_density_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_ce306241",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::semantic_cost_advantage",
+              "github:2603_08462::info_density_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@semantic_cost_advantage predicts that semantic surprisal cost penalizes generic tokens more than task-specific ones. The qualitative categories of removed content (conversational scaffolding, verification loops, exploration) are precisely the patterns that a base language model $Q_\\phi$ would assign high probability (low surprisal, low cost) — they follow generic discourse patterns. The information density increase (≳0.2 vs ≈0.1 nats/token) quantifies this effect."
+      },
+      "premises": [
+        "github:2603_08462::semantic_cost_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8884aec748bd6794",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::cib_principled_framework",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__conjunction_result_13537e94",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_08462::cib_resolves_paradox",
+              "github:2603_08462::cib_unifies_budget_forcing",
+              "github:2603_08462::cib_pareto_dominates_l1"
+            ]
+          },
+          {
+            "conclusion": "github:2603_08462::__implication_result_db507bba",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::__conjunction_result_13537e94",
+              "github:2603_08462::cib_principled_framework"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@cib_resolves_paradox establishes the theoretical correctness of CIB for transformers. @cib_unifies_budget_forcing shows it subsumes prior methods. @cib_pareto_dominates_l1 demonstrates empirical superiority. Together, these three lines of evidence support the claim that CIB is a principled and effective framework."
+      },
+      "premises": [
+        "github:2603_08462::cib_resolves_paradox",
+        "github:2603_08462::cib_unifies_budget_forcing",
+        "github:2603_08462::cib_pareto_dominates_l1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2ea6847877a60f72",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::accuracy_degradation_at_scale",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_91933159",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::larger_prior_more_compression",
+              "github:2603_08462::accuracy_degradation_at_scale"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@larger_prior_more_compression shows that the 7B prior achieves 41% compression but with −0.7pp accuracy drop on DeepScaleR. The −1.3pp accuracy drop on DLER-7B with the 7B prior at $\\beta^+$ suggests the $\\beta$ value tuned for the smaller prior leads to over-compression with the larger prior, as the 7B model assigns higher surprisal to more tokens, amplifying the compression pressure beyond the tuned level."
+      },
+      "premises": [
+        "github:2603_08462::larger_prior_more_compression"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dc9a7026f435b979",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::no_inference_overhead",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_bbe89147",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::no_inference_overhead"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "In the CIB RL training objective (@rl_objective_formulation), $Q_\\phi$ is frozen and used only to compute the reward $r_{\\text{min}}$ during training rollouts. Once training is complete, the policy $\\pi_\\theta$ has internalized the compression behavior and generates shorter traces directly without any reference to $Q_\\phi$ at inference time."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bc74a271a8bb1745",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_08462::framework_generality",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_08462::__implication_result_e769e4b2",
+            "operator": "implication",
+            "variables": [
+              "github:2603_08462::rl_objective_formulation",
+              "github:2603_08462::framework_generality"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The CIB RL objective (@rl_objective_formulation) is parameterized by: (1) the verifier $Q_\\rho$ used to compute $r_{\\text{acc}}$, and (2) the prior $Q_\\phi$ used to compute $r_{\\text{min}}$. Both components are modular — the verifier can be any function returning task reward signals, and the prior can be any language model. This modularity makes the framework applicable beyond mathematical reasoning to any domain with a verifiable reward signal."
+      },
+      "premises": [
+        "github:2603_08462::rl_objective_formulation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_75da99886f91b428",
+      "type": "support"
+    }
+  ]
+}

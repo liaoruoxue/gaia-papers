@@ -1,0 +1,58 @@
+{
+  "holes": [
+    {
+      "content": "On DeepScaleR-1.5B with CIB using a larger 7B prior model, average accuracy decreases from 44.7% (baseline) to 44.0% (−0.7pp), while average token count decreases from 6,722 to 3,951 tokens (−41%). This demonstrates aggressive compression with minimal accuracy cost:\n\n| Benchmark | Acc (base) | Acc (CIB-7B) | Tok (base) | Tok (CIB-7B) |\n|-----------|-----------|-------------|-----------|-------------|\n| MATH500   | 85.8%     | 84.0%       | 3,190     | 1,548       |\n| AIME24    | 38.1%     | 35.2%       | 9,269     | 5,720       |\n| AIME25    | 25.2%     | 25.8%       | 8,901     | 5,362       |\n| Minerva   | 19.9%     | 19.6%       | 6,375     | 3,097       |\n| Olympiad  | 54.7%     | 55.2%       | 5,875     | 4,029       |",
+      "content_hash": "32ca84e3e5ac1a1ac4a60c5801520b138e89a7cec4158da1c4de5e8c3c94973c",
+      "interface_hash": "sha256:792e273d310dce642980c11175bba3f941fa5e99e0c42f1830ff9469fa72d4bb",
+      "label": "deepscaler_7b_prior",
+      "qid": "github:2603_08462::deepscaler_7b_prior",
+      "required_by": [
+        "github:2603_08462::accuracy_degradation_at_scale"
+      ]
+    },
+    {
+      "content": "On DeepScaleR-1.5B with CIB using 1.5B prior ($\\beta^+ = 1.5\\times10^{-4}$, aggressive), average accuracy improves from 44.7% (baseline) to 46.0% (+1.3pp), while average token count decreases from 6,722 (baseline) to 4,797 tokens (−29%):\n\n| Benchmark | Acc (base) | Acc (CIB) | Tok (base) | Tok (CIB) |\n|-----------|-----------|-----------|-----------|----------|\n| MATH500   | 85.8%     | 87.8%     | 3,190     | 2,106    |\n| AIME24    | 38.1%     | 40.2%     | 9,269     | 6,857    |\n| AIME25    | 25.2%     | 26.3%     | 8,901     | 6,672    |\n| Minerva   | 19.9%     | 20.3%     | 6,375     | 4,144    |\n| Olympiad  | 54.7%     | 55.3%     | 5,875     | 4,208    |",
+      "content_hash": "75d91929017f8788698e1e20b606943128f6684fedf25dcc0f11cab2b30fa6f3",
+      "interface_hash": "sha256:02e3496e3d0cde9771a6aa5724b6579f972ab4fbeef44b1f02ade7374477bf75",
+      "label": "deepscaler_cib_aggressive",
+      "qid": "github:2603_08462::deepscaler_cib_aggressive",
+      "required_by": [
+        "github:2603_08462::accuracy_degradation_at_scale"
+      ]
+    },
+    {
+      "content": "CIB with semantic prior predicts higher accuracy than L1-Exact at comparable compression levels because semantic cost selectively removes low-information tokens while preserving task-critical reasoning steps.",
+      "content_hash": "fab734969e25848a19879720e640b56df8ab50f76f32222f38b04b8e954a7063",
+      "interface_hash": "sha256:503120547414883af00f7916a88f0cec1f7af333285906616609a621200b4a21",
+      "label": "pred_cib_better",
+      "qid": "github:2603_08462::pred_cib_better",
+      "required_by": [
+        "github:2603_08462::cib_pareto_dominates_l1"
+      ]
+    },
+    {
+      "content": "L1-Exact predicts equal or greater compression at the cost of higher accuracy loss than CIB, because it cannot distinguish essential from redundant tokens.",
+      "content_hash": "b304624e81987908bba6bbf8428b93a5ac930c26492af477d214f1379e33c2ed",
+      "interface_hash": "sha256:9f396152a9e4ac12de3e5a56cb59425d470d319e46e797d43c88e12354999938",
+      "label": "pred_l1_worse",
+      "qid": "github:2603_08462::pred_l1_worse",
+      "required_by": [
+        "github:2603_08462::cib_pareto_dominates_l1"
+      ]
+    },
+    {
+      "content": "Transformer decoder architectures use causal self-attention that allows the answer generation step to attend directly to both the input prompt X and the reasoning trace Z via the key-value cache. This means the Markov chain assumption Y↔X↔Z required by standard IB is violated: Y depends on (X,Z) jointly rather than on Z alone.",
+      "content_hash": "ce09d6e9ab3d55603f276456f403a2e8b89c992b4ad3cc3fc93c70c76e038f64",
+      "interface_hash": "sha256:60d23eff8c84c1d4229b74a6afe0f2bcf5542390d85137cfbd56b3238038f2b4",
+      "label": "transformer_attention_violates_markov",
+      "qid": "github:2603_08462::transformer_attention_violates_markov",
+      "required_by": [
+        "github:2603_08462::attention_paradox"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:d8126aea6634d6279b6e1a84ca6bc766f5edc7b28b6fe0db61d6da82b5369b04",
+  "manifest_schema_version": 1,
+  "package": "2603-08462",
+  "version": "0.1.0"
+}
