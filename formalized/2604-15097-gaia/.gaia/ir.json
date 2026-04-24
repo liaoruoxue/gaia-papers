@@ -1,0 +1,2877 @@
+{
+  "ir_hash": "sha256:d315cd729bae10cba739e6f207ef7f16729b8e72d527daff65e64fd2472a8f59",
+  "knowledges": [
+    {
+      "content": "Large language models (LLMs) can incorporate reusable experience at test time via a control signal r = φ(ℋ), where ℋ represents prior trajectories. The control-relevance condition requires: pθ(y|x, r) ≠ pθ(y|x, ∅), meaning the representation must change model behavior. Excluded are parameter updates, one-off conversational recall, and single-use tricks.",
+      "content_hash": "9b8c349de7ff8f92417558c67bc19d14c69a711eb8745510c72534c4a1d7c9e9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15097::setup_testtime",
+      "label": "setup_testtime",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Test-time control via reusable experience",
+      "type": "setting"
+    },
+    {
+      "content": "A procedural skill package is structured as s = {d_main, d_aux}, where d_main = {overview, workflow, pitfalls, error_handling} captures the main documentation and d_aux = {api_notes, examples, scripts} captures auxiliary reference material. Skills are optimized for human reading and information completeness, not for inference-time control. In the experiments, skills average approximately 2,500 tokens.",
+      "content_hash": "a2402c8870c3be90e4f1fa0d5ffef1bd7c32aa644c27797ce6aea901d6af5490",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15097::setup_skill_def",
+      "label": "setup_skill_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Procedural skill definition",
+      "type": "setting"
+    },
+    {
+      "content": "A strategy gene is defined as g = ψ(s) or g = ψ(ℋ), derived from either a skill package or raw experience trajectories. Its formal structure is g = (m, u, π, α, c, v), where: m = task-matching signals, u = compact summary, π = strategic steps (the key differentiator), α = failure-aware AVOID cues, c = execution constraints, v = validation hooks. Genes average approximately 230 tokens in experiments — roughly 11× smaller than skills.",
+      "content_hash": "51a002f020030f35fa831f19f19ce13976087bbb2f5df0235239007e1292ebb8",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15097::setup_gene_def",
+      "label": "setup_gene_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Strategy gene definition",
+      "type": "setting"
+    },
+    {
+      "content": "The Gene Evolution Protocol (GEP) is defined as Γ(g) → g̃ ∈ G̃. It organizes genes as 'explicit, structured, and protocolized' objects supporting three operations: matching (find relevant gene for task), replacement (mutate gene content), and validation (confirm evolved gene works). GEP maintains three object types: Genes (G), Capsules (C), and Events (E), forming the object hierarchy O = G ∪ C ∪ E.",
+      "content_hash": "9b61ccf89de7e73022e813ad0cf17a995a1bca67f921b919d32eac7431aa1934",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15097::setup_gep",
+      "label": "setup_gep",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Gene Evolution Protocol (GEP)",
+      "type": "setting"
+    },
+    {
+      "content": "Experimental evaluation uses a checkpoint-based pass rate metric: PassRate = (1/N) Σ(p_i/n_i), where p_i is checkpoints passed and n_i is total checkpoints for scenario i. All trials use temperature T=0.05, max 16,384 tokens, 120-second timeout per trial. Two models: Gemini 3.1 Pro Preview and Gemini 3.1 Flash Lite Preview. Total: 4,590 retained trials across 45 scientific code-solving scenarios spanning bioinformatics, neuroscience, chemistry, seismology, climate, signal processing, networks, finance, robotics, and quantum computing.",
+      "content_hash": "ffea8589ff0f2d4997d271be390a1ac6d41ec8b8a05143a479e64fda5cc56a44",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15097::setup_eval",
+      "label": "setup_eval",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Evaluation protocol and benchmark",
+      "type": "setting"
+    },
+    {
+      "content": "Which representation format—procedural skills or strategy genes—better encodes reusable experience for effective test-time LLM control and evolution?",
+      "content_hash": "c7be33bac6aab7a815c86fdc76d6650fd903609d6a969657d8932dafa0431d80",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15097::rq_representation",
+      "label": "rq_representation",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core research question",
+      "type": "question"
+    },
+    {
+      "content": "The representational form of reusable experience is a first-order factor for test-time LLM control, independent of content volume. A compact strategy gene (~230 tokens) outperforms a comprehensive documentation-oriented skill package (~2,500 tokens) derived from the same underlying experience, achieving +3.0 percentage points (pp) improvement versus -1.1pp degradation on a scientific code-solving benchmark (average over Gemini 3.1 Pro and Flash Lite) [@Wang2026].",
+      "content_hash": "b31a1ffb4ebae805bc16a0492a6de77f7270d024762c69929a75c47e34fdacae",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_15097::thesis_form_over_content",
+      "label": "thesis_form_over_content",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "thesis_form_over_content",
+              "thesis_gene_superior",
+              "thesis_skill_misaligned"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Representation form is a first-order control factor",
+      "type": "claim"
+    },
+    {
+      "content": "Documentation-oriented procedural skill packages are misaligned with test-time LLM control. Despite encoding correct information, the documentation format causes performance degradation (-1.1pp average, dropping from 51.0% to 49.9% pass rate) because usable control signals are sparse within the ~2,500-token package and expanded documentation actively hinders rather than helps model performance [@Wang2026].",
+      "content_hash": "3576c23c61756dfeb8e916ed07a58c94648d62b45a6cc474cd9f5faa2f674456",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_15097::thesis_skill_misaligned",
+      "label": "thesis_skill_misaligned",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "obs_baseline_passrate",
+              "obs_skill_passrate",
+              "thesis_skill_misaligned"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Skills are misaligned with test-time control",
+      "type": "claim"
+    },
+    {
+      "content": "Strategy genes are superior representations for test-time LLM control compared to procedural skills, budget-matched skill fragments, and unstructured text. The full gene format achieves 54.0% average pass rate (+3.0pp above the 51.0% no-guidance baseline) using only ~230 tokens, while the complete skill package achieves 49.9% (-1.1pp below baseline) using ~2,500 tokens [@Wang2026].",
+      "content_hash": "ae172f822ddf46d6300e30f7ea90ac506324052bdb5e81049339bfe73902ba72",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_15097::thesis_gene_superior",
+      "label": "thesis_gene_superior",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "obs_baseline_passrate",
+              "obs_gene_passrate",
+              "thesis_gene_superior"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Gene representation outperforms skill representation",
+      "type": "claim"
+    },
+    {
+      "content": "The no-guidance baseline achieves an average pass rate of 51.0% (Gemini 3.1 Pro Preview: 60.1%, Gemini 3.1 Flash Lite Preview: 41.8%) across 45 scientific code-solving scenarios [@Wang2026].",
+      "content_hash": "3127f8dff2976df9dd5d1357433d4cf2a7ff40c44084cb31cf4c9da726f6cd96",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_15097::obs_baseline_passrate",
+      "label": "obs_baseline_passrate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement from 4,590 trials; checkpoint pass rate is a deterministic function of outcomes. Slight uncertainty for potential experimental noise."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "No-guidance baseline pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "The full procedural skill package condition achieves an average pass rate of 49.9% (Gemini 3.1 Pro Preview: 50.7%, Gemini 3.1 Flash Lite Preview: 49.0%), which is -1.1pp below the no-guidance baseline of 51.0%. This represents net performance degradation despite providing additional information [@Wang2026].",
+      "content_hash": "48a4288b13694e3bdcd6f77adfa5c86f41fa243dcf0ebe99977c4531b08b3e12",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_15097::obs_skill_passrate",
+      "label": "obs_skill_passrate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement (49.9% avg) from the same 4,590-trial protocol; same reliability as the baseline measurement."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Skill condition pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "The strategy gene condition achieves an average pass rate of 54.0% (Gemini 3.1 Pro Preview: 59.9%, Gemini 3.1 Flash Lite Preview: 48.2%), which is +3.0pp above the no-guidance baseline of 51.0% [@Wang2026].",
+      "content_hash": "1d7215fa9fb5e885708bedef3a0c6d97b9b11935bf03c86639372b3946f0671d",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_15097::obs_gene_passrate",
+      "label": "obs_gene_passrate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement (54.0% avg) from the same 4,590-trial protocol."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Gene condition pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "Within the procedural skill package, only the Skill-Workflow sub-component (the step-by-step procedural workflow portion of d_main) shows clearly positive utility for test-time LLM control. This component contains concentrated, sequential procedural instructions with minimal extraneous documentation [@Wang2026].",
+      "content_hash": "f0328fdb8a6caa6e85001a28300e6d5be94ec1f02d7a9c3b788683de3e43c9ca",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15097::obs_skill_workflow_useful",
+      "label": "obs_skill_workflow_useful",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Figure 3(a) decomposition shows Skill-Workflow as clearly positive. Moderate uncertainty because qualitative characterization ('clearly useful') without exact numeric comparison."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Skill-Workflow sub-component is useful",
+      "type": "claim"
+    },
+    {
+      "content": "The Skill-Overview sub-component (the high-level summary portion of d_main) is strongly harmful to test-time LLM control performance. Adding the overview section actively degrades model pass rates, suggesting that high-level documentation language interferes with the model's ability to execute precise procedural steps [@Wang2026].",
+      "content_hash": "3d80fd3b339e7f93b79f714611dd0ef34a37aff1d2d9e8c9bddb75edd12babec",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15097::obs_skill_overview_harmful",
+      "label": "obs_skill_overview_harmful",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Figure 3(a) shows Skill-Overview as 'strongly harmful', and full-package degradation (-1.1pp) is consistent with this. High confidence in direction; slight uncertainty in magnitude."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Skill-Overview sub-component is harmful",
+      "type": "claim"
+    },
+    {
+      "content": "When a budget-matched skill fragment (a portion of the skill package truncated to approximately 230 tokens, matching the Gene token budget) is used as the control signal, performance improves relative to the full skill but remains below the full Gene at 54.0% average pass rate. This confirms that token budget alone does not explain the Gene's superiority [@Wang2026].",
+      "content_hash": "edd6437d0aa2b37e79143c0aa08d72d658415a022d1b1c891dce2bfc4e3550c5",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15097::obs_budget_matched_fragment",
+      "label": "obs_budget_matched_fragment",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Budget-matched fragment comparison (Figure 3(b)) shows improvement but below Gene. Moderate uncertainty because exact value not reported, only relative comparison."
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Budget-matched skill fragment underperforms Gene",
+      "type": "claim"
+    },
+    {
+      "content": "Usable control signals are sparsely distributed within procedural skill packages. The majority of the ~2,500-token skill package consists of human-readable documentation (overviews, API notes, examples) that provides little or negative marginal value for inference-time LLM control; only a narrow procedural slice (the workflow component) contains effective control signal [@Wang2026].",
+      "content_hash": "995e8870b2c622157065964797cfb50482745d09df46c18234b8a44df0fdffb0",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15097::signal_sparse",
+      "label": "signal_sparse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "obs_budget_matched_fragment",
+              "obs_skill_overview_harmful",
+              "obs_skill_workflow_useful",
+              "signal_sparse"
+            ]
+          }
+        }
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Skill signal sparsity",
+      "type": "claim"
+    },
+    {
+      "content": "Aggregating all documentation sections into a complete skill package produces worse test-time control than any single useful section alone. The -1.1pp average degradation of the full skill (49.9%) versus the baseline (51.0%) indicates that harmful sections (e.g., Skill-Overview) dominate when included alongside useful sections (e.g., Skill-Workflow) [@Wang2026].",
+      "content_hash": "52c439d6f3d6b57bfae878bceef3741dc74791965381eac95c2a58fc5d1fc24a",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15097::aggregation_harmful",
+      "label": "aggregation_harmful",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "aggregation_harmful",
+              "obs_skill_overview_harmful",
+              "obs_skill_passrate",
+              "obs_skill_workflow_useful"
+            ]
+          }
+        }
+      },
+      "module": "s4_skill_probe",
+      "parameters": [],
+      "title": "Skill aggregation is counterproductive",
+      "type": "claim"
+    },
+    {
+      "content": "Using only the keywords component of a gene (the task-matching signals m) as the control signal achieves 53.5% average pass rate (+2.5pp above baseline), with Gemini 3.1 Pro Preview at 57.9% and Flash Lite at 49.1% [@Wang2026].",
+      "content_hash": "94ba790c080a88f7a9e14ce278b92815ef7cebf3c211074f3fe62cb135724680",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15097::obs_keywords_only",
+      "label": "obs_keywords_only",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement: keywords-only condition achieves 53.5% (+2.5pp) in Table 2."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Keywords-only gene component pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "Using the keywords plus summary components (m + u) of a gene as the control signal reverts to 51.0% average pass rate (+0.0pp, equal to no-guidance baseline), with Gemini 3.1 Pro Preview at 51.3% and Flash Lite at 50.6%. Adding the compact summary (u) to keywords (m) does not improve and may slightly hurt performance compared to keywords alone [@Wang2026].",
+      "content_hash": "edb14d65e914148e21f47982b284fce3d91a2032530d0f0e4c8bcd8377a1e6bc",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15097::obs_keywords_plus_summary",
+      "label": "obs_keywords_plus_summary",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement: keywords+summary achieves 51.0% (+0.0pp) in Table 2."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Keywords+summary gene components pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "The complete gene structure (m, u, π, α, c, v) — including the strategic steps component π — achieves 54.0% average pass rate (+3.0pp), the highest among all construction variants. The benefit emerges specifically when the strategy layer π is added, not from progressive accumulation of the keyword or summary layers [@Wang2026].",
+      "content_hash": "368ed05a02d644872ec421c2f5cd9f6233dba5a9e8777837fa526910d593b0cd",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15097::obs_full_gene_construction",
+      "label": "obs_full_gene_construction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement: full gene achieves 54.0% (+3.0pp) in Table 2; same as main result."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Full gene construction achieves maximum pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "The strategic steps component π of a strategy gene is the critical differentiating element that drives performance improvement. Without π, gene components (keywords m, summary u) achieve at most +2.5pp; adding π achieves +3.0pp. More importantly, adding keywords+summary without π reverts to baseline (0.0pp), showing that accumulating descriptive tokens without strategic framing provides no benefit [@Wang2026].",
+      "content_hash": "2d6c4303cbbb704bf5c36f9d80934d5d08d561c2655df0f416156bbb888fb19e",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_15097::strategy_layer_critical",
+      "label": "strategy_layer_critical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "obs_full_gene_construction",
+              "obs_keywords_only",
+              "obs_keywords_plus_summary",
+              "strategy_layer_critical"
+            ]
+          }
+        }
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Strategic steps (π) are the critical gene component",
+      "type": "claim"
+    },
+    {
+      "content": "When a gene with incorrect algorithm (wrong-algorithm content corruption) is used as the control signal, average pass rate drops to 48.8% (-2.2pp below the gene's 54.0%, below the 51.0% baseline), indicating that semantic content accuracy matters for gene effectiveness [@Wang2026].",
+      "content_hash": "79bb467bdc49aac93f3db2e8d9b5349d7bd107b1b27a638f871c645cfa77024b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15097::obs_content_corrupt_wrong_algo",
+      "label": "obs_content_corrupt_wrong_algo",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from Figure 4: wrong-algorithm condition 48.8%. High confidence; experimental condition is precisely defined."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Wrong-algorithm gene reduces performance below baseline",
+      "type": "claim"
+    },
+    {
+      "content": "When a gene with incorrect domain (wrong-domain content corruption) is used as the control signal, average pass rate drops to 49.4% (-1.6pp below the gene's 54.0%), also below the 51.0% baseline, confirming that domain-accurate content is necessary for gene effectiveness [@Wang2026].",
+      "content_hash": "2869c793ba5d12db6f11cd294c7447345a022f51416160f0c419da1f0fec76a5",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15097::obs_content_corrupt_wrong_domain",
+      "label": "obs_content_corrupt_wrong_domain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from Figure 4: wrong-domain condition 49.4%."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Wrong-domain gene reduces performance below baseline",
+      "type": "claim"
+    },
+    {
+      "content": "When the gene's internal priority ordering is inverted (structural perturbation: reordering strategic steps in reverse priority), pass rate remains at 52.8% (−1.2pp from gene's 54.0%, but still +1.8pp above baseline), showing that structural deformation is tolerated better than content corruption [@Wang2026].",
+      "content_hash": "d2d833d55b70cd63a743ca4cc4c6236bb150ae0211e4ba89cf0d53843759b6c0",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15097::obs_structural_inverted_priority",
+      "label": "obs_structural_inverted_priority",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "alt_attention_bias",
+              "obs_structural_inverted_priority",
+              "pred_gene_structure_helps"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from Figure 4: inverted priority 52.8%. High confidence."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Inverted-priority gene maintains above-baseline performance",
+      "type": "claim"
+    },
+    {
+      "content": "When the gene is overconstrained (structural perturbation: adding additional restrictive constraints beyond the original), pass rate rises to 55.9% (+1.9pp above gene's 54.0%, +4.9pp above baseline), suggesting that additional specificity can sometimes help rather than hurt [@Wang2026].",
+      "content_hash": "74ccdb29a0df3f4c4f3ac182e25f35de3f66960510a4720c11673aa5f02e2aa3",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15097::obs_structural_overconstrained",
+      "label": "obs_structural_overconstrained",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from Figure 4: overconstrained 55.9%. High confidence."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Overconstrained gene achieves highest single-perturbation pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "Strategy genes are more sensitive to content accuracy than to structural deformation. Content corruptions (wrong algorithm: 48.8%, wrong domain: 49.4%) drive performance below the 51.0% baseline, while structural perturbations (inverted priority: 52.8%, overconstrained: 55.9%) remain at or above baseline. The structure itself carries independent value even when partially malformed [@Wang2026].",
+      "content_hash": "b04931ad6fd08bd52fb069bbd68d71ecbc6a7e006c8f92931c5ef387efccf494",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_15097::gene_sensitive_to_content_not_structure",
+      "label": "gene_sensitive_to_content_not_structure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "gene_sensitive_to_content_not_structure",
+              "obs_content_corrupt_wrong_algo",
+              "obs_content_corrupt_wrong_domain",
+              "obs_structural_inverted_priority",
+              "obs_structural_overconstrained"
+            ]
+          }
+        }
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Genes tolerate structural deformation but require content accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Adding API notes (d_aux api_notes from the skill package) back to the gene results in 51.5% average pass rate (+0.5pp above baseline, -2.5pp below standalone gene), with Gemini 3.1 Pro at 51.8% and Flash Lite at 51.2%. The API documentation dilutes gene effectiveness despite providing correct information [@Wang2026].",
+      "content_hash": "e2949d46d119e7d673c31b70df402521ae0422ec0c5e87594933261f8a872bdf",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_15097::obs_gene_plus_api",
+      "label": "obs_gene_plus_api",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 3: Gene + API notes achieves 51.5% avg."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Gene + API notes underperforms standalone gene",
+      "type": "claim"
+    },
+    {
+      "content": "Adding code examples (d_aux examples from the skill package) to the gene results in 52.0% average pass rate (+1.0pp above baseline, -2.0pp below standalone gene), with Gemini 3.1 Pro at 57.8% and Flash Lite at 46.1%. Example reattachment partially dilutes gene effectiveness [@Wang2026].",
+      "content_hash": "0e8747cd7d6ddac5c86502beadd48db6f0a5e3848c1a31d1e7439f8704defa07",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_15097::obs_gene_plus_examples",
+      "label": "obs_gene_plus_examples",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 3: Gene + examples achieves 52.0% avg."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Gene + examples underperforms standalone gene",
+      "type": "claim"
+    },
+    {
+      "content": "Reattaching documentation components (API notes or examples) to a strategy gene degrades its test-time control effectiveness below the standalone gene, even when the documentation is factually correct. Gene + API notes achieves 51.5% and Gene + examples achieves 52.0%, both below the standalone gene's 54.0%. Complementarity of gene and documentation does not offset dilution effects [@Wang2026].",
+      "content_hash": "1f0fa318da410be9c6e2e53f3a58f122b33a2ffccf4a2e5637b2847d8516dd05",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_15097::documentation_dilution",
+      "label": "documentation_dilution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "documentation_dilution",
+              "obs_gene_passrate",
+              "obs_gene_plus_api",
+              "obs_gene_plus_examples"
+            ]
+          }
+        }
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Documentation reattachment dilutes gene effectiveness",
+      "type": "claim"
+    },
+    {
+      "content": "Using two complementary strategy genes (covering different but related scenarios) simultaneously as control signal achieves only 44.9% average pass rate (-6.1pp below baseline), with Gemini 3.1 Pro at 45.5% and Flash Lite at 44.3%. This is the worst-performing condition tested [@Wang2026].",
+      "content_hash": "adffcda76fa33a6ed69c9d4fd3dbaf9d4ebc29efeb206da8ac0c3eb70dd127b9",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_15097::obs_two_complementary_genes",
+      "label": "obs_two_complementary_genes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 4: two complementary genes achieves 44.9% avg (-6.1pp)."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Two complementary genes severely degrades performance",
+      "type": "claim"
+    },
+    {
+      "content": "Using three complementary strategy genes simultaneously achieves 50.4% average pass rate (-0.6pp below baseline, but -3.6pp below single gene), with Gemini 3.1 Pro at 54.5% and Flash Lite at 46.2%. Performance partially recovers from the two-gene case but remains below single gene [@Wang2026].",
+      "content_hash": "5da4afd3108ade8ee86fc65f5d89dc4d2c2e70a52a03f5f81c10dc6e494b86ad",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_15097::obs_three_complementary_genes",
+      "label": "obs_three_complementary_genes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 4: three complementary genes achieves 50.4% avg (-0.6pp)."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Three complementary genes underperforms single gene",
+      "type": "claim"
+    },
+    {
+      "content": "Using two conflicting strategy genes (encoding mutually inconsistent strategies) simultaneously achieves 53.2% average pass rate (+2.2pp above baseline, -0.8pp below single gene), suggesting that conflicting signals self-cancel rather than accumulate harm [@Wang2026].",
+      "content_hash": "c026806b96d335d0edb4e9d14307b215de1e622fde5657078515560a18b88a97",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_15097::obs_two_conflicting_genes",
+      "label": "obs_two_conflicting_genes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 4: two conflicting genes achieves 53.2% avg (+2.2pp)."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Two conflicting genes nearly matches single gene",
+      "type": "claim"
+    },
+    {
+      "content": "Gene reusability has bounded scope in scientific code-solving contexts. A single targeted gene achieves the highest pass rate (54.0%), while all multi-gene composition strategies underperform: two complementary genes (44.9%), three complementary genes (50.4%), two conflicting genes (53.2%). Accumulating more genes does not improve performance and often causes interference [@Wang2026].",
+      "content_hash": "e8ced924485bd50e533759e3cd62b1b41ca5758c1353885d6088cb4c5e14f9d5",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_15097::gene_reuse_scope_bounded",
+      "label": "gene_reuse_scope_bounded",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "gene_reuse_scope_bounded",
+              "obs_gene_passrate",
+              "obs_three_complementary_genes",
+              "obs_two_complementary_genes",
+              "obs_two_conflicting_genes"
+            ]
+          }
+        }
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Gene reusability is scope-bounded; single gene is optimal",
+      "type": "claim"
+    },
+    {
+      "content": "The structural format of the gene may bias the model's attention toward relevant procedural steps via token placement and formatting, independently of whether the semantic content is accurate (attention-bias hypothesis).",
+      "content_hash": "ba9c1ed7569a1a619bd93ec0aafaad71a3f01f16d37860d261a28595b88148a3",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2604_15097::alt_attention_bias",
+      "label": "alt_attention_bias",
+      "metadata": {
+        "prior": 0.4,
+        "prior_justification": "The attention-bias alternative hypothesis (structure biases attention independently of semantic content) is a plausible mechanism but incomplete: it cannot explain why content corruption drops below baseline while structure tolerates deformation. Prior reflects partial explanatory power."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Alternative: structural format creates attention bias independent of content",
+      "type": "claim"
+    },
+    {
+      "content": "The gene's structured format (explicit fields for strategic steps, constraints, validation hooks) provides a consistent template that the model can execute even when content is partially wrong, because the structure cues execution mode.",
+      "content_hash": "d2115d0524ba78c0d576a32876f2333d70d0c50715bc0aff7fe5d8a45c5ac7f7",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2604_15097::pred_gene_structure_helps",
+      "label": "pred_gene_structure_helps",
+      "metadata": {
+        "prior": 0.7,
+        "prior_justification": "The execution-mode cuing hypothesis (structure templates LLM execution) is the more complete explanation: it accounts for both structural tolerance and content sensitivity. Moderate-high prior as the primary hypothesis."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Gene structure cues execution mode (hypothesis)",
+      "type": "claim"
+    },
+    {
+      "content": "If attention bias were the primary mechanism, then shuffling or inverting gene fields while preserving format should maintain or improve performance, and the exact semantic content of the strategy steps would not matter.",
+      "content_hash": "cc1f1e4798ea2b937f64388ffc51c612bc88b72752e33ac36acc3e23e7b67ba7",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2604_15097::pred_attention_bias",
+      "label": "pred_attention_bias",
+      "metadata": {
+        "prior": 0.45,
+        "prior_justification": "The prediction derived from the attention-bias hypothesis (format alone suffices) is partially contradicted by content sensitivity results. Moderate-low prior."
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "title": "Attention bias predicts format-only sufficiency",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The gene's structured format (explicit fields for strategic steps, constraints, validation hooks) provides a consistent template that the model can execute even when content is partially wrong, because the structure cues execution mode., If attention bias were the primary mechanism, then shuffling or inverting gene fields while preserving format should maintain or improve performance, and the exact semantic content of the strategy steps would not matter., When the gene's internal priority ordering is inverted (structural perturbation: reordering strategic steps in reverse priority), pass rate remains at 52.8% (−1.2pp from gene's 54.0%, but still +1.8pp above baseline), showing that structural deformation is tolerated better than content corruption [@Wang2026].)",
+      "content_hash": "b87b23af9eed43d18b208b20639aa301f7715096dd9d216e74aa777ba278c22f",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2604_15097::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_gene_probe",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Attaching raw failure history to the procedural skill package and using it as control signal achieves 47.8% average pass rate (-3.2pp below baseline, -2.1pp below skill alone), with Gemini 3.1 Pro at 53.8% and Flash Lite at 41.8%. Adding failure information to an already-misaligned representation further degrades performance [@Wang2026].",
+      "content_hash": "241ac27ee3d21ece506c11593d630e1b98b4caef42dec904d35628d2c4069126",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15097::obs_skill_plus_failure",
+      "label": "obs_skill_plus_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 5: Skill + failure achieves 47.8% avg (-3.2pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Skill + raw failure history further degrades performance",
+      "type": "claim"
+    },
+    {
+      "content": "Attaching raw failure history to unstructured freeform text and using it as control signal achieves 49.6% average pass rate (-1.4pp below baseline), with Gemini 3.1 Pro at 55.7% and Flash Lite at 43.5%. Unstructured failure information provides less value than no guidance [@Wang2026].",
+      "content_hash": "2d683e16c6b1ad6730d07c79271efc81345349ee997f5a1915965bb37a0f2dcd",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15097::obs_freeform_plus_failure",
+      "label": "obs_freeform_plus_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 5: Freeform + failure achieves 49.6% avg (-1.4pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Freeform + raw failure history underperforms baseline",
+      "type": "claim"
+    },
+    {
+      "content": "Attaching raw failure history to the gene and using it as control signal achieves 52.0% average pass rate (+1.0pp above baseline, but -2.0pp below standalone gene at 54.0%), with Gemini 3.1 Pro at 55.3% and Flash Lite at 48.6%. Gene is the best carrier format for failure history, but naive appending still dilutes [@Wang2026].",
+      "content_hash": "cb463ca107f6520f5d0d38433c078507e381a0f3279795ccac1c59cf9d154ea4",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15097::obs_gene_plus_raw_failure",
+      "label": "obs_gene_plus_raw_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 5: Gene + failure achieves 52.0% avg (+1.0pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Gene + raw failure history: best carrier but still dilutes",
+      "type": "claim"
+    },
+    {
+      "content": "Among tested carrier formats, the strategy gene is the best substrate for attaching failure history information. Gene + failure achieves 52.0% average pass rate, versus 47.8% for Skill + failure and 49.6% for Freeform + failure. However, all naive-appending conditions fall below the standalone gene (54.0%), indicating that carrier format quality matters but raw appending is insufficient [@Wang2026].",
+      "content_hash": "f375731242df0c7834bf783533e7838931d353bdb975ed994840b06dee758941",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15097::gene_best_failure_carrier",
+      "label": "gene_best_failure_carrier",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "gene_best_failure_carrier",
+              "obs_freeform_plus_failure",
+              "obs_gene_plus_raw_failure",
+              "obs_skill_plus_failure"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Gene is the best failure carrier format",
+      "type": "claim"
+    },
+    {
+      "content": "Using flattened prose (converting the gene's structured format into continuous unstructured text with the same content) achieves 50.5% average pass rate (-0.5pp below baseline), with Gemini 3.1 Pro at 56.8% and Flash Lite at 44.1%. Flattening structure degrades performance even with identical content [@Wang2026].",
+      "content_hash": "dae284c21864690b3e534ea2d7239548c80d4ec48314a0b508706da4fdf63104",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15097::obs_flattened_prose",
+      "label": "obs_flattened_prose",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 6: flattened prose achieves 50.5% avg (-0.5pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Flattened prose underperforms baseline",
+      "type": "claim"
+    },
+    {
+      "content": "Using the Gene Evolution Protocol (GEP) structured format achieves 54.0% average pass rate (+3.0pp above baseline), with Gemini 3.1 Pro at 59.9% and Flash Lite at 48.2%. This is identical to the standalone gene result, confirming GEP structure preserves gene effectiveness [@Wang2026].",
+      "content_hash": "497a8e92b28a9837bbe1ab6d492ed5affefd0f8eea1b0e5798b3012db16a1ffc",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15097::obs_structured_gep",
+      "label": "obs_structured_gep",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 6: structured GEP achieves 54.0% avg (+3.0pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "GEP structured format matches gene performance",
+      "type": "claim"
+    },
+    {
+      "content": "The structured format of strategy genes contributes independently to test-time control effectiveness, beyond content alone. Structured GEP (54.0%) outperforms flattened prose (50.5%) with identical content. The -0.5pp degradation from flattening matches the structural contribution: removing structure costs ~3.5pp relative to the structured gene, and the flattened version falls below baseline [@Wang2026].",
+      "content_hash": "f4292e4be955b9fad2902ee013ec47bb6dd6337e582fbad298e1611dfed69f27",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_15097::structure_independent_value",
+      "label": "structure_independent_value",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "obs_flattened_prose",
+              "obs_structured_gep",
+              "structure_independent_value"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Gene structure contributes value independent of content",
+      "type": "claim"
+    },
+    {
+      "content": "When failure information is placed first in the gene (failure warnings prepended before strategy content), the system achieves 50.5% average pass rate (+0.7pp above the 49.8% adjusted baseline for this experiment), with Gemini 3.1 Pro at 56.3% and Flash Lite at 44.7% [@Wang2026].",
+      "content_hash": "1b4304dd735dbc1d8dfa2d138175bff59e814acef812a2a61c1b03413fbd2ad5",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15097::obs_failure_first",
+      "label": "obs_failure_first",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 7: failure-first encoding achieves 50.5% (+0.7pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Failure-first encoding achieves modest improvement",
+      "type": "claim"
+    },
+    {
+      "content": "When strategy content is placed first in the gene (strategy prepended before failure information), the system achieves 51.8% average pass rate (+2.0pp above the 49.8% adjusted baseline), with Gemini 3.1 Pro at 58.4% and Flash Lite at 45.2%. Ordering strategy before failure improves performance over failure-first placement [@Wang2026].",
+      "content_hash": "7b3820fd69609dd312b0a85cfeeb1da5ed610a34802d702d81307cedba0b75d4",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_15097::obs_strategy_first",
+      "label": "obs_strategy_first",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 7: strategy-first achieves 51.8% (+2.0pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Strategy-first encoding outperforms failure-first",
+      "type": "claim"
+    },
+    {
+      "content": "Using only the strategy component (without any failure information appended) in the failure encoding experiment achieves 52.3% average pass rate (+2.5pp above the 49.8% adjusted baseline), with Gemini 3.1 Pro at 56.9% and Flash Lite at 47.7%. Strategy without failure information is more effective than any strategy+failure combination [@Wang2026].",
+      "content_hash": "ed5cf219275c29a1d3001290fba5d8a6123562c60c54e3cb3f403cc00bae6c6d",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_15097::obs_strategy_only_failure_exp",
+      "label": "obs_strategy_only_failure_exp",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 7: strategy-only achieves 52.3% (+2.5pp)."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Strategy-only (no failure info) outperforms all strategy+failure combinations",
+      "type": "claim"
+    },
+    {
+      "content": "Using only distilled failure warnings (compact AVOID cues α, derived from failure history without strategy steps) achieves 54.4% average pass rate (+4.6pp above the 49.8% adjusted baseline), with Gemini 3.1 Pro at 56.8% and Flash Lite at 52.0%. This is the highest-performing condition in the failure encoding experiment, outperforming all strategy+failure combinations [@Wang2026].",
+      "content_hash": "53559bb616e71067494a8031ef84365e5267db155daa21a870a34d53499831b1",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_15097::obs_failure_warnings_only",
+      "label": "obs_failure_warnings_only",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Table 7: failure warnings only achieves 54.4% (+4.6pp); this is the top-performing condition in the failure encoding experiment."
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Failure warnings only achieves highest performance in failure encoding experiment",
+      "type": "claim"
+    },
+    {
+      "content": "Failure experience is most useful when distilled into compact AVOID warnings rather than combined with strategic content or appended verbatim. Distilled failure warnings only (54.4%) outperform strategy-only (52.3%), strategy+failure ordered combinations (50.5%-51.8%), and raw failure+gene (52.0%). The failure information is most potent when isolated as targeted negative guidance, not as part of a combined positive+negative bundle [@Wang2026].",
+      "content_hash": "8854095fa9ab14a883a3468b391503a6a115c115ff0f914c3d5612d41fcc04e9",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_15097::failure_distillation_principle",
+      "label": "failure_distillation_principle",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "failure_distillation_principle",
+              "obs_failure_first",
+              "obs_failure_warnings_only",
+              "obs_strategy_first",
+              "obs_strategy_only_failure_exp"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_probe",
+      "parameters": [],
+      "title": "Failure distillation principle: compact warnings outperform verbose failure records",
+      "type": "claim"
+    },
+    {
+      "content": "CritPt is a benchmark for quantum chemistry and materials science code-solving tasks. Results are reported as accuracy (percentage of tasks solved correctly). Baselines use the best available Gemini model without evolution: Gemini 3 Pro (non-preview) for the Feb 2026 evaluation, and Gemini 3.1 Pro (non-preview) for the Mar 2026 evaluation.",
+      "content_hash": "ef17a724c9f73084cfbd56c66bd2f46b9b046d15fcf91dd54ec559f9f4c14fc8",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15097::setup_critpt",
+      "label": "setup_critpt",
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "CritPt benchmark context",
+      "type": "setting"
+    },
+    {
+      "content": "The CritPt benchmark baseline (Gemini 3 Pro without evolution guidance) achieves 9.1% accuracy on the quantum chemistry and materials science tasks evaluated as of the 2026-02-16 Evolver run [@Wang2026].",
+      "content_hash": "55263e5fdbc4cf12ef9bf4ef9972b59cb0b484ce7fdbd5dc91972f7d2286f481",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_15097::obs_critpt_baseline_feb",
+      "label": "obs_critpt_baseline_feb",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement: Gemini 3 Pro (non-preview) achieves 9.1% on CritPt benchmark in the Feb 2026 evaluation. High confidence as a reported benchmark result."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "CritPt Feb-2026 baseline: 9.1%",
+      "type": "claim"
+    },
+    {
+      "content": "The CritPt benchmark baseline (Gemini 3.1 Pro without evolution guidance) achieves 17.7% accuracy on the quantum chemistry and materials science tasks evaluated as of the 2026-03-26 Evolver run. The improvement from 9.1% to 17.7% reflects the stronger underlying model [@Wang2026].",
+      "content_hash": "7a463124f14a5e79f2abf34ee00997deb377fd0dae82e54b4e341dadbfb59896",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_15097::obs_critpt_baseline_mar",
+      "label": "obs_critpt_baseline_mar",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement: Gemini 3.1 Pro (non-preview) achieves 17.7% on CritPt benchmark in the Mar 2026 evaluation. High confidence as a reported benchmark result."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "CritPt Mar-2026 baseline: 17.7%",
+      "type": "claim"
+    },
+    {
+      "content": "Evolver (Gene) 2026-02-16 achieves 18.57% accuracy on CritPt, compared to the 9.1% baseline for the same evaluation period (Gemini 3 Pro), representing a +9.47 percentage point absolute improvement. This version focuses on the memory-grounded evolution phase, converting failures into structured repair procedures [@Wang2026].",
+      "content_hash": "9e377ee2f1aaea21fae68adae2e7bfadbd98ab8afd41e3ae67be98ecef8c7ffb",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_15097::obs_evolver_feb",
+      "label": "obs_evolver_feb",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly reported CritPt result: 18.57% accuracy for Evolver (Gene) 2026-02-16. High confidence as an explicitly reported benchmark result from the paper."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Evolver (Gene) 2026-02-16: 18.57% accuracy (+9.47pp)",
+      "type": "claim"
+    },
+    {
+      "content": "Evolver (Gene) 2026-03-26 achieves 27.14% accuracy on CritPt, compared to the 17.7% baseline for the same evaluation period (Gemini 3.1 Pro), representing a +9.44 percentage point absolute improvement. This version adds the exploration-augmented evolution phase, accumulating 210 gene slots across 36 unique IDs, including 148 arxiv-derived selections, 44 run_experience selections, and 18 builtin_topic_prior selections. The most frequently activated gene is gene_topic_hamiltonian_inverse_design (25 selections) [@Wang2026].",
+      "content_hash": "1fb6be628cbb59b7d62b255945049952795e32686fcb957f62b320f651ace736",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_15097::obs_evolver_mar",
+      "label": "obs_evolver_mar",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly reported CritPt result: 27.14% accuracy for Evolver (Gene) 2026-03-26. High confidence as an explicitly reported benchmark result from the paper."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Evolver (Gene) 2026-03-26: 27.14% accuracy (+9.44pp)",
+      "type": "claim"
+    },
+    {
+      "content": "The memory-grounded evolution phase (Evolver 2026-02-16) converts run failures into structured repair procedures stored as genes. These repair-procedure genes encode specific AVOID cues (α component) derived from observed failure modes, allowing the system to avoid previously seen error patterns on subsequent runs [@Wang2026].",
+      "content_hash": "429cf52422fe11dd887abe797522adad1e5df4457fd4f22c86e9080bdb95f17d",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15097::obs_memory_grounded_phase",
+      "label": "obs_memory_grounded_phase",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Qualitative description of the Feb 2026 evolver's memory-grounded mechanism (failure → repair procedure conversion). High confidence in the mechanism description; moderate uncertainty because the details come from qualitative Appendix D examples."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Memory-grounded phase: failure repair procedures",
+      "type": "claim"
+    },
+    {
+      "content": "The exploration-augmented evolution phase (Evolver 2026-03-26) adds genes derived from external sources (arxiv papers, domain prior knowledge) in addition to run experience, creating a broader repertoire. By Mar 2026, the system maintains 210 gene slots across 36 unique gene IDs, with domain-specific genes like gene_topic_hamiltonian_inverse_design activated 25 times [@Wang2026].",
+      "content_hash": "ec2a035de466b1445af8dee6a89ea26c5e9f418f1a16997da7ee6202fef77935",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15097::obs_exploration_augmented_phase",
+      "label": "obs_exploration_augmented_phase",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Observation about the Mar 2026 evolver's gene library structure (210 slots, 36 IDs). High confidence in the reported numbers; slight uncertainty because library composition details are qualitative descriptors from Appendix D."
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Exploration-augmented phase: external knowledge integration",
+      "type": "claim"
+    },
+    {
+      "content": "Gene-based test-time evolution consistently improves LLM performance on scientific code-solving benchmarks by approximately 9-10 percentage points above the contemporaneous baseline model.",
+      "content_hash": "37db49467d18672ca450bc52cc4a772b73ef2a42e35345ebea7e4b56f13ff85f",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_15097::law_gene_evolution_improves",
+      "label": "law_gene_evolution_improves",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_gene_evolution_improves",
+              "obs_evolver_feb",
+              "obs_evolver_mar"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Gene evolution law: consistent ~9-10pp improvement",
+      "type": "claim"
+    },
+    {
+      "content": "Gene-based test-time evolution achieves persistent, measurable accuracy improvements across two independent CritPt evaluation points. The improvement is stable at approximately +9.4-9.5pp in both evaluations (Feb: +9.47pp, Mar: +9.44pp), despite the underlying baseline model changing (9.1% → 17.7%). This consistency suggests evolution benefits are additive rather than model-specific [@Wang2026].",
+      "content_hash": "470aefca4e933dbe02a5e7e0ad0a4f009039062315bf46028ab5138544a037f1",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_15097::gene_evolution_persistent_improvement",
+      "label": "gene_evolution_persistent_improvement",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "gene_evolution_persistent_improvement",
+              "obs_evolver_feb",
+              "obs_evolver_mar"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Gene evolution produces consistent ~9.4pp improvement across evaluations",
+      "type": "claim"
+    },
+    {
+      "content": "The gene format enables iterative accumulation of reusable experience through the GEP protocol. The exploration-augmented evolver (Mar 2026) demonstrates that genes can be sourced from heterogeneous origins (run experience, arxiv, domain priors) and organized into a queryable library of 36 unique IDs, showing the gene format supports both targeted recall and broad exploration [@Wang2026].",
+      "content_hash": "41de2f8b10c48d8379fbfc172ad45bd9d84c926bd3aba4fbeb3bf37776176901",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_15097::gene_enables_accumulation",
+      "label": "gene_enables_accumulation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "gene_enables_accumulation",
+              "obs_evolver_mar",
+              "obs_exploration_augmented_phase"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Gene format enables heterogeneous experience accumulation",
+      "type": "claim"
+    },
+    {
+      "content": "The paper's four principal empirical findings are: (1) Documentation skills are misaligned with test-time LLM control (Skill: -1.1pp); (2) Representation form is a first-order factor independent of content volume (Gene: +3.0pp vs Skill: -1.1pp from the same experience); (3) Gene format is a better substrate for failure accumulation (Gene+failure: 52.0% vs Skill+failure: 47.8%); (4) Failure experience is most effective when distilled into compact AVOID warnings (warnings-only: 54.4%, highest single failure-encoding condition) [@Wang2026].",
+      "content_hash": "0590086d63a6690a3c85555d95423bdee1215e48c75f381057f2a2a5a8e48609",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_15097::overall_four_findings",
+      "label": "overall_four_findings",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026"
+            ],
+            "referenced_claims": [
+              "failure_distillation_principle",
+              "gene_best_failure_carrier",
+              "obs_evolver_feb",
+              "obs_memory_grounded_phase",
+              "overall_four_findings"
+            ]
+          }
+        }
+      },
+      "module": "s4_evolution_results",
+      "parameters": [],
+      "title": "Four principal empirical findings",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::thesis_skill_misaligned,github:2604_15097::thesis_gene_superior)",
+      "content_hash": "45bd522a2bd75a009af376928d5c458f5fa53041dfa007d350d95cda7f1f1a35",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_5dd626ae",
+      "label": "__conjunction_result_5dd626ae",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::thesis_skill_misaligned,github:2604_15097::thesis_gene_superior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_eade14c61d5d1f5c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_5dd626ae,github:2604_15097::thesis_form_over_content)",
+      "content_hash": "6c1c6c6f144cca5ee9f958db826402574d4d9e542e14d67d2c372bf0b7e9e43d",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_b0729864",
+      "label": "__implication_result_b0729864",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_5dd626ae,github:2604_15097::thesis_form_over_content)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_eade14c61d5d1f5c",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_skill_passrate,github:2604_15097::obs_baseline_passrate)",
+      "content_hash": "18ab5fe281ff628ce5dbbc1a3745ea727fe0e7bc08fac3b921f32bfe647df545",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_9b27e3bd",
+      "label": "__conjunction_result_9b27e3bd",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_skill_passrate,github:2604_15097::obs_baseline_passrate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_46a3639fb4085422",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_9b27e3bd,github:2604_15097::thesis_skill_misaligned)",
+      "content_hash": "6f23ecef6cac88f05544e881eb7062780f351149e945d3ae14c387c11e32c263",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_b37e98e1",
+      "label": "__implication_result_b37e98e1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_9b27e3bd,github:2604_15097::thesis_skill_misaligned)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_46a3639fb4085422",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_gene_passrate,github:2604_15097::obs_baseline_passrate)",
+      "content_hash": "0c79acccf9f6d3cad11e168cbdc3044b6c959d7afa05ee45a51aa9c1572efe79",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_81677a1e",
+      "label": "__conjunction_result_81677a1e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_gene_passrate,github:2604_15097::obs_baseline_passrate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_146f9bcccbd0ebae",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_81677a1e,github:2604_15097::thesis_gene_superior)",
+      "content_hash": "2405ca978fd4c7fcda882fd9e3cd0826c29cb0ee580edfb690c8f29652b7e727",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_645dbf6b",
+      "label": "__implication_result_645dbf6b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_81677a1e,github:2604_15097::thesis_gene_superior)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_146f9bcccbd0ebae",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_skill_workflow_useful,github:2604_15097::obs_skill_overview_harmful,github:2604_15097::obs_budget_matched_fragment)",
+      "content_hash": "0ce8046e15c318d129588162da2573befd13b725486ca3b5418de8398b2221ea",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_08ecd1e0",
+      "label": "__conjunction_result_08ecd1e0",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_skill_workflow_useful,github:2604_15097::obs_skill_overview_harmful,github:2604_15097::obs_budget_matched_fragment)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_00763aaaa6aaa623",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_08ecd1e0,github:2604_15097::signal_sparse)",
+      "content_hash": "8812d3ae8bbf27284a4330751dd3eec1e9fc622c4f7918ac5dcbb8ca5211132f",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_340a222b",
+      "label": "__implication_result_340a222b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_08ecd1e0,github:2604_15097::signal_sparse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_00763aaaa6aaa623",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_skill_passrate,github:2604_15097::obs_skill_workflow_useful,github:2604_15097::obs_skill_overview_harmful)",
+      "content_hash": "9aa39c2f00e9f293a990df2baa1a77d9f7cee3cfbd1f6c581bb820a6e72f3492",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_a1290941",
+      "label": "__conjunction_result_a1290941",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_skill_passrate,github:2604_15097::obs_skill_workflow_useful,github:2604_15097::obs_skill_overview_harmful)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_25d80002f175c28a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_a1290941,github:2604_15097::aggregation_harmful)",
+      "content_hash": "768c54c5c251620833040e70db752486afe09d2388074ef5da5615179f86df34",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_58332e13",
+      "label": "__implication_result_58332e13",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_a1290941,github:2604_15097::aggregation_harmful)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_25d80002f175c28a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_keywords_only,github:2604_15097::obs_keywords_plus_summary,github:2604_15097::obs_full_gene_construction)",
+      "content_hash": "be11a3a4b0970686dee192f0b29731a7787cfcb531319f2e2403b0173dae5e21",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_a4b478bd",
+      "label": "__conjunction_result_a4b478bd",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_keywords_only,github:2604_15097::obs_keywords_plus_summary,github:2604_15097::obs_full_gene_construction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ac8c5ee967038463",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_a4b478bd,github:2604_15097::strategy_layer_critical)",
+      "content_hash": "d2425b13c76b3d04f1abd9e33d15b5939a0061511e041d080346ae79c26f04fb",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_1027a6bb",
+      "label": "__implication_result_1027a6bb",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_a4b478bd,github:2604_15097::strategy_layer_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ac8c5ee967038463",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_content_corrupt_wrong_algo,github:2604_15097::obs_content_corrupt_wrong_domain,github:2604_15097::obs_structural_inverted_priority,github:2604_15097::obs_structural_overconstrained)",
+      "content_hash": "a4aa07d91e4e6b7400eac5196c49e1fdbf6bd95b90c44053d4c5f08d3117a3de",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_0632a673",
+      "label": "__conjunction_result_0632a673",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_content_corrupt_wrong_algo,github:2604_15097::obs_content_corrupt_wrong_domain,github:2604_15097::obs_structural_inverted_priority,github:2604_15097::obs_structural_overconstrained)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_370b9ff3f6454f2c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_0632a673,github:2604_15097::gene_sensitive_to_content_not_structure)",
+      "content_hash": "032e8b3b0aae8f4f25f2525f65c17a00b5c46937412606b8b65a345f458de78a",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_b0bffbbf",
+      "label": "__implication_result_b0bffbbf",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_0632a673,github:2604_15097::gene_sensitive_to_content_not_structure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_370b9ff3f6454f2c",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_gene_plus_api,github:2604_15097::obs_gene_plus_examples,github:2604_15097::obs_gene_passrate)",
+      "content_hash": "5c803d462cca1c95b7b7c6d3fcfe33853b0843da1b08e1c7d1712e10d7a9d536",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_c0d39ca1",
+      "label": "__conjunction_result_c0d39ca1",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_gene_plus_api,github:2604_15097::obs_gene_plus_examples,github:2604_15097::obs_gene_passrate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cc413912872a15a8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_c0d39ca1,github:2604_15097::documentation_dilution)",
+      "content_hash": "09b984ea1160fd075680843951f3a546cee40ccc8446956c52f27cfc765c8c9a",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_8c577e32",
+      "label": "__implication_result_8c577e32",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_c0d39ca1,github:2604_15097::documentation_dilution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cc413912872a15a8",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_two_complementary_genes,github:2604_15097::obs_three_complementary_genes,github:2604_15097::obs_two_conflicting_genes,github:2604_15097::obs_gene_passrate)",
+      "content_hash": "edba693d3eba86fd613285ae7d395ef9ccd2e2207ba5fd971c7e6462d817280e",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_22192a0b",
+      "label": "__conjunction_result_22192a0b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_two_complementary_genes,github:2604_15097::obs_three_complementary_genes,github:2604_15097::obs_two_conflicting_genes,github:2604_15097::obs_gene_passrate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_755651eb4b3ce8ad",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_22192a0b,github:2604_15097::gene_reuse_scope_bounded)",
+      "content_hash": "5940f8aef9c6645012492664117c0db3c9797a527a70a57640d6b9df79b0ba89",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_4119a151",
+      "label": "__implication_result_4119a151",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_22192a0b,github:2604_15097::gene_reuse_scope_bounded)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_755651eb4b3ce8ad",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::pred_gene_structure_helps,github:2604_15097::obs_structural_inverted_priority)",
+      "content_hash": "c29bffa09062bc24d642394922cbfa95898e0f6877fa952c33e096edc82797fc",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_0a6cc15d",
+      "label": "__implication_result_0a6cc15d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::pred_gene_structure_helps,github:2604_15097::obs_structural_inverted_priority)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e79f6af75e177e03",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::alt_attention_bias,github:2604_15097::obs_structural_inverted_priority)",
+      "content_hash": "d05a477ffae95833bdf394cee536378a9034826fcc9efb6391aa2d0e7bc0e2ff",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_66af0e72",
+      "label": "__implication_result_66af0e72",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::alt_attention_bias,github:2604_15097::obs_structural_inverted_priority)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c4f6c534c140a096",
+        "owning_strategy_type": "support",
+        "prior": 0.55,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_15097::pred_gene_structure_helps,github:2604_15097::obs_structural_inverted_priority)",
+      "content_hash": "a1a8128ec79236ba8b07f92d51c17812e2e7d27b0b2c6a009431da7835d843af",
+      "exported": false,
+      "id": "github:2604_15097::__equivalence_result_670f67dc",
+      "label": "__equivalence_result_670f67dc",
+      "metadata": {
+        "canonical_name": "matches(github:2604_15097::pred_gene_structure_helps,github:2604_15097::obs_structural_inverted_priority)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_3899b39cdc7b8e8d",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_15097::pred_attention_bias,github:2604_15097::obs_structural_inverted_priority)",
+      "content_hash": "6b8ebf055cfc83ed8179ccd2cce7e80a5d33a802ef9abb66648e267266d1dd1f",
+      "exported": false,
+      "id": "github:2604_15097::__equivalence_result_39aedd97",
+      "label": "__equivalence_result_39aedd97",
+      "metadata": {
+        "canonical_name": "matches(github:2604_15097::pred_attention_bias,github:2604_15097::obs_structural_inverted_priority)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_3899b39cdc7b8e8d",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_skill_plus_failure,github:2604_15097::obs_freeform_plus_failure,github:2604_15097::obs_gene_plus_raw_failure)",
+      "content_hash": "52862375262f6724b2203c415b44fdc0d7fae561922f83ae04100b0cdb102f19",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_ba97eddd",
+      "label": "__conjunction_result_ba97eddd",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_skill_plus_failure,github:2604_15097::obs_freeform_plus_failure,github:2604_15097::obs_gene_plus_raw_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_293bf1546c2dce02",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_ba97eddd,github:2604_15097::gene_best_failure_carrier)",
+      "content_hash": "f3e02e8598e21ad19c3985123b7c4cae3235a294428eda59c25313cfcdcb8788",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_31032cb6",
+      "label": "__implication_result_31032cb6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_ba97eddd,github:2604_15097::gene_best_failure_carrier)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_293bf1546c2dce02",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_flattened_prose,github:2604_15097::obs_structured_gep)",
+      "content_hash": "7abce12e22813cb9b213c1dbfae9a54b26d77f6c87747fd5fbf4caeff16e12a1",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_47b1c73c",
+      "label": "__conjunction_result_47b1c73c",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_flattened_prose,github:2604_15097::obs_structured_gep)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0b038139343958bf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_47b1c73c,github:2604_15097::structure_independent_value)",
+      "content_hash": "ae6f153bd23f36e814f3247a4562684022f0975aab0b8724f0f0bd84f98def2c",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_28c0e830",
+      "label": "__implication_result_28c0e830",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_47b1c73c,github:2604_15097::structure_independent_value)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0b038139343958bf",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_failure_warnings_only,github:2604_15097::obs_strategy_only_failure_exp,github:2604_15097::obs_strategy_first,github:2604_15097::obs_failure_first)",
+      "content_hash": "51e9ca954ad365d860e00be42311591f56838d87da72e08a4574f7a779ea7358",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_40737ec3",
+      "label": "__conjunction_result_40737ec3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_failure_warnings_only,github:2604_15097::obs_strategy_only_failure_exp,github:2604_15097::obs_strategy_first,github:2604_15097::obs_failure_first)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_78dbc8834a566488",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_40737ec3,github:2604_15097::failure_distillation_principle)",
+      "content_hash": "9fb9237185e0a0cef270f932fd79a0e3e4b1fa36a453ea6722d6c7abf3451820",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_15f01513",
+      "label": "__implication_result_15f01513",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_40737ec3,github:2604_15097::failure_distillation_principle)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_78dbc8834a566488",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::law_gene_evolution_improves,github:2604_15097::obs_evolver_feb)",
+      "content_hash": "fcb912d67b026f7eaa7036a6f5dc628df167b8792eee06cca66662dbdb1ce4a7",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_3065982a",
+      "label": "__implication_result_3065982a",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::law_gene_evolution_improves,github:2604_15097::obs_evolver_feb)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_70d9843735716737",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::law_gene_evolution_improves,github:2604_15097::obs_evolver_mar)",
+      "content_hash": "bbde3e923387e361f631fc4561d00c92b1a056b72ca41295aee0df28cae83033",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_d2a0c5f9",
+      "label": "__implication_result_d2a0c5f9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::law_gene_evolution_improves,github:2604_15097::obs_evolver_mar)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_37b838a2cf898765",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_evolver_feb,github:2604_15097::obs_evolver_mar)",
+      "content_hash": "a113c7786265a47cfd8c348deb6fa26933c47b08e71615eed7ccca1f9695646e",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_f34349ef",
+      "label": "__conjunction_result_f34349ef",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_evolver_feb,github:2604_15097::obs_evolver_mar)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_08340261537d88d5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_f34349ef,github:2604_15097::gene_evolution_persistent_improvement)",
+      "content_hash": "b508d03d7d83d6100624da4881298616b80cc4e7f617c3424f210d559103d200",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_7177534e",
+      "label": "__implication_result_7177534e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_f34349ef,github:2604_15097::gene_evolution_persistent_improvement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_08340261537d88d5",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_exploration_augmented_phase,github:2604_15097::obs_evolver_mar)",
+      "content_hash": "fd5dd83d97b96051d391926d9abe046f384d7c4a6a4233cae5c2385ca33139d0",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_f173e9f3",
+      "label": "__conjunction_result_f173e9f3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_exploration_augmented_phase,github:2604_15097::obs_evolver_mar)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f06efaefcd12129f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_f173e9f3,github:2604_15097::gene_enables_accumulation)",
+      "content_hash": "91ddf9b94c3f1209f2fc05c905e1e8766813da1e4601ed2661200ce300fadf9f",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_ecd414ce",
+      "label": "__implication_result_ecd414ce",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_f173e9f3,github:2604_15097::gene_enables_accumulation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f06efaefcd12129f",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15097::obs_memory_grounded_phase,github:2604_15097::obs_evolver_feb,github:2604_15097::failure_distillation_principle,github:2604_15097::gene_best_failure_carrier)",
+      "content_hash": "35e3dddb9caed1674007aa69d2f190484d11e4961f5f66fba669229ef8a38146",
+      "exported": false,
+      "id": "github:2604_15097::__conjunction_result_db7bcda2",
+      "label": "__conjunction_result_db7bcda2",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15097::obs_memory_grounded_phase,github:2604_15097::obs_evolver_feb,github:2604_15097::failure_distillation_principle,github:2604_15097::gene_best_failure_carrier)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fe5c9b73f0ee6a4a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15097::__conjunction_result_db7bcda2,github:2604_15097::overall_four_findings)",
+      "content_hash": "e6c50751be55cce93a00a18cc24e2a07893e2417895d0fa26525294bdc0d0800",
+      "exported": false,
+      "id": "github:2604_15097::__implication_result_b49963b9",
+      "label": "__implication_result_b49963b9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15097::__conjunction_result_db7bcda2,github:2604_15097::overall_four_findings)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fe5c9b73f0ee6a4a",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s4_skill_probe",
+    "s4_gene_probe",
+    "s4_evolution_probe",
+    "s4_evolution_results"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Experience Representation for Test-Time Control",
+    "s4_evolution_probe": "Section 4.3: Evolution Probe — Genes as Better Substrate for Experience Accumulation",
+    "s4_evolution_results": "Section 4.4: Gene as Carrier for Test-Time Evolution — CritPt Benchmark Results",
+    "s4_gene_probe": "Section 4.2: Gene Probe — Strategy Genes as Better Representation",
+    "s4_skill_probe": "Section 4.1: Skill Probe — Documentation-Oriented Skills Misaligned with Control"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_15097",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_15097::thesis_form_over_content",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_5dd626ae",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::thesis_skill_misaligned",
+              "github:2604_15097::thesis_gene_superior"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_b0729864",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_5dd626ae",
+              "github:2604_15097::thesis_form_over_content"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Both probes together establish that @thesis_skill_misaligned (documentation format harms performance) and @thesis_gene_superior (compact gene format outperforms) jointly imply that representational form, not content volume, is the primary driver. The same underlying experience produces opposite outcomes depending only on how it is packaged, confirming @thesis_form_over_content."
+      },
+      "premises": [
+        "github:2604_15097::thesis_skill_misaligned",
+        "github:2604_15097::thesis_gene_superior"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_eade14c61d5d1f5c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::thesis_skill_misaligned",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_9b27e3bd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_skill_passrate",
+              "github:2604_15097::obs_baseline_passrate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_b37e98e1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_9b27e3bd",
+              "github:2604_15097::thesis_skill_misaligned"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The measured pass rate for the full skill condition is 49.9% (@obs_skill_passrate), which is 1.1pp below the no-guidance baseline of 51.0% (@obs_baseline_passrate). This direct comparison shows that adding skill documentation causes net degradation, confirming @thesis_skill_misaligned."
+      },
+      "premises": [
+        "github:2604_15097::obs_skill_passrate",
+        "github:2604_15097::obs_baseline_passrate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_46a3639fb4085422",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::thesis_gene_superior",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_81677a1e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_gene_passrate",
+              "github:2604_15097::obs_baseline_passrate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_645dbf6b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_81677a1e",
+              "github:2604_15097::thesis_gene_superior"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The gene condition achieves 54.0% (@obs_gene_passrate) versus the baseline 51.0% (@obs_baseline_passrate), a +3.0pp improvement. Combined with the skill's -1.1pp degradation, the gene demonstrates clear superiority despite using approximately 11× fewer tokens, supporting @thesis_gene_superior."
+      },
+      "premises": [
+        "github:2604_15097::obs_gene_passrate",
+        "github:2604_15097::obs_baseline_passrate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_146f9bcccbd0ebae",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::signal_sparse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_08ecd1e0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_skill_workflow_useful",
+              "github:2604_15097::obs_skill_overview_harmful",
+              "github:2604_15097::obs_budget_matched_fragment"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_340a222b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_08ecd1e0",
+              "github:2604_15097::signal_sparse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The decomposition results show @obs_skill_workflow_useful (workflow useful) while @obs_skill_overview_harmful (overview harmful), and @obs_budget_matched_fragment (budget-matched fragment better than full but worse than gene). Together these establish that usable control signal is concentrated in a narrow slice of the skill package, confirming @signal_sparse."
+      },
+      "premises": [
+        "github:2604_15097::obs_skill_workflow_useful",
+        "github:2604_15097::obs_skill_overview_harmful",
+        "github:2604_15097::obs_budget_matched_fragment"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_00763aaaa6aaa623",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::aggregation_harmful",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_a1290941",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_skill_passrate",
+              "github:2604_15097::obs_skill_workflow_useful",
+              "github:2604_15097::obs_skill_overview_harmful"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_58332e13",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_a1290941",
+              "github:2604_15097::aggregation_harmful"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The full skill achieves 49.9% (@obs_skill_passrate) below baseline, while @obs_skill_workflow_useful shows the workflow component alone is positive and @obs_skill_overview_harmful shows the overview is strongly negative. The full package's underperformance is explained by harmful sections dominating the useful ones when combined, confirming @aggregation_harmful."
+      },
+      "premises": [
+        "github:2604_15097::obs_skill_passrate",
+        "github:2604_15097::obs_skill_workflow_useful",
+        "github:2604_15097::obs_skill_overview_harmful"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_25d80002f175c28a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::strategy_layer_critical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_a4b478bd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_keywords_only",
+              "github:2604_15097::obs_keywords_plus_summary",
+              "github:2604_15097::obs_full_gene_construction"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_1027a6bb",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_a4b478bd",
+              "github:2604_15097::strategy_layer_critical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The three construction conditions form a diagnostic: @obs_keywords_only (m only: +2.5pp), @obs_keywords_plus_summary (m+u: 0.0pp), @obs_full_gene_construction (full with π: +3.0pp). The non-monotonic pattern — adding summary hurts, but adding strategy helps — isolates the strategic steps layer π as the active ingredient. Token accumulation alone does not explain gains, confirming @strategy_layer_critical."
+      },
+      "premises": [
+        "github:2604_15097::obs_keywords_only",
+        "github:2604_15097::obs_keywords_plus_summary",
+        "github:2604_15097::obs_full_gene_construction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ac8c5ee967038463",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::gene_sensitive_to_content_not_structure",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_0632a673",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_content_corrupt_wrong_algo",
+              "github:2604_15097::obs_content_corrupt_wrong_domain",
+              "github:2604_15097::obs_structural_inverted_priority",
+              "github:2604_15097::obs_structural_overconstrained"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_b0bffbbf",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_0632a673",
+              "github:2604_15097::gene_sensitive_to_content_not_structure"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The four perturbation conditions divide cleanly: content corruptions (@obs_content_corrupt_wrong_algo: 48.8%, @obs_content_corrupt_wrong_domain: 49.4%) fall below baseline, while structural perturbations (@obs_structural_inverted_priority: 52.8%, @obs_structural_overconstrained: 55.9%) remain above baseline. This asymmetric pattern establishes that semantic content must be correct but structural form is flexible, confirming @gene_sensitive_to_content_not_structure."
+      },
+      "premises": [
+        "github:2604_15097::obs_content_corrupt_wrong_algo",
+        "github:2604_15097::obs_content_corrupt_wrong_domain",
+        "github:2604_15097::obs_structural_inverted_priority",
+        "github:2604_15097::obs_structural_overconstrained"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_370b9ff3f6454f2c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::documentation_dilution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_c0d39ca1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_gene_plus_api",
+              "github:2604_15097::obs_gene_plus_examples",
+              "github:2604_15097::obs_gene_passrate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_8c577e32",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_c0d39ca1",
+              "github:2604_15097::documentation_dilution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Both augmented conditions degrade performance: @obs_gene_plus_api (51.5%) and @obs_gene_plus_examples (52.0%) both fall below the standalone @obs_gene_passrate (54.0%). The pattern holds across both documentation types and across both models, establishing that documentation reattachment systematically dilutes gene control effectiveness, confirming @documentation_dilution."
+      },
+      "premises": [
+        "github:2604_15097::obs_gene_plus_api",
+        "github:2604_15097::obs_gene_plus_examples",
+        "github:2604_15097::obs_gene_passrate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cc413912872a15a8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::gene_reuse_scope_bounded",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_22192a0b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_two_complementary_genes",
+              "github:2604_15097::obs_three_complementary_genes",
+              "github:2604_15097::obs_two_conflicting_genes",
+              "github:2604_15097::obs_gene_passrate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_4119a151",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_22192a0b",
+              "github:2604_15097::gene_reuse_scope_bounded"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "All multi-gene conditions underperform the single gene (@obs_gene_passrate: 54.0%): @obs_two_complementary_genes (44.9%), @obs_three_complementary_genes (50.4%), @obs_two_conflicting_genes (53.2%). The monotone relationship (more genes → worse) holds for complementary genes, while conflicting genes nearly match the single gene, suggesting interference rather than complementary benefit drives multi-gene degradation, confirming @gene_reuse_scope_bounded."
+      },
+      "premises": [
+        "github:2604_15097::obs_two_complementary_genes",
+        "github:2604_15097::obs_three_complementary_genes",
+        "github:2604_15097::obs_two_conflicting_genes",
+        "github:2604_15097::obs_gene_passrate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_755651eb4b3ce8ad",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::obs_structural_inverted_priority",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__implication_result_0a6cc15d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::pred_gene_structure_helps",
+              "github:2604_15097::obs_structural_inverted_priority"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "@pred_gene_structure_helps: if structure cues execution mode, the model follows the template even with inverted priority, explaining why @obs_structural_inverted_priority (52.8%) stays above baseline."
+      },
+      "premises": [
+        "github:2604_15097::pred_gene_structure_helps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e79f6af75e177e03",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::obs_structural_inverted_priority",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__implication_result_66af0e72",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::alt_attention_bias",
+              "github:2604_15097::obs_structural_inverted_priority"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.55,
+        "reason": "@alt_attention_bias: if structural format creates attention bias independently of content, then inverted priority would still trigger attention to the strategy section, explaining @obs_structural_inverted_priority staying above baseline."
+      },
+      "premises": [
+        "github:2604_15097::alt_attention_bias"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c4f6c534c140a096",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__equivalence_result_670f67dc",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_15097::pred_gene_structure_helps",
+              "github:2604_15097::obs_structural_inverted_priority"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__equivalence_result_39aedd97",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_15097::pred_attention_bias",
+              "github:2604_15097::obs_structural_inverted_priority"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__equivalence_result_39aedd97",
+              "github:2604_15097::__equivalence_result_670f67dc"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Both hypotheses explain why structural perturbations maintain above-baseline performance. The execution-mode cuing hypothesis better accounts for why content corruption (wrong algorithm/domain) drops below baseline: if structure alone sufficed, content accuracy wouldn't matter. Attention bias cannot explain the content sensitivity, giving the execution-mode hypothesis higher explanatory completeness."
+      },
+      "premises": [
+        "github:2604_15097::pred_gene_structure_helps",
+        "github:2604_15097::pred_attention_bias",
+        "github:2604_15097::obs_structural_inverted_priority"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3899b39cdc7b8e8d",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_15097::_anon_000",
+      "metadata": {
+        "reason": "Both hypotheses attempt to explain why structural perturbations tolerate deformation"
+      },
+      "premises": [
+        "github:2604_15097::pred_gene_structure_helps",
+        "github:2604_15097::alt_attention_bias",
+        "github:2604_15097::pred_attention_bias",
+        "github:2604_15097::obs_structural_inverted_priority"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f65f71c207c4766",
+      "sub_strategies": [
+        "lcs_e79f6af75e177e03",
+        "lcs_c4f6c534c140a096",
+        "lcs_3899b39cdc7b8e8d"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_15097::gene_best_failure_carrier",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_ba97eddd",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_skill_plus_failure",
+              "github:2604_15097::obs_freeform_plus_failure",
+              "github:2604_15097::obs_gene_plus_raw_failure"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_31032cb6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_ba97eddd",
+              "github:2604_15097::gene_best_failure_carrier"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Ranking the carrier conditions by performance: @obs_gene_plus_raw_failure (52.0%) > @obs_freeform_plus_failure (49.6%) > @obs_skill_plus_failure (47.8%). Gene is unambiguously best, but all three fall below standalone gene (54.0%), establishing both the gene's superiority as carrier and the limitation of naive appending, confirming @gene_best_failure_carrier."
+      },
+      "premises": [
+        "github:2604_15097::obs_skill_plus_failure",
+        "github:2604_15097::obs_freeform_plus_failure",
+        "github:2604_15097::obs_gene_plus_raw_failure"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_293bf1546c2dce02",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::structure_independent_value",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_47b1c73c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_flattened_prose",
+              "github:2604_15097::obs_structured_gep"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_28c0e830",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_47b1c73c",
+              "github:2604_15097::structure_independent_value"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The controlled comparison between @obs_flattened_prose (50.5%) and @obs_structured_gep (54.0%) holds content constant while varying format. The 3.5pp difference can only be attributed to structure. The fact that flattened prose falls below baseline (51.0%) while structured GEP is 3pp above confirms @structure_independent_value."
+      },
+      "premises": [
+        "github:2604_15097::obs_flattened_prose",
+        "github:2604_15097::obs_structured_gep"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0b038139343958bf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::failure_distillation_principle",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_40737ec3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_failure_warnings_only",
+              "github:2604_15097::obs_strategy_only_failure_exp",
+              "github:2604_15097::obs_strategy_first",
+              "github:2604_15097::obs_failure_first"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_15f01513",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_40737ec3",
+              "github:2604_15097::failure_distillation_principle"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The four failure encoding conditions rank: @obs_failure_warnings_only (54.4%) > @obs_strategy_only_failure_exp (52.3%) > @obs_strategy_first (51.8%) > @obs_failure_first (50.5%). The dominance of pure warnings over combined strategy+failure objects, and the ordering effect (strategy before failure is better), together establish that compact isolated negative guidance outperforms verbose combination, confirming @failure_distillation_principle."
+      },
+      "premises": [
+        "github:2604_15097::obs_failure_warnings_only",
+        "github:2604_15097::obs_strategy_only_failure_exp",
+        "github:2604_15097::obs_strategy_first",
+        "github:2604_15097::obs_failure_first"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_78dbc8834a566488",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_15097::obs_critpt_baseline_feb"
+      ],
+      "conclusion": "github:2604_15097::obs_evolver_feb",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__implication_result_3065982a",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::law_gene_evolution_improves",
+              "github:2604_15097::obs_evolver_feb"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87
+      },
+      "premises": [
+        "github:2604_15097::law_gene_evolution_improves"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "@law_gene_evolution_improves predicts ~9-10pp improvement over the baseline. The Feb 2026 evaluation with baseline 9.1% should yield ~18-19% accuracy. The observed @obs_evolver_feb (18.57%) falls within this predicted range, confirming the law's prediction for this evaluation point."
+        }
+      ],
+      "strategy_id": "lcs_70d9843735716737",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_15097::obs_critpt_baseline_mar"
+      ],
+      "conclusion": "github:2604_15097::obs_evolver_mar",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__implication_result_d2a0c5f9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::law_gene_evolution_improves",
+              "github:2604_15097::obs_evolver_mar"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87
+      },
+      "premises": [
+        "github:2604_15097::law_gene_evolution_improves"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "@law_gene_evolution_improves predicts ~9-10pp improvement over the baseline. The Mar 2026 evaluation with baseline 17.7% should yield ~26-28% accuracy. The observed @obs_evolver_mar (27.14%) falls within this predicted range, confirming the law's prediction for this evaluation point."
+        }
+      ],
+      "strategy_id": "lcs_37b838a2cf898765",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::law_gene_evolution_improves",
+      "metadata": {
+        "reason": "Two independent CritPt evaluation points each confirm @law_gene_evolution_improves: Feb 2026 (+9.47pp, @obs_evolver_feb) and Mar 2026 (+9.44pp, @obs_evolver_mar). The evaluations are independent (different months, different baseline models), and both show consistent ~9.4-9.5pp improvement."
+      },
+      "premises": [
+        "github:2604_15097::obs_evolver_feb",
+        "github:2604_15097::obs_evolver_mar"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_22f5918f8e4fc193",
+      "sub_strategies": [
+        "lcs_70d9843735716737",
+        "lcs_37b838a2cf898765"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_15097::gene_evolution_persistent_improvement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_f34349ef",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_evolver_feb",
+              "github:2604_15097::obs_evolver_mar"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_7177534e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_f34349ef",
+              "github:2604_15097::gene_evolution_persistent_improvement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Both evolution evaluations show consistent improvement magnitude despite different baselines: @obs_evolver_feb (+9.47pp above the 9.1% baseline) and @obs_evolver_mar (+9.44pp above the 17.7% baseline). The consistency across changing underlying models confirms @gene_evolution_persistent_improvement."
+      },
+      "premises": [
+        "github:2604_15097::obs_evolver_feb",
+        "github:2604_15097::obs_evolver_mar"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_08340261537d88d5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::gene_enables_accumulation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_f173e9f3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_exploration_augmented_phase",
+              "github:2604_15097::obs_evolver_mar"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_ecd414ce",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_f173e9f3",
+              "github:2604_15097::gene_enables_accumulation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "@obs_exploration_augmented_phase documents the multi-source gene library (210 slots, 36 IDs, three source types), and @obs_evolver_mar shows this library produces 27.14% accuracy (+9.44pp). The combination of library scale and performance improvement confirms @gene_enables_accumulation."
+      },
+      "premises": [
+        "github:2604_15097::obs_exploration_augmented_phase",
+        "github:2604_15097::obs_evolver_mar"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f06efaefcd12129f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15097::overall_four_findings",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15097::__conjunction_result_db7bcda2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15097::obs_memory_grounded_phase",
+              "github:2604_15097::obs_evolver_feb",
+              "github:2604_15097::failure_distillation_principle",
+              "github:2604_15097::gene_best_failure_carrier"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15097::__implication_result_b49963b9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15097::__conjunction_result_db7bcda2",
+              "github:2604_15097::overall_four_findings"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@obs_memory_grounded_phase establishes the failure-to-gene conversion mechanism; @obs_evolver_feb shows +9.47pp from memory-grounded evolution; @failure_distillation_principle shows compact warnings outperform verbose records; @gene_best_failure_carrier shows gene is best carrier format. Together these confirm all four findings summarized in @overall_four_findings."
+      },
+      "premises": [
+        "github:2604_15097::obs_memory_grounded_phase",
+        "github:2604_15097::obs_evolver_feb",
+        "github:2604_15097::failure_distillation_principle",
+        "github:2604_15097::gene_best_failure_carrier"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fe5c9b73f0ee6a4a",
+      "type": "support"
+    }
+  ]
+}
