@@ -1,0 +1,3191 @@
+{
+  "ir_hash": "sha256:4ad85d1a9a66e69a3a08bc04bf9c5b9b7218a1b4facbf9a07ed10e12cc72718f",
+  "knowledges": [
+    {
+      "content": "Open-ended discovery refers to the class of problems—spanning mathematics, engineering, and science—where the objective function is known (or can be specified) but the optimal strategy for achieving it is unknown, and the solution space is too large for exhaustive search. Classical examples include combinatorial optimization, algorithm design, and physical system optimization. Evolutionary search methods have historically been applied to such problems but require hand-designed mutation operators and search heuristics.",
+      "content_hash": "9405dbfc0fc42f44b2fefa7c6588f69a36ab77f001b0d451944b154f585e059e",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_01658::open_ended_discovery_setting",
+      "label": "open_ended_discovery_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Open-ended discovery problem class",
+      "type": "setting"
+    },
+    {
+      "content": "Large language model (LLM) based agents are autonomous systems that use a frontier language model as the reasoning core, augmented with tool access (code execution, file I/O, web search, etc.) and memory mechanisms. In this paper, agents operate via a 17-command CLI interface. Each agent maintains its own isolated workspace (a sandbox directory) but shares access to a common persistent memory store and evaluator.",
+      "content_hash": "8cf841dd7e5b87638b39bfcfbc0b17899a2026408d96ed5712f329910b64c968",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_01658::llm_agent_setting",
+      "label": "llm_agent_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM agent definition and capabilities",
+      "type": "setting"
+    },
+    {
+      "content": "Fixed evolutionary search methods—including FunSearch [@FunSearch2023], EvoPrompting [@EvoPrompting2023], OpenEvolve [@OpenEvolve2025], and ShinkaEvolve [@ShinkaEvolve2025]—apply LLMs as mutation operators within a human-designed evolutionary loop. These methods follow predetermined algorithms: selection, mutation, and evaluation steps are fixed at design time and do not adapt based on problem structure or accumulated experience.",
+      "content_hash": "7467b31e4d091a2c575758319f7bd1e03a06e630e958f3793cad3d1d99325eb3",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_01658::evolutionary_search_setting",
+      "label": "evolutionary_search_setting",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EvoPrompting2023",
+              "FunSearch2023",
+              "OpenEvolve2025",
+              "ShinkaEvolve2025"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Fixed evolutionary search baseline definition",
+      "type": "setting"
+    },
+    {
+      "content": "CORAL's shared persistent memory is a filesystem structure shared across all collaborating agents via symbolic links. It organizes three artifact types:\n\n| Directory | Contents |\n|-----------|----------|\n| `attempts/` | Historical evaluations: code, score, parent lineage |\n| `notes/` | Agent observations, reflections, and learnings |\n| `skills/` | Reusable procedures and implementation patterns |\n\nMemory is persistent across agent restarts and accessible to all agents simultaneously.",
+      "content_hash": "61e455a6fde2ffc89c9f372fcd4944e0b8c840a504aa185c08343922ac473f94",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_01658::shared_memory_setting",
+      "label": "shared_memory_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Shared persistent memory structure",
+      "type": "setting"
+    },
+    {
+      "content": "CORAL uses three types of heartbeat interventions to guide agent behavior:\n\n1. **Per-iteration reflection**: After each evaluation, agents are prompted to record observations, insights, and next steps in the shared notes directory.\n2. **Periodic consolidation**: Every 10 evaluations, agents synthesize accumulated knowledge into structured summaries.\n3. **Stagnation-triggered redirection**: After 5 consecutive non-improving evaluations, agents receive a prompt to pivot strategy and explore fundamentally different approaches.",
+      "content_hash": "6871e4ef0170ad9b3f790138647ad1f9edf7d2fb0f4210cf4beccf07d0677e5c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_01658::heartbeat_setting",
+      "label": "heartbeat_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Heartbeat intervention types",
+      "type": "setting"
+    },
+    {
+      "content": "Experimental budget: CORAL runs for a 3-hour wall-clock limit or 100 evaluation iterations (whichever is longer for baselines). Results reported as mean over 4 independent trials. All experiments use Claude Opus 4.6 as the backbone model unless otherwise specified. Open-source validation uses MiniMax-M2.5 and OpenCode models.",
+      "content_hash": "45c0c7934b4974563688a092292fb4ddb572589aaf9bc015d87d814dfc6a1131",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_01658::evaluation_budget_setting",
+      "label": "evaluation_budget_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Experimental evaluation budget and configuration",
+      "type": "setting"
+    },
+    {
+      "content": "Can LLM-based agents autonomously conduct evolutionary search on open-ended discovery problems without relying on predetermined algorithms or hand-designed heuristics?",
+      "content_hash": "87a6aaa03901a8d71a29f2c73e226216c2059f645c47a69c9962526e7093427d",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_01658::q_autonomous_evolution",
+      "label": "q_autonomous_evolution",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Main research question: autonomous evolution",
+      "type": "question"
+    },
+    {
+      "content": "Does multi-agent co-evolution provide benefits beyond simply running multiple independent single-agent searches with the same total compute budget?",
+      "content_hash": "8f6ec2c631dffa24e21997b2b78cf77eb0c84e1c46e7a60f9426497aa0208219",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_01658::q_multi_agent_benefit",
+      "label": "q_multi_agent_benefit",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Multi-agent coordination question",
+      "type": "question"
+    },
+    {
+      "content": "Does knowledge accumulation (persistent memory) causally improve CORAL's performance, or is the correlation between knowledge access and improvement spurious?",
+      "content_hash": "ed1e18d1f40c0e8aee54f600d4ee59f01dd64f1f7c6d51d932c803829eea2652",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_01658::q_knowledge_causality",
+      "label": "q_knowledge_causality",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Knowledge causality question",
+      "type": "question"
+    },
+    {
+      "content": "CORAL, a framework for autonomous LLM-based multi-agent evolution, achieves state-of-the-art performance on 10 out of 11 diverse benchmark tasks (6 mathematical optimization, 5 systems optimization), establishing new best-known results on 8 tasks. CORAL's improvement rate is 3–10× higher than fixed evolutionary search baselines (FunSearch, EvoPrompting, OpenEvolve, ShinkaEvolve), and it typically converges within 5–20 evaluations versus 60–100 evaluations for baselines [@CORAL2026].",
+      "content_hash": "152c7c09fd99eb50dacabe0d1038f9f77dbde661df97ce3976f10d143942d271",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_01658::claim_coral_outperforms_fixed",
+      "label": "claim_coral_outperforms_fixed",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CORAL2026"
+            ],
+            "referenced_claims": [
+              "claim_coral_outperforms_fixed"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Abstract + Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "CORAL outperforms fixed evolutionary search",
+      "type": "claim"
+    },
+    {
+      "content": "Four co-evolving CORAL agents achieve better results than a single CORAL agent on the hardest benchmark tasks, and these gains cannot be explained by additional compute alone. On the Kernel Engineering stress-test task, four collaborating agents reduced the cycle count from 1,363 (single-agent best) to 1,103—an 18.3% improvement [@CORAL2026].",
+      "content_hash": "e9fc4b4e2c34ea3d1d852739dd24debf1f0ab157c5f5e053691e43d055e8e16f",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_01658::claim_multi_agent_gains",
+      "label": "claim_multi_agent_gains",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CORAL2026"
+            ],
+            "referenced_claims": [
+              "claim_agents_adaptable",
+              "claim_coral_outperforms_fixed",
+              "claim_knowledge_causal",
+              "claim_multi_agent_gains"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Multi-agent co-evolution provides gains beyond compute",
+      "type": "claim"
+    },
+    {
+      "content": "Knowledge accumulation via shared persistent memory is causally responsible for a substantial portion of CORAL's performance gains. Disabling the knowledge accumulation component degrades Kernel Engineering performance from 1,350 to 1,601 cycles—an 18.6% regression—confirming the causal role of accumulated knowledge rather than a spurious correlation with agent capability [@CORAL2026].",
+      "content_hash": "8d0818d821d8c90ac18cc0a714a3437cfc4c4cb189ff83bbf58e8e6985541cc7",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_01658::claim_knowledge_causal",
+      "label": "claim_knowledge_causal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CORAL2026"
+            ],
+            "referenced_claims": [
+              "claim_ablation_knowledge_kernel",
+              "claim_knowledge_access_correlates",
+              "claim_knowledge_causal"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.3"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Knowledge accumulation causally improves performance",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL agents autonomously discover and apply effective search strategies without human-designed heuristics, adapting their approach based on accumulated experience. Agents vary their local verification behavior (from 11% to 61% local test rates across tasks), knowledge access patterns (7% to 30% of attempts), and strategy diversity (Jaccard similarity 0.31–0.43 across agents), demonstrating emergent adaptive behavior [@CORAL2026].",
+      "content_hash": "155f35ce143f225784214cbc8d342ef739ab7181903b2a7c32d22f4108a10770",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2604_01658::claim_agents_adaptable",
+      "label": "claim_agents_adaptable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CORAL2026"
+            ]
+          }
+        },
+        "prior": 0.82,
+        "prior_justification": "Agent adaptability (varying local verification 11–61%, knowledge access 7–30%, Jaccard similarity 0.31–0.43) is reported from trajectory analysis across multiple tasks and runs. These are measured behaviors from 4 independent trials. Moderate-high confidence: the pattern is consistent but derived from a limited set of tasks and runs.",
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agents autonomously adapt search strategies",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's shared persistent memory serves as the primary coordination mechanism between agents, replacing explicit inter-agent communication protocols. Agents write to and read from three directories—`attempts/` (evaluation history with code, score, and parent lineage), `notes/` (observations and reflections), and `skills/` (reusable procedures)—and knowledge diffuses organically without explicit synchronization. Implementation uses a filesystem with symbolic links so each agent's workspace points to the shared memory store.",
+      "content_hash": "4cbfffa735988bad85fcba951c532a5fd1c1fe98660bafd1df0d9c7a179312f6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_01658::claim_persistent_memory_design",
+      "label": "claim_persistent_memory_design",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "The shared persistent memory structure (attempts/, notes/, skills/) is an explicit architectural design choice stated as implemented. The filesystem implementation with symbolic links is described in detail. High confidence as a design fact.",
+        "source": "artifacts/2604-01658.pdf, Section 2.1"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Persistent memory as coordination mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL agents execute asynchronously in isolated workspaces, each maintaining its own sandboxed environment while sharing access to the common evaluator and memory store via symbolic links. Asynchronous execution means agents do not need to synchronize or wait for each other between iterations, enabling organic coordination: faster agents contribute more frequently to shared memory, slower agents benefit from accumulated knowledge when they read from memory before each attempt.",
+      "content_hash": "3d88389b9abb16d19ae8f950de1add46a36aa737301dc2445c7c372dc494a9c6",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_01658::claim_async_execution",
+      "label": "claim_async_execution",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Asynchronous multi-agent execution with isolated workspaces is an explicit architectural design stated as implemented. Confidence is high as a factual description of the framework's implementation.",
+        "source": "artifacts/2604-01658.pdf, Section 2.2"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Asynchronous multi-agent execution",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's three-tier heartbeat intervention system guides agent behavior without prescribing specific search strategies. Per-iteration reflection prompts (after every evaluation) encourage note-taking and observation recording. Periodic consolidation prompts (every 10 evaluations) synthesize accumulated knowledge into structured summaries. Stagnation-triggered redirection prompts (after 5 consecutive non-improving evaluations) push agents toward strategic pivots and exploration of fundamentally different approaches.",
+      "content_hash": "7c4228277c163d5608379f81bad704482a92e1a31f4c4010a8dba29cd0853dbf",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_01658::claim_heartbeat_mechanism",
+      "label": "claim_heartbeat_mechanism",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_async_execution",
+              "claim_heartbeat_mechanism",
+              "claim_persistent_memory_design"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 2.3"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Heartbeat intervention mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL uses a pluggable evaluator hierarchy: a task-specific grader (user-defined) wrapped by a common evaluation harness that provides resource management, timeout handling, and result standardization. The evaluator is separated from agent workspaces to prevent cheating or gaming the evaluation signal. Configuration uses YAML task definitions specifying the grader, budget constraints, and evaluator parameters.",
+      "content_hash": "5385ffe76f7f9e49500ccd59bfada40f7492bb681f90dda05aa4146f8d589e05",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_01658::claim_evaluator_design",
+      "label": "claim_evaluator_design",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "The pluggable evaluator hierarchy with YAML task definitions is a concrete implementation detail the authors describe as part of the deployed system. High confidence as a stated design fact.",
+        "source": "artifacts/2604-01658.pdf, Section 2.4"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Pluggable evaluator design",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL implements four safety mechanisms for deployment: (1) workspace isolation prevents agents from accessing each other's private files or the evaluation code, (2) evaluator separation ensures agents cannot read or modify the grader, (3) resource controls limit CPU/memory/time per evaluation, and (4) agent health monitoring (via heartbeat checks) detects and restarts failed agents. A 17-command CLI interface manages all agent lifecycle operations.",
+      "content_hash": "366c62d3ac9bb01bf820b9dcd331eae3c9e03f9718cfc22ac0f8a04357734a90",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_01658::claim_safety_mechanisms",
+      "label": "claim_safety_mechanisms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_async_execution",
+              "claim_evaluator_design",
+              "claim_safety_mechanisms"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 2.5"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "CORAL safety and infrastructure mechanisms",
+      "type": "claim"
+    },
+    {
+      "content": "Unlike fixed evolutionary search methods (FunSearch, EvoPrompting, OpenEvolve), CORAL does not impose a predetermined evolutionary algorithm. There is no explicit population management, selection operator, or crossover mechanism specified by the framework designer. Instead, agents autonomously decide which prior attempts to build on, how to combine ideas, and when to explore versus exploit, using the shared memory store as the implicit population.",
+      "content_hash": "8e055514e4bdc5523c4ed94be26e7d1c1c5b152dc48f18d1a6335bbb74b041f0",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_01658::claim_no_fixed_algorithm",
+      "label": "claim_no_fixed_algorithm",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_heartbeat_mechanism",
+              "claim_persistent_memory_design"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 2"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "CORAL uses no fixed evolutionary algorithm",
+      "type": "claim"
+    },
+    {
+      "content": "Fixed evolutionary algorithms with LLM mutation operators (FunSearch, EvoPrompting, OpenEvolve) are sufficient for open-ended discovery tasks and autonomous adaptation provides no additional benefit over well-designed fixed heuristics.",
+      "content_hash": "e333db26760a42270aed54648ed99245b492c1bbbc63f281930d954f294d5528",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_01658::alt_fixed_algorithm_sufficient",
+      "label": "alt_fixed_algorithm_sufficient",
+      "metadata": {
+        "prior": 0.1,
+        "prior_justification": "Fixed evolutionary algorithms being sufficient is falsified by direct comparison: CORAL achieves 3–10× higher improvement rates than all fixed baselines. This alternative predicts comparable performance, contradicted by consistent SOTA across 8/11 tasks. pi(Alt) = 0.10 (very low explanatory power for CORAL's gap).",
+        "source": "artifacts/2604-01658.pdf, Section 1 (baseline comparison)"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Alternative: fixed evolutionary algorithms are sufficient",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_01658::not_both_sufficient",
+      "label": "not_both_sufficient",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The benchmark suite comprises 11 tasks across two categories:\n\n**Mathematical optimization (6 tasks):** Combinatorial problems with exact scoring\n- Cap Set: find largest subset of {0,1,2}^n with no 3-term arithmetic progression\n- Costas Array: construct permutation matrices with distinct difference vectors\n- Admissible Set: number theory optimization problem\n- Boolformer: Boolean formula synthesis\n- Weave: combinatorial graph weaving problem\n- Lyapunov: design Lyapunov functions for stability\n\n**Systems optimization (5 tasks):** Engineering optimization with simulation-based scoring\n- Two scheduling problems (Transaction Scheduling, Task Assignment)\n- Two network routing problems\n- One memory allocation problem\n\nStress-test tasks (not in the main 11): Kernel Engineering and Polyominoes packing (harder, longer-horizon problems used for multi-agent evaluation).",
+      "content_hash": "4fcbcad9c644c75a6e68d32a911d6a755b327d2e0b23cc8191bf6e7a8b43317f",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_01658::benchmark_tasks_setting",
+      "label": "benchmark_tasks_setting",
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "Benchmark task suite",
+      "type": "setting"
+    },
+    {
+      "content": "Baseline methods evaluated against CORAL (single-agent):\n\n| Baseline | Type | Description |\n|----------|------|-------------|\n| FunSearch | Fixed evolutionary | LLM mutation in island-based evolution |\n| EvoPrompting | Fixed evolutionary | Prompt-based evolutionary code search |\n| OpenEvolve | Fixed evolutionary | Open-source AlphaEvolve implementation |\n| ShinkaEvolve | Fixed evolutionary | Evolutionary optimization with LLMs |\n| EvoX | Fixed evolutionary | General evolutionary computation framework |\n\nAll baselines use the same LLM (Claude Opus 4.6) and the same evaluation budget (3-hour wall-clock or 100 iterations). Results averaged over 4 independent trials.",
+      "content_hash": "58b1f1d4ab5223fa57e45777b3769de469969c59edd6b9f19ab7091b54e9c8ca",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_01658::baselines_setting",
+      "label": "baselines_setting",
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "Baseline methods for single-agent comparison",
+      "type": "setting"
+    },
+    {
+      "content": "CORAL (single-agent) establishes new state-of-the-art results on 8 of 11 benchmark tasks, achieving the best final score across all 11 tasks compared to fixed evolutionary baselines (FunSearch, EvoPrompting, OpenEvolve, ShinkaEvolve, EvoX). The 8 new state-of-the-art results span both mathematical (5/6) and systems optimization (3/5) categories.",
+      "content_hash": "f8e6474211940da1751fca6515668f317d0cf546d5a62de762be00d7cb0f66e9",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_01658::claim_sota_8_tasks",
+      "label": "claim_sota_8_tasks",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_heartbeat_mechanism",
+              "claim_no_fixed_algorithm",
+              "claim_persistent_memory_design",
+              "claim_sota_8_tasks"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 1, Section 3"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL achieves new SOTA on 8/11 tasks",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's improvement rate (fraction of evaluations that produce a new best score) is 3–10× higher than all fixed evolutionary baselines across the 11-task benchmark. CORAL typically achieves convergence within 5–20 evaluations, whereas baselines require 60–100 evaluations to reach comparable performance levels.",
+      "content_hash": "b76e737ec4f3451ed27f7d41f4d54f5e8e2199799a30fbbbfcab5d0260353231",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_01658::claim_improvement_rate",
+      "label": "claim_improvement_rate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_sota_8_tasks"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 3.1"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL improvement rate 3-10x higher",
+      "type": "claim"
+    },
+    {
+      "content": "On mathematical optimization tasks, CORAL single-agent achieves the highest scores on 5 of 6 tasks compared to all fixed evolutionary baselines. The Cap Set task shows the largest gap, with CORAL achieving scores that baselines fail to reach within the evaluation budget.",
+      "content_hash": "7de7f23241db5f50a96f2c5ec6343cea218ce2c78ba7ef902a908b44a1dde8a5",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_01658::claim_math_tasks_strong",
+      "label": "claim_math_tasks_strong",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_coral_outperforms_fixed"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 1, Section 3"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL strong on mathematical optimization",
+      "type": "claim"
+    },
+    {
+      "content": "On systems optimization tasks (scheduling, routing, memory allocation), CORAL single-agent achieves the highest scores on 4 of 5 tasks. Transaction Scheduling shows CORAL achieving 4,566 cycles in single-agent mode (improved to 4,694 with 4 agents), outperforming all fixed baselines.",
+      "content_hash": "065cec8c94cfb7d772a8dfc6a91f8d0b4ab7f2a49510a95cb3757be98baacb50",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_01658::claim_systems_tasks_strong",
+      "label": "claim_systems_tasks_strong",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_coral_outperforms_fixed"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 1, Section 3"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL strong on systems optimization",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL single-agent convergence profiles show a distinctly non-monotone improvement pattern: rapid gains in the first 5–10 evaluations, followed by plateau periods punctuated by sharp jumps when the agent discovers a new approach. This pattern contrasts with baseline methods that show more gradual, monotone improvement curves.",
+      "content_hash": "1f937c4eadebf7a6da8be51095cd6ec4cb1686b3f293d42be102eb93f042a2e6",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_01658::claim_single_agent_convergence",
+      "label": "claim_single_agent_convergence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_agents_adaptable",
+              "claim_heartbeat_mechanism",
+              "claim_single_agent_convergence"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 3.2, Figure 2"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL shows punctuated convergence pattern",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's performance advantage generalizes beyond Claude Opus 4.6: experiments with open-source models (MiniMax-M2.5 and OpenCode) on a subset of benchmark tasks show that CORAL outperforms fixed evolutionary baselines using open-source LLMs, confirming the framework's generality beyond a single proprietary model.",
+      "content_hash": "2cb495c20a36fe43759b93ac8acc95c7fecbbd0430cf8ec941ebb9e616d6be80",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_01658::claim_open_source_validates",
+      "label": "claim_open_source_validates",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_improvement_rate"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Appendix"
+      },
+      "module": "s3_single_agent",
+      "parameters": [],
+      "title": "CORAL advantages generalize to open-source models",
+      "type": "claim"
+    },
+    {
+      "content": "Multi-agent co-evolution experiments use 4 agents running simultaneously on the hardest benchmark tasks (Kernel Engineering and Polyominoes packing stress tests, plus Transaction Scheduling). Each agent has its own isolated workspace but shares the persistent memory store. The comparison baseline is 'independent best-of-4': 4 independent single-agent runs where agents do not share memory, taking the best result across all 4. This controls for additional compute.",
+      "content_hash": "3538b56c1cc05003d3185f66cd8bb15ce49959b1b66c4788ca9057fcbda60902",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_01658::multi_agent_setup_setting",
+      "label": "multi_agent_setup_setting",
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Multi-agent experimental setup",
+      "type": "setting"
+    },
+    {
+      "content": "Kernel Engineering stress-test: optimize the cycle count of a computational kernel (lower is better). Starting score used for normalization. The task involves low-level code optimization requiring specialized knowledge of CPU architecture, memory access patterns, SIMD instructions, and compiler optimization flags. Scores reported in CPU cycles (lower = better).",
+      "content_hash": "2809f34c3be72b91b8e6b3ab87403d46720bf4302da1507372491e6118fbaac7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_01658::kernel_engineering_setting",
+      "label": "kernel_engineering_setting",
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Kernel Engineering task description",
+      "type": "setting"
+    },
+    {
+      "content": "Polyominoes packing stress-test: pack the maximum number of polyominoes into a fixed grid (higher coverage percentage is better). The task requires combinatorial search over placement strategies and shape selection, with a known optimal upper bound. Scores reported as coverage percentage (higher = better).",
+      "content_hash": "d475c0015c742d6c09d3e408ddd1d900be3e099d668ac43202ae6ad8341aa51b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_01658::polyominoes_setting",
+      "label": "polyominoes_setting",
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Polyominoes packing task description",
+      "type": "setting"
+    },
+    {
+      "content": "Four co-evolving CORAL agents achieve a Kernel Engineering score of 1,103 cycles, compared to 1,350 cycles for the single-agent baseline and 1,363 cycles as the starting score—a 18.3% improvement over single-agent CORAL and 19.1% over the initial score. The 4-agent result establishes a new best-known score for this task.",
+      "content_hash": "156005b64b8665f27042ad1fc8a68c2a6473be1f8a6c6190f10d648a7fdd4ce3",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_01658::claim_kernel_4agent",
+      "label": "claim_kernel_4agent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_cross_agent_transfer_kernel",
+              "claim_persistent_memory_design"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 2, Section 4.2"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "4-agent Kernel Engineering: 1103 cycles",
+      "type": "claim"
+    },
+    {
+      "content": "Four co-evolving CORAL agents achieve 84.2% Polyominoes coverage, compared to 80.2% for the single-agent baseline—a 4.99 percentage point improvement. The 4-agent result exceeds all single-agent baselines including the best-of-4 independent runs.",
+      "content_hash": "10219da2e793ab410e58d6cf03d99b84c2a5fb50caf4f74db1279c5b6cc7f44b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_01658::claim_polyominoes_4agent",
+      "label": "claim_polyominoes_4agent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_cross_agent_transfer_poly",
+              "claim_strategy_diversity"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 2, Section 4.2"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "4-agent Polyominoes: 84.2% coverage",
+      "type": "claim"
+    },
+    {
+      "content": "Four co-evolving CORAL agents achieve a Transaction Scheduling score of 4,694 (higher is better), compared to 4,566 for the single-agent CORAL—a 1.89% improvement over single-agent performance.",
+      "content_hash": "8a46320e222805b1cb6edf69dcd18283a72d111434c021f4aab35c3b59f52837",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_01658::claim_transaction_4agent",
+      "label": "claim_transaction_4agent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_coevolution_beats_independent",
+              "claim_local_verification_benefit"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 2, Section 4.2"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "4-agent Transaction Scheduling: 4694",
+      "type": "claim"
+    },
+    {
+      "content": "4-agent co-evolution (with shared memory) outperforms independent best-of-4 (without shared memory) on the hardest tasks. On Kernel Engineering, co-evolution achieves 1,103 cycles versus 1,180 cycles for independent best-of-4—a 6.5% advantage. This confirms that multi-agent gains derive from coordination (knowledge sharing) rather than simply from running more independent agents.",
+      "content_hash": "6a9f720625162d1d6b98e5487c31b07331c3aa96d360e7685d3467d2b230d7c8",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_01658::claim_coevolution_beats_independent",
+      "label": "claim_coevolution_beats_independent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_additional_compute_explains",
+              "claim_heartbeat_mechanism",
+              "claim_multi_agent_gains",
+              "claim_strategy_diversity"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 2, Section 4.2"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Co-evolution beats independent best-of-4",
+      "type": "claim"
+    },
+    {
+      "content": "The performance advantage of 4-agent CORAL over single-agent CORAL is fully explained by the additional compute (4× more evaluations), and knowledge sharing between agents provides no additional benefit beyond what independent parallel search would achieve.",
+      "content_hash": "8394450ddc41b7503eec833dbbea0df21e5a585462aafa674710cedfce5ab7d8",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_01658::alt_additional_compute_explains",
+      "label": "alt_additional_compute_explains",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "The additional compute explanation is falsified by the co-evolution vs. independent best-of-4 ablation: under identical compute, co-evolution wins by 6.5%. Prior is low because this alternative predicts no gap between co-evolution and independent search, but a clear gap is observed. pi(Alt) = 0.15 (cannot explain the observation).",
+        "source": "artifacts/2604-01658.pdf, Section 4.2 (counterfactual baseline)"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Alternative: additional compute explains multi-agent gains",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_01658::not_both_coordination",
+      "label": "not_both_coordination",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Co-evolution with shared memory will outperform independent best-of-4 on hard tasks where knowledge transfer is possible, showing a measurable gap.",
+      "content_hash": "be0d36f4310d0927adf4c0d759aa8558b609abce26020092c09256164f6bc409",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_01658::pred_coordination",
+      "label": "pred_coordination",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The coordination hypothesis prediction (co-evolution beats independent best-of-4) is confirmed by the experimental result. Prior reflects the pre-experiment plausibility of this prediction given the shared memory design."
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Prediction: coordination beats independent compute",
+      "type": "claim"
+    },
+    {
+      "content": "Independent best-of-4 will match or nearly match co-evolution performance since additional compute is the main driver, showing approximately no gap.",
+      "content_hash": "3e954ed93b72d4c4b02e7ed92b467f6031aacf96fd4c4628980e3e3d01fa1908",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_01658::pred_compute",
+      "label": "pred_compute",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "The compute-only prediction (independent best-of-4 matches co-evolution) is refuted by the 6.5% gap between co-evolution (1,103 cycles) and independent best-of-4 (1,180 cycles). Low prior as the experiment contradicts this prediction."
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Prediction: independent compute matches co-evolution",
+      "type": "claim"
+    },
+    {
+      "content": "compare(Co-evolution with shared memory will outperform independent best-of-4 on hard tasks where knowledge transfer is possible, showing a measurable gap., Independent best-of-4 will match or nearly match co-evolution performance since additional compute is the main driver, showing approximately no gap., 4-agent co-evolution (with shared memory) outperforms independent best-of-4 (without shared memory) on the hardest tasks. On Kernel Engineering, co-evolution achieves 1,103 cycles versus 1,180 cycles for independent best-of-4—a 6.5% advantage. This confirms that multi-agent gains derive from coordination (knowledge sharing) rather than simply from running more independent agents.)",
+      "content_hash": "dd02b576b2c970cbfb66c591002ad3dbfda81386e3ebd361e9ce69000d24d35e",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_01658::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_coevolution_beats_independent",
+              "claim_multi_agent_gains"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Ablating knowledge accumulation (disabling the shared notes/ and skills/ directories so agents cannot write or read shared knowledge) degrades Kernel Engineering performance from 1,350 cycles to 1,601 cycles—an 18.6% regression. This establishes that knowledge accumulation is causally responsible for a substantial performance gain, not merely correlated with agent capability.",
+      "content_hash": "e4de2c6dd78f87c64d1e487c80f9c6ea615e41a71a00acfe3bbabce4648b5d4d",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_01658::claim_ablation_knowledge_kernel",
+      "label": "claim_ablation_knowledge_kernel",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_knowledge_causal"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 3, Section 4.3"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Knowledge ablation: 18.6% regression on Kernel Engineering",
+      "type": "claim"
+    },
+    {
+      "content": "Ablating knowledge accumulation degrades Polyominoes coverage from 80.2% to 77.3%—a 3.6 percentage point regression (4.5% relative). The effect is smaller than on Kernel Engineering, consistent with Polyominoes requiring less specialized domain knowledge that agents would record and reuse.",
+      "content_hash": "6e7f130dea8b296b0d36c248f1d47a21881e3addd35ee489227634485f2cd310",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_01658::claim_ablation_knowledge_polyominoes",
+      "label": "claim_ablation_knowledge_polyominoes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_knowledge_causal"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 3, Section 4.3"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Knowledge ablation: 3.6pp regression on Polyominoes",
+      "type": "claim"
+    },
+    {
+      "content": "Agents that perform local verification (running their own tests before submitting to the evaluator) have significantly higher improvement rates than agents that do not. On tasks involving compiled code, local verification rates reach 57–61% (Kernel Engineering: 57%, Transaction Scheduling: 61%), and agents using local testing show improvement rates of approximately 43% versus 24% for agents without local verification on standard tasks.",
+      "content_hash": "d35e3b723f2f53743edf152e3e4b45bae9a28f92c6bfd342420c2514cde96718",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2604_01658::claim_local_verification_benefit",
+      "label": "claim_local_verification_benefit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_agents_adaptable"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Table 4, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Local verification correlates with improvement rate",
+      "type": "claim"
+    },
+    {
+      "content": "Knowledge access frequency (fraction of attempts where the agent reads from shared memory before attempting a solution) correlates positively with improvement rate. Advanced tasks show 17–30% knowledge access rates, with knowledge-accessing attempts improving at 55% (Kernel Engineering) and 38% (Polyominoes) versus 26% and 18% for non-knowledge-accessing attempts.",
+      "content_hash": "6c140acbac96894df550bff3c46a95736f1002f2111a3071259c15d05413fa8c",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2604_01658::claim_knowledge_access_correlates",
+      "label": "claim_knowledge_access_correlates",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Knowledge access correlation (55% improvement rate when accessing knowledge vs. 26% without) is directly measured from trajectory analysis on Kernel Engineering. Moderate-high confidence: the correlation is strong and consistent, but correlation does not fully establish causation (addressed by ablation studies separately).",
+        "source": "artifacts/2604-01658.pdf, Table 4, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Knowledge access correlates with improvement",
+      "type": "claim"
+    },
+    {
+      "content": "Knowledge creation rates differ dramatically between standard and advanced tasks. On standard tasks, agents create only 0.05 knowledge artifacts per attempt (notes, skills). On advanced tasks, knowledge creation rates are 0.55 (Kernel Engineering) and 0.68 (Polyominoes) artifacts per attempt—approximately 10× higher. This suggests agents recognize and record more insights on harder problems.",
+      "content_hash": "4137bf482ca08e4aba7ccc17aa0c516ef96700e94576b37ac7c199fe4c21ccb4",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2604_01658::claim_knowledge_creation_differential",
+      "label": "claim_knowledge_creation_differential",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_knowledge_causal"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Advanced tasks generate 10x more knowledge artifacts",
+      "type": "claim"
+    },
+    {
+      "content": "On Kernel Engineering, 36% of attempts explicitly leverage another agent's prior work (by reading and building on another agent's code or notes from shared memory). These cross-agent attempts improve at a 17% rate versus 9% for attempts without cross-agent transfer. Furthermore, 66% of new best-known records on Kernel Engineering originate from cross-agent parentage.",
+      "content_hash": "a4f3f19ed343037fa67a539df43cf0c4fb185ad4b8c573ecd62c13ad8cf36ea3",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2604_01658::claim_cross_agent_transfer_kernel",
+      "label": "claim_cross_agent_transfer_kernel",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Cross-agent transfer statistics (36% of attempts, 17% vs. 9% improvement rate, 66% of records from cross-agent parentage) are directly measured from agent trajectory logs on Kernel Engineering. High confidence as a directly observed empirical measurement, though limited to one task.",
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Kernel Engineering: 36% cross-agent transfer, 66% of records from cross-agent",
+      "type": "claim"
+    },
+    {
+      "content": "On Polyominoes, 87% of agent rounds reference knowledge from other agents (reading shared notes or skills before attempting). This extremely high cross-agent reading rate indicates that the shared memory store becomes the primary information source for agent strategy on hard combinatorial problems.",
+      "content_hash": "3643f2ca666e4369e918aa5e94c1f432a79bc47c735d2fc29ddf094a3458da9c",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2604_01658::claim_cross_agent_transfer_poly",
+      "label": "claim_cross_agent_transfer_poly",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_persistent_memory_design"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Polyominoes: 87% of rounds reference cross-agent knowledge",
+      "type": "claim"
+    },
+    {
+      "content": "Co-evolving agents maintain diverse strategies despite sharing memory: average Jaccard similarity between any two agents' strategy vocabularies is 0.43 (Kernel Engineering) and 0.31 (Polyominoes). This means more than half of each agent's strategy vocabulary is unique to that agent, indicating that memory sharing promotes knowledge diffusion without eliminating strategic diversity.",
+      "content_hash": "aa0058c1709f99362ae25d5474cabc8e4e0c6f1a4f094d8588efeb55ff99b400",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2604_01658::claim_strategy_diversity",
+      "label": "claim_strategy_diversity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_homogeneous_agents",
+              "claim_strategy_diversity"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "s4_multi_agent",
+      "parameters": [],
+      "title": "Co-evolving agents maintain strategic diversity",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL currently requires frontier foundation models (e.g., Claude Opus 4.6) to achieve its performance advantages. The framework's autonomous strategy discovery, knowledge synthesis, and adaptive reflection depend on models with strong code generation, reasoning, and instruction-following capabilities. Smaller or weaker models may not produce the emergent behaviors (local verification, knowledge creation, strategic pivots) that drive CORAL's performance gains.",
+      "content_hash": "4466d4c76f5c29fbe10dd24c0471955069fdfd31b23819491906acf6a8a56426",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_01658::claim_frontier_model_dependency",
+      "label": "claim_frontier_model_dependency",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The frontier model dependency is a stated limitation: Claude Opus 4.6 is used as the backbone, and the emergent behaviors (local verification, strategic pivots) are likely capability-dependent. The open-source validation shows performance generalizes partially, but the degree of frontier dependency is acknowledged by the authors. Moderate-high confidence.",
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Limitation: requires frontier foundation models",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's current implementation uses homogeneous agents: all agents run the same model with the same system prompt and no injected personality differences. This means agent diversity emerges purely from stochastic sampling and different exploration histories. The lack of bootstrapped heterogeneity may limit the extent of specialization achievable through co-evolution.",
+      "content_hash": "24e7df2a76ef7e08d3dd6e5c11c153b5272922b4a32c24b6282ff3b5cb4c9d1b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_01658::claim_homogeneous_agents",
+      "label": "claim_homogeneous_agents",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Homogeneous agent implementation (identical system prompt, same model, no injected personality differences) is a factual description of the current implementation explicitly acknowledged as a limitation by the authors. Very high confidence as a stated implementation fact.",
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Limitation: homogeneous agents lack bootstrapped diversity",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL assumes a well-specified, reliable evaluator that agents cannot easily game or circumvent. In practice, open-ended discovery problems may not have such clean evaluation functions: natural science experiments may be expensive or impossible to automate, social science outcomes may be difficult to quantify, and creative tasks may require human evaluation. CORAL's current design does not address co-evolution of evaluation criteria alongside solutions.",
+      "content_hash": "0bcda1134e076b2dd89fc48293bde0b63781fb20bfbfccb613c167d7bb76398a",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_01658::claim_evaluator_assumption",
+      "label": "claim_evaluator_assumption",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_evaluator_assumption",
+              "claim_evaluator_design"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Limitation: assumes well-specified evaluator",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL with frontier models (Claude Opus 4.6) incurs substantial API costs per evaluation run. Each agent iteration involves multiple LLM calls (reflection, code generation, consolidation heartbeats), making large-scale deployment economically intensive. The open-source model validation (MiniMax-M2.5, OpenCode) partially addresses this but at some performance cost.",
+      "content_hash": "7ef780876503db34ad8fb89fc9bcde475856c812e69f4fea8b83c732eb8f6c5d",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_01658::claim_compute_cost",
+      "label": "claim_compute_cost",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_compute_cost",
+              "claim_frontier_model_dependency"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Limitation: high compute cost with frontier models",
+      "type": "claim"
+    },
+    {
+      "content": "Future work could train specialized smaller models as CORAL agents by using the framework's trajectory data (attempts, notes, skills) as supervision signal. A model trained on successful CORAL trajectories might achieve comparable performance at lower inference cost than frontier models, addressing the compute limitation.",
+      "content_hash": "a5494a5af9d6d740be72a17917c78e8c414a4f45f9389aec338fe34dc4091df5",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_01658::claim_specialized_training",
+      "label": "claim_specialized_training",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_compute_cost",
+              "claim_frontier_model_dependency",
+              "claim_specialized_training"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Future: train specialized smaller agent models",
+      "type": "claim"
+    },
+    {
+      "content": "Injecting distinct agent personalities (e.g., specialist vs. generalist, exploiter vs. explorer, mathematician vs. engineer) into the system prompt could bootstrap the strategic heterogeneity needed to further improve co-evolution efficiency, reducing the Jaccard similarity below the emergent 0.31–0.43 observed in homogeneous runs.",
+      "content_hash": "14e9036127d0af1fad676e13a91a7147ec3560e6b4bfe6d49abb60c7b9e11dc6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_01658::claim_agent_personalities",
+      "label": "claim_agent_personalities",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_agent_personalities",
+              "claim_emergent_specialization",
+              "claim_homogeneous_agents"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Future: inject distinct agent personalities",
+      "type": "claim"
+    },
+    {
+      "content": "Co-evolving evaluation criteria alongside solutions—having agents propose improvements to the grader as well as to the solution—could extend CORAL to open-ended problems where the evaluation function is itself uncertain or evolving. This requires mechanisms to prevent Goodhart's Law dynamics where agents optimize for proxy metrics rather than the true objective.",
+      "content_hash": "e83385714b6bba435152d8c03743734ce8764fced661e0f845f477f571a81486",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_01658::claim_coeolving_evaluators",
+      "label": "claim_coeolving_evaluators",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_coeolving_evaluators",
+              "claim_evaluator_assumption"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Future: co-evolve evaluation criteria",
+      "type": "claim"
+    },
+    {
+      "content": "CORAL's performance advantage spans two structurally different problem categories (mathematical optimization and systems engineering), and the open-source model validation shows the framework design is not model-specific. This domain generality supports the claim that CORAL's design principles (shared memory, heartbeats, autonomous strategy) are broadly applicable to open-ended discovery, not specialized to a particular problem type.",
+      "content_hash": "b3f20634e3e44954023ae44d1ee2bfb15586105f21ab72869efb59c1b407d519",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_01658::claim_domain_generality",
+      "label": "claim_domain_generality",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_domain_generality",
+              "claim_open_source_validates",
+              "claim_sota_8_tasks"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 5"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "CORAL's advantages are domain-general",
+      "type": "claim"
+    },
+    {
+      "content": "Co-evolving CORAL agents spontaneously develop specialized roles without explicit role assignment. On Kernel Engineering, analysis shows agents naturally diverge into exploration-heavy and exploitation-heavy behaviors based on their accumulated experience, even though all agents start with identical prompts and capabilities. This emergent specialization contributes to the co-evolution advantage over independent parallel search.",
+      "content_hash": "86b55de5aecdc633490d4ebe67a656670202e2b8185feef48129a0453fc2bb5f",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_01658::claim_emergent_specialization",
+      "label": "claim_emergent_specialization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_cross_agent_transfer_kernel",
+              "claim_strategy_diversity"
+            ]
+          }
+        },
+        "source": "artifacts/2604-01658.pdf, Section 4.4"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Agents develop emergent specialization",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_agents_adaptable)",
+      "content_hash": "3902d59b2c8d3ac698c5dca00fe149b5adc250282610f568ef6cd84cbb6194a4",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_11bb037f",
+      "label": "__conjunction_result_11bb037f",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_agents_adaptable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9f91f7a9343d3c3f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_11bb037f,github:2604_01658::claim_multi_agent_gains)",
+      "content_hash": "c6ad480408af28baa720de8ff97ec6be82d709b58e505aac55d0fb855479803e",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_5eaa0c92",
+      "label": "__implication_result_5eaa0c92",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_11bb037f,github:2604_01658::claim_multi_agent_gains)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9f91f7a9343d3c3f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_async_execution)",
+      "content_hash": "b5f4a383494f5a28841c4ddb9248fb83abdd48804b30f7eed217247a9b703823",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_c250585e",
+      "label": "__conjunction_result_c250585e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_async_execution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e79757ca7e483207",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_c250585e,github:2604_01658::claim_heartbeat_mechanism)",
+      "content_hash": "6f7477d058e828fe7d063323c2f184f122ae53d8be31adbe3de628ad6a2472b9",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_c0c99ad9",
+      "label": "__implication_result_c0c99ad9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_c250585e,github:2604_01658::claim_heartbeat_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e79757ca7e483207",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_evaluator_design,github:2604_01658::claim_async_execution)",
+      "content_hash": "522536e6a145000ee23f7990c1342baecef1262a847f288431c670ba03de3064",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_253d1db0",
+      "label": "__conjunction_result_253d1db0",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_evaluator_design,github:2604_01658::claim_async_execution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c8e12c78214c41d3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_253d1db0,github:2604_01658::claim_safety_mechanisms)",
+      "content_hash": "9aa9910d0e0db65b721ec60c99ae72bafaa9959af2bdc97d0a94c1bf3ae281e9",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_7a572cf2",
+      "label": "__implication_result_7a572cf2",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_253d1db0,github:2604_01658::claim_safety_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8e12c78214c41d3",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_heartbeat_mechanism)",
+      "content_hash": "7a599fd6f4962c1e4ed7508a1f8a31077911d5ef76eb453f291d31cb1914aa4a",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_ddfdc6ea",
+      "label": "__conjunction_result_ddfdc6ea",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_heartbeat_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7fe2a523b512a2eb",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_ddfdc6ea,github:2604_01658::claim_no_fixed_algorithm)",
+      "content_hash": "2d1201f200467a091a6de0c2826bbadaf22bb1c74f6182e9bb9723227d101157",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_da9eef1e",
+      "label": "__implication_result_da9eef1e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_ddfdc6ea,github:2604_01658::claim_no_fixed_algorithm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7fe2a523b512a2eb",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_no_fixed_algorithm,github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_heartbeat_mechanism)",
+      "content_hash": "381b0c6ca1dad9bd43e27f355095d4b022b14e2bdd0e095f9dace840e0ca3b66",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_3a82f9ba",
+      "label": "__conjunction_result_3a82f9ba",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_no_fixed_algorithm,github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_heartbeat_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8597c125d872fde6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_3a82f9ba,github:2604_01658::claim_sota_8_tasks)",
+      "content_hash": "3516b88ceb3e5ce3f9f47dac7bfcd95d7eade5bf144ba18fd8457d6176174d8e",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_a195b615",
+      "label": "__implication_result_a195b615",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_3a82f9ba,github:2604_01658::claim_sota_8_tasks)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8597c125d872fde6",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_sota_8_tasks,github:2604_01658::claim_improvement_rate)",
+      "content_hash": "6191085e7690f83c9e6eafd4294ff12e686091cb82a388b37ca3aa4d43b3019d",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_1f65814f",
+      "label": "__implication_result_1f65814f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_sota_8_tasks,github:2604_01658::claim_improvement_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_36d2872f4e1f338f",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_math_tasks_strong)",
+      "content_hash": "82305c7080e841327216c82f7d178a1b8c61c9e2fe9f1a44e40802dd3636a4b4",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_fc9a6d8f",
+      "label": "__implication_result_fc9a6d8f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_math_tasks_strong)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_62351eb25889258c",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_systems_tasks_strong)",
+      "content_hash": "031e4c140201f896ca3f1e27f2c6ea63cdc0e373720d7be1a44196edd948654e",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_36a4d485",
+      "label": "__implication_result_36a4d485",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_coral_outperforms_fixed,github:2604_01658::claim_systems_tasks_strong)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d41d1cb381d0a1bf",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_improvement_rate,github:2604_01658::claim_open_source_validates)",
+      "content_hash": "f9ede7ca118e8f4d682910a79615ab887051d98b04e369b19fe3c952c7f9afa5",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_18797b18",
+      "label": "__implication_result_18797b18",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_improvement_rate,github:2604_01658::claim_open_source_validates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_352926f5dfdb52de",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_heartbeat_mechanism,github:2604_01658::claim_agents_adaptable)",
+      "content_hash": "284a40a37dbba98dfd45f0f829345c540bb47f111c2e76fd38a2747db8d1259c",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_9ddf974c",
+      "label": "__conjunction_result_9ddf974c",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_heartbeat_mechanism,github:2604_01658::claim_agents_adaptable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4553245e24483b75",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_9ddf974c,github:2604_01658::claim_single_agent_convergence)",
+      "content_hash": "c83266a6f8be8e49f9505e1c158653d43fa6d423b747088caabada9347b9b0a3",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_06995bed",
+      "label": "__implication_result_06995bed",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_9ddf974c,github:2604_01658::claim_single_agent_convergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4553245e24483b75",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_multi_agent_gains,github:2604_01658::claim_coevolution_beats_independent)",
+      "content_hash": "f4773b3ae642dad51d05819104b25a9ad2ee44e016a1f7dd438a38295cb4b397",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_ab7c0fd4",
+      "label": "__implication_result_ab7c0fd4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_multi_agent_gains,github:2604_01658::claim_coevolution_beats_independent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_68299bfa119a8e52",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::alt_additional_compute_explains,github:2604_01658::claim_coevolution_beats_independent)",
+      "content_hash": "da6cf81524da308caff532e96c568f9710a7fb0bac82b1d46072e9d9427c3e0c",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_1069c886",
+      "label": "__implication_result_1069c886",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::alt_additional_compute_explains,github:2604_01658::claim_coevolution_beats_independent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_84b6ba652b959e46",
+        "owning_strategy_type": "support",
+        "prior": 0.25,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_01658::pred_coordination,github:2604_01658::claim_coevolution_beats_independent)",
+      "content_hash": "45adffb36ae2253b0baeb66baca13fb7f8437e4d283ccaef50fdb7ffc9647160",
+      "exported": false,
+      "id": "github:2604_01658::__equivalence_result_603e4d65",
+      "label": "__equivalence_result_603e4d65",
+      "metadata": {
+        "canonical_name": "matches(github:2604_01658::pred_coordination,github:2604_01658::claim_coevolution_beats_independent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_4992c711fccf8f97",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_01658::pred_compute,github:2604_01658::claim_coevolution_beats_independent)",
+      "content_hash": "5a3c6f307a02eac0a1d5a2d032d9441acd6cade0a8e7af682c83368baf6299a0",
+      "exported": false,
+      "id": "github:2604_01658::__equivalence_result_90536050",
+      "label": "__equivalence_result_90536050",
+      "metadata": {
+        "canonical_name": "matches(github:2604_01658::pred_compute,github:2604_01658::claim_coevolution_beats_independent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_4992c711fccf8f97",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_ablation_knowledge_kernel)",
+      "content_hash": "2d9f391a74f576273c95420333331877b86316479e9986d713d940dacdfb59ec",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_2c9c4d36",
+      "label": "__implication_result_2c9c4d36",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_ablation_knowledge_kernel)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0eb53c020cbb1682",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_ablation_knowledge_polyominoes)",
+      "content_hash": "65646b71db88ee3bab689c21ff6a4181cd191455f8e428599e495abe60b819b5",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_5c8a1310",
+      "label": "__implication_result_5c8a1310",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_ablation_knowledge_polyominoes)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6b60b6a8ea4fd870",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_cross_agent_transfer_kernel,github:2604_01658::claim_persistent_memory_design)",
+      "content_hash": "bb685a53215f8eea5e91054a1628dc535afe3e7b57ab8c343d674a9e7f84e645",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_77eadc02",
+      "label": "__conjunction_result_77eadc02",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_cross_agent_transfer_kernel,github:2604_01658::claim_persistent_memory_design)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ef4457ae78416a25",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_77eadc02,github:2604_01658::claim_kernel_4agent)",
+      "content_hash": "58bbcf94a5af5b18619bd1fea7e85ce2241d3dbbf052a01c4c1479209d9d4028",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_ea729a02",
+      "label": "__implication_result_ea729a02",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_77eadc02,github:2604_01658::claim_kernel_4agent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef4457ae78416a25",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_strategy_diversity,github:2604_01658::claim_heartbeat_mechanism)",
+      "content_hash": "62815a442a0dd83d4cbee99f5c8754ece839845b1177bf44643c43bde8462a3e",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_1eeba7d0",
+      "label": "__conjunction_result_1eeba7d0",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_strategy_diversity,github:2604_01658::claim_heartbeat_mechanism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0b9d2e4f7dbd87b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_1eeba7d0,github:2604_01658::claim_coevolution_beats_independent)",
+      "content_hash": "93c4c5ab62e75e55ac26a75eef43e506d6a673e49305f44cae71e6aa1410649b",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_1b51d347",
+      "label": "__implication_result_1b51d347",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_1eeba7d0,github:2604_01658::claim_coevolution_beats_independent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0b9d2e4f7dbd87b",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_agents_adaptable,github:2604_01658::claim_local_verification_benefit)",
+      "content_hash": "fd0c5be81877230139972178e0ee0e2f31db50d67d5d869d00982acee4dc3374",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_fc6f7451",
+      "label": "__implication_result_fc6f7451",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_agents_adaptable,github:2604_01658::claim_local_verification_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5ea318ae274b81eb",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_ablation_knowledge_kernel,github:2604_01658::claim_knowledge_access_correlates)",
+      "content_hash": "8c6a18d24302d8faa7fd8eafbde3a1c2786a2231fb757aff98ff172d10a30681",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_b5729b3c",
+      "label": "__conjunction_result_b5729b3c",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_ablation_knowledge_kernel,github:2604_01658::claim_knowledge_access_correlates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8b8c8e5dc80e1662",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_b5729b3c,github:2604_01658::claim_knowledge_causal)",
+      "content_hash": "ca31042fe41dd2fbaf51c3079a1335c9300aeb3ac2e3f1af46461bac21b8ab5a",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_73407ce6",
+      "label": "__implication_result_73407ce6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_b5729b3c,github:2604_01658::claim_knowledge_causal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8b8c8e5dc80e1662",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_cross_agent_transfer_poly)",
+      "content_hash": "8d27c56535a240c037482340ae9771e355f5d2c968831ef7afb56d4dc1e94010",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_4e9cdf51",
+      "label": "__implication_result_4e9cdf51",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_persistent_memory_design,github:2604_01658::claim_cross_agent_transfer_poly)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e24cffbcd413f6d6",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_cross_agent_transfer_poly,github:2604_01658::claim_strategy_diversity)",
+      "content_hash": "84d88b13ce1b291a2acf8137bbace9ab32664e87976ac8e5d4504c0c44663be9",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_cd25c56b",
+      "label": "__conjunction_result_cd25c56b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_cross_agent_transfer_poly,github:2604_01658::claim_strategy_diversity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a136d6572e1f7b1a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_cd25c56b,github:2604_01658::claim_polyominoes_4agent)",
+      "content_hash": "b54206817ad946e10a61ce402fe3d9c474d87fc95b5cb85560a4158d4d12bf44",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_90d6bc33",
+      "label": "__implication_result_90d6bc33",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_cd25c56b,github:2604_01658::claim_polyominoes_4agent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a136d6572e1f7b1a",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_coevolution_beats_independent,github:2604_01658::claim_local_verification_benefit)",
+      "content_hash": "2d266826a91a1364e8492451974f162f5b87563e9fefba0c72a80f07c70ec114",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_ed7480bc",
+      "label": "__conjunction_result_ed7480bc",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_coevolution_beats_independent,github:2604_01658::claim_local_verification_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_118ea7ca73861cd8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_ed7480bc,github:2604_01658::claim_transaction_4agent)",
+      "content_hash": "73b0a990040ccf44e821f884400919906bc3cf4927dcf97bb57d0b3d72c81028",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_e0602010",
+      "label": "__implication_result_e0602010",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_ed7480bc,github:2604_01658::claim_transaction_4agent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_118ea7ca73861cd8",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_knowledge_creation_differential)",
+      "content_hash": "6bbb5f9f9f0fb1e77bad60891d453f177571fa0d1d884c97c79ce13817ea959f",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_7c4d4fa5",
+      "label": "__implication_result_7c4d4fa5",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_knowledge_causal,github:2604_01658::claim_knowledge_creation_differential)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cb3e4ed3cdf54a5c",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_frontier_model_dependency,github:2604_01658::claim_compute_cost)",
+      "content_hash": "67ed3b555008d3abc21af384d2a233cc95338d9060526fad9a3b2c79a1699f25",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_18835aa2",
+      "label": "__implication_result_18835aa2",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_frontier_model_dependency,github:2604_01658::claim_compute_cost)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8ea71c4d8ca19b0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_homogeneous_agents,github:2604_01658::claim_strategy_diversity)",
+      "content_hash": "64e6a547346d9ee4a8e09d5aef6d5a1f7cd229a27828183b5a1b9cb00384d182",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_d5fae2db",
+      "label": "__implication_result_d5fae2db",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_homogeneous_agents,github:2604_01658::claim_strategy_diversity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0450399788e38d45",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_sota_8_tasks,github:2604_01658::claim_open_source_validates)",
+      "content_hash": "0f71b3ef73156cd92c6a0fe451c42ee48d3fa5def70b9bdac6c5836954c2c639",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_789b9ce8",
+      "label": "__conjunction_result_789b9ce8",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_sota_8_tasks,github:2604_01658::claim_open_source_validates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dc1541177764d441",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_789b9ce8,github:2604_01658::claim_domain_generality)",
+      "content_hash": "cf05245b9757ab9f8eb28f2eaf46325e5acb9940c6d036f28aa899092f8f9cd4",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_11f94bcd",
+      "label": "__implication_result_11f94bcd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_789b9ce8,github:2604_01658::claim_domain_generality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dc1541177764d441",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_strategy_diversity,github:2604_01658::claim_cross_agent_transfer_kernel)",
+      "content_hash": "62bcff16af615c3ccdd0d7b1bc176a8e842f79b764c473a84d630d7a329547c1",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_a9672472",
+      "label": "__conjunction_result_a9672472",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_strategy_diversity,github:2604_01658::claim_cross_agent_transfer_kernel)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b88551d687b5dbae",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_a9672472,github:2604_01658::claim_emergent_specialization)",
+      "content_hash": "eff25f4f2175252501754354701afe9f58eeb2e1e1f30c7118caeb3e53de2eaa",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_46a0a98d",
+      "label": "__implication_result_46a0a98d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_a9672472,github:2604_01658::claim_emergent_specialization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b88551d687b5dbae",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_homogeneous_agents,github:2604_01658::claim_emergent_specialization)",
+      "content_hash": "3f91b6aa541044b465721d74842595ba3049a6ba19b9e845367801095e7fc091",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_00e19266",
+      "label": "__conjunction_result_00e19266",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_homogeneous_agents,github:2604_01658::claim_emergent_specialization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ad757443a8095f3a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_00e19266,github:2604_01658::claim_agent_personalities)",
+      "content_hash": "f4b0780901bc45f2457c01d562a7810a0f0223c9142be667e0dce21133ae389f",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_61c05a7b",
+      "label": "__implication_result_61c05a7b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_00e19266,github:2604_01658::claim_agent_personalities)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ad757443a8095f3a",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_evaluator_design,github:2604_01658::claim_evaluator_assumption)",
+      "content_hash": "e2b32386eac6974309207c7b4e2fedcfe1f05b5b9cfd9116f94953a3c8dc4d13",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_0f66bc85",
+      "label": "__implication_result_0f66bc85",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_evaluator_design,github:2604_01658::claim_evaluator_assumption)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ab9a3c9dc1791604",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_01658::claim_compute_cost,github:2604_01658::claim_frontier_model_dependency)",
+      "content_hash": "393c85adf41cd59744457aea422c3548ab16a9f3134b0ebf218bf46d4e78973b",
+      "exported": false,
+      "id": "github:2604_01658::__conjunction_result_e9ac91af",
+      "label": "__conjunction_result_e9ac91af",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_01658::claim_compute_cost,github:2604_01658::claim_frontier_model_dependency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_38880c06f7f87d96",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::__conjunction_result_e9ac91af,github:2604_01658::claim_specialized_training)",
+      "content_hash": "e1c0b14c8aef53caf8adab2e0e54422ac4d4e1b7004037e97fc3fc891f164e9c",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_5e9085de",
+      "label": "__implication_result_5e9085de",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::__conjunction_result_e9ac91af,github:2604_01658::claim_specialized_training)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_38880c06f7f87d96",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_01658::claim_evaluator_assumption,github:2604_01658::claim_coeolving_evaluators)",
+      "content_hash": "5c65f99c358a3af656c76224557e96b80a2d3025f56dc7eb771b3066bdb58332",
+      "exported": false,
+      "id": "github:2604_01658::__implication_result_2eb916b7",
+      "label": "__implication_result_2eb916b7",
+      "metadata": {
+        "canonical_name": "implies(github:2604_01658::claim_evaluator_assumption,github:2604_01658::claim_coeolving_evaluators)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c65eac922f7b2cad",
+        "owning_strategy_type": "support",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_framework",
+    "s3_single_agent",
+    "s4_multi_agent",
+    "s5_analysis"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Autonomous Multi-Agent Evolution for Open-Ended Discovery",
+    "s2_framework": "Section 2: The CORAL Framework — Architecture and Design Principles",
+    "s3_single_agent": "Section 3: Single-Agent Experiments — Performance vs. Fixed Evolutionary Baselines",
+    "s4_multi_agent": "Section 4: Multi-Agent Co-Evolution — Coordination, Ablations, and Trajectory Analysis",
+    "s5_analysis": "Section 5: Analysis — Limitations, Generality, and Future Directions"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_01658::not_both_sufficient",
+      "metadata": {
+        "reason": "If CORAL's autonomous strategy adaptation provides 3-10x higher improvement rates than fixed baselines, then fixed algorithms are not sufficient. Both cannot hold: CORAL's design philosophy (no fixed algorithm) and the claim that fixed algorithms suffice are mutually exclusive."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_3ad66f0231f1c112",
+      "scope": "local",
+      "variables": [
+        "github:2604_01658::claim_no_fixed_algorithm",
+        "github:2604_01658::alt_fixed_algorithm_sufficient"
+      ]
+    },
+    {
+      "conclusion": "github:2604_01658::not_both_coordination",
+      "metadata": {
+        "reason": "If co-evolution beats independent best-of-4 by 6.5% on Kernel Engineering, while both use the same total compute, then the additional compute explanation is falsified. These two claims cannot both be true: coordination matters implies additional compute does not fully explain the gains."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_a329ef5f200908a2",
+      "scope": "local",
+      "variables": [
+        "github:2604_01658::claim_coevolution_beats_independent",
+        "github:2604_01658::alt_additional_compute_explains"
+      ]
+    }
+  ],
+  "package_name": "2604_01658",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_01658::claim_multi_agent_gains",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_11bb037f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_coral_outperforms_fixed",
+              "github:2604_01658::claim_knowledge_causal",
+              "github:2604_01658::claim_agents_adaptable"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_5eaa0c92",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_11bb037f",
+              "github:2604_01658::claim_multi_agent_gains"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The multi-agent gains (@claim_multi_agent_gains) build directly on the foundation established by single-agent CORAL performance (@claim_coral_outperforms_fixed) and causal knowledge accumulation (@claim_knowledge_causal). The emergent adaptive strategy variation (@claim_agents_adaptable) provides the mechanism by which agents divide the search space rather than duplicating effort, enabling coordination gains that exceed independent parallel search."
+      },
+      "premises": [
+        "github:2604_01658::claim_coral_outperforms_fixed",
+        "github:2604_01658::claim_knowledge_causal",
+        "github:2604_01658::claim_agents_adaptable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f91f7a9343d3c3f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_heartbeat_mechanism",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_c250585e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_persistent_memory_design",
+              "github:2604_01658::claim_async_execution"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_c0c99ad9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_c250585e",
+              "github:2604_01658::claim_heartbeat_mechanism"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The heartbeat mechanism (@claim_heartbeat_mechanism) is feasible precisely because of the persistent memory structure (@claim_persistent_memory_design): each heartbeat prompt can reference the agent's notes and memory state to contextualize the reflection or consolidation request. Asynchronous execution (@claim_async_execution) means heartbeats fire independently per agent without coordination overhead."
+      },
+      "premises": [
+        "github:2604_01658::claim_persistent_memory_design",
+        "github:2604_01658::claim_async_execution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e79757ca7e483207",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_safety_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_253d1db0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_evaluator_design",
+              "github:2604_01658::claim_async_execution"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_7a572cf2",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_253d1db0",
+              "github:2604_01658::claim_safety_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The safety mechanisms (@claim_safety_mechanisms) are enabled by the evaluator separation design (@claim_evaluator_design): isolated workspaces with symbolic links to shared memory provide the filesystem-level isolation needed for workspace sandboxing. Asynchronous execution (@claim_async_execution) in separate processes enables resource controls per agent without global locks."
+      },
+      "premises": [
+        "github:2604_01658::claim_evaluator_design",
+        "github:2604_01658::claim_async_execution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8e12c78214c41d3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_no_fixed_algorithm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_ddfdc6ea",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_persistent_memory_design",
+              "github:2604_01658::claim_heartbeat_mechanism"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_da9eef1e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_ddfdc6ea",
+              "github:2604_01658::claim_no_fixed_algorithm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The architectural choice of shared persistent memory (@claim_persistent_memory_design) as the implicit population, combined with open-ended heartbeat prompts (@claim_heartbeat_mechanism) that do not specify which candidates to select or how to mutate them, logically entails that no fixed evolutionary algorithm is imposed. The framework design itself constitutes the absence of a fixed algorithm."
+      },
+      "premises": [
+        "github:2604_01658::claim_persistent_memory_design",
+        "github:2604_01658::claim_heartbeat_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7fe2a523b512a2eb",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_sota_8_tasks",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_3a82f9ba",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_no_fixed_algorithm",
+              "github:2604_01658::claim_persistent_memory_design",
+              "github:2604_01658::claim_heartbeat_mechanism"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_a195b615",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_3a82f9ba",
+              "github:2604_01658::claim_sota_8_tasks"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The absence of a fixed algorithm (@claim_no_fixed_algorithm) allows agents to adapt their search strategy to each task's structure. The shared persistent memory (@claim_persistent_memory_design) enables agents to build on previous discoveries rather than re-exploring visited regions. Heartbeat interventions (@claim_heartbeat_mechanism) prevent premature convergence by triggering strategic pivots when agents stagnate. Together these mechanisms produce the SOTA results on 8/11 tasks (@claim_sota_8_tasks)."
+      },
+      "premises": [
+        "github:2604_01658::claim_no_fixed_algorithm",
+        "github:2604_01658::claim_persistent_memory_design",
+        "github:2604_01658::claim_heartbeat_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8597c125d872fde6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_improvement_rate",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_1f65814f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_sota_8_tasks",
+              "github:2604_01658::claim_improvement_rate"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Achieving best final scores on 8/11 tasks (@claim_sota_8_tasks) within the same evaluation budget as baselines that score lower implies a higher per-evaluation improvement rate. The 3–10× improvement rate figure is a direct consequence of reaching higher scores with fewer evaluations: convergence within 5–20 evaluations versus 60–100 for baselines under the same 3-hour budget."
+      },
+      "premises": [
+        "github:2604_01658::claim_sota_8_tasks"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_36d2872f4e1f338f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_math_tasks_strong",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_fc9a6d8f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_coral_outperforms_fixed",
+              "github:2604_01658::claim_math_tasks_strong"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The general law that CORAL outperforms fixed evolutionary search (@claim_coral_outperforms_fixed) predicts that on mathematical optimization tasks, CORAL should achieve higher scores than baselines. The autonomous strategy adaptation and shared memory design that drives the law should manifest in math tasks, where agents discover task-specific combinatorial insights and build on prior solutions."
+      },
+      "premises": [
+        "github:2604_01658::claim_coral_outperforms_fixed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_62351eb25889258c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_systems_tasks_strong",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_36a4d485",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_coral_outperforms_fixed",
+              "github:2604_01658::claim_systems_tasks_strong"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The general law that CORAL outperforms fixed evolutionary search (@claim_coral_outperforms_fixed) predicts that on systems optimization tasks, CORAL should achieve higher scores than baselines. CORAL's autonomous adaptation should allow agents to discover task-specific techniques (e.g., local testing on compiled-code tasks) that fixed algorithms cannot encode."
+      },
+      "premises": [
+        "github:2604_01658::claim_coral_outperforms_fixed"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d41d1cb381d0a1bf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_coral_outperforms_fixed",
+      "metadata": {
+        "reason": "Mathematical optimization and systems optimization tasks are structurally independent benchmark categories—different problem types, different solution representations, different evaluation functions. CORAL achieving better scores on both categories independently provides inductive confirmation of the general law that CORAL outperforms fixed evolutionary search (@claim_coral_outperforms_fixed)."
+      },
+      "premises": [
+        "github:2604_01658::claim_math_tasks_strong",
+        "github:2604_01658::claim_systems_tasks_strong"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f58f3a2672bea9c6",
+      "sub_strategies": [
+        "lcs_62351eb25889258c",
+        "lcs_d41d1cb381d0a1bf"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_open_source_validates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_18797b18",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_improvement_rate",
+              "github:2604_01658::claim_open_source_validates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "If the improvement rate advantage (@claim_improvement_rate) derives from framework design (memory, heartbeats, autonomous strategy) rather than from the specific capabilities of Claude Opus 4.6, then the advantage should generalize to other capable LLMs. The open-source validation result confirms this framework-level generality: MiniMax-M2.5 and OpenCode also outperform fixed baselines under CORAL's framework."
+      },
+      "premises": [
+        "github:2604_01658::claim_improvement_rate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_352926f5dfdb52de",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_single_agent_convergence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_9ddf974c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_heartbeat_mechanism",
+              "github:2604_01658::claim_agents_adaptable"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_06995bed",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_9ddf974c",
+              "github:2604_01658::claim_single_agent_convergence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "The punctuated convergence pattern (@claim_single_agent_convergence) — rapid gains followed by plateaus punctuated by jumps — is mechanistically explained by heartbeat-triggered strategic pivots (@claim_heartbeat_mechanism): after 5 non-improving evaluations, the stagnation redirect prompt causes the agent to fundamentally change strategy, producing sharp jumps. The agent's capacity to discover new approaches (@claim_agents_adaptable) determines the magnitude of each jump."
+      },
+      "premises": [
+        "github:2604_01658::claim_heartbeat_mechanism",
+        "github:2604_01658::claim_agents_adaptable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4553245e24483b75",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_coevolution_beats_independent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_ab7c0fd4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_multi_agent_gains",
+              "github:2604_01658::claim_coevolution_beats_independent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "If multi-agent collaboration provides genuine gains (@claim_multi_agent_gains), then co-evolution with shared memory should outperform independent best-of-4 under identical compute, because coordination enables agents to avoid duplicating failed approaches and to build on each other's successes. This predicts the observed 6.5% advantage of co-evolution over independent best-of-4."
+      },
+      "premises": [
+        "github:2604_01658::claim_multi_agent_gains"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_68299bfa119a8e52",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_coevolution_beats_independent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_1069c886",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::alt_additional_compute_explains",
+              "github:2604_01658::claim_coevolution_beats_independent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.25,
+        "reason": "If additional compute alone (@alt_additional_compute_explains) explains performance gains, then co-evolution (4 agents × shared memory) should match independent best-of-4 (4 agents × independent). The alternative predicts that the co-evolution vs. independent comparison would show approximately no gap—contradicted by the observed 6.5% advantage."
+      },
+      "premises": [
+        "github:2604_01658::alt_additional_compute_explains"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_84b6ba652b959e46",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__equivalence_result_603e4d65",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_01658::pred_coordination",
+              "github:2604_01658::claim_coevolution_beats_independent"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__equivalence_result_90536050",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_01658::pred_compute",
+              "github:2604_01658::claim_coevolution_beats_independent"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__equivalence_result_90536050",
+              "github:2604_01658::__equivalence_result_603e4d65"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The observed 6.5% gap between co-evolution (1,103 cycles) and independent best-of-4 (1,180 cycles) on Kernel Engineering matches the coordination hypothesis's prediction of a measurable gap, and contradicts the compute-only hypothesis's prediction of approximately no gap."
+      },
+      "premises": [
+        "github:2604_01658::pred_coordination",
+        "github:2604_01658::pred_compute",
+        "github:2604_01658::claim_coevolution_beats_independent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4992c711fccf8f97",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_01658::_anon_000",
+      "metadata": {
+        "reason": "Both hypotheses (coordination vs. additional compute) attempt to explain why 4-agent CORAL outperforms single-agent CORAL (@claim_multi_agent_gains). The decisive test is the co-evolution vs. independent best-of-4 comparison (@claim_coevolution_beats_independent): if co-evolution wins under identical compute, coordination explains the gains; if not, compute explains them."
+      },
+      "premises": [
+        "github:2604_01658::claim_multi_agent_gains",
+        "github:2604_01658::alt_additional_compute_explains",
+        "github:2604_01658::pred_coordination",
+        "github:2604_01658::pred_compute",
+        "github:2604_01658::claim_coevolution_beats_independent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6e847850c31ce8be",
+      "sub_strategies": [
+        "lcs_68299bfa119a8e52",
+        "lcs_84b6ba652b959e46",
+        "lcs_4992c711fccf8f97"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_ablation_knowledge_kernel",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_2c9c4d36",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_knowledge_causal",
+              "github:2604_01658::claim_ablation_knowledge_kernel"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If knowledge accumulation is causally important (@claim_knowledge_causal), then disabling it should produce a regression. The Kernel Engineering task requires specialized low-level optimization knowledge (CPU architecture, SIMD, compiler flags) that agents accumulate over iterations. Removing this accumulation forces each attempt to start from scratch, predicting the observed 18.6% regression."
+      },
+      "premises": [
+        "github:2604_01658::claim_knowledge_causal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0eb53c020cbb1682",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_ablation_knowledge_polyominoes",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_5c8a1310",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_knowledge_causal",
+              "github:2604_01658::claim_ablation_knowledge_polyominoes"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If knowledge accumulation is causally important (@claim_knowledge_causal), Polyominoes should also regress without knowledge, but less so than Kernel Engineering because combinatorial packing requires less specialized technical knowledge. The observed 3.6pp regression is consistent with this prediction."
+      },
+      "premises": [
+        "github:2604_01658::claim_knowledge_causal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6b60b6a8ea4fd870",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_knowledge_causal",
+      "metadata": {
+        "reason": "Two independent ablation observations on structurally different tasks (Kernel Engineering: code optimization; Polyominoes: combinatorial packing) both confirm the causal role of knowledge accumulation, providing inductive support for the general law (@claim_knowledge_causal). The tasks are independent: different solution spaces, different evaluation functions, different agent behaviors."
+      },
+      "premises": [
+        "github:2604_01658::claim_ablation_knowledge_kernel",
+        "github:2604_01658::claim_ablation_knowledge_polyominoes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_db7410a03d1d4b5d",
+      "sub_strategies": [
+        "lcs_0eb53c020cbb1682",
+        "lcs_6b60b6a8ea4fd870"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_kernel_4agent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_77eadc02",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_cross_agent_transfer_kernel",
+              "github:2604_01658::claim_persistent_memory_design"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_ea729a02",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_77eadc02",
+              "github:2604_01658::claim_kernel_4agent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The 1,103-cycle Kernel Engineering result by 4-agent co-evolution is mechanistically explained by cross-agent knowledge transfer (@claim_cross_agent_transfer_kernel): 66% of new records come from cross-agent parentage, meaning the best solutions build on insights from multiple agents. This transfer is enabled by shared persistent memory (@claim_persistent_memory_design) which stores agent-discovered techniques in the skills/ directory accessible to all agents."
+      },
+      "premises": [
+        "github:2604_01658::claim_cross_agent_transfer_kernel",
+        "github:2604_01658::claim_persistent_memory_design"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef4457ae78416a25",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_coevolution_beats_independent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_1eeba7d0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_strategy_diversity",
+              "github:2604_01658::claim_heartbeat_mechanism"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_1b51d347",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_1eeba7d0",
+              "github:2604_01658::claim_coevolution_beats_independent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Strategic diversity (@claim_strategy_diversity) — Jaccard similarity 0.43, implying >50% unique strategy vocabulary per agent — ensures agents explore complementary regions of the solution space. Combined with heartbeat-triggered stagnation detection (@claim_heartbeat_mechanism), co-evolution avoids convergence to the same local optima that independent agents would each discover, producing the 6.5% advantage over independent best-of-4."
+      },
+      "premises": [
+        "github:2604_01658::claim_strategy_diversity",
+        "github:2604_01658::claim_heartbeat_mechanism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0b9d2e4f7dbd87b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_local_verification_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_fc6f7451",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_agents_adaptable",
+              "github:2604_01658::claim_local_verification_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Agent adaptability (@claim_agents_adaptable) is the mechanism behind local verification behavior: agents autonomously learn (through accumulated notes) that local testing before evaluation improves efficiency on compiled-code tasks. The 57–61% local test rates on Kernel Engineering and Transaction Scheduling are emergent behaviors, not specified by the framework, consistent with agents adapting to task structure."
+      },
+      "premises": [
+        "github:2604_01658::claim_agents_adaptable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5ea318ae274b81eb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_knowledge_causal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_b5729b3c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_ablation_knowledge_kernel",
+              "github:2604_01658::claim_knowledge_access_correlates"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_73407ce6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_b5729b3c",
+              "github:2604_01658::claim_knowledge_causal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Two converging lines of evidence support knowledge causality: (1) ablation (@claim_ablation_knowledge_kernel) shows that removing knowledge access produces 18.6% regression, establishing counterfactual causality; (2) trajectory analysis (@claim_knowledge_access_correlates) shows knowledge-accessing attempts improve at 55% versus 26% for non-accessing attempts, establishing correlational evidence within the same experimental runs. Together they support @claim_knowledge_causal."
+      },
+      "premises": [
+        "github:2604_01658::claim_ablation_knowledge_kernel",
+        "github:2604_01658::claim_knowledge_access_correlates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8b8c8e5dc80e1662",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_cross_agent_transfer_poly",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_4e9cdf51",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_persistent_memory_design",
+              "github:2604_01658::claim_cross_agent_transfer_poly"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Shared persistent memory (@claim_persistent_memory_design) is the mechanism enabling 87% of Polyominoes rounds to reference cross-agent knowledge: the notes/ and skills/ directories provide the store from which agents read other agents' findings. Without this shared store, cross-agent knowledge transfer would be impossible."
+      },
+      "premises": [
+        "github:2604_01658::claim_persistent_memory_design"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e24cffbcd413f6d6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_polyominoes_4agent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_cd25c56b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_cross_agent_transfer_poly",
+              "github:2604_01658::claim_strategy_diversity"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_90d6bc33",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_cd25c56b",
+              "github:2604_01658::claim_polyominoes_4agent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The 84.2% Polyominoes coverage by 4-agent co-evolution is explained by extremely high cross-agent knowledge transfer (87% of rounds reading cross-agent knowledge, @claim_cross_agent_transfer_poly) combined with strategic diversity (Jaccard similarity 0.31, @claim_strategy_diversity). Diverse strategies ensure agents discover complementary packing approaches, while high transfer ensures each agent builds on the best insights from all agents."
+      },
+      "premises": [
+        "github:2604_01658::claim_cross_agent_transfer_poly",
+        "github:2604_01658::claim_strategy_diversity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a136d6572e1f7b1a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_transaction_4agent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_ed7480bc",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_coevolution_beats_independent",
+              "github:2604_01658::claim_local_verification_benefit"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_e0602010",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_ed7480bc",
+              "github:2604_01658::claim_transaction_4agent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The Transaction Scheduling improvement from 4,566 (single-agent) to 4,694 (4-agent) follows from co-evolution advantages (@claim_coevolution_beats_independent): shared memory allows agents to exchange successful local verification strategies @claim_local_verification_benefit. On Transaction Scheduling, agents achieve 61% local test rates, and sharing these verification discoveries accelerates improvement."
+      },
+      "premises": [
+        "github:2604_01658::claim_coevolution_beats_independent",
+        "github:2604_01658::claim_local_verification_benefit"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_118ea7ca73861cd8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_knowledge_creation_differential",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_7c4d4fa5",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_knowledge_causal",
+              "github:2604_01658::claim_knowledge_creation_differential"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "If knowledge accumulation causally improves performance (@claim_knowledge_causal), then harder tasks—where knowledge matters more—should trigger higher knowledge creation rates. The 10× differential (0.05 vs. 0.55–0.68 artifacts per attempt) reflects that on harder tasks, agents recognize and record more useful insights, consistent with knowledge being genuinely valuable on those tasks."
+      },
+      "premises": [
+        "github:2604_01658::claim_knowledge_causal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cb3e4ed3cdf54a5c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_compute_cost",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_18835aa2",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_frontier_model_dependency",
+              "github:2604_01658::claim_compute_cost"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The frontier model dependency (@claim_frontier_model_dependency) directly implies high compute cost (@claim_compute_cost): frontier models like Claude Opus 4.6 have substantially higher per-token costs than smaller models. Each CORAL iteration involves multiple LLM calls, multiplying this cost across many evaluations and multiple agents."
+      },
+      "premises": [
+        "github:2604_01658::claim_frontier_model_dependency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8ea71c4d8ca19b0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_strategy_diversity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_d5fae2db",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_homogeneous_agents",
+              "github:2604_01658::claim_strategy_diversity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Homogeneous agents (@claim_homogeneous_agents) constrain the achievable strategic diversity: the Jaccard similarity of 0.31–0.43 (@claim_strategy_diversity) is the maximum achievable through stochastic variation alone. With injected personality differences, diversity could be higher, suggesting the observed diversity represents a lower bound on what co-evolution could achieve with heterogeneous agents."
+      },
+      "premises": [
+        "github:2604_01658::claim_homogeneous_agents"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0450399788e38d45",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_domain_generality",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_789b9ce8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_sota_8_tasks",
+              "github:2604_01658::claim_open_source_validates"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_11f94bcd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_789b9ce8",
+              "github:2604_01658::claim_domain_generality"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "SOTA on 8/11 tasks spanning two categories (@claim_sota_8_tasks) demonstrates cross-domain applicability. Open-source model validation (@claim_open_source_validates) demonstrates cross-model applicability. Together these provide evidence for domain generality (@claim_domain_generality) beyond any single problem type or model family."
+      },
+      "premises": [
+        "github:2604_01658::claim_sota_8_tasks",
+        "github:2604_01658::claim_open_source_validates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dc1541177764d441",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_emergent_specialization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_a9672472",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_strategy_diversity",
+              "github:2604_01658::claim_cross_agent_transfer_kernel"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_46a0a98d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_a9672472",
+              "github:2604_01658::claim_emergent_specialization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "Strategic diversity (@claim_strategy_diversity, Jaccard 0.43 for Kernel Engineering) combined with high cross-agent transfer rates (36% of attempts build on other agents' work, @claim_cross_agent_transfer_kernel) implies agents developed complementary specializations: some agents produce the novel solutions (exploration) while others refine and combine them (exploitation), with transfer enabling cross-specialization learning."
+      },
+      "premises": [
+        "github:2604_01658::claim_strategy_diversity",
+        "github:2604_01658::claim_cross_agent_transfer_kernel"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b88551d687b5dbae",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_agent_personalities",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_00e19266",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_homogeneous_agents",
+              "github:2604_01658::claim_emergent_specialization"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_61c05a7b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_00e19266",
+              "github:2604_01658::claim_agent_personalities"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "If homogeneous agents (@claim_homogeneous_agents) can still achieve Jaccard similarity 0.31–0.43 through emergent specialization (@claim_emergent_specialization), then injecting distinct personalities (@claim_agent_personalities) would amplify this differentiation, potentially achieving lower similarity (more diversity) and stronger co-evolution benefits."
+      },
+      "premises": [
+        "github:2604_01658::claim_homogeneous_agents",
+        "github:2604_01658::claim_emergent_specialization"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ad757443a8095f3a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_evaluator_assumption",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_0f66bc85",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_evaluator_design",
+              "github:2604_01658::claim_evaluator_assumption"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The evaluator design (@claim_evaluator_design) assumes a pluggable, well-specified grader with clear scoring. This design choice embeds the assumption (@claim_evaluator_assumption) that the evaluation function is reliable, automatable, and tamper-resistant. Tasks where the evaluator cannot be well-specified (e.g., natural science experiments, creative tasks) fall outside CORAL's current scope."
+      },
+      "premises": [
+        "github:2604_01658::claim_evaluator_design"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ab9a3c9dc1791604",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_specialized_training",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__conjunction_result_e9ac91af",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_01658::claim_compute_cost",
+              "github:2604_01658::claim_frontier_model_dependency"
+            ]
+          },
+          {
+            "conclusion": "github:2604_01658::__implication_result_5e9085de",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::__conjunction_result_e9ac91af",
+              "github:2604_01658::claim_specialized_training"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The high compute cost of frontier model dependency (@claim_compute_cost, @claim_frontier_model_dependency) motivates the future direction of training specialized smaller models (@claim_specialized_training). If CORAL trajectories (attempts, notes, skills) provide supervision signal, smaller models trained on these trajectories could achieve comparable performance at lower inference cost."
+      },
+      "premises": [
+        "github:2604_01658::claim_compute_cost",
+        "github:2604_01658::claim_frontier_model_dependency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_38880c06f7f87d96",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_01658::claim_coeolving_evaluators",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_01658::__implication_result_2eb916b7",
+            "operator": "implication",
+            "variables": [
+              "github:2604_01658::claim_evaluator_assumption",
+              "github:2604_01658::claim_coeolving_evaluators"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "The evaluator assumption limitation (@claim_evaluator_assumption)—that CORAL requires well-specified evaluation functions—motivates the future direction of co-evolving evaluation criteria (@claim_coeolving_evaluators). If evaluation criteria could be refined alongside solutions, CORAL could extend to problems where the objective function itself is uncertain or evolving."
+      },
+      "premises": [
+        "github:2604_01658::claim_evaluator_assumption"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c65eac922f7b2cad",
+      "type": "support"
+    }
+  ]
+}
