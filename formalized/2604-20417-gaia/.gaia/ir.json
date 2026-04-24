@@ -1,0 +1,3298 @@
+{
+  "ir_hash": "sha256:8a73f70bc2715a4c6228ebb254f7a1d862367e89156973dabdb856e0963229ba",
+  "knowledges": [
+    {
+      "content": "Approximate Nearest Neighbor Search (ANNS) algorithms are used to retrieve results that are close — but not necessarily the exact nearest — neighbors to a query in a high-dimensional embedding space. The approximation trades search exactness for speed.",
+      "content_hash": "d1e00cf3fea01c45ec7ddba09abb2c2e0b9800faf75e39e111376fffe492bca6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::setup_anns",
+      "label": "setup_anns",
+      "module": "motivation",
+      "parameters": [],
+      "title": "ANNS background",
+      "type": "setting"
+    },
+    {
+      "content": "Traditional recall for ANNS is defined as the fraction of retrieved results that appear in the brute-force (exact) ground truth of top-$k$ nearest neighbors. Formally: $\\text{recall} = |R \\cap G_k| / |G_k|$, where $R$ is the set of retrieved neighbors and $G_k$ is the brute-force ground truth.",
+      "content_hash": "3962c13e38e27f4f62ea2034fd62e6edd93bdf5399d0c3d51adbc765f965b74a",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::setup_recall",
+      "label": "setup_recall",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Traditional recall definition",
+      "type": "setting"
+    },
+    {
+      "content": "AI embedding models map objects (text, images, video) into high-dimensional vectors such that semantically similar objects are geometrically close under distance metrics like Euclidean distance or inner product. The semantic similarity between objects is thus reflected in their vector proximity.",
+      "content_hash": "766426225c8b2d4dbbaf434a2e4d5aea3a3f9ee004040052f0fc4f66d99f9c92",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20417::setup_embedding",
+      "label": "setup_embedding",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Embedding model setup",
+      "type": "setting"
+    },
+    {
+      "content": "Traditional recall (the fraction of retrieved neighbors matching the exact brute-force ground truth top-$k$) is the de facto standard metric for evaluating the retrieval quality of ANNS algorithms in both academia and industry [@ANNBench2020; @DARTH2025; @VIBE2025].",
+      "content_hash": "b91f400c08a2549b038e97eaddcd417759ef33e010cc5cc2d6de3a2377d9a9ed",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20417::claim_recall_widespread",
+      "label": "claim_recall_widespread",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ANNBench2020",
+              "DARTH2025",
+              "VIBE2025"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Traditional recall is unambiguously the standard metric for ANNS evaluation in both academic benchmarks (ANN-Benchmarks) and industry; this is documented fact, not disputed."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Widespread use of traditional recall",
+      "type": "claim"
+    },
+    {
+      "content": "Traditional recall is misaligned with the goal of embedding-based retrieval because it penalizes ANNS algorithms for failing to retrieve mathematically close but semantically irrelevant objects. Failing to retrieve an irrelevant neighbor is penalized just as much as failing to retrieve a relevant one, even though only the latter matters to end users [@EmbedPitfalls2025].",
+      "content_hash": "f0f578a66b34ed6270bcf573f79a433739eb7165f080c2795318f6efa9ceb961",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_20417::claim_recall_misaligned",
+      "label": "claim_recall_misaligned",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EmbedPitfalls2025",
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_few_relevant_common",
+              "claim_irrelevant_equidistant"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Traditional recall misalignment with semantic quality",
+      "type": "claim"
+    },
+    {
+      "content": "ANNS algorithms are fundamentally bounded by exact nearest neighbor search (NNS): they cannot retrieve semantically relevant objects that an exact NNS would miss, because both operate within the same embedding space constraints [@EmbedLimits2025]. An embedding model that places a semantically relevant object far from the query will cause both exact and approximate NNS to miss it.",
+      "content_hash": "53fcaf93e72c9326b06f57cf97655447a388cd468fbfdf0594eeecc85d018644",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_20417::claim_anns_bounded_by_exact",
+      "label": "claim_anns_bounded_by_exact",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EmbedLimits2025"
+            ]
+          }
+        },
+        "prior": 0.97,
+        "prior_justification": "This follows from the mathematical definition of ANNS: it searches within the embedding space and is constrained by the embedding model's representation. Formally established and cited by the embedding limitations paper."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ANNS bounded by exact NNS",
+      "type": "claim"
+    },
+    {
+      "content": "Evaluation using manually curated ground truths (where relevance is judged independently of vector proximity) can unfairly penalize ANNS algorithms for limitations of the embedding model, since an ANNS algorithm can only retrieve objects the embedding model places near the query [@EmbedPitfalls2025].",
+      "content_hash": "1573270038b554f701bf3d8b5c9dbcb25a38d7b80db46f7f38095fdfd9264b04",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20417::claim_curated_gt_unfair",
+      "label": "claim_curated_gt_unfair",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EmbedLimits2025",
+              "EmbedPitfalls2025"
+            ],
+            "referenced_claims": [
+              "claim_anns_bounded_by_exact"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Curated ground truth penalizes embedding model limitations",
+      "type": "claim"
+    },
+    {
+      "content": "A significant fraction of queries in embedding datasets have few semantically relevant results among their top-$k$ nearest neighbors. In the MSMARCO dataset with 250 queries and top-100 ground truth, approximately 40% of queries have fewer than 15 relevant documents, including 3 queries with no relevant results at all (Figure 2, artifacts/2604.20417.pdf).",
+      "content_hash": "b29875ba028580a305f68cb3d126e291ac15dee28ac3279c9d38d022d956bb5e",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_20417::claim_few_relevant_common",
+      "label": "claim_few_relevant_common",
+      "metadata": {
+        "caption": "Distribution of semantically relevant neighbors per query in MSMARCO",
+        "figure": "artifacts/2604.20417.pdf, Figure 2",
+        "prior": 0.9,
+        "prior_justification": "Directly observed in the MSMARCO experiment: 40% of 250 queries have <15 relevant documents out of top-100. This is a direct measurement, high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Few-relevant-neighbor queries are common",
+      "type": "claim"
+    },
+    {
+      "content": "Non-semantic (irrelevant) neighbors tend to cluster at nearly the same distance from the query embedding, with consistently small score deltas between consecutive irrelevant neighbors. This near-equidistance makes irrelevant neighbors particularly hard for ANNS algorithms to retrieve reliably, since small ranking fluctuations (e.g., from quantization) easily reorder them. Traditional recall penalizes algorithms for this unavoidable reordering.",
+      "content_hash": "7938b7ee67ea5e5e029bb8831ea7d7015f40f7090bf5af5b47941de1744a6f24",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_20417::claim_irrelevant_equidistant",
+      "label": "claim_irrelevant_equidistant",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Supported by Table 2 data showing consistently small non-SN score deltas (0.002±0.003 average) vs. larger SN score deltas. This is a measured property."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Irrelevant neighbors are near-equidistant",
+      "type": "claim"
+    },
+    {
+      "content": "Can we define an evaluation metric for ANNS that measures only semantically relevant retrieval quality, without penalizing algorithms for missing irrelevant neighbors?",
+      "content_hash": "06bf2c8b3370be7542159e4dd2c6a2ace665d796cf4f9c75aea7c7c0172f014c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_20417::q_better_metric",
+      "label": "q_better_metric",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "When semantic relevance labels cannot be obtained (e.g., embeddings-only datasets), what proxy metric best approximates semantic recall?",
+      "content_hash": "a92389c3ffe5f7e20bdca6b6eb65e9518a7cf0658d06fc3020e890b274d0af8d",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_20417::q_proxy_metric",
+      "label": "q_proxy_metric",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_20417::not_both_metrics",
+      "label": "not_both_metrics",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.85
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Semantic neighbors (SN) of a query $q$ are defined as the subset of the brute-force exact NNS top-$k$ ground truth that are semantically relevant to $q$, as determined by an external judge (human or LLM). Relevance is binary: each ground-truth neighbor is labeled 'Relevant' or 'Not Relevant' with respect to $q$.",
+      "content_hash": "0be430ac9bb665222dd88876f80d9d899d62f2cda31bb4d04b487ea02cb31948",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::defn_semantic_neighbors",
+      "label": "defn_semantic_neighbors",
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic neighbors definition",
+      "type": "setting"
+    },
+    {
+      "content": "Semantic recall ($\\text{srecall}$) is defined as: $\\text{srecall} = |R \\cap SN| / |SN|$, where $R$ is the set of results retrieved by an ANNS algorithm and $SN$ is the set of semantic neighbors in the top-$k$ ground truth. A high srecall indicates the algorithm retrieves objects that are both mathematically close and semantically meaningful.",
+      "content_hash": "967ff8a1f69d7439a44d0a93d2192995cfc001faada437e5d5f27a2a96b866e1",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::defn_srecall",
+      "label": "defn_srecall",
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall formula",
+      "type": "setting"
+    },
+    {
+      "content": "Semantic neighbors are identified via a two-step process: (1) compute the exact NNS ground truth (top-$k$ results via brute-force search); (2) classify each ground-truth neighbor as semantically relevant or irrelevant using an external judge (LLM or human). Only the top-$k$ ground-truth neighbors need to be judged, not the entire dataset.",
+      "content_hash": "40025b1f2dbf950ff0d74a311970b8a629e0e6a0f469b88a49b849f0ca2171e3",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20417::defn_judging_process",
+      "label": "defn_judging_process",
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Judging process for semantic neighbors",
+      "type": "setting"
+    },
+    {
+      "content": "Semantic recall eliminates the three key limitations of traditional recall: (i) it does not penalize algorithms for missing mathematically close but semantically irrelevant objects; (ii) it is not affected by embedding model limitations since it only considers objects retrievable via exact NNS; (iii) it requires no threshold hyperparameters, unlike metrics such as $\\text{recall}@k\\text{-}\\epsilon$ [@ANNBench2020] or Relative Distance Error [@DARTH2025] [@Kuffo2026].",
+      "content_hash": "4570efb53b30528ac5bf8e2801ce1f195ab0478bef875e7433704f3220d14044",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_20417::claim_srecall_no_penalty",
+      "label": "claim_srecall_no_penalty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ANNBench2020",
+              "DARTH2025",
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_anns_bounded_by_exact",
+              "claim_llm_judging_efficient",
+              "defn_srecall"
+            ]
+          }
+        }
+      },
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall advantages over traditional recall",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall requires no threshold hyperparameter configuration, in contrast to $\\text{recall}@k\\text{-}\\epsilon$ (requires $\\epsilon$ threshold), $\\text{robustness}@k\\text{-}\\gamma$ [@RobustVS2025] (requires $\\gamma$), and Relative Distance Error [@DARTH2025] (requires a distance tolerance). The lack of a hyperparameter makes semantic recall more portable and interpretable across different datasets and systems.",
+      "content_hash": "48532f6cf4536cf68a993b70eaf5ae4b1e45697d5d397248372fa480f7b3cd7e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_20417::claim_srecall_hyperparameter_free",
+      "label": "claim_srecall_hyperparameter_free",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DARTH2025",
+              "RobustVS2025"
+            ]
+          }
+        }
+      },
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall is hyperparameter-free",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-based identification of semantic neighbors is substantially more efficient than full dataset curation: instead of judging millions of (query, document) pairs to construct a gold-standard dataset, only the top-$k$ ground-truth neighbors per query need to be classified. For 250 queries with top-100 ground truth, this requires at most 25,000 LLM calls vs. millions for full curation.",
+      "content_hash": "c3f0a72bf2ffa30367455899ae7078a2b10c75f926da7b549f8727acecb56032",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20417::claim_llm_judging_efficient",
+      "label": "claim_llm_judging_efficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_cross_val_agreement"
+            ]
+          }
+        }
+      },
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "LLM judging efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall requires access to the underlying raw objects (text, images, etc.) in order to perform semantic relevance judging. Embeddings alone are insufficient. This is a practical limitation compared to traditional recall, which only requires the embedding vectors [@Kuffo2026].",
+      "content_hash": "c05361b16feddf03450f9a2fc764797439416c2bd0a7cd2ee38f6cd27579a912",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20417::claim_srecall_requires_raw_data",
+      "label": "claim_srecall_requires_raw_data",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        }
+      },
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall limitation: requires raw data",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall is undefined when a query has no semantically relevant results in the top-$k$ ground truth (i.e., $|SN| = 0$). Such queries should be excluded from retrieval-quality evaluation, as no meaningful answers exist in the embedding space for those queries. Their existence may indicate regression in the embedding model.",
+      "content_hash": "80503f2fc4cf8def1c7703010b402d7fa068763eb09ca8babb62fc03d298de0e",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20417::claim_srecall_undefined_no_relevant",
+      "label": "claim_srecall_undefined_no_relevant",
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall undefined for zero-SN queries",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall is a more accurate indicator of retrieval quality perceived by end users than traditional recall, because it measures the fraction of retrieved results that are semantically useful, rather than the fraction that match a mathematical ground truth that may include irrelevant items [@Kuffo2026].",
+      "content_hash": "40181fcc3ce6edb81dc32058f6e76607d1559acbf1e695218c770e0940c8005a",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_20417::claim_srecall_better_proxy",
+      "label": "claim_srecall_better_proxy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_recall_misaligned",
+              "claim_sn_higher_scores",
+              "claim_srecall_no_penalty"
+            ]
+          }
+        }
+      },
+      "module": "s2_semantic_recall",
+      "parameters": [],
+      "title": "Semantic recall is a better quality proxy",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall ($\\text{trecall}@k$) is defined as follows. Given a ground-truth set $G_k$ and a retrieved set $R_k$ (each of size $k$), tolerant recall finds the largest subset $T \\subseteq R_k$ such that every $t_i \\in T$ corresponds to a unique $g_i \\in G_k$ satisfying either (a) $g_i = t_i$ (exact match), or (b) $t_i^{\\text{score}} \\geq g_i^{\\text{score}} \\cdot (1 - x\\%)$ under inner product similarity (score within $x\\%$ tolerance). Then: $\\text{trecall}@k = |T| / |G_k|$. The tolerance $x\\%$ is a hyperparameter.",
+      "content_hash": "18d5caabce05bb19a8d7808bd8f85999806a2e7415cc7dbc257bb19b2d6a11e7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::defn_trecall",
+      "label": "defn_trecall",
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall formula",
+      "type": "setting"
+    },
+    {
+      "content": "A practical proxy for setting the tolerance threshold $x\\%$ is computed as the relative difference between the scores of the $\\frac{2}{3}k$-th and $k$-th ground-truth neighbors, normalized by the maximum ground-truth score, averaged across queries: $\\frac{\\text{score}_{2k/3} - \\text{score}_k}{\\text{max\\_score}} \\times 100$. This leverages the score gap among lower-ranked results where irrelevant neighbors tend to cluster.",
+      "content_hash": "06e80846021e1d57bb9737f932316fbf0d046d31ed8fdfb6bf4d0c9aeda07df0",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::defn_threshold_proxy",
+      "label": "defn_threshold_proxy",
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerance threshold proxy formula",
+      "type": "setting"
+    },
+    {
+      "content": "Tolerant recall with a 1% tolerance threshold closely approximates semantic recall in the MSMARCO dataset (250 queries, ScaNN ANNS with 8-bit quantization). Across all queries: semantic recall = 0.932, tolerant recall = 0.920. For queries with fewer than 20 semantic neighbors: semantic recall = 0.903, tolerant recall = 0.859. The per-query distributions in Figure 3 (artifacts/2604.20417.pdf) show that tolerant recall closely tracks the semantic recall distribution.",
+      "content_hash": "022ac78bfa684446aca3328f2c6cf83461b551098a2afb9e4a60ec1fa80fcaf8",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_20417::claim_trecall_approximates_srecall",
+      "label": "claim_trecall_approximates_srecall",
+      "metadata": {
+        "caption": "Per-query distributions of traditional, semantic, and tolerant recall",
+        "figure": "artifacts/2604.20417.pdf, Figure 3",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_irrelevant_equidistant",
+              "claim_trecall_mitigates_quantization"
+            ]
+          }
+        }
+      },
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall approximates semantic recall (MSMARCO)",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall can be computed using only embedding vectors and their similarity scores, without access to the underlying raw objects (text, images, etc.). This makes it applicable in scenarios where semantic neighbors cannot be identified, such as embeddings-only datasets.",
+      "content_hash": "bef1be018f56e344ed95c898b1ca7c091a88517f7b28b9d5a4934e369083b383",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_20417::claim_trecall_no_raw_data",
+      "label": "claim_trecall_no_raw_data",
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall applicable without raw data",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall is more robust to frequent dataset updates than traditional recall. Traditional recall degrades rapidly if the ground truth is not recomputed after each database update, since new items may displace existing top-$k$ neighbors. Tolerant recall allows replacements with items scoring within the tolerance band, reducing sensitivity to minor ground-truth shifts [@Kuffo2026].",
+      "content_hash": "aede1526cfdccb4a7b0e53ccc9f9ae2739f24284bb83ef315338d55ab166fa33",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20417::claim_trecall_robust_dynamic",
+      "label": "claim_trecall_robust_dynamic",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        }
+      },
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall robust to dynamic datasets",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall mitigates the evaluation penalties caused by 8-bit scalar quantization artifacts. Quantization introduces small relative score errors that can reorder near-equidistant irrelevant neighbors, causing traditional recall penalties. Tolerant recall absorbs these reorderings by allowing score-proximate replacements within the retrieved set [@Quantization2025].",
+      "content_hash": "884761974587adae092e8e29e1dd6df80d9d4b23c7197bdd7a11da6683ec651a",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20417::claim_trecall_mitigates_quantization",
+      "label": "claim_trecall_mitigates_quantization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Quantization2025"
+            ],
+            "referenced_claims": [
+              "claim_irrelevant_equidistant"
+            ]
+          }
+        }
+      },
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall robust to quantization artifacts",
+      "type": "claim"
+    },
+    {
+      "content": "Unlike semantic recall, tolerant recall requires a tolerance threshold hyperparameter $x\\%$ that must be configured. This is a limitation relative to semantic recall, though a practical proxy for setting $x\\%$ is provided (see @defn_threshold_proxy) [@Kuffo2026].",
+      "content_hash": "96e18bb2b3352757379e0a80c98e288bf28eb48c6d87dc3884ce9727e6c155eb",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20417::claim_trecall_has_hyperparameter",
+      "label": "claim_trecall_has_hyperparameter",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "defn_threshold_proxy"
+            ]
+          }
+        }
+      },
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Tolerant recall requires threshold hyperparameter",
+      "type": "claim"
+    },
+    {
+      "content": "The tolerance threshold proxy (relative score difference between the $\\frac{2}{3}k$-th and $k$-th neighbors) closely matches the semantic recall metric in both MSMARCO and MIRACL datasets, as shown in Figure 8 (artifacts/2604.20417.pdf). This proxy provides a practical starting point for threshold selection without needing semantic neighbor labels.",
+      "content_hash": "01c727f964a787a047666dce47e387e02ca5167953f027281f62f489dbf805f9",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20417::claim_threshold_proxy_effective",
+      "label": "claim_threshold_proxy_effective",
+      "metadata": {
+        "caption": "Effect of different thresholds on tolerant recall",
+        "figure": "artifacts/2604.20417.pdf, Figure 8",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_irrelevant_equidistant"
+            ]
+          }
+        }
+      },
+      "module": "s3_tolerant_recall",
+      "parameters": [],
+      "title": "Threshold proxy matches semantic recall",
+      "type": "claim"
+    },
+    {
+      "content": "MSMARCO evaluation setup: 8.83M text documents encoded into 3072-dimensional embeddings using the Gemini Embedding model [@GeminiEmbed2025]. Query set: 250 general-knowledge questions, encoded with the same model. Ground truth: top-100 nearest neighbors per query via brute-force inner product search (embeddings normalized so scores $\\in [-1, 1]$). Semantic neighbor labels: Gemini 2.5 [@Gemini25] used as judge, labeling each ground-truth neighbor 'Relevant' or 'Not Relevant'. ANNS system: ScaNN [@ScaNN2020] with 8-bit quantization, retrieving top-100 results.",
+      "content_hash": "f09c55cf66e81b8d468687178e4079144e468a019c2ef58935463f92e792cefd",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::setup_msmarco_exp",
+      "label": "setup_msmarco_exp",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Gemini25",
+              "GeminiEmbed2025",
+              "ScaNN2020"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "MSMARCO experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "The distribution of semantic neighbors per query in MSMARCO (250 queries, top-100 ground truth, Gemini 2.5 judge) is bimodal: approximately 40% of queries have 0-15 relevant documents (few-SN cluster), including 3 queries with zero relevant results, while another cluster appears near 90-100 relevant documents. The upper bound artifact arises from using only the top-100 ground truth — queries in the upper cluster likely have more than 100 relevant documents in the full corpus.",
+      "content_hash": "2231e353f46f52ec8da6d3cf2f23b6c233570d95cfc4bf3a971b7b126b4aac05",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::claim_sn_distribution_bimodal",
+      "label": "claim_sn_distribution_bimodal",
+      "metadata": {
+        "caption": "Distribution of semantically relevant neighbors per query",
+        "figure": "artifacts/2604.20417.pdf, Figure 2"
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "MSMARCO SN distribution is bimodal",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic neighbors (SN) achieve higher average inner product similarity scores than non-semantic neighbors (non-SN) across all query groups in MSMARCO. Specifically:\n\n| Query Group | N. Queries | Avg. score (SN) | Avg. score (non-SN) |\n|-------------|-----------|-----------------|---------------------|\n| All queries | 247       | 0.77 ± 0.02     | 0.73 ± 0.03         |\n| SN < 20     | 102       | 0.77 ± 0.03     | 0.71 ± 0.02         |\n| 20 ≤ SN < 80| 91        | 0.76 ± 0.02     | 0.74 ± 0.02         |\n| SN ≥ 80     | 54        | 0.77 ± 0.01     | 0.76 ± 0.02         |\n\nThe largest gap between SN and non-SN average scores appears for queries with fewer than 20 SNs.",
+      "content_hash": "1a3c4d6624f216de2176512d3379f21d7ebae4db9760187a3cc0aa3dcc17c318",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20417::claim_sn_higher_scores",
+      "label": "claim_sn_higher_scores",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2: SN average score 0.77 vs. non-SN 0.73 across all queries. Empirical measurement, high confidence.",
+        "source_table": "artifacts/2604.20417.pdf, Table 2"
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "SN have higher similarity scores than non-SN",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic neighbors exhibit significantly larger and more variable score differences (deltas between consecutive neighbors) than non-semantic neighbors in MSMARCO. Specifically:\n\n| Query Group | Avg. score delta (SN) | Avg. score delta (non-SN) |\n|-------------|----------------------|---------------------------|\n| All queries | 0.006 ± 0.006        | 0.002 ± 0.003             |\n| SN < 20     | 0.014 ± 0.012        | 0.001 ± 0.002             |\n| 20 ≤ SN < 80| 0.002 ± 0.003        | 0.001 ± 0.002             |\n| SN ≥ 80     | 0.001 ± 0.001        | 0.005 ± 0.006             |\n\nNon-SNs have consistently small score deltas, indicating near-equidistance.",
+      "content_hash": "e8ac01cb03820c3bfcdb0ab28d8d37ed0891af311feef93c336c99a70b545c89",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20417::claim_sn_larger_deltas",
+      "label": "claim_sn_larger_deltas",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2: SN average score delta 0.006±0.006 vs. non-SN 0.002±0.003. Particularly stark for SN<20 queries (0.014 vs. 0.001). High confidence from direct measurement.",
+        "source_table": "artifacts/2604.20417.pdf, Table 2"
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "SN have larger score deltas than non-SN",
+      "type": "claim"
+    },
+    {
+      "content": "Cross-validation of 100 queries using Claude Haiku as an independent judge (outside the Gemini model family) showed an inter-judge agreement rate of 91.1% (Cohen's $\\kappa = 0.82$). Agreement by category: 89.5% for 'Relevant', 93.3% for 'Not Relevant'. Only 2 of 100 queries fell below 70% agreement. When judges disagreed, Gemini more frequently labeled documents as 'Relevant' (more lenient), while Claude adhered more strictly to the prompt criteria [@Kuffo2026].",
+      "content_hash": "056eaaaa6ca1bd9c1e092b3b103d14fe90019030cf65fcf9c6072ec4ce9212ca",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20417::claim_cross_val_agreement",
+      "label": "claim_cross_val_agreement",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Directly measured: Claude Haiku vs. Gemini 2.5 agreement rate of 91.1% with Cohen's κ=0.82 on 100 queries × 100 documents. This is a reported measurement."
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "LLM judge cross-validation agreement (91.1%, κ=0.82)",
+      "type": "claim"
+    },
+    {
+      "content": "On MSMARCO (250 queries, ScaNN top-100 with 8-bit quantization), the three metrics compare as follows:\n\n| Query Group        | Traditional Recall | Semantic Recall | Tolerant Recall |\n|--------------------|-------------------|-----------------|------------------|\n| All queries        | 0.863 ± 0.177     | 0.932 ± 0.144   | 0.920 ± 0.125    |\n| SN < 20            | 0.762 ± 0.204     | 0.903 ± 0.183   | 0.859 ± 0.152    |\n| 20 ≤ SN < 80       | 0.903 ± 0.133     | 0.937 ± 0.124   | 0.941 ± 0.096    |\n| SN ≥ 80            | 0.976 ± 0.061     | 0.978 ± 0.062   | 0.991 ± 0.027    |\n\nSemantic recall is consistently higher than traditional recall, with the largest gap for queries with few semantic neighbors (SN < 20: 0.903 vs 0.762).",
+      "content_hash": "4621a81b9e8ff8a4f9cb17d023fc1c1e7cc8fcdb24a6effaa914044c828444e2",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_20417::claim_recall_comparison_all",
+      "label": "claim_recall_comparison_all",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Directly measured experimental results reported in Table 3 of the paper. ScaNN with 8-bit quantization on MSMARCO. High confidence from direct measurement.",
+        "source_table": "artifacts/2604.20417.pdf, Table 3"
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "MSMARCO recall comparison table",
+      "type": "claim"
+    },
+    {
+      "content": "Queries with few semantic neighbors (SN < 20) show the largest penalty under traditional recall: average traditional recall = 0.762 vs. semantic recall = 0.903, a gap of 0.141. In contrast, for queries with many semantic neighbors (SN ≥ 80), the gap between traditional and semantic recall is negligible (0.976 vs. 0.978). This confirms that traditional recall's bias primarily affects queries where irrelevant neighbors dominate the ground truth [@Kuffo2026].",
+      "content_hash": "8c9db39fc260c9f89b83250089a4ed60abb07b4131815974f58666716dd9782c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_20417::claim_few_sn_penalized",
+      "label": "claim_few_sn_penalized",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_recall_comparison_all",
+              "claim_sn_larger_deltas"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Few-SN queries are most penalized by traditional recall",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall better reflects search quality as perceived by end users compared to traditional recall. For top-100 search with ScaNN: semantic recall = 0.903 vs. traditional recall = 0.762 for queries with few SNs. For top-20 search: semantic recall = 0.901 vs. traditional recall = 0.869. The higher semantic recall scores reflect that the ANNS algorithm is actually retrieving most of the relevant results [@Kuffo2026].",
+      "content_hash": "68ee93f7016b36adc8bea33e53170e4e0b39803fdddbec2799911802cf2b3c20",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20417::claim_srecall_better_end_user",
+      "label": "claim_srecall_better_end_user",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_few_sn_penalized",
+              "claim_recall_comparison_all"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Semantic recall better reflects end-user experience",
+      "type": "claim"
+    },
+    {
+      "content": "R-precision (which retrieves the top-$R$ results for a query with $R$ relevant objects) inadvertently penalizes ANNS algorithms for embedding model shortcomings. For example, if a query has $R = 3$ semantic neighbors and the third-ranked SN is ranked 4th in the exact NNS ground truth, R-precision counts this as an error even though exact NNS cannot retrieve it in the top-3. Semantic recall avoids this by allowing relevant documents to appear anywhere within the top-$k$ results. The rank-biserial correlation between ground-truth rank and semantic relevance is $-0.72$ ($p \\approx 0$) for queries with SN < 20, confirming the alignment is negative but imperfect [@Kuffo2026].",
+      "content_hash": "a9837f10ab73691b79a351720f3cebfc83c986a4f21b3d89989f71b6281a8dd3",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_20417::claim_rprecision_limitation",
+      "label": "claim_rprecision_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_anns_bounded_by_exact"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "R-precision limitation vs semantic recall",
+      "type": "claim"
+    },
+    {
+      "content": "8-bit scalar quantization introduces small relative score errors that can reorder near-equidistant irrelevant neighbors, causing traditional recall penalties. This effect is observed across MSMARCO, GloVe [@GloVe2014], and BigANN [@BigANN2022] datasets (Figure 4, artifacts/2604.20417.pdf). Tolerant recall mitigates this by allowing score-proximate replacements; semantic recall avoids it by considering only relevant results.",
+      "content_hash": "276c455e057dbeab1813c29ae504a62a8d04a9343aa45ad4afebc08d55308ec0",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_20417::claim_quantization_reorders_irrelevant",
+      "label": "claim_quantization_reorders_irrelevant",
+      "metadata": {
+        "caption": "Distribution of error % between full precision and 8-bit quantization scores",
+        "figure": "artifacts/2604.20417.pdf, Figure 4",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "BigANN2022",
+              "GloVe2014",
+              "Quantization2025"
+            ],
+            "referenced_claims": [
+              "claim_irrelevant_equidistant",
+              "claim_sn_larger_deltas"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Quantization artifacts reorder irrelevant neighbors",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall correctly captures retrieval quality because it excludes irrelevant neighbors from its denominator, making it insensitive to the near-equidistance of irrelevant objects.",
+      "content_hash": "1e52eaf5a3bdc67656bd6bcc910a13b4015e5a3dc1b80209b52f6da71c185b64",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_20417::h_srecall_correct",
+      "label": "h_srecall_correct",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "The paper's main thesis: semantic recall correctly captures retrieval quality. Prior reflects the strength of the motivation and existing work on retrieval quality; not fully established until the empirical results are accepted."
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Hypothesis: semantic recall is the correct quality metric",
+      "type": "claim"
+    },
+    {
+      "content": "Traditional recall is an equally valid measure of retrieval quality: both relevant and irrelevant nearest neighbors should be penalized equally when missed, because mathematical proximity is a valid proxy for semantic relevance.",
+      "content_hash": "2f335092fc6a77d4da15eb4cb1333decd808e7f54ca9d101439a65c9191b7da0",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_20417::alt_traditional_valid",
+      "label": "alt_traditional_valid",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The alternative that traditional recall is equally valid. Prior is low because the paper's motivation section provides strong theoretical grounds for why it is misaligned. The 0.25 reflects the possibility that this view has merit in some scenarios (e.g., when all results are relevant)."
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Alternative: traditional recall is equally valid",
+      "type": "claim"
+    },
+    {
+      "content": "For MSMARCO queries with fewer than 20 semantic neighbors (SN < 20), traditional recall = 0.762 while semantic recall = 0.903, a gap of 0.141. This gap is absent for queries with many SNs (SN ≥ 80: 0.976 vs. 0.978).",
+      "content_hash": "b9ca5fb695ac412841d062f91ebd366f11669de7944b5e685ed1d36a2b6ffc8c",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_20417::obs_recall_gap",
+      "label": "obs_recall_gap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_traditional_valid",
+              "h_srecall_correct",
+              "obs_recall_gap"
+            ]
+          }
+        }
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "title": "Observed recall gap for few-SN queries",
+      "type": "claim"
+    },
+    {
+      "content": "If semantic recall correctly captures quality (@h_srecall_correct), then semantic recall scores should be substantially higher than traditional recall for few-SN queries, because traditional recall penalizes missed irrelevant near-equidistant neighbors that semantic recall ignores.",
+      "content_hash": "56aac230d43649a59c7048a7135e6df9a6ea90d42b0d90411bb31889eb5799ab",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_20417::pred_h_metric",
+      "label": "pred_h_metric",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "h_srecall_correct"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "The prediction that semantic recall will score higher for few-SN queries if it is the correct metric. This prediction follows directly from the semantic recall mechanism; high confidence it would be correct if the hypothesis holds."
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "If traditional recall is equally valid (@alt_traditional_valid), then traditional and semantic recall should yield similar scores across all query types, with no systematic advantage for semantic recall on few-SN queries.",
+      "content_hash": "de7014667e613e9ccdcc61ee37d8165c38ed4448a94cfa8bef3ca469867f546e",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_20417::pred_alt_metric",
+      "label": "pred_alt_metric",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_traditional_valid"
+            ]
+          }
+        },
+        "prior": 0.2,
+        "prior_justification": "The prediction that traditional and semantic recall would be similar if traditional recall is equally valid. Low prior because even a casual inspection of the mechanism suggests a gap would occur for few-SN queries."
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(If semantic recall correctly captures quality (@h_srecall_correct), then semantic recall scores should be substantially higher than traditional recall for few-SN queries, because traditional recall penalizes missed irrelevant near-equidistant neighbors that semantic recall ignores., If traditional recall is equally valid (@alt_traditional_valid), then traditional and semantic recall should yield similar scores across all query types, with no systematic advantage for semantic recall on few-SN queries., For MSMARCO queries with fewer than 20 semantic neighbors (SN < 20), traditional recall = 0.762 while semantic recall = 0.903, a gap of 0.141. This gap is absent for queries with many SNs (SN ≥ 80: 0.976 vs. 0.978).)",
+      "content_hash": "e4e6df30f092d488a9a3cd59b17e692e63f49107805088ad0343645723b41b39",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2604_20417::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "alt_traditional_valid",
+              "h_srecall_correct"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Tuning experiment setup: Google Vizier [@Vizier2017] used to optimize ScaNN [@ScaNN2020] hyperparameters on MSMARCO, minimizing 'bytes read' (which closely correlates with the number of inner product computations [@ScaNN2020]) subject to a fixed target recall value. CPU cost of query processing used as the final performance measure.",
+      "content_hash": "27c748523987e877f54c0334fb23cf5e4ee31a5c7f41bcea458fd57d3017954c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::setup_tuning_exp",
+      "label": "setup_tuning_exp",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ScaNN2020",
+              "Vizier2017"
+            ]
+          }
+        }
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Hyperparameter tuning experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Tuning ScaNN [@ScaNN2020] for a target traditional recall of 98% on MSMARCO using Google Vizier [@Vizier2017] yields a Pareto-optimal configuration that achieves: traditional recall = 98%, tolerant recall = 98.69%, semantic recall = 98.93%. This configuration serves as the baseline for cost comparisons [@Kuffo2026].",
+      "content_hash": "c525201e8668eb6f0f5dd1ccd421c36db2b82c77f1ffa982948f322ad505ccfb",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::claim_tuning_baseline",
+      "label": "claim_tuning_baseline",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026",
+              "ScaNN2020",
+              "Vizier2017"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly measured: ScaNN tuned via Google Vizier for 98% traditional recall achieves 98%, 98.69% tolerant, 98.93% semantic recall. Direct experimental result."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Tuning baseline: 98% traditional recall configuration",
+      "type": "claim"
+    },
+    {
+      "content": "Re-tuning ScaNN for a target tolerant recall of 98.69% (matching the baseline tolerant recall level) yields a configuration with the same tolerant recall at 5% lower search cost compared to the traditional-recall-tuned baseline [@Kuffo2026].",
+      "content_hash": "55ae3d94a14501bc32f3e4057bcfa3edebf4a350aaade8296201aa8b7d365204",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_20417::claim_tuning_tolerant_saves_5pct",
+      "label": "claim_tuning_tolerant_saves_5pct",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_non_sn_harder_to_retrieve",
+              "claim_tuning_baseline"
+            ]
+          }
+        }
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Tuning for tolerant recall saves 5% cost at same quality",
+      "type": "claim"
+    },
+    {
+      "content": "Re-tuning ScaNN for a target semantic recall of 98.93% (matching the baseline semantic recall level) yields a configuration that preserves semantic recall while reducing search cost by 14% compared to the traditional-recall-tuned baseline [@Kuffo2026].",
+      "content_hash": "716130725ae3e47f9c42bb892c247bc68bd3ae1dbb56c0029dfa6268794367fb",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_20417::claim_tuning_semantic_saves_14pct",
+      "label": "claim_tuning_semantic_saves_14pct",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_non_sn_harder_to_retrieve",
+              "claim_tuning_baseline"
+            ]
+          }
+        }
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Tuning for semantic recall saves 14% cost at same quality",
+      "type": "claim"
+    },
+    {
+      "content": "Tuning for a 95% target using tolerant recall instead of traditional recall yields the following cost reductions (compared to tuning for 95% traditional recall):\n\n| Dataset | Cost Reduction |\n|---------|----------------|\n| BigANN (1B vectors, 128-dim) | ~25% |\n| GloVe (1M vectors, 100-dim)  | ~5%  |\n| MSMARCO                       | ~35% |\n\nThese gains arise because non-semantic neighbors are harder to retrieve in partition-based indexes: they require exploring additional partitions, increasing search effort without improving semantic quality [@Kuffo2026].",
+      "content_hash": "64c3d3489f421c0271cf123de87372480f8bb7e51b1001f01040c1ee7a5ea78d",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_20417::claim_tuning_95pct_target",
+      "label": "claim_tuning_95pct_target",
+      "metadata": {
+        "caption": "Recall vs cost: Cost rises sharply as recall increases",
+        "figure": "artifacts/2604.20417.pdf, Figure 5",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_cost_rises_sharply",
+              "claim_non_sn_harder_to_retrieve"
+            ]
+          }
+        }
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "95% tolerant recall tuning: 5-35% cost reduction across datasets",
+      "type": "claim"
+    },
+    {
+      "content": "Search cost rises sharply as recall approaches 1.0 (Figure 5, artifacts/2604.20417.pdf). This super-linear cost-recall relationship means that even small reductions in the target recall (e.g., by using a metric that accurately represents semantic quality rather than mathematical exactness) yield substantial compute cost savings.",
+      "content_hash": "3834ba928a49c3d46abefa86478c013dcf5e1aa62bf2737d9c514e155b9a53c2",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20417::claim_cost_rises_sharply",
+      "label": "claim_cost_rises_sharply",
+      "metadata": {
+        "caption": "Figure 5: Recall vs cost curve",
+        "figure": "artifacts/2604.20417.pdf, Figure 5",
+        "prior": 0.88,
+        "prior_justification": "Visible in Figure 5 (cost-recall curve shows super-linear growth near high recall). Well-established property of ANNS cost-recall tradeoffs, consistent with prior work."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Cost-recall curve is super-linear near high recall",
+      "type": "claim"
+    },
+    {
+      "content": "Non-semantic neighbors are harder to retrieve than semantic neighbors in partition-based ANNS indexes (e.g., ScaNN [@ScaNN2020]). Because non-SNs are nearly equidistant and not strongly associated with any partition, retrieving them requires exploring additional partitions beyond what would suffice to retrieve all SNs. This is the mechanism by which tuning for semantic or tolerant recall yields cost savings.",
+      "content_hash": "2315f41ea8da3b768538f273edaebf031ac30abbd184294151c808fa5e54d0ec",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20417::claim_non_sn_harder_to_retrieve",
+      "label": "claim_non_sn_harder_to_retrieve",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ScaNN2020"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Stated by the authors as the mechanism explaining cost savings from semantic recall tuning. Plausible given the equidistance property, but not directly measured with an ablation study."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Non-semantic neighbors are harder to retrieve (require more partitions)",
+      "type": "claim"
+    },
+    {
+      "content": "Tuning ScaNN for 95% tolerant recall (vs. 95% traditional recall) on BigANN (1 billion vectors, 128 dimensions) reduces search cost by approximately 25%.",
+      "content_hash": "82e97dada174dd986712a905d2076bc7ccb0dac3ea4cedfc69eeba512741e6ab",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20417::obs_bigann",
+      "label": "obs_bigann",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured cost reduction result (~25%) reported in the paper for BigANN (1B vectors) when switching from 95% traditional to 95% tolerant recall target."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Tuning ScaNN for 95% tolerant recall (vs. 95% traditional recall) on GloVe (1 million vectors, 100 dimensions) reduces search cost by approximately 5%.",
+      "content_hash": "c5f076b453dd22c78ba350b350a6ee83fb7c8fc7bc0ab84183b6784aa55121b8",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_20417::obs_glove",
+      "label": "obs_glove",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured cost reduction (~5%) reported for GloVe (1M vectors) when switching from 95% traditional to 95% tolerant recall target."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Tuning ScaNN for 95% tolerant recall (vs. 95% traditional recall) on MSMARCO (8.83 million documents, 3072 dimensions) reduces search cost by approximately 35%.",
+      "content_hash": "06bdc830edfc94383204be901a50594238e2a5a88287a2baee19ed5108cdffdd",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_20417::obs_msmarco_cost",
+      "label": "obs_msmarco_cost",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured cost reduction (~35%) reported for MSMARCO when switching from 95% traditional to 95% tolerant recall target."
+      },
+      "module": "s4b_tuning",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Across diverse datasets and scales, tuning ANNS hyperparameters for tolerant recall (or semantic recall) as the optimization objective rather than traditional recall consistently yields cost savings at the same semantic quality level, because non-semantic neighbors require disproportionately more search effort.",
+      "content_hash": "f540f238fc53e09c5c46b746a53456f239ffd1c78fe181f69cef20377f6be5d1",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_20417::law_tolerant_saves_cost",
+      "label": "law_tolerant_saves_cost",
+      "module": "s4b_tuning",
+      "parameters": [],
+      "title": "Tolerant/semantic recall tuning consistently saves cost",
+      "type": "claim"
+    },
+    {
+      "content": "MIRACL evaluation setup: 542,166 Thai-language documents embedded into 1024-dimensional vectors using Cohere Embed V3. Query set: 100 questions in Thai. Ground truth: top-20 nearest neighbors per query via brute-force inner product search. Semantic neighbor labels: Gemini 2.5 as judge. ANNS system: FAISS IVF index [@FAISS2025] (3000 partitions, 8-bit scalar quantization, probing 0.5% of clusters). Tolerant recall: 2% tolerance threshold.",
+      "content_hash": "ad7e925d3a0045249652ebdf100d4b80fd5cb02a53baa613f29580845aade446",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20417::setup_miracl_exp",
+      "label": "setup_miracl_exp",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "FAISS2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "MIRACL experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "The distribution of semantic neighbors per query in the MIRACL Thai-language dataset (100 queries, top-20 ground truth, Gemini 2.5 judge) follows a power-law-like behavior: 60% of queries have at most 4 semantic neighbors out of 20. This is similar in character to the MSMARCO distribution, where approximately 40% of queries have fewer than 15 semantic neighbors out of 100.",
+      "content_hash": "7a58bd697f20daf07bde00edc78814c9cdad5fcf8991cbd556a1f8d7a32faed0",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::claim_miracl_sn_powerlaw",
+      "label": "claim_miracl_sn_powerlaw",
+      "metadata": {
+        "caption": "Distribution of semantic neighbors per query in MIRACL",
+        "figure": "artifacts/2604.20417.pdf, Figure 6",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_few_relevant_common"
+            ]
+          }
+        }
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "MIRACL SN distribution is power-law (60% queries have ≤4 SNs)",
+      "type": "claim"
+    },
+    {
+      "content": "In the MIRACL dataset, semantic neighbors exhibit significantly larger score deltas than non-semantic neighbors: SN average delta = $0.05 \\pm 0.03$, non-SN average delta = $0.005 \\pm 0.008$. The 10× larger delta for SNs compared to non-SNs parallels the pattern observed in MSMARCO.",
+      "content_hash": "3fc47630f4d515fb6170bb89059ddf9a0dddd7ffbadcfb3488cb442af1350326",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20417::claim_miracl_sn_larger_deltas",
+      "label": "claim_miracl_sn_larger_deltas",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Directly measured: SN delta 0.05±0.03 vs. non-SN 0.005±0.008 in MIRACL. 10× difference is a clear empirical measurement."
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "MIRACL SN have 10× larger score deltas than non-SN",
+      "type": "claim"
+    },
+    {
+      "content": "On the MIRACL Thai dataset (100 queries, FAISS IVF index with 8-bit quantization, 2% tolerant recall threshold), the recall metrics compare as:\n\n| Metric             | Average Score |\n|--------------------|---------------|\n| Traditional recall | 0.75          |\n| Semantic recall    | 0.85          |\n| Tolerant recall    | 0.83          |\n\nAs in MSMARCO, queries with few SNs show low traditional recall while semantic recall confirms relevant results are retrieved.",
+      "content_hash": "675901e1eefb8ec20a373216777b18dba4500df99afebe859a7d46df0e216ec2",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20417::claim_miracl_recall_results",
+      "label": "claim_miracl_recall_results",
+      "metadata": {
+        "caption": "Per-query distribution of traditional, semantic, and tolerant recall on MIRACL",
+        "figure": "artifacts/2604.20417.pdf, Figure 7",
+        "prior": 0.92,
+        "prior_justification": "Directly measured experimental results: traditional=0.75, semantic=0.85, tolerant=0.83 on MIRACL Thai with FAISS IVF. Direct experimental measurement."
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "MIRACL recall comparison (traditional=0.75, semantic=0.85, tolerant=0.83)",
+      "type": "claim"
+    },
+    {
+      "content": "The MIRACL evaluation replicates the MSMARCO pattern: queries with few semantic neighbors exhibit low traditional recall while semantic recall confirms that the ANNS algorithm is retrieving the relevant results. This replication occurs across a different language (Thai vs. English), a different embedding model (Cohere Embed V3 vs. Gemini Embedding), a different ANNS system (FAISS IVF vs. ScaNN), and a different dataset scale (542K vs. 8.83M documents) [@Kuffo2026].",
+      "content_hash": "fae6670548a2d37195d80d4046978afb4083cbd3e992bc16f3326b29279f5a80",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20417::claim_miracl_replicates_pattern",
+      "label": "claim_miracl_replicates_pattern",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_miracl_recall_results",
+              "claim_miracl_sn_larger_deltas"
+            ]
+          }
+        }
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "MIRACL replicates MSMARCO pattern across language, model, and system",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall and tolerant recall are applicable across diverse embedding models, ANNS algorithms, languages, and data scales: demonstrated on MSMARCO (English, 8.83M docs, Gemini Embedding, ScaNN, 3072-dim) and MIRACL Thai (Thai, 542K docs, Cohere Embed V3, FAISS IVF, 1024-dim). The core mechanisms — near-equidistant non-SNs causing spurious traditional recall penalties — appear in both settings.",
+      "content_hash": "9a1af08d938dd5da45c91738d2f3dd1c94d83a4d6f271d7d0f73d04a1122a117",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_20417::claim_metrics_generalize",
+      "label": "claim_metrics_generalize",
+      "module": "s5_generalizability",
+      "parameters": [],
+      "title": "Semantic and tolerant recall generalize across models and datasets",
+      "type": "claim"
+    },
+    {
+      "content": "In MSMARCO (English, 8.83M docs, Gemini Embedding, ScaNN), semantic recall (0.932) substantially exceeds traditional recall (0.863) for all queries, and the gap is largest for few-SN queries (0.903 vs. 0.762).",
+      "content_hash": "2f78e472a2a61b9e36101927dc42bbb69ab5b3b5ab8623be79b6c99e0ced6496",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20417::obs_msmarco_srecall",
+      "label": "obs_msmarco_srecall",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Directly measured from Table 3: MSMARCO overall semantic recall = 0.932 vs. traditional recall = 0.863. High confidence from direct experimental measurement."
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "In MIRACL Thai (Thai, 542K docs, Cohere Embed V3, FAISS IVF), semantic recall (0.85) substantially exceeds traditional recall (0.75) for all queries, with queries having few SNs showing low traditional recall while semantic recall confirms relevant retrieval.",
+      "content_hash": "d4040ccf6b1748a052acca6df240ef0d8ecdd6f559963e1580ed5478a24ecee6",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20417::obs_miracl_srecall",
+      "label": "obs_miracl_srecall",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured on MIRACL Thai: semantic recall = 0.85 vs. traditional recall = 0.75. High confidence from direct experimental measurement."
+      },
+      "module": "s5_generalizability",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Optimizing ANNS hyperparameters for traditional recall is equivalent to optimizing for 'mathematical exactness at unnecessary extra retrieval cost': configurations selected for high traditional recall must incur extra search effort to retrieve near-equidistant irrelevant neighbors, which does not improve end-user experience. The long-tailed distributions of traditional recall reported in prior ANNS work [@DARTH2025; @VIBE2025] likely stem from queries with few or no relevant neighbors.",
+      "content_hash": "cd11128a8328c6d923afb3e5767dab48583c78112685111b2b614743e20ad405",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_20417::claim_traditional_optimizes_noise",
+      "label": "claim_traditional_optimizes_noise",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DARTH2025",
+              "VIBE2025"
+            ],
+            "referenced_claims": [
+              "claim_cost_rises_sharply",
+              "claim_few_sn_penalized"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Traditional recall tuning optimizes for noise",
+      "type": "claim"
+    },
+    {
+      "content": "The binary relevance judgment (Relevant / Not Relevant) used in semantic recall collapses uncertainty into a hard decision, delegating the confidence threshold to the judge. This simplification favors reproducibility and tractability, but richer graded judgments could capture more nuance. Errors in judgment are unavoidable, and correlations between the judge and the evaluated system may occur in some scenarios [@Kuffo2026].",
+      "content_hash": "c38502e46e39dfafc82045addeb070b81a50146234fec9743ad8e3139bbf6d6d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20417::claim_binary_relevance_simplification",
+      "label": "claim_binary_relevance_simplification",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Binary relevance assumption is a simplification",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-based semantic neighbor identification relies on the LLM's knowledge: for domain-specific datasets (e.g., specialized medical or legal corpora), the LLM may lack sufficient domain expertise, potentially requiring human expert validation. This limits the automation benefit of LLM judging for niche domains [@Kuffo2026].",
+      "content_hash": "3636ebbfd720d8ae9e99c22a40d01e4f49f78b21cb5f26443bb5ea7697afe9a9",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20417::claim_llm_domain_limitation",
+      "label": "claim_llm_domain_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "LLM judging limited for domain-specific datasets",
+      "type": "claim"
+    },
+    {
+      "content": "Future work should incorporate semantic recall and tolerant recall into early-termination mechanisms for ANNS [@DARTH2025], allowing search to stop once sufficient semantic neighbors have been retrieved rather than continuing to search for near-equidistant irrelevant neighbors.",
+      "content_hash": "d352d6540ae2a7c5ca1439caf0a78b281eece9885749991db0564ef5958a84b8",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20417::claim_future_early_termination",
+      "label": "claim_future_early_termination",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DARTH2025"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "Future work: semantic recall in early-termination ANNS",
+      "type": "claim"
+    },
+    {
+      "content": "ANNS evaluation can relax strict mathematical precision in favor of improved search efficiency without compromising retrieval quality more than previously thought, because performance losses that reshuffle only irrelevant results do not affect end-user experience. Semantic and tolerant recall enable developers to distinguish between meaningful performance losses (affecting relevant results) and noise (reshuffling irrelevant ones) [@Kuffo2026].",
+      "content_hash": "f394de5e8b117d0057bee16941ed5056f187215594bd7f68d9044c946f0f45ef",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_20417::claim_relaxing_precision",
+      "label": "claim_relaxing_precision",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_srecall_better_end_user",
+              "claim_tuning_semantic_saves_14pct",
+              "claim_tuning_tolerant_saves_5pct"
+            ]
+          }
+        }
+      },
+      "module": "s6_discussion",
+      "parameters": [],
+      "title": "ANNS evaluation can relax mathematical precision",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_few_relevant_common,github:2604_20417::claim_irrelevant_equidistant)",
+      "content_hash": "dba912afbf5509aa2a823d9313f41684f5a7f2f2b754972b415916e19bb8515f",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_4afd0587",
+      "label": "__conjunction_result_4afd0587",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_few_relevant_common,github:2604_20417::claim_irrelevant_equidistant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c3e61ff804352ac6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_4afd0587,github:2604_20417::claim_recall_misaligned)",
+      "content_hash": "de78965ba52eb1336e14499049bab5666a163671c516417bc3061072e3fd7960",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_e057e902",
+      "label": "__implication_result_e057e902",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_4afd0587,github:2604_20417::claim_recall_misaligned)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3e61ff804352ac6",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_curated_gt_unfair)",
+      "content_hash": "ccd4437573cc623f567e175eba92f071098bd70d1b426ce60227f57cb660f2d7",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_624b1006",
+      "label": "__implication_result_624b1006",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_curated_gt_unfair)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cba73856af9cfbee",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_srecall_no_penalty)",
+      "content_hash": "63b217b57a5040425112455d30f74ac6e1d99ca85170432cb461ffcd8e4d0384",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_6c4346c0",
+      "label": "__implication_result_6c4346c0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_srecall_no_penalty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d13bd1753b41f2d3",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_srecall_no_penalty,github:2604_20417::claim_recall_misaligned)",
+      "content_hash": "128649bc8bea1b22c9982cc0705a47f09251c3db1850b7a7e1984b7e638e8819",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_6b48ed03",
+      "label": "__conjunction_result_6b48ed03",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_srecall_no_penalty,github:2604_20417::claim_recall_misaligned)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_71c6330314231282",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_6b48ed03,github:2604_20417::claim_srecall_better_proxy)",
+      "content_hash": "a844297d5a2dbfb1564e69423de975f8a01c49e88af990388d5636151571e8a6",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_409ae3ed",
+      "label": "__implication_result_409ae3ed",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_6b48ed03,github:2604_20417::claim_srecall_better_proxy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_71c6330314231282",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_llm_judging_efficient,github:2604_20417::claim_srecall_no_penalty)",
+      "content_hash": "b40369a6823f324294c3f8ba0969d54b02ba8981a6a979cd7d567ebb91ca1ae2",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_384f8c92",
+      "label": "__implication_result_384f8c92",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_llm_judging_efficient,github:2604_20417::claim_srecall_no_penalty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_de8d9cd8dfff8c33",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_irrelevant_equidistant,github:2604_20417::claim_trecall_mitigates_quantization)",
+      "content_hash": "57325f28c1a9a3ace05e980de949a5ccdf5bfc43a1efb283a76e678675f92a9a",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_f8a184f8",
+      "label": "__implication_result_f8a184f8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_irrelevant_equidistant,github:2604_20417::claim_trecall_mitigates_quantization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0914aa578e7136b7",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_trecall_mitigates_quantization,github:2604_20417::claim_irrelevant_equidistant)",
+      "content_hash": "d503ce008e33a2ced645938700ea3799646b584e1ebff8ab311ede821b65730d",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_dc9d1c59",
+      "label": "__conjunction_result_dc9d1c59",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_trecall_mitigates_quantization,github:2604_20417::claim_irrelevant_equidistant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_490c24d649800991",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_dc9d1c59,github:2604_20417::claim_trecall_approximates_srecall)",
+      "content_hash": "5083c31e05ea1390878cd9e045446ebc5cbe22b2679eb66b0ea61d4644693170",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_fe2d8d59",
+      "label": "__implication_result_fe2d8d59",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_dc9d1c59,github:2604_20417::claim_trecall_approximates_srecall)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_490c24d649800991",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_irrelevant_equidistant,github:2604_20417::claim_threshold_proxy_effective)",
+      "content_hash": "6192c272830f9815bbfcbe9fe1d75f6c674dc3d6c810601a96e52e5be83f292c",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_38f76fd8",
+      "label": "__implication_result_38f76fd8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_irrelevant_equidistant,github:2604_20417::claim_threshold_proxy_effective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_15f344e4688c0d36",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_sn_higher_scores,github:2604_20417::claim_srecall_better_proxy)",
+      "content_hash": "e629bb1befbc9b02d9ca902d1a80aea19209d4e959682530ba98ca5f61563cbf",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_1ec5784b",
+      "label": "__implication_result_1ec5784b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_sn_higher_scores,github:2604_20417::claim_srecall_better_proxy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7174fa16e5135ec4",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_recall_comparison_all,github:2604_20417::claim_sn_larger_deltas)",
+      "content_hash": "2ae1b3e745981a784a9656aef3f7335c58002a922df2c0c4550dd97eacb9c074",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_141ad278",
+      "label": "__conjunction_result_141ad278",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_recall_comparison_all,github:2604_20417::claim_sn_larger_deltas)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c3f8b29cfeaa29a0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_141ad278,github:2604_20417::claim_few_sn_penalized)",
+      "content_hash": "b8bd1db74dc092cc3d182fee0bdabb1a414a09fa753288fd22ca9c96f5e387f9",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_ee61c67c",
+      "label": "__implication_result_ee61c67c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_141ad278,github:2604_20417::claim_few_sn_penalized)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3f8b29cfeaa29a0",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_recall_comparison_all,github:2604_20417::claim_few_sn_penalized)",
+      "content_hash": "b437cca1a644318e6bf225c6627e21423fc7ce3f2c5485f2ec55a5b9866fa7b2",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_f2866616",
+      "label": "__conjunction_result_f2866616",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_recall_comparison_all,github:2604_20417::claim_few_sn_penalized)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ea87cbed5f5495f0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_f2866616,github:2604_20417::claim_srecall_better_end_user)",
+      "content_hash": "1d34894af6efa4467f9c7d59e855596fd09a32383cbbd3d125729bc233deedbe",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_8cc7e6dd",
+      "label": "__implication_result_8cc7e6dd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_f2866616,github:2604_20417::claim_srecall_better_end_user)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ea87cbed5f5495f0",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_20417::pred_h_metric,github:2604_20417::obs_recall_gap)",
+      "content_hash": "cd7989ee7d770568c3820e57b2cea69ad3467750f8819e2408aaae3cfdd464f4",
+      "exported": false,
+      "id": "github:2604_20417::__equivalence_result_6c5ac4f8",
+      "label": "__equivalence_result_6c5ac4f8",
+      "metadata": {
+        "canonical_name": "matches(github:2604_20417::pred_h_metric,github:2604_20417::obs_recall_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_b57e46dec828c78b",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_20417::pred_alt_metric,github:2604_20417::obs_recall_gap)",
+      "content_hash": "d0e79c44ae882cf52ca1c6b389e0efe3fd11919142081a4e2fb7aa96001c82c3",
+      "exported": false,
+      "id": "github:2604_20417::__equivalence_result_fb49e317",
+      "label": "__equivalence_result_fb49e317",
+      "metadata": {
+        "canonical_name": "matches(github:2604_20417::pred_alt_metric,github:2604_20417::obs_recall_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_b57e46dec828c78b",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::h_srecall_correct,github:2604_20417::obs_recall_gap)",
+      "content_hash": "fda026cd970642bef629c6f4dce0dcf6fff65ef8ad596f6059b0361593c5a453",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_59d70c8d",
+      "label": "__implication_result_59d70c8d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::h_srecall_correct,github:2604_20417::obs_recall_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c4d77bd28d4628e4",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::alt_traditional_valid,github:2604_20417::obs_recall_gap)",
+      "content_hash": "e165a8d767109d7162e0f0cef419d9e746655d0bcb4f23362c627199416d5e7e",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_0416a362",
+      "label": "__implication_result_0416a362",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::alt_traditional_valid,github:2604_20417::obs_recall_gap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bbd24b222151c2e4",
+        "owning_strategy_type": "support",
+        "prior": 0.2,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_sn_larger_deltas,github:2604_20417::claim_irrelevant_equidistant)",
+      "content_hash": "678242530d7592d67d8566735d888a6d92ece931d3a80036e38d6a0667e93c23",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_ffd85952",
+      "label": "__conjunction_result_ffd85952",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_sn_larger_deltas,github:2604_20417::claim_irrelevant_equidistant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a5c789ed5f37dde8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_ffd85952,github:2604_20417::claim_quantization_reorders_irrelevant)",
+      "content_hash": "f6b7950397d5a67ffb962693a3a3487dc613ba0115c45d0dcfaa433fabc80744",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_004f293b",
+      "label": "__implication_result_004f293b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_ffd85952,github:2604_20417::claim_quantization_reorders_irrelevant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a5c789ed5f37dde8",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_rprecision_limitation)",
+      "content_hash": "8c3527e020d32b5a7fc6aad5c14961fc87cf0f6ead1df4186fba7e3708e662f5",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_660d5357",
+      "label": "__implication_result_660d5357",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_anns_bounded_by_exact,github:2604_20417::claim_rprecision_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c1b81e4aa41f9e19",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_cross_val_agreement,github:2604_20417::claim_llm_judging_efficient)",
+      "content_hash": "7264056222735d000bf4d77b47667a1615fb67516d9857fc7e5083529ae68ffa",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_abf1afbb",
+      "label": "__implication_result_abf1afbb",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_cross_val_agreement,github:2604_20417::claim_llm_judging_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_00efdf9cf74997fe",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_tuning_baseline,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+      "content_hash": "732fe137195ab7ea4dfd5bb374243ddcaee9cc515dc4e82357f63bd3b1160b5c",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_9cf57918",
+      "label": "__conjunction_result_9cf57918",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_tuning_baseline,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9dad6c42dc240850",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_9cf57918,github:2604_20417::claim_tuning_tolerant_saves_5pct)",
+      "content_hash": "821651fab302e00a20ad3e280fc230a5b19498d0b13bd07721e76f7f63699cee",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_a0d11498",
+      "label": "__implication_result_a0d11498",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_9cf57918,github:2604_20417::claim_tuning_tolerant_saves_5pct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9dad6c42dc240850",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_tuning_baseline,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+      "content_hash": "732fe137195ab7ea4dfd5bb374243ddcaee9cc515dc4e82357f63bd3b1160b5c",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_46e93039",
+      "label": "__conjunction_result_46e93039",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_tuning_baseline,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5ff250de967f2e74",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_46e93039,github:2604_20417::claim_tuning_semantic_saves_14pct)",
+      "content_hash": "ec4d243d7d90eefce1258656bb5392a61f6a7006afd86598db83fe5bd8c0f664",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_129ade8e",
+      "label": "__implication_result_129ade8e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_46e93039,github:2604_20417::claim_tuning_semantic_saves_14pct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5ff250de967f2e74",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_cost_rises_sharply,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+      "content_hash": "deffef86bf7b2ff4d51c72b4e73149ee10f94537b1396e2ab2e203403ea4c17e",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_29547858",
+      "label": "__conjunction_result_29547858",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_cost_rises_sharply,github:2604_20417::claim_non_sn_harder_to_retrieve)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0347b80156d9e2b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_29547858,github:2604_20417::claim_tuning_95pct_target)",
+      "content_hash": "de5111cc170088a5dd4229b8f491353c86d78df5723b17cfccff063b71e38d0d",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_576b4b68",
+      "label": "__implication_result_576b4b68",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_29547858,github:2604_20417::claim_tuning_95pct_target)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0347b80156d9e2b",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_bigann)",
+      "content_hash": "976f5eda5056675afbbf79ec1f43084ecb4193395c01ac59f90b67445baba48e",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_21ec49da",
+      "label": "__implication_result_21ec49da",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_bigann)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e52bee73917757b2",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_glove)",
+      "content_hash": "638bdc10d2c267426ae65c2cfac97d7470faee103f253478d2921fc55544baf5",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_a56012cd",
+      "label": "__implication_result_a56012cd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_glove)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_041a054ca20fa452",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_msmarco_cost)",
+      "content_hash": "0f6c883b1671e8d47915a1ce0a886af9c829039d04e01c14e0e2940dda050e5e",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_bf4fe074",
+      "label": "__implication_result_bf4fe074",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::law_tolerant_saves_cost,github:2604_20417::obs_msmarco_cost)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14e5887e9574c226",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_few_relevant_common,github:2604_20417::claim_miracl_sn_powerlaw)",
+      "content_hash": "d1f49b11ae3d1916e6ddca63f9ca91d5999fb7662e283822b637abbb9570d6da",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_f10f1598",
+      "label": "__implication_result_f10f1598",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_few_relevant_common,github:2604_20417::claim_miracl_sn_powerlaw)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3ef7b9a24df7ec26",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_miracl_recall_results,github:2604_20417::claim_miracl_sn_larger_deltas)",
+      "content_hash": "74ac21d11d6e0722ae5afdba1851a808e22a03b5b318b0a935b13f8374b70ef7",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_58a13e29",
+      "label": "__conjunction_result_58a13e29",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_miracl_recall_results,github:2604_20417::claim_miracl_sn_larger_deltas)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_440fa72b5f094ac9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_58a13e29,github:2604_20417::claim_miracl_replicates_pattern)",
+      "content_hash": "c61e35f8fc52cb7f3bfb11400d2d2a3a079acb0411adbc3cec2cc968e80158eb",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_50389cb0",
+      "label": "__implication_result_50389cb0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_58a13e29,github:2604_20417::claim_miracl_replicates_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_440fa72b5f094ac9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_metrics_generalize,github:2604_20417::obs_msmarco_srecall)",
+      "content_hash": "f8ee6c069882097d85bf2e20535a6b98e87b83eabcee71e3ef4e4ade78d8ea21",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_faa1268b",
+      "label": "__implication_result_faa1268b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_metrics_generalize,github:2604_20417::obs_msmarco_srecall)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f1d9498fde741193",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::claim_metrics_generalize,github:2604_20417::obs_miracl_srecall)",
+      "content_hash": "71fc939871e2c637241618d06c18595880760d10f2b0a3d71f9e05b78a7bd60a",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_5e61f5d6",
+      "label": "__implication_result_5e61f5d6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::claim_metrics_generalize,github:2604_20417::obs_miracl_srecall)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1bad7142dce9b2b5",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_few_sn_penalized,github:2604_20417::claim_cost_rises_sharply)",
+      "content_hash": "8b7943ec5cf233e643bb4525c1c69af946b06e5c99573c363bd3f97dcfa5fbd7",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_a0d09a7e",
+      "label": "__conjunction_result_a0d09a7e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_few_sn_penalized,github:2604_20417::claim_cost_rises_sharply)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cc4df356c089dcb7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_a0d09a7e,github:2604_20417::claim_traditional_optimizes_noise)",
+      "content_hash": "1ac970cad94fa130b5174c083b7315f2da8d1ae1ac4bda98221027b8276f5344",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_721672aa",
+      "label": "__implication_result_721672aa",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_a0d09a7e,github:2604_20417::claim_traditional_optimizes_noise)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cc4df356c089dcb7",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20417::claim_tuning_semantic_saves_14pct,github:2604_20417::claim_tuning_tolerant_saves_5pct,github:2604_20417::claim_srecall_better_end_user)",
+      "content_hash": "353c8fa25294a297db48b1cc17ad5f5d1116e6e7c09a8029d63d420f63bccfef",
+      "exported": false,
+      "id": "github:2604_20417::__conjunction_result_8fd1ae40",
+      "label": "__conjunction_result_8fd1ae40",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20417::claim_tuning_semantic_saves_14pct,github:2604_20417::claim_tuning_tolerant_saves_5pct,github:2604_20417::claim_srecall_better_end_user)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5e68a7a2becf1dc9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20417::__conjunction_result_8fd1ae40,github:2604_20417::claim_relaxing_precision)",
+      "content_hash": "0f0b02a1b848e792c2b69193d6f173cf800feb9e26657db940efefa2e816ec90",
+      "exported": false,
+      "id": "github:2604_20417::__implication_result_449ef15a",
+      "label": "__implication_result_449ef15a",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20417::__conjunction_result_8fd1ae40,github:2604_20417::claim_relaxing_precision)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5e68a7a2becf1dc9",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_semantic_recall",
+    "s3_tolerant_recall",
+    "s4_evaluation",
+    "s4b_tuning",
+    "s5_generalizability",
+    "s6_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Motivation and Problem Statement",
+    "s2_semantic_recall": "Section 2: Semantic Recall — Definition and Methodology",
+    "s3_tolerant_recall": "Section 3: Tolerant Recall — Proxy Metric Definition",
+    "s4_evaluation": "Section 4: Evaluation — MSMARCO Experiments",
+    "s4b_tuning": "Section 4.3: Tuning for Semantic Recall — Cost-Quality Tradeoffs",
+    "s5_generalizability": "Section 5: Generalizability — MIRACL Dataset Evaluation",
+    "s6_discussion": "Section 6-7: Discussion and Conclusions"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_20417::not_both_metrics",
+      "metadata": {
+        "reason": "Traditional recall cannot simultaneously be the correct metric for semantic quality (widespread-use assumption) and be systematically misaligned with semantic quality — this tension is the paper's central motivation for new metrics."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_0ff76e80246fb2df",
+      "scope": "local",
+      "variables": [
+        "github:2604_20417::claim_recall_widespread",
+        "github:2604_20417::claim_recall_misaligned"
+      ]
+    }
+  ],
+  "package_name": "2604_20417",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_20417::setup_recall",
+        "github:2604_20417::setup_anns"
+      ],
+      "conclusion": "github:2604_20417::claim_recall_misaligned",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_4afd0587",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_few_relevant_common",
+              "github:2604_20417::claim_irrelevant_equidistant"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_e057e902",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_4afd0587",
+              "github:2604_20417::claim_recall_misaligned"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "When queries have few relevant results (@claim_few_relevant_common), the ground truth is dominated by irrelevant neighbors. Because irrelevant neighbors are nearly equidistant (@claim_irrelevant_equidistant), ANNS algorithms frequently fail to retrieve some of them due to ranking fluctuations, incurring traditional recall penalties. These penalties reflect noise rather than real quality loss, demonstrating the misalignment of traditional recall with the semantic retrieval goal [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_few_relevant_common",
+        "github:2604_20417::claim_irrelevant_equidistant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c3e61ff804352ac6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_embedding"
+      ],
+      "conclusion": "github:2604_20417::claim_curated_gt_unfair",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_624b1006",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_anns_bounded_by_exact",
+              "github:2604_20417::claim_curated_gt_unfair"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Since ANNS is bounded by exact NNS (@claim_anns_bounded_by_exact), any curated ground truth item that exact NNS cannot retrieve represents a limitation of the embedding model, not of the ANNS algorithm. Penalizing ANNS for this conflates two distinct failure modes: embedding model failure vs. approximation algorithm failure [@EmbedLimits2025]."
+      },
+      "premises": [
+        "github:2604_20417::claim_anns_bounded_by_exact"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cba73856af9cfbee",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_srecall",
+        "github:2604_20417::defn_semantic_neighbors"
+      ],
+      "conclusion": "github:2604_20417::claim_srecall_no_penalty",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_6c4346c0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_anns_bounded_by_exact",
+              "github:2604_20417::claim_srecall_no_penalty"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "By construction (see @defn_srecall), semantic recall's denominator contains only semantically relevant objects that appear in the exact NNS ground truth. Because ANNS is bounded by exact NNS (@claim_anns_bounded_by_exact), all $SN$ members are theoretically retrievable. Missing a non-$SN$ object incurs no penalty. This directly follows from the definition, requiring no empirical validation [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_anns_bounded_by_exact"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d13bd1753b41f2d3",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_anns"
+      ],
+      "conclusion": "github:2604_20417::claim_srecall_better_proxy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_6b48ed03",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_srecall_no_penalty",
+              "github:2604_20417::claim_recall_misaligned"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_409ae3ed",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_6b48ed03",
+              "github:2604_20417::claim_srecall_better_proxy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because semantic recall does not penalize for irrelevant neighbors (@claim_srecall_no_penalty) and traditional recall does (@claim_recall_misaligned), semantic recall more closely tracks the quality that matters to end users: retrieving relevant objects. The empirical evidence in Section 4 corroborates this reasoning [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_srecall_no_penalty",
+        "github:2604_20417::claim_recall_misaligned"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_71c6330314231282",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_judging_process"
+      ],
+      "conclusion": "github:2604_20417::claim_srecall_no_penalty",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_384f8c92",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_llm_judging_efficient",
+              "github:2604_20417::claim_srecall_no_penalty"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The efficiency of LLM-based judging (@claim_llm_judging_efficient) makes it practically feasible to obtain semantic neighbor labels, which is a prerequisite for computing semantic recall. Without an efficient judging method, the operational advantage of semantic recall would be undermined by annotation cost [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_llm_judging_efficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_de8d9cd8dfff8c33",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_trecall"
+      ],
+      "conclusion": "github:2604_20417::claim_trecall_mitigates_quantization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_f8a184f8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_irrelevant_equidistant",
+              "github:2604_20417::claim_trecall_mitigates_quantization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "Because irrelevant neighbors cluster at nearly the same score (@claim_irrelevant_equidistant), small quantization errors easily reorder them. The tolerant recall tolerance band covers this score gap, allowing retrieved items to substitute for ground-truth items within the band. Semantic recall avoids this issue entirely by ignoring irrelevant neighbors [@Quantization2025]."
+      },
+      "premises": [
+        "github:2604_20417::claim_irrelevant_equidistant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0914aa578e7136b7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_trecall",
+        "github:2604_20417::defn_srecall"
+      ],
+      "conclusion": "github:2604_20417::claim_trecall_approximates_srecall",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_dc9d1c59",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_trecall_mitigates_quantization",
+              "github:2604_20417::claim_irrelevant_equidistant"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_fe2d8d59",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_dc9d1c59",
+              "github:2604_20417::claim_trecall_approximates_srecall"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "Because tolerant recall absorbs score perturbations among near-equidistant irrelevant neighbors (@claim_trecall_mitigates_quantization, @claim_irrelevant_equidistant), its replacements occur mostly among irrelevant objects, which are also the objects excluded from semantic recall's denominator. This structural alignment causes tolerant recall to track semantic recall empirically [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_trecall_mitigates_quantization",
+        "github:2604_20417::claim_irrelevant_equidistant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_490c24d649800991",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_threshold_proxy"
+      ],
+      "conclusion": "github:2604_20417::claim_threshold_proxy_effective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_38f76fd8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_irrelevant_equidistant",
+              "github:2604_20417::claim_threshold_proxy_effective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Irrelevant neighbors cluster at nearly the same score (@claim_irrelevant_equidistant). The lower-ranked neighbors (around the $\\frac{2}{3}k$ to $k$ range) are dominated by such near-equidistant irrelevant items. Their score gap thus captures the scale of score fluctuations needed to substitute irrelevant items, which is exactly what the tolerance threshold is meant to cover [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_irrelevant_equidistant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_15f344e4688c0d36",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_srecall_better_proxy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_1ec5784b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_sn_higher_scores",
+              "github:2604_20417::claim_srecall_better_proxy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The fact that semantic neighbors have higher average similarity scores than non-semantic neighbors (@claim_sn_higher_scores) implies that the embedding model does capture semantic relevance to a meaningful degree. This supports the validity of using exact NNS as a filter: it selects the most relevant items from the corpus, and semantic recall measures retrieval of those items."
+      },
+      "premises": [
+        "github:2604_20417::claim_sn_higher_scores"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7174fa16e5135ec4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_few_sn_penalized",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_141ad278",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_recall_comparison_all",
+              "github:2604_20417::claim_sn_larger_deltas"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_ee61c67c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_141ad278",
+              "github:2604_20417::claim_few_sn_penalized"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The recall comparison table (@claim_recall_comparison_all) shows the largest gap between traditional and semantic recall for queries with SN < 20 (0.762 vs. 0.903). The large score deltas among SNs and small deltas among non-SNs (@claim_sn_larger_deltas) explain this: for few-SN queries, most of the top-100 neighbors are irrelevant and near-equidistant, causing frequent ANNS misses penalized by traditional recall but not by semantic recall [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_recall_comparison_all",
+        "github:2604_20417::claim_sn_larger_deltas"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c3f8b29cfeaa29a0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_srecall_better_end_user",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_f2866616",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_recall_comparison_all",
+              "github:2604_20417::claim_few_sn_penalized"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_8cc7e6dd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_f2866616",
+              "github:2604_20417::claim_srecall_better_end_user"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The recall comparison (@claim_recall_comparison_all) shows semantic recall consistently closer to 1.0 than traditional recall, particularly for few-SN queries (@claim_few_sn_penalized). Since few-SN queries are the ones most penalized by irrelevant-neighbor noise, the higher semantic recall reflects that the ANNS algorithm does find the relevant content — the traditional recall penalty was noise [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_recall_comparison_all",
+        "github:2604_20417::claim_few_sn_penalized"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ea87cbed5f5495f0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__equivalence_result_6c5ac4f8",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_20417::pred_h_metric",
+              "github:2604_20417::obs_recall_gap"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__equivalence_result_fb49e317",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_20417::pred_alt_metric",
+              "github:2604_20417::obs_recall_gap"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__equivalence_result_fb49e317",
+              "github:2604_20417::__equivalence_result_6c5ac4f8"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.91,
+        "reason": "The observed gap of 0.141 for few-SN queries and its absence for high-SN queries matches exactly what the semantic recall hypothesis predicts and is incompatible with the traditional recall equivalence hypothesis [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::pred_h_metric",
+        "github:2604_20417::pred_alt_metric",
+        "github:2604_20417::obs_recall_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b57e46dec828c78b",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_recall_gap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_59d70c8d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::h_srecall_correct",
+              "github:2604_20417::obs_recall_gap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "If @h_srecall_correct, the near-equidistance of irrelevant neighbors causes traditional recall penalties for few-SN queries that semantic recall avoids, predicting the observed recall gap (@obs_recall_gap)."
+      },
+      "premises": [
+        "github:2604_20417::h_srecall_correct"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c4d77bd28d4628e4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_recall_gap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_0416a362",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::alt_traditional_valid",
+              "github:2604_20417::obs_recall_gap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.2,
+        "reason": "If @alt_traditional_valid, both metrics should track similarly since all nearest neighbors are equally weighted — this alternative cannot explain the observed 0.141 gap for few-SN queries."
+      },
+      "premises": [
+        "github:2604_20417::alt_traditional_valid"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bbd24b222151c2e4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::_anon_000",
+      "metadata": {
+        "reason": "Both hypotheses attempt to explain the observed recall gap for few-SN queries. Semantic recall's mechanism directly predicts this gap; the traditional recall equivalence view cannot account for it."
+      },
+      "premises": [
+        "github:2604_20417::h_srecall_correct",
+        "github:2604_20417::alt_traditional_valid",
+        "github:2604_20417::pred_h_metric",
+        "github:2604_20417::pred_alt_metric",
+        "github:2604_20417::obs_recall_gap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_74820ef1162524f5",
+      "sub_strategies": [
+        "lcs_c4d77bd28d4628e4",
+        "lcs_bbd24b222151c2e4",
+        "lcs_b57e46dec828c78b"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_quantization_reorders_irrelevant",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_ffd85952",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_sn_larger_deltas",
+              "github:2604_20417::claim_irrelevant_equidistant"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_004f293b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_ffd85952",
+              "github:2604_20417::claim_quantization_reorders_irrelevant"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "Since non-SNs have consistently small score deltas (@claim_sn_larger_deltas, @claim_irrelevant_equidistant), quantization errors (even small ones) are sufficient to reorder them. This reordering causes traditional recall penalties since ground-truth positions shift. Tolerant recall absorbs these small reorderings; semantic recall ignores non-SNs entirely [@Quantization2025]."
+      },
+      "premises": [
+        "github:2604_20417::claim_sn_larger_deltas",
+        "github:2604_20417::claim_irrelevant_equidistant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a5c789ed5f37dde8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::defn_srecall"
+      ],
+      "conclusion": "github:2604_20417::claim_rprecision_limitation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_660d5357",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_anns_bounded_by_exact",
+              "github:2604_20417::claim_rprecision_limitation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "R-precision assumes the ground-truth rank aligns with semantic relevance. But since ANNS is bounded by exact NNS (@claim_anns_bounded_by_exact), a semantically relevant item ranked 4th in exact NNS cannot be retrieved in the top-3 by any ANNS algorithm. R-precision treats this as a penalty even though it is physically impossible to avoid. Semantic recall's denominator ($SN$) only includes items within the top-$k$ window, so it cannot penalize for items the algorithm is incapable of retrieving [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_anns_bounded_by_exact"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c1b81e4aa41f9e19",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_llm_judging_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_abf1afbb",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_cross_val_agreement",
+              "github:2604_20417::claim_llm_judging_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Inter-judge agreement of 91.1% ($\\kappa = 0.82$) between Gemini and Claude Haiku (@claim_cross_val_agreement) demonstrates that LLM-based judging is reliable and consistent across model families. This validates the judging methodology used to produce the semantic neighbor labels upon which all semantic recall results depend [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_cross_val_agreement"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_00efdf9cf74997fe",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_tuning_exp"
+      ],
+      "conclusion": "github:2604_20417::claim_tuning_tolerant_saves_5pct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_9cf57918",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_tuning_baseline",
+              "github:2604_20417::claim_non_sn_harder_to_retrieve"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_a0d11498",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_9cf57918",
+              "github:2604_20417::claim_tuning_tolerant_saves_5pct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Starting from the baseline configuration tuned for 98% traditional recall (@claim_tuning_baseline), re-tuning for 98.69% tolerant recall (the same tolerant recall the baseline already achieves) allows the optimizer to find configurations that skip unnecessary retrieval of near-equidistant irrelevant neighbors (@claim_non_sn_harder_to_retrieve). The 5% cost reduction directly demonstrates that the baseline wastes effort on such neighbors [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_tuning_baseline",
+        "github:2604_20417::claim_non_sn_harder_to_retrieve"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9dad6c42dc240850",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_tuning_exp"
+      ],
+      "conclusion": "github:2604_20417::claim_tuning_semantic_saves_14pct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_46e93039",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_tuning_baseline",
+              "github:2604_20417::claim_non_sn_harder_to_retrieve"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_129ade8e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_46e93039",
+              "github:2604_20417::claim_tuning_semantic_saves_14pct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Starting from the baseline (@claim_tuning_baseline), tuning for 98.93% semantic recall (the same semantic recall the baseline achieves) allows the optimizer to avoid the extra partition exploration required by non-SNs (@claim_non_sn_harder_to_retrieve). The 14% cost reduction (larger than the 5% from tolerant tuning) reflects that semantic recall more precisely excludes non-SNs from the objective function [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_tuning_baseline",
+        "github:2604_20417::claim_non_sn_harder_to_retrieve"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5ff250de967f2e74",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_tuning_exp"
+      ],
+      "conclusion": "github:2604_20417::claim_tuning_95pct_target",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_29547858",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_cost_rises_sharply",
+              "github:2604_20417::claim_non_sn_harder_to_retrieve"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_576b4b68",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_29547858",
+              "github:2604_20417::claim_tuning_95pct_target"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because cost rises sharply at high recall (@claim_cost_rises_sharply) and non-SNs require extra retrieval effort (@claim_non_sn_harder_to_retrieve), switching the 95% target from traditional to tolerant recall shifts the effective operating point leftward on the cost-recall curve, yielding disproportionate cost savings. The larger savings on MSMARCO vs. GloVe reflect more severe few-SN query distributions in MSMARCO [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_cost_rises_sharply",
+        "github:2604_20417::claim_non_sn_harder_to_retrieve"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0347b80156d9e2b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_bigann",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_21ec49da",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::law_tolerant_saves_cost",
+              "github:2604_20417::obs_bigann"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "law predicts BigANN cost savings from tolerant tuning"
+      },
+      "premises": [
+        "github:2604_20417::law_tolerant_saves_cost"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e52bee73917757b2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_glove",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_a56012cd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::law_tolerant_saves_cost",
+              "github:2604_20417::obs_glove"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "law predicts GloVe cost savings from tolerant tuning"
+      },
+      "premises": [
+        "github:2604_20417::law_tolerant_saves_cost"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_041a054ca20fa452",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_msmarco_cost",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_bf4fe074",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::law_tolerant_saves_cost",
+              "github:2604_20417::obs_msmarco_cost"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "law predicts MSMARCO cost savings from tolerant tuning"
+      },
+      "premises": [
+        "github:2604_20417::law_tolerant_saves_cost"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14e5887e9574c226",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::law_tolerant_saves_cost",
+      "metadata": {
+        "reason": "BigANN (1B, 128-dim) and GloVe (1M, 100-dim) are independent datasets with different scales"
+      },
+      "premises": [
+        "github:2604_20417::obs_bigann",
+        "github:2604_20417::obs_glove"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_29a6e38a345462f2",
+      "sub_strategies": [
+        "lcs_e52bee73917757b2",
+        "lcs_041a054ca20fa452"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_20417::law_tolerant_saves_cost",
+      "metadata": {
+        "reason": "MSMARCO (8.83M, 3072-dim) provides a third independent dataset confirming the law"
+      },
+      "premises": [
+        "github:2604_20417::obs_bigann",
+        "github:2604_20417::obs_glove",
+        "github:2604_20417::obs_msmarco_cost"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_18f5a18cc8ee1140",
+      "sub_strategies": [
+        "lcs_29a6e38a345462f2",
+        "lcs_14e5887e9574c226"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_miracl_sn_powerlaw",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_f10f1598",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_few_relevant_common",
+              "github:2604_20417::claim_miracl_sn_powerlaw"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The finding that queries commonly have few relevant results (@claim_few_relevant_common) in MSMARCO is replicated in MIRACL: 60% of queries have at most 4 SNs. This supports the generalizability of the few-SN phenomenon as a property of embedding datasets across languages and domains [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_few_relevant_common"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3ef7b9a24df7ec26",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_miracl_exp"
+      ],
+      "conclusion": "github:2604_20417::claim_miracl_replicates_pattern",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_58a13e29",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_miracl_recall_results",
+              "github:2604_20417::claim_miracl_sn_larger_deltas"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_50389cb0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_58a13e29",
+              "github:2604_20417::claim_miracl_replicates_pattern"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The MIRACL recall results (@claim_miracl_recall_results) show the same pattern as MSMARCO: higher semantic recall (0.85) than traditional (0.75) for a dataset where 60% of queries have few SNs. The 10× larger SN score deltas (@claim_miracl_sn_larger_deltas) confirm the equidistance mechanism operates in Thai-language embeddings as well [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_miracl_recall_results",
+        "github:2604_20417::claim_miracl_sn_larger_deltas"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_440fa72b5f094ac9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_msmarco_srecall",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_faa1268b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_metrics_generalize",
+              "github:2604_20417::obs_msmarco_srecall"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "law predicts MSMARCO semantic recall advantage over traditional recall"
+      },
+      "premises": [
+        "github:2604_20417::claim_metrics_generalize"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f1d9498fde741193",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::obs_miracl_srecall",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__implication_result_5e61f5d6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::claim_metrics_generalize",
+              "github:2604_20417::obs_miracl_srecall"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "law predicts MIRACL semantic recall advantage over traditional recall"
+      },
+      "premises": [
+        "github:2604_20417::claim_metrics_generalize"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1bad7142dce9b2b5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_metrics_generalize",
+      "metadata": {
+        "reason": "MSMARCO and MIRACL use different languages, embedding models, ANNS systems, and dataset scales, providing genuinely independent evidence for generalizability"
+      },
+      "premises": [
+        "github:2604_20417::obs_msmarco_srecall",
+        "github:2604_20417::obs_miracl_srecall"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_31f77c9a58fe2906",
+      "sub_strategies": [
+        "lcs_f1d9498fde741193",
+        "lcs_1bad7142dce9b2b5"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2604_20417::setup_anns"
+      ],
+      "conclusion": "github:2604_20417::claim_traditional_optimizes_noise",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_a0d09a7e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_few_sn_penalized",
+              "github:2604_20417::claim_cost_rises_sharply"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_721672aa",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_a0d09a7e",
+              "github:2604_20417::claim_traditional_optimizes_noise"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because traditional recall penalizes algorithms for missing irrelevant neighbors (@claim_few_sn_penalized) and cost rises sharply at high recall (@claim_cost_rises_sharply), configurations tuned for high traditional recall must spend disproportionate effort on irrelevant neighbors. This wasted effort is 'optimizing for noise' — it satisfies the metric without improving semantic quality [@DARTH2025; @VIBE2025]."
+      },
+      "premises": [
+        "github:2604_20417::claim_few_sn_penalized",
+        "github:2604_20417::claim_cost_rises_sharply"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cc4df356c089dcb7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20417::claim_relaxing_precision",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20417::__conjunction_result_8fd1ae40",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20417::claim_tuning_semantic_saves_14pct",
+              "github:2604_20417::claim_tuning_tolerant_saves_5pct",
+              "github:2604_20417::claim_srecall_better_end_user"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20417::__implication_result_449ef15a",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20417::__conjunction_result_8fd1ae40",
+              "github:2604_20417::claim_relaxing_precision"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The 14% cost saving from semantic recall tuning (@claim_tuning_semantic_saves_14pct) and 5% from tolerant recall tuning (@claim_tuning_tolerant_saves_5pct), combined with higher semantic quality scores (@claim_srecall_better_end_user), demonstrate that relaxing mathematical exactness (not retrieving every near-equidistant irrelevant neighbor) preserves or improves semantic quality while reducing cost [@Kuffo2026]."
+      },
+      "premises": [
+        "github:2604_20417::claim_tuning_semantic_saves_14pct",
+        "github:2604_20417::claim_tuning_tolerant_saves_5pct",
+        "github:2604_20417::claim_srecall_better_end_user"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5e68a7a2becf1dc9",
+      "type": "support"
+    }
+  ]
+}

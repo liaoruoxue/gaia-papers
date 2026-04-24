@@ -1,0 +1,134 @@
+{
+  "ir_hash": "sha256:8a73f70bc2715a4c6228ebb254f7a1d862367e89156973dabdb856e0963229ba",
+  "manifest_schema_version": 1,
+  "package": "2604-20417",
+  "premises": [
+    {
+      "content": "ANNS algorithms are fundamentally bounded by exact nearest neighbor search (NNS): they cannot retrieve semantically relevant objects that an exact NNS would miss, because both operate within the same embedding space constraints [@EmbedLimits2025]. An embedding model that places a semantically relevant object far from the query will cause both exact and approximate NNS to miss it.",
+      "content_hash": "53fcaf93e72c9326b06f57cf97655447a388cd468fbfdf0594eeecc85d018644",
+      "exported": true,
+      "interface_hash": "sha256:804936143e5dc57426bb448b1b32589123af3aa9e679cd01106c20597e61f5d4",
+      "label": "claim_anns_bounded_by_exact",
+      "qid": "github:2604_20417::claim_anns_bounded_by_exact",
+      "required_by": [
+        "github:2604_20417::claim_srecall_no_penalty"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Search cost rises sharply as recall approaches 1.0 (Figure 5, artifacts/2604.20417.pdf). This super-linear cost-recall relationship means that even small reductions in the target recall (e.g., by using a metric that accurately represents semantic quality rather than mathematical exactness) yield substantial compute cost savings.",
+      "content_hash": "3834ba928a49c3d46abefa86478c013dcf5e1aa62bf2737d9c514e155b9a53c2",
+      "exported": false,
+      "interface_hash": "sha256:22b55b11f9aa25bfb3fd9976e18838bfae1bc0b1d8101c04de3e71ed8c3487f8",
+      "label": "claim_cost_rises_sharply",
+      "qid": "github:2604_20417::claim_cost_rises_sharply",
+      "required_by": [
+        "github:2604_20417::claim_traditional_optimizes_noise",
+        "github:2604_20417::claim_tuning_95pct_target"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Cross-validation of 100 queries using Claude Haiku as an independent judge (outside the Gemini model family) showed an inter-judge agreement rate of 91.1% (Cohen's $\\kappa = 0.82$). Agreement by category: 89.5% for 'Relevant', 93.3% for 'Not Relevant'. Only 2 of 100 queries fell below 70% agreement. When judges disagreed, Gemini more frequently labeled documents as 'Relevant' (more lenient), while Claude adhered more strictly to the prompt criteria [@Kuffo2026].",
+      "content_hash": "056eaaaa6ca1bd9c1e092b3b103d14fe90019030cf65fcf9c6072ec4ce9212ca",
+      "exported": false,
+      "interface_hash": "sha256:190252460f30d1fbf81308569ac4deb17bd20718cdecdcdb0cdb9366b08f0c80",
+      "label": "claim_cross_val_agreement",
+      "qid": "github:2604_20417::claim_cross_val_agreement",
+      "required_by": [
+        "github:2604_20417::claim_srecall_no_penalty"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "A significant fraction of queries in embedding datasets have few semantically relevant results among their top-$k$ nearest neighbors. In the MSMARCO dataset with 250 queries and top-100 ground truth, approximately 40% of queries have fewer than 15 relevant documents, including 3 queries with no relevant results at all (Figure 2, artifacts/2604.20417.pdf).",
+      "content_hash": "b29875ba028580a305f68cb3d126e291ac15dee28ac3279c9d38d022d956bb5e",
+      "exported": true,
+      "interface_hash": "sha256:05707a1e4414aadadd62c4c03edf53de6718d95544c8e66d9b4fb9f7b0c8c3d8",
+      "label": "claim_few_relevant_common",
+      "qid": "github:2604_20417::claim_few_relevant_common",
+      "required_by": [
+        "github:2604_20417::claim_recall_misaligned"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Non-semantic (irrelevant) neighbors tend to cluster at nearly the same distance from the query embedding, with consistently small score deltas between consecutive irrelevant neighbors. This near-equidistance makes irrelevant neighbors particularly hard for ANNS algorithms to retrieve reliably, since small ranking fluctuations (e.g., from quantization) easily reorder them. Traditional recall penalizes algorithms for this unavoidable reordering.",
+      "content_hash": "7938b7ee67ea5e5e029bb8831ea7d7015f40f7090bf5af5b47941de1744a6f24",
+      "exported": true,
+      "interface_hash": "sha256:e5db1fa9accc2bc4aa5dd916e155ea127e473d135c69c02366388749e72429ac",
+      "label": "claim_irrelevant_equidistant",
+      "qid": "github:2604_20417::claim_irrelevant_equidistant",
+      "required_by": [
+        "github:2604_20417::claim_recall_misaligned",
+        "github:2604_20417::claim_trecall_approximates_srecall"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Non-semantic neighbors are harder to retrieve than semantic neighbors in partition-based ANNS indexes (e.g., ScaNN [@ScaNN2020]). Because non-SNs are nearly equidistant and not strongly associated with any partition, retrieving them requires exploring additional partitions beyond what would suffice to retrieve all SNs. This is the mechanism by which tuning for semantic or tolerant recall yields cost savings.",
+      "content_hash": "2315f41ea8da3b768538f273edaebf031ac30abbd184294151c808fa5e54d0ec",
+      "exported": false,
+      "interface_hash": "sha256:9c5f9d1293bd2cbd6f4741924fd1ca6eae72897ec9375a82db66ab7db828b248",
+      "label": "claim_non_sn_harder_to_retrieve",
+      "qid": "github:2604_20417::claim_non_sn_harder_to_retrieve",
+      "required_by": [
+        "github:2604_20417::claim_tuning_95pct_target",
+        "github:2604_20417::claim_tuning_semantic_saves_14pct",
+        "github:2604_20417::claim_tuning_tolerant_saves_5pct"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "On MSMARCO (250 queries, ScaNN top-100 with 8-bit quantization), the three metrics compare as follows:\n\n| Query Group        | Traditional Recall | Semantic Recall | Tolerant Recall |\n|--------------------|-------------------|-----------------|------------------|\n| All queries        | 0.863 ± 0.177     | 0.932 ± 0.144   | 0.920 ± 0.125    |\n| SN < 20            | 0.762 ± 0.204     | 0.903 ± 0.183   | 0.859 ± 0.152    |\n| 20 ≤ SN < 80       | 0.903 ± 0.133     | 0.937 ± 0.124   | 0.941 ± 0.096    |\n| SN ≥ 80            | 0.976 ± 0.061     | 0.978 ± 0.062   | 0.991 ± 0.027    |\n\nSemantic recall is consistently higher than traditional recall, with the largest gap for queries with few semantic neighbors (SN < 20: 0.903 vs 0.762).",
+      "content_hash": "4621a81b9e8ff8a4f9cb17d023fc1c1e7cc8fcdb24a6effaa914044c828444e2",
+      "exported": true,
+      "interface_hash": "sha256:84b479ab1bcfb4344ddd1e38e9e09d397245032270cc3140c436d8dc808214e2",
+      "label": "claim_recall_comparison_all",
+      "qid": "github:2604_20417::claim_recall_comparison_all",
+      "required_by": [
+        "github:2604_20417::claim_few_sn_penalized",
+        "github:2604_20417::claim_relaxing_precision"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Semantic neighbors (SN) achieve higher average inner product similarity scores than non-semantic neighbors (non-SN) across all query groups in MSMARCO. Specifically:\n\n| Query Group | N. Queries | Avg. score (SN) | Avg. score (non-SN) |\n|-------------|-----------|-----------------|---------------------|\n| All queries | 247       | 0.77 ± 0.02     | 0.73 ± 0.03         |\n| SN < 20     | 102       | 0.77 ± 0.03     | 0.71 ± 0.02         |\n| 20 ≤ SN < 80| 91        | 0.76 ± 0.02     | 0.74 ± 0.02         |\n| SN ≥ 80     | 54        | 0.77 ± 0.01     | 0.76 ± 0.02         |\n\nThe largest gap between SN and non-SN average scores appears for queries with fewer than 20 SNs.",
+      "content_hash": "1a3c4d6624f216de2176512d3379f21d7ebae4db9760187a3cc0aa3dcc17c318",
+      "exported": false,
+      "interface_hash": "sha256:38b6330882bc6c7ce3bf8821f93aabe339081d9a921929eaa8a42af5ef91bc8e",
+      "label": "claim_sn_higher_scores",
+      "qid": "github:2604_20417::claim_sn_higher_scores",
+      "required_by": [
+        "github:2604_20417::claim_srecall_better_proxy"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Semantic neighbors exhibit significantly larger and more variable score differences (deltas between consecutive neighbors) than non-semantic neighbors in MSMARCO. Specifically:\n\n| Query Group | Avg. score delta (SN) | Avg. score delta (non-SN) |\n|-------------|----------------------|---------------------------|\n| All queries | 0.006 ± 0.006        | 0.002 ± 0.003             |\n| SN < 20     | 0.014 ± 0.012        | 0.001 ± 0.002             |\n| 20 ≤ SN < 80| 0.002 ± 0.003        | 0.001 ± 0.002             |\n| SN ≥ 80     | 0.001 ± 0.001        | 0.005 ± 0.006             |\n\nNon-SNs have consistently small score deltas, indicating near-equidistance.",
+      "content_hash": "e8ac01cb03820c3bfcdb0ab28d8d37ed0891af311feef93c336c99a70b545c89",
+      "exported": false,
+      "interface_hash": "sha256:d373e0e2c1a1621cb33160c0a2d402863274e2177358f281586fccd7648e8a82",
+      "label": "claim_sn_larger_deltas",
+      "qid": "github:2604_20417::claim_sn_larger_deltas",
+      "required_by": [
+        "github:2604_20417::claim_few_sn_penalized"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Tuning ScaNN [@ScaNN2020] for a target traditional recall of 98% on MSMARCO using Google Vizier [@Vizier2017] yields a Pareto-optimal configuration that achieves: traditional recall = 98%, tolerant recall = 98.69%, semantic recall = 98.93%. This configuration serves as the baseline for cost comparisons [@Kuffo2026].",
+      "content_hash": "c525201e8668eb6f0f5dd1ccd421c36db2b82c77f1ffa982948f322ad505ccfb",
+      "exported": false,
+      "interface_hash": "sha256:30dc3598ebdd9e67a210cbcc915494352b7b08a4f4cd8e65272836977263947f",
+      "label": "claim_tuning_baseline",
+      "qid": "github:2604_20417::claim_tuning_baseline",
+      "required_by": [
+        "github:2604_20417::claim_tuning_semantic_saves_14pct",
+        "github:2604_20417::claim_tuning_tolerant_saves_5pct"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

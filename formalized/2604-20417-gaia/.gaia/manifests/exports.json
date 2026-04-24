@@ -1,0 +1,134 @@
+{
+  "exports": [
+    {
+      "content": "ANNS algorithms are fundamentally bounded by exact nearest neighbor search (NNS): they cannot retrieve semantically relevant objects that an exact NNS would miss, because both operate within the same embedding space constraints [@EmbedLimits2025]. An embedding model that places a semantically relevant object far from the query will cause both exact and approximate NNS to miss it.",
+      "content_hash": "53fcaf93e72c9326b06f57cf97655447a388cd468fbfdf0594eeecc85d018644",
+      "label": "claim_anns_bounded_by_exact",
+      "qid": "github:2604_20417::claim_anns_bounded_by_exact",
+      "type": "claim"
+    },
+    {
+      "content": "A significant fraction of queries in embedding datasets have few semantically relevant results among their top-$k$ nearest neighbors. In the MSMARCO dataset with 250 queries and top-100 ground truth, approximately 40% of queries have fewer than 15 relevant documents, including 3 queries with no relevant results at all (Figure 2, artifacts/2604.20417.pdf).",
+      "content_hash": "b29875ba028580a305f68cb3d126e291ac15dee28ac3279c9d38d022d956bb5e",
+      "label": "claim_few_relevant_common",
+      "qid": "github:2604_20417::claim_few_relevant_common",
+      "type": "claim"
+    },
+    {
+      "content": "Queries with few semantic neighbors (SN < 20) show the largest penalty under traditional recall: average traditional recall = 0.762 vs. semantic recall = 0.903, a gap of 0.141. In contrast, for queries with many semantic neighbors (SN ≥ 80), the gap between traditional and semantic recall is negligible (0.976 vs. 0.978). This confirms that traditional recall's bias primarily affects queries where irrelevant neighbors dominate the ground truth [@Kuffo2026].",
+      "content_hash": "8c9db39fc260c9f89b83250089a4ed60abb07b4131815974f58666716dd9782c",
+      "label": "claim_few_sn_penalized",
+      "qid": "github:2604_20417::claim_few_sn_penalized",
+      "type": "claim"
+    },
+    {
+      "content": "Non-semantic (irrelevant) neighbors tend to cluster at nearly the same distance from the query embedding, with consistently small score deltas between consecutive irrelevant neighbors. This near-equidistance makes irrelevant neighbors particularly hard for ANNS algorithms to retrieve reliably, since small ranking fluctuations (e.g., from quantization) easily reorder them. Traditional recall penalizes algorithms for this unavoidable reordering.",
+      "content_hash": "7938b7ee67ea5e5e029bb8831ea7d7015f40f7090bf5af5b47941de1744a6f24",
+      "label": "claim_irrelevant_equidistant",
+      "qid": "github:2604_20417::claim_irrelevant_equidistant",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall and tolerant recall are applicable across diverse embedding models, ANNS algorithms, languages, and data scales: demonstrated on MSMARCO (English, 8.83M docs, Gemini Embedding, ScaNN, 3072-dim) and MIRACL Thai (Thai, 542K docs, Cohere Embed V3, FAISS IVF, 1024-dim). The core mechanisms — near-equidistant non-SNs causing spurious traditional recall penalties — appear in both settings.",
+      "content_hash": "9a1af08d938dd5da45c91738d2f3dd1c94d83a4d6f271d7d0f73d04a1122a117",
+      "label": "claim_metrics_generalize",
+      "qid": "github:2604_20417::claim_metrics_generalize",
+      "type": "claim"
+    },
+    {
+      "content": "On MSMARCO (250 queries, ScaNN top-100 with 8-bit quantization), the three metrics compare as follows:\n\n| Query Group        | Traditional Recall | Semantic Recall | Tolerant Recall |\n|--------------------|-------------------|-----------------|------------------|\n| All queries        | 0.863 ± 0.177     | 0.932 ± 0.144   | 0.920 ± 0.125    |\n| SN < 20            | 0.762 ± 0.204     | 0.903 ± 0.183   | 0.859 ± 0.152    |\n| 20 ≤ SN < 80       | 0.903 ± 0.133     | 0.937 ± 0.124   | 0.941 ± 0.096    |\n| SN ≥ 80            | 0.976 ± 0.061     | 0.978 ± 0.062   | 0.991 ± 0.027    |\n\nSemantic recall is consistently higher than traditional recall, with the largest gap for queries with few semantic neighbors (SN < 20: 0.903 vs 0.762).",
+      "content_hash": "4621a81b9e8ff8a4f9cb17d023fc1c1e7cc8fcdb24a6effaa914044c828444e2",
+      "label": "claim_recall_comparison_all",
+      "qid": "github:2604_20417::claim_recall_comparison_all",
+      "type": "claim"
+    },
+    {
+      "content": "Traditional recall is misaligned with the goal of embedding-based retrieval because it penalizes ANNS algorithms for failing to retrieve mathematically close but semantically irrelevant objects. Failing to retrieve an irrelevant neighbor is penalized just as much as failing to retrieve a relevant one, even though only the latter matters to end users [@EmbedPitfalls2025].",
+      "content_hash": "f0f578a66b34ed6270bcf573f79a433739eb7165f080c2795318f6efa9ceb961",
+      "label": "claim_recall_misaligned",
+      "qid": "github:2604_20417::claim_recall_misaligned",
+      "type": "claim"
+    },
+    {
+      "content": "ANNS evaluation can relax strict mathematical precision in favor of improved search efficiency without compromising retrieval quality more than previously thought, because performance losses that reshuffle only irrelevant results do not affect end-user experience. Semantic and tolerant recall enable developers to distinguish between meaningful performance losses (affecting relevant results) and noise (reshuffling irrelevant ones) [@Kuffo2026].",
+      "content_hash": "f394de5e8b117d0057bee16941ed5056f187215594bd7f68d9044c946f0f45ef",
+      "label": "claim_relaxing_precision",
+      "qid": "github:2604_20417::claim_relaxing_precision",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall is a more accurate indicator of retrieval quality perceived by end users than traditional recall, because it measures the fraction of retrieved results that are semantically useful, rather than the fraction that match a mathematical ground truth that may include irrelevant items [@Kuffo2026].",
+      "content_hash": "40181fcc3ce6edb81dc32058f6e76607d1559acbf1e695218c770e0940c8005a",
+      "label": "claim_srecall_better_proxy",
+      "qid": "github:2604_20417::claim_srecall_better_proxy",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall requires no threshold hyperparameter configuration, in contrast to $\\text{recall}@k\\text{-}\\epsilon$ (requires $\\epsilon$ threshold), $\\text{robustness}@k\\text{-}\\gamma$ [@RobustVS2025] (requires $\\gamma$), and Relative Distance Error [@DARTH2025] (requires a distance tolerance). The lack of a hyperparameter makes semantic recall more portable and interpretable across different datasets and systems.",
+      "content_hash": "48532f6cf4536cf68a993b70eaf5ae4b1e45697d5d397248372fa480f7b3cd7e",
+      "label": "claim_srecall_hyperparameter_free",
+      "qid": "github:2604_20417::claim_srecall_hyperparameter_free",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic recall eliminates the three key limitations of traditional recall: (i) it does not penalize algorithms for missing mathematically close but semantically irrelevant objects; (ii) it is not affected by embedding model limitations since it only considers objects retrievable via exact NNS; (iii) it requires no threshold hyperparameters, unlike metrics such as $\\text{recall}@k\\text{-}\\epsilon$ [@ANNBench2020] or Relative Distance Error [@DARTH2025] [@Kuffo2026].",
+      "content_hash": "4570efb53b30528ac5bf8e2801ce1f195ab0478bef875e7433704f3220d14044",
+      "label": "claim_srecall_no_penalty",
+      "qid": "github:2604_20417::claim_srecall_no_penalty",
+      "type": "claim"
+    },
+    {
+      "content": "Optimizing ANNS hyperparameters for traditional recall is equivalent to optimizing for 'mathematical exactness at unnecessary extra retrieval cost': configurations selected for high traditional recall must incur extra search effort to retrieve near-equidistant irrelevant neighbors, which does not improve end-user experience. The long-tailed distributions of traditional recall reported in prior ANNS work [@DARTH2025; @VIBE2025] likely stem from queries with few or no relevant neighbors.",
+      "content_hash": "cd11128a8328c6d923afb3e5767dab48583c78112685111b2b614743e20ad405",
+      "label": "claim_traditional_optimizes_noise",
+      "qid": "github:2604_20417::claim_traditional_optimizes_noise",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall with a 1% tolerance threshold closely approximates semantic recall in the MSMARCO dataset (250 queries, ScaNN ANNS with 8-bit quantization). Across all queries: semantic recall = 0.932, tolerant recall = 0.920. For queries with fewer than 20 semantic neighbors: semantic recall = 0.903, tolerant recall = 0.859. The per-query distributions in Figure 3 (artifacts/2604.20417.pdf) show that tolerant recall closely tracks the semantic recall distribution.",
+      "content_hash": "022ac78bfa684446aca3328f2c6cf83461b551098a2afb9e4a60ec1fa80fcaf8",
+      "label": "claim_trecall_approximates_srecall",
+      "qid": "github:2604_20417::claim_trecall_approximates_srecall",
+      "type": "claim"
+    },
+    {
+      "content": "Tolerant recall can be computed using only embedding vectors and their similarity scores, without access to the underlying raw objects (text, images, etc.). This makes it applicable in scenarios where semantic neighbors cannot be identified, such as embeddings-only datasets.",
+      "content_hash": "bef1be018f56e344ed95c898b1ca7c091a88517f7b28b9d5a4934e369083b383",
+      "label": "claim_trecall_no_raw_data",
+      "qid": "github:2604_20417::claim_trecall_no_raw_data",
+      "type": "claim"
+    },
+    {
+      "content": "Tuning for a 95% target using tolerant recall instead of traditional recall yields the following cost reductions (compared to tuning for 95% traditional recall):\n\n| Dataset | Cost Reduction |\n|---------|----------------|\n| BigANN (1B vectors, 128-dim) | ~25% |\n| GloVe (1M vectors, 100-dim)  | ~5%  |\n| MSMARCO                       | ~35% |\n\nThese gains arise because non-semantic neighbors are harder to retrieve in partition-based indexes: they require exploring additional partitions, increasing search effort without improving semantic quality [@Kuffo2026].",
+      "content_hash": "64c3d3489f421c0271cf123de87372480f8bb7e51b1001f01040c1ee7a5ea78d",
+      "label": "claim_tuning_95pct_target",
+      "qid": "github:2604_20417::claim_tuning_95pct_target",
+      "type": "claim"
+    },
+    {
+      "content": "Re-tuning ScaNN for a target semantic recall of 98.93% (matching the baseline semantic recall level) yields a configuration that preserves semantic recall while reducing search cost by 14% compared to the traditional-recall-tuned baseline [@Kuffo2026].",
+      "content_hash": "716130725ae3e47f9c42bb892c247bc68bd3ae1dbb56c0029dfa6268794367fb",
+      "label": "claim_tuning_semantic_saves_14pct",
+      "qid": "github:2604_20417::claim_tuning_semantic_saves_14pct",
+      "type": "claim"
+    },
+    {
+      "content": "Re-tuning ScaNN for a target tolerant recall of 98.69% (matching the baseline tolerant recall level) yields a configuration with the same tolerant recall at 5% lower search cost compared to the traditional-recall-tuned baseline [@Kuffo2026].",
+      "content_hash": "55ae3d94a14501bc32f3e4057bcfa3edebf4a350aaade8296201aa8b7d365204",
+      "label": "claim_tuning_tolerant_saves_5pct",
+      "qid": "github:2604_20417::claim_tuning_tolerant_saves_5pct",
+      "type": "claim"
+    },
+    {
+      "content": "Across diverse datasets and scales, tuning ANNS hyperparameters for tolerant recall (or semantic recall) as the optimization objective rather than traditional recall consistently yields cost savings at the same semantic quality level, because non-semantic neighbors require disproportionately more search effort.",
+      "content_hash": "f540f238fc53e09c5c46b746a53456f239ffd1c78fe181f69cef20377f6be5d1",
+      "label": "law_tolerant_saves_cost",
+      "qid": "github:2604_20417::law_tolerant_saves_cost",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:8a73f70bc2715a4c6228ebb254f7a1d862367e89156973dabdb856e0963229ba",
+  "manifest_schema_version": 1,
+  "package": "2604-20417",
+  "version": "0.1.0"
+}
