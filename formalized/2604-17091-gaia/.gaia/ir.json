@@ -1,0 +1,3460 @@
+{
+  "ir_hash": "sha256:5a69717bf3e9801acf0e59877ba095489b9918d4e6a5464fb28e18bd7246db48",
+  "knowledges": [
+    {
+      "content": "Large language model (LLM) agents such as Claude Code, OpenAI Codex, and OpenClaw are increasingly deployed as goal-directed systems that operate through terminals, file systems, browsers, and external tools — far beyond passive text generation.",
+      "content_hash": "d49c13becf91dffa028d7d6c318f00cd69eacb543c4b860dfe2e606a0fc4ea52",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_17091::context_llm_agents",
+      "label": "context_llm_agents",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM agents as action-taking systems",
+      "type": "setting"
+    },
+    {
+      "content": "Long-horizon agentic tasks require multi-step execution across many turns, where the agent must maintain coherent state, avoid re-exploring resolved choices, and accumulate and reuse experience across separate episodes.",
+      "content_hash": "eaeb6e6690a95f571e1d52a848998886289a0ca3d0e0238446ad89fab79ab140",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_17091::context_long_horizon",
+      "label": "context_long_horizon",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Long-horizon agent challenge",
+      "type": "setting"
+    },
+    {
+      "content": "Current LLMs operate within a finite context window. The effective context length — the fraction of the window from which information can be reliably retrieved — is substantially smaller than the nominal window size.",
+      "content_hash": "6f9e317299109d70ce6be9a1fc4c89bb15561f44f0ef1b05edca785cc0efcf73",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_17091::context_context_window",
+      "label": "context_context_window",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Finite and effective context window constraint",
+      "type": "setting"
+    },
+    {
+      "content": "LLMs exhibit pronounced positional bias when processing long sequences: relevant information placed in the middle of the context is significantly harder to retrieve than information near the beginning or end [@LostInMiddle2023].",
+      "content_hash": "b4f993a18d66ad4f14df86695ccc3049b15421ac40762a85d8a25051976f2af3",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_17091::failure_positional_bias",
+      "label": "failure_positional_bias",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LostInMiddle2023"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Well-replicated finding from Liu et al. 2023 ('Lost in the Middle'): LLMs systematically underperform when critical information is mid-context. High prior because the finding is reproducible across many model families."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Positional bias in long contexts",
+      "type": "claim"
+    },
+    {
+      "content": "Irrelevant content in the context does not merely remain unused — it actively degrades performance by diverting attention away from decision-critical evidence. LLMs can be easily distracted by irrelevant context [@LostInMiddle2023].",
+      "content_hash": "5acc6d2c66f32beef88ad427b9964a2afd563a1755ae9276f72c210122910671",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_17091::failure_attention_dilution",
+      "label": "failure_attention_dilution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LostInMiddle2023"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Established in Shi et al. 2023 (LLMs distracted by irrelevant context). High prior as this is a fundamental architectural property of attention mechanisms with broad empirical support."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Attention dilution from irrelevant content",
+      "type": "claim"
+    },
+    {
+      "content": "The effective context length of current LLMs falls far short of their nominal window size: part of the provided context is functionally inaccessible during generation [@EffectiveContext2024].",
+      "content_hash": "b7514c012eec8e1c680e3ac10bc44bfc828e5f8923199fc6c643f33e36c3cc00",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_17091::failure_effective_window",
+      "label": "failure_effective_window",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EffectiveContext2024"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Established in An et al. 2024 (ICLR 2025, 'Why does the effective context length of LLMs fall short?'). High prior because the result is demonstrated rigorously and accepted at a top venue."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Effective context window shortfall",
+      "type": "claim"
+    },
+    {
+      "content": "The three long-context failure modes — positional bias, attention dilution, and effective window shortfall — reinforce one another: as context grows, positional bias worsens, irrelevant content competes more strongly for attention, and the ratio of effective to nominal window length declines. Beyond a threshold, adding more context reduces rather than improves decision quality.",
+      "content_hash": "c8588ab534557ee0dbf5a719f2b91b749c172d1b841912cebd85c02cafc8b6f2",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_17091::failure_compounding",
+      "label": "failure_compounding",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "EffectiveContext2024",
+              "LostInMiddle2023"
+            ],
+            "referenced_claims": [
+              "failure_attention_dilution",
+              "failure_effective_window",
+              "failure_positional_bias"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Compounding long-context failure modes",
+      "type": "claim"
+    },
+    {
+      "content": "Existing agent frameworks largely fail to accumulate and reuse experience across task episodes. Most treat each episode as stateless [@LifelongAgentBench2025]. Even when retrieval-augmented memory is introduced, it stores raw logs rather than distilled, reusable operational knowledge. Without feedback-driven refinement, stale or incorrect memories are never corrected, causing silent degradation. Token expenditure scales linearly with task count, yet effective capability remains flat — a stagnation loop with no return on accumulated interaction.",
+      "content_hash": "a182b4c12e3d918e8adfbc8ac86c57601ded5a77b1d2b64e557eb293aa0415bb",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_17091::failure_experience_reuse",
+      "label": "failure_experience_reuse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LifelongAgentBench2025"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "The claim that current agents fail to accumulate experience across episodes is well-supported by the LifelongAgentBench paper and the broad agent literature. Slightly lower because some frameworks (MemGPT, A-MEM) do attempt cross-episode memory."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Experience accumulation and reuse failure in existing systems",
+      "type": "claim"
+    },
+    {
+      "content": "Long-horizon agent performance is determined not by context length, but by how much decision-relevant information is maintained within a finite context budget. Context information density — completeness × conciseness within the effective window — is the primary structural constraint for all LLM-based agent systems.",
+      "content_hash": "c30f0098b19fc3d1c5f1ef0df750a28ad8dfc83a9d422324ec5d4468c2d84a24",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_17091::thesis_density",
+      "label": "thesis_density",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "failure_compounding",
+              "failure_experience_reuse"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context information density as primary constraint",
+      "type": "claim"
+    },
+    {
+      "content": "Under the structural constraint of context information density, an agent framework needs to implement only three capabilities: (1) tool interfacing — keeping the action space deliberately minimal to avoid prompt overhead; (2) context management — actively filtering task state and tool outputs before they enter the context; (3) memory formation — retaining verified experience across episodes into reusable representations. Any additional complexity that does not serve one of these three is, in the authors' view, actively degrading information density.",
+      "content_hash": "06e2a815222959c0bacf883ce66a538458e2e4315df77b88362b8022f6cbe69a",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_17091::thesis_minimal_capability",
+      "label": "thesis_minimal_capability",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "thesis_density"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Minimal complete capability set for agent systems",
+      "type": "claim"
+    },
+    {
+      "content": "In long-horizon agentic settings, lower token consumption correlates with better task performance, not worse. An agent that consumes more tokens is more likely suffering from failures in context management — compensating for degraded per-step decision quality through additional interactions rather than improving it. Token consumption reflects the symptoms of context management quality.",
+      "content_hash": "dadb2c3380393451a126eae51185d276669c64fbabac60a04476037fafc97fd2",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_17091::thesis_token_efficiency",
+      "label": "thesis_token_efficiency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "result_context_explosion",
+              "result_evolution_trajectory",
+              "result_lifelong_ga_claude"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Token consumption as symptom of context management quality",
+      "type": "claim"
+    },
+    {
+      "content": "Minimal architecture (a few thousand lines of core code) is a necessary prerequisite for autonomous agent self-evolution. A system with hundreds of thousands of lines of code is opaque to the agent — it can neither understand nor modify it. In a minimal codebase, subagents can read and modify the core code, making architectural self-update a practically achievable next step.",
+      "content_hash": "2bf363d3231c98f07ba4a319dd0b0df2133c086722b0d1e56b0a31cea6bfa0f5",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_17091::thesis_minimal_architecture",
+      "label": "thesis_minimal_architecture",
+      "metadata": {
+        "prior": 0.72,
+        "prior_justification": "The claim that minimal architecture (~3,000 lines) is a necessary prerequisite for architectural self-update is argued by analogy (agent must understand codebase). Plausible but not empirically validated in the paper — the self-update dimension is explicitly left as future work. Moderate prior."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Minimal architecture as prerequisite for self-evolution",
+      "type": "claim"
+    },
+    {
+      "content": "How can a general-purpose LLM agent system be designed to maximize contextual information density across tool interfacing, context management, and memory formation, while remaining self-evolving and broadly capable?",
+      "content_hash": "d124be0ad0f46b9b71f2527bdb0eff28763823cc1c147847f5585632df4b3993",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_17091::q_main",
+      "label": "q_main",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "Context design involves a core trade-off between completeness (all decision-relevant information is present) and conciseness (no low-value content wastes the context budget). Naturalness — how easily the model interprets the representation — acts as a secondary constraint rather than a third independent dimension. The finite effective context window sharpens this into a constrained optimization: maximize completeness subject to conciseness, with naturalness as a guard rail.",
+      "content_hash": "6863b33c62b4fae6b08a736e8970066e8b16af6f9a7800128615020dd4877a64",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_17091::def_completeness_conciseness",
+      "label": "def_completeness_conciseness",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Completeness-conciseness trade-off in context design",
+      "type": "setting"
+    },
+    {
+      "content": "The 'hallucination-free context length' is defined as the effective ceiling below which the LLM can process context without significantly increased confabulation. For current models, this is roughly an order of magnitude smaller than the nominal window — approximately 30k tokens for models with 200k–1M token windows.",
+      "content_hash": "f7da0a2aad8cd994176e247997d086ca3d3a2b5ce392c88b687824ea448da6c2",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_17091::def_hallucination_free_length",
+      "label": "def_hallucination_free_length",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Hallucination-free context length definition",
+      "type": "setting"
+    },
+    {
+      "content": "An atomic tool is a minimal, general-purpose primitive with a single, non-overlapping capability. Complex behaviors emerge from sequential composition of atomic tools rather than from task-specific tool enumeration. GenericAgent (GA) uses exactly 9 atomic tools: file_read, file_write, file_patch, code_run, web_scan, web_execute_js, ask_user, update_working_checkpoint, and start_long_term_update.",
+      "content_hash": "fa32abca309e1f420e497f5655e10136bc9f4be9b754feb9007613c678e81dc5",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_17091::def_atomic_tool",
+      "label": "def_atomic_tool",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Definition of atomic tool and GA's tool set",
+      "type": "setting"
+    },
+    {
+      "content": "GA's hierarchical memory is organized into four layers: L1 (Insight Index) — always-on, lightweight orientation layer showing only category existence (bounded by Kolmogorov complexity of the categorical structure); L2 (Global Facts) — stable accumulated knowledge retrieved on demand; L3 (Task Skills/SOPs) — reusable workflows and executable code retrieved on demand; L4 (Session Archive) — task records for long-horizon recall. A global meta-memory layer defines the memory map, core rules, and update boundaries. GA injects only the meta-memory and L1 by default.",
+      "content_hash": "3a097e2b1bfe74e0a15e386b30b8bd3b55b2f9b173e7b460af852719cae4a34b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_17091::def_memory_layers",
+      "label": "def_memory_layers",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "GA hierarchical memory layer definitions",
+      "type": "setting"
+    },
+    {
+      "content": "GA's unified agent loop: at each step, construct execution context from global memory and current task; the LLM generates outputs or tool calls; tool results return as structured signals; after task completion, compress execution traces into structured long-term representations for L2/L3 storage. Two execution modes: Interact mode (user-initiated tasks) and Reflect mode (autonomous event-triggered execution via watchdog-style polling).",
+      "content_hash": "099176df7f68ea903afe3d1c9f8764676ba111a9bd507feaf5b99f7ffce3d4e3",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_17091::def_agent_loop",
+      "label": "def_agent_loop",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "GA unified agent loop and execution modes",
+      "type": "setting"
+    },
+    {
+      "content": "GA's context budget management uses a character-domain heuristic. Total character length $C_H = \\sum_{m \\in H} \\mathrm{len}(m)$ is compared against character budget $B = \\alpha \\cdot W_{\\mathrm{tokens}}$ where $\\alpha \\approx 3$ chars/token. Compression or eviction triggers when $C_H > B$. Target: < 30k tokens.",
+      "content_hash": "e1fec693ac4d51057c7e04a99f447e4c09d18f5cbc8a5be81de6a2713451c57b",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_17091::def_context_budget",
+      "label": "def_context_budget",
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Context budget heuristic definition",
+      "type": "setting"
+    },
+    {
+      "content": "Keeping the tool interface minimal — using 9 atomic tools rather than 53+ specialized tools — preserves context information density by preventing tool descriptions from consuming large fractions of the context budget before task execution begins. Tool minimality is not a functional restriction but the mechanism by which GA preserves general-purpose capability while reducing interface overhead and creating favorable conditions for experience consolidation.",
+      "content_hash": "bb5d7b7d949a6209d00c7d8c2e7bb7786715d24ce32ea52bbd6f927450752c37",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_17091::claim_tool_minimality",
+      "label": "claim_tool_minimality",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "thesis_minimal_capability"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Tool minimality as density-preserving mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "GA's on-demand hierarchical memory preserves context information density by keeping only the L1 index (category-level orientation, bounded in size) permanently in context while routing deeper factual and procedural knowledge (L2/L3) through tool calls only when needed. This prevents prior interactions, intermediate states, and execution traces from progressively consuming the context budget and burying decision-critical information.",
+      "content_hash": "5c7dab140d17d0c69799d2da950966eb3e1e4ae707d2ca7a7739ff7340551211",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_17091::claim_hierarchical_memory",
+      "label": "claim_hierarchical_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "def_memory_layers",
+              "thesis_density"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Hierarchical on-demand memory for density preservation",
+      "type": "claim"
+    },
+    {
+      "content": "GA's self-evolution mechanism converts verified past trajectories into reusable standard operating procedures (SOPs) and executable code stored in L3. This allows later tasks to begin from compact, task-relevant context rather than rebuilding understanding from scratch. The evolution pathway is: initial exploration → textual SOP → codified executable SOP, with autonomous exploration triggered via Reflect Mode using idle-time polling.",
+      "content_hash": "0a9e171de1e6f3001ab5b74715e72b5b278ac65e4ebdd7a4c480e3a0c981192c",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_17091::claim_self_evolution",
+      "label": "claim_self_evolution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "thesis_density",
+              "thesis_minimal_capability"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Self-evolution via trajectory-to-SOP-to-code conversion",
+      "type": "claim"
+    },
+    {
+      "content": "GA's context truncation and compression layer maintains information density during long-horizon execution through four staged mechanisms: (Stage 1) per-tool truncation thresholds (e.g., code_run: 10,000 chars; file_read: ~1,280 chars/line, 20,000 total; web_scan HTML: 35,000 chars); (Stage 2) assistant message compression — replacing earlier messages with one-line summaries, exempting the 4 most recent; (Stage 3) FIFO message eviction when $C_H > B$, reducing to 60% of budget; (Stage 4) working-memory anchor prompt injected after every tool invocation, containing the 20 most recent one-line turn summaries, current turn number, and a persistent key_info block maintained by the agent.",
+      "content_hash": "a01a0194b797192e60013559a1c28cdef7cfb3111e63326c9005e8529666e9c8",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_17091::claim_context_compression",
+      "label": "claim_context_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "def_context_budget",
+              "def_hallucination_free_length",
+              "thesis_density"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Four-stage context truncation and compression mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "GA uses a three-step failure escalation mechanism to prevent stagnation loops: (1) analyze the error and make a localized adjustment; (2) if failure persists, abandon the current approach entirely and switch strategy or search for missing information; (3) if all automated attempts fail, pause and request human intervention. This staged design prevents the agent from blindly repeating mistakes.",
+      "content_hash": "467afda033e1d3aaaa3c234eec36d293d25db93143c54b26dbf9922ce60b64a4",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_17091::claim_failure_escalation",
+      "label": "claim_failure_escalation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_self_evolution"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Three-step failure escalation mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "GA's web_scan tool implements a layout-analysis algorithm that clones the live DOM, computes per-element visibility, classifies regions as main or non-essential through overlay and partition analysis, and removes covered or hidden elements before serialization. This reduces token cost by an order of magnitude compared to raw DOM output while preserving decision-relevant web content.",
+      "content_hash": "8b51b6d826fc8df214d27b956c0c1edafbd8c9f47bbf289fe7c74421d8ea7cc7",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_17091::claim_web_scan_optimization",
+      "label": "claim_web_scan_optimization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_context_compression"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "web_scan DOM layout analysis for token reduction",
+      "type": "claim"
+    },
+    {
+      "content": "GA's L1 index layer remains bounded even as L2 and L3 expand. Each L1 entry records only the existence of a knowledge category, not its content. New entries are introduced only when genuinely new categories arise, so the overall L1 description length approaches the Kolmogorov complexity of the categorical structure of the knowledge set. The LLM acts as the decoder to retrieve full content from deeper layers via tool calls.",
+      "content_hash": "ae48e07696cb7255627889b9d80587e1751a66e53b6f05d9cdf19f333d5f986a",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_17091::claim_l1_bounded",
+      "label": "claim_l1_bounded",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_hierarchical_memory",
+              "def_memory_layers"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "L1 index bounded by Kolmogorov complexity of knowledge categories",
+      "type": "claim"
+    },
+    {
+      "content": "GA uses a triggered commit mechanism rather than immediate memory writing. When information is identified as potentially valuable, it enters a validation stage where usefulness and reusability are checked before being written into L2 or L3 via small, incremental updates. Only verified information is committed, preventing memory from growing in an uncontrolled manner.",
+      "content_hash": "d66006aaeb029f612e319484b8a877c0746ffe6caefea4bb054bb68400ffd30e",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_17091::claim_triggered_commit",
+      "label": "claim_triggered_commit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_hierarchical_memory"
+            ]
+          }
+        }
+      },
+      "module": "s2_design",
+      "parameters": [],
+      "title": "Triggered commit mechanism for memory quality control",
+      "type": "claim"
+    },
+    {
+      "content": "GA exposes a single unified command-line interface (CLI). All agent interactions — task submission, progress monitoring, runtime intervention — are handled through this CLI. The agent is a standalone CLI program, not a service requiring a daemon.",
+      "content_hash": "aec7447fd6f2ce55933043ab050dcd5109f61040fb63b909ca22b80aaaab90c4",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_17091::def_cli_interface",
+      "label": "def_cli_interface",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "GA's CLI-only interface",
+      "type": "setting"
+    },
+    {
+      "content": "Subagent dispatch in GA: a parent agent spawns child GA instances by executing a standard terminal command (the GA CLI). Each instance runs in its own memory space with its own conversation history. Communication is via the standard interaction protocol. No dedicated subagent manager is required.",
+      "content_hash": "1c380d58865a1063382258e587256ae45736d6db33924013b1681f0654169d7b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_17091::def_subagent_dispatch",
+      "label": "def_subagent_dispatch",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Subagent dispatch definition",
+      "type": "setting"
+    },
+    {
+      "content": "Reflect Mode: GA continuously monitors for environmental changes via a user-supplied callback polled at a fixed interval. When the callback returns a non-empty string, that string is injected as a new prompt. The default trigger fires every six minutes with a fixed prompt directing autonomous exploration. Reflect Mode requires no user instruction.",
+      "content_hash": "a9552002d215bd7639c79c8922613a0a0198f2c93def40486f311799601ea374",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_17091::def_reflect_mode",
+      "label": "def_reflect_mode",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Reflect Mode polling mechanism",
+      "type": "setting"
+    },
+    {
+      "content": "GA organizes accumulated skills into a persistent skill tree: a two-level map where categories (e.g., web_automation, data_processing) contain named skills, each recording associated tool scripts and a monotonically increasing usage counter. The skill tree acts as a global capability index and drives autonomous exploration.",
+      "content_hash": "27c7975837e2ce76cff652cf96652a2f29b76ffd3b34efe462870f5baca9fd7b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_17091::def_skill_tree",
+      "label": "def_skill_tree",
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Skill tree data structure",
+      "type": "setting"
+    },
+    {
+      "content": "GA's extreme architectural minimality — approximately 3,000 lines of core code with a single CLI interface — is not a functional compromise but a deliberate design choice. Because the architecture is stripped down and purely CLI-based, advanced behaviors such as subagent dispatch and Reflect Mode emerge naturally from the single primitive without requiring new architectural layers.",
+      "content_hash": "f19d834f026ddae4eeb2db4098494a54ce4df2bf511aa8b12f909af875abcfb0",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17091::claim_cli_minimality",
+      "label": "claim_cli_minimality",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_tool_minimality",
+              "def_cli_interface"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "CLI minimality enables emergent compositional capabilities",
+      "type": "claim"
+    },
+    {
+      "content": "Subagent dispatch in GA emerges naturally from the CLI architecture: any agent can spawn a child GA process via a standard terminal command. This provides context isolation by design (each process has its own memory space) and enables map-reduce parallelism without a dedicated subagent manager subsystem.",
+      "content_hash": "547992abdf9a3bf8d58ebccf08e51b0d21bccad582d9fb23ef947c60c89433e6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_17091::claim_subagent_emergence",
+      "label": "claim_subagent_emergence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_cli_minimality",
+              "def_cli_interface",
+              "def_subagent_dispatch"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Subagent dispatch as emergent property of CLI design",
+      "type": "claim"
+    },
+    {
+      "content": "Reflect Mode emerges naturally from the CLI architecture: an idle-condition callback fires every 6 minutes to trigger autonomous exploration. No new architectural subsystem is required — the dispatcher becomes the agent itself.",
+      "content_hash": "6d65531ff441f36da6fc975f02c621b35e18334fcf2950598e16998f06b71c94",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_17091::claim_reflect_emergence",
+      "label": "claim_reflect_emergence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_cli_minimality",
+              "def_reflect_mode"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Reflect Mode as emergent property of CLI design",
+      "type": "claim"
+    },
+    {
+      "content": "Autonomous exploration in GA combines subagent dispatch (execution substrate) and Reflect Mode (trigger substrate) to enable the agent to explore new skills during idle time without user instruction. Skills are organized in a persistent skill tree. Exploration task generation decides what to explore based on current capability gaps in the skill tree.",
+      "content_hash": "574bc798d060933f71a2e38d72a3287abbd98a10859a15b6807698b5cb5fc75a",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_17091::claim_autonomous_exploration",
+      "label": "claim_autonomous_exploration",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_reflect_emergence",
+              "claim_subagent_emergence",
+              "def_skill_tree"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Autonomous exploration via combined subagent dispatch and Reflect Mode",
+      "type": "claim"
+    },
+    {
+      "content": "In GA's minimal codebase (~3,000 lines), subagents can read and modify the core codebase itself, making architectural self-update a practically achievable next step. Agent evolution has three progressive dimensions: (1) skill consolidation via SOPs, (2) autonomous exploration via Reflect Mode, (3) architectural self-update. Minimal architecture is the necessary prerequisite for reaching dimension (3).",
+      "content_hash": "60bf7a75ce386a787d27d1f301136cc10c46345014a5731535f7853a42056234",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_17091::claim_architectural_self_update",
+      "label": "claim_architectural_self_update",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_cli_minimality",
+              "thesis_minimal_architecture"
+            ]
+          }
+        }
+      },
+      "module": "s3_architecture",
+      "parameters": [],
+      "title": "Three dimensions of agent evolution enabled by minimal architecture",
+      "type": "claim"
+    },
+    {
+      "content": "Baseline systems evaluated: (1) Claude Code — industry-leading proprietary agent with 53 source-level built-in tools; (2) OpenClaw — open-source multi-tool framework with 18 source-level tool factories; (3) CodeX — widely adopted execution baseline. Backbone LLMs used: Claude Sonnet 4.6, Claude Opus 4.6, Minimax M2.7, GPT-5.4, covering different architectural paradigms.",
+      "content_hash": "5bc0dc8d1dd8ea9e887c9bfe38dfd2fa35e2e73122d0d9f8c84d5e68feeffe4f",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_17091::setup_baselines",
+      "label": "setup_baselines",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Experimental baselines and backbone LLMs",
+      "type": "setting"
+    },
+    {
+      "content": "Efficiency metric: Efficiency = Accuracy / Total Tokens (M). Measures the accuracy achieved per million total tokens consumed. Because token scales differ across benchmarks, efficiency values are only comparable within the same benchmark block.",
+      "content_hash": "64ea8afe8d37e13c2f83e34e28cb707fcb0fb7f76388fa9fedbe450be1b90a6b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_17091::setup_efficiency_metric",
+      "label": "setup_efficiency_metric",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Efficiency metric definition",
+      "type": "setting"
+    },
+    {
+      "content": "Memory ablation configurations on SOP-Bench dangerous_goods subset (backbone: GPT-5.4): (1) No-Memory: task inputs and tool descriptions only; (2) Full-Memory: complete unedited SOP injected; (3) Redundant-Memory: Condensed Memory extended with background, definitions, weakly relevant content (288 tokens); (4) Condensed Memory: only high-density, action-guiding rules (165 tokens).",
+      "content_hash": "9e79c410b0c31739f8fee0407afbe5cee27deb27bfc3cd46e67ab7305dd14598",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_17091::setup_memory_ablation",
+      "label": "setup_memory_ablation",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Memory ablation experimental configurations",
+      "type": "setting"
+    },
+    {
+      "content": "LoCoMo factual memory evaluation: first subset of LoCoMo with Category 5 (summarization) removed. Embedding-based baselines: Mem0 and A-MEM with text-embedding-3-small. Non-embedding baselines: OpenClaw and GA. Backbone: GPT-5.4. Metrics: F1 (correctness/completeness), BLEU-1 (lexical similarity).",
+      "content_hash": "3c068d04229061731649521337d48048945257137687f5bed73d8e0f67e9474c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_17091::setup_locomo",
+      "label": "setup_locomo",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "LoCoMo factual memory evaluation setup",
+      "type": "setting"
+    },
+    {
+      "content": "Self-evolution longitudinal study: nine sequential rounds of a GitHub research task, each on a new task instance. Stages: Round 1 (initial run), Rounds 2-5 (SOP optimization), Rounds 6-9 (codified SOP). Backbone: Claude Opus 4.6 for GA and OpenClaw comparison.",
+      "content_hash": "ddc2b63dc5e6dca7f12a1a9d1a7244593d680f9c41900e53f1a45b21b16e4b06",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_17091::setup_self_evolution",
+      "label": "setup_self_evolution",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Self-evolution longitudinal study setup",
+      "type": "setting"
+    },
+    {
+      "content": "Web browsing evaluation: GA vs. OpenClaw (both using Claude Opus 4.6). Three benchmarks: WebCanvas (12 tasks, automatic evaluation), BrowseComp-ZH (10 tasks, LLM-as-judge), Custom Tasks (22 tasks, human + LLM). Metric: Score (0-1). Also reports Avg. Tokens (M) per task.",
+      "content_hash": "619ff705b878153cbb375534c7bf46baa4971d661daed1bc8408918bf9383ef6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_17091::setup_web_browsing",
+      "label": "setup_web_browsing",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Web browsing evaluation setup",
+      "type": "setting"
+    },
+    {
+      "content": "On SOP-Bench (multi-step SOP execution benchmark) with Claude Sonnet 4.6 backbone: GA achieves 100% accuracy, consuming 2.02M input tokens, 53k output tokens, 2.08M total tokens, efficiency 0.48. OpenClaw achieves 100% accuracy, consuming 2.60M input tokens, 2.64M total, efficiency 0.38. Claude Code achieves 85% accuracy, consuming 1.23M input tokens, 1.25M total, efficiency 0.68.",
+      "content_hash": "d1ee209c8b73f98c04968a1eabef76cffe4d254d09f913caacc3c848cdf57fe0",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_17091::result_sop_bench_ga_claude",
+      "label": "result_sop_bench_ga_claude",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_tool_minimality"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SOP-Bench results with Claude Sonnet 4.6",
+      "type": "claim"
+    },
+    {
+      "content": "On Lifelong AgentBench (sequential tasks with cross-task dependencies) with Claude Sonnet 4.6 backbone: GA achieves 100% accuracy, consuming only 222k input tokens, 20k output, 241k total tokens, efficiency 4.15. OpenClaw achieves 70% accuracy, consuming 1.43M input tokens, 1.45M total, efficiency 0.48. Claude Code achieves 75% accuracy, consuming 800k input tokens, 814k total, efficiency 0.92. GA uses 27.7% of Claude Code's input tokens and 15.5% of OpenClaw's input tokens while achieving higher task completion.",
+      "content_hash": "6663ef0316f6c324b2c269f36fff0d268449d12dc8e9a3fc9b16c7a84163f68c",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_17091::result_lifelong_ga_claude",
+      "label": "result_lifelong_ga_claude",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_model_advantage",
+              "ga_density_architecture"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Lifelong AgentBench results with Claude Sonnet 4.6",
+      "type": "claim"
+    },
+    {
+      "content": "On RealFin-Benchmark (financial workflows with implicit user intent) with mixed backbones: GA (Claude Sonnet 4.6) achieves 65% accuracy, 102k input tokens, 114k total, efficiency 5.70. Claude Code (Claude Opus 4.6): 60% accuracy, 290k input, 307k total, efficiency 1.95. Claude Code (Claude Sonnet 4.6): 55% accuracy, 226k input, 238k total, efficiency 2.31. OpenClaw (Claude Sonnet 4.6): 35% accuracy, 249k input, 251k total, efficiency 1.39. CodeX (GPT-5.4): 60% accuracy, 838k input, 892k total, efficiency 0.67. GA achieves the highest accuracy and efficiency on this benchmark.",
+      "content_hash": "78eb621920bee9783a3d7c9b48c2f0215b875ca28026751c21f26d9acad90819",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_17091::result_realfin_ga",
+      "label": "result_realfin_ga",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_context_compression"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "RealFin-Benchmark results",
+      "type": "claim"
+    },
+    {
+      "content": "On five long-horizon complex tasks (document generation, SQL copilot, experiment analysis report, procurement decision-making, research paper feasibility analysis) using Claude Sonnet 4.6: GA: 100% success, 188,829 total tokens (35.1% of Claude Code's), 220.8s, 11.0 requests, 12.8 tool calls. Claude Code: 100% success, 537,413 total tokens, 320.8s, 32.6 requests, 22.6 tool calls. OpenClaw: 80% success, 633,101 total tokens, 183.1s, 15.0 requests, 16.6 tool calls.",
+      "content_hash": "8a094f0ea176ac5e1baa6481960f4191fdb769a0abdc179e752d0fa55f7d8002",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_17091::result_long_horizon_tool",
+      "label": "result_long_horizon_tool",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_context_compression",
+              "claim_tool_minimality"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 4"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Long-horizon complex task results",
+      "type": "claim"
+    },
+    {
+      "content": "GA's superior performance on task completion benchmarks could be primarily due to better backbone model selection or model-specific optimizations rather than architectural innovations in context density management.",
+      "content_hash": "1f387d5d94d377fde2dabcb50f6a00c62ef61fb109bbbd96c1fb7b30fca56391",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_17091::alt_model_advantage",
+      "label": "alt_model_advantage",
+      "metadata": {
+        "prior": 0.22,
+        "prior_justification": "The model-selection alternative is partially falsified by the cross-LLM results (GA still outperforms with Minimax M2.7). However, backbone LLM capability inevitably contributes some portion of the observed advantage. Low prior because the architecture-based explanation accounts for the cross-LLM consistency."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative: GA performance from model selection rather than architecture",
+      "type": "claim"
+    },
+    {
+      "content": "Tool usage is highly concentrated in a small subset even in systems with many tools. In Claude Code: AgentTool accounts for 50.4% of calls, WebFetchTool 22.1%, FileReadTool 10.6%, FileWriteTool 8.9%; many tools appear only in the tail. OpenClaw shows similar concentration. In GA: code_run (34.4%), web_execute_js (17.2%), file_read (10.9%), file_write (3.1%), web_scan (3.1%), update_working_checkpoint (31.2%). A substantial fraction of low-frequency tools in large-toolset systems still occupy prompt context despite contributing little to execution.",
+      "content_hash": "40484a593e66079eea7ebaf30611efee157d94912204bdb395cc099cc3fb0e5c",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_17091::result_tool_distribution",
+      "label": "result_tool_distribution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_tool_minimality"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604-17091.pdf, Figure 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Tool usage concentration analysis",
+      "type": "claim"
+    },
+    {
+      "content": "GA shows continuous efficiency improvement across repeated runs of the same task type. Using GPT-5.4 backbone on a HuggingFace dataset download task: GA's operation time decreased from 102 seconds (Run 1) to approximately 66 seconds (Run 5). Token consumption dropped from 200,439 (Run 1) to approximately 100,000 (Run 5). CodeX, Claude Code, and OpenClaw remained largely stable across runs, with OpenClaw's token usage fluctuating (1,370k to 2,330k to 2,130k). GA's gain comes from converting task experience into reusable L3 SOPs.",
+      "content_hash": "c3965da9c502f376c5e2d42c77a4f71a5a21e7d833886b9e605c35f57fd9510c",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_17091::result_continuous_improvement",
+      "label": "result_continuous_improvement",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_self_evolution"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604-17091.pdf, Figure 4"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Continuous efficiency improvement through repeated task execution",
+      "type": "claim"
+    },
+    {
+      "content": "Memory ablation on SOP-Bench dangerous_goods (GPT-5.4 backbone): No-Memory: TSR = 13.87%, memory size = 0 tokens. Full-Memory: TSR = 52.44%, memory size = 575 tokens. Redundant-Memory: TSR = 66.48%, memory size = 288 tokens. Condensed Memory: TSR = 66.48%, memory size = 165 tokens. Condensed memory achieves the same highest TSR (Task Success Rate) as Redundant-Memory while using 42.7% fewer tokens (165 vs 288), and outperforms Full-Memory (52.44%) while using 71.3% fewer tokens.",
+      "content_hash": "c7e41766b2b26e072b9e194714e82abff26105672c160732712bd7b744a998b8",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2604_17091::result_condensed_memory_ablation",
+      "label": "result_condensed_memory_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_hierarchical_memory"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 5"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Condensed vs Full vs Redundant memory ablation results",
+      "type": "claim"
+    },
+    {
+      "content": "Long-term factual memory evaluation on LoCoMo (GPT-5.4 backbone): GA achieves highest scores across all four categories: Multi-Hop: F1=43.33, BLEU=39.96 (vs Mem0 F1=39.32, A-MEM F1=29.03, OpenClaw F1=21.43). Temporal: F1=52.23, BLEU=51.11 (vs Mem0 F1=50.03, A-MEM F1=46.83, OpenClaw F1=22.56). Open-Domain: F1=20.41, BLEU=15.31 (vs Mem0 F1=18.32, A-MEM F1=13.11, OpenClaw F1=9.56). Single-Hop: F1=45.69, BLEU=40.66 (vs Mem0 F1=40.32, A-MEM F1=44.68, OpenClaw F1=23.44). GA does not use an embedding model or vector database.",
+      "content_hash": "ab272c495a34e3afdc977737df2c7847fb3cb201f473cd59e45f07180a890aa2",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2604_17091::result_factual_memory",
+      "label": "result_factual_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "law_hierarchical_memory_factual"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Long-term factual memory evaluation results (LoCoMo)",
+      "type": "claim"
+    },
+    {
+      "content": "Context explosion prevention after installing 20 skills with intensive use. Full prompt length on minimal 'Hello' request: GA: 2,298 tokens. Claude Code: 22,821 tokens. CodeX: 23,932 tokens. OpenClaw: 43,321 tokens. GA's prompt is 10.1x smaller than Claude Code, 10.4x smaller than CodeX, and 18.9x smaller than OpenClaw.",
+      "content_hash": "1a0e5d06a596e617e75546cb373ae6016f858f5d51c3b1bdc1337f317f398835",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_17091::result_context_explosion",
+      "label": "result_context_explosion",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly measured prompt length after installing 20 skills. GA: 2,298 tokens vs Claude Code 22,821, CodeX 23,932, OpenClaw 43,321. This is a deterministic measurement with a clear and reproducible protocol. Very high prior.",
+        "source_table": "artifacts/2604-17091.pdf, Table 7"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Context explosion prevention results",
+      "type": "claim"
+    },
+    {
+      "content": "Nine-round evolution trajectory on LangChain GitHub research task (Claude Opus 4.6): Round 1 (initial): 7m30s, 32 LLM calls, 15,581 input tokens, 222,203 total. Round 2-5 (SOP optimization): time decreases from 4m19s to 2m50s; calls decrease from 12 to 7; total tokens from 66,341 to 35,536. Round 6-9 (codified SOP): converges to ~23k +/- 1k total tokens; 5 LLM calls; time ~1m35s to 1m41s. Token reduction from Round 1 to Round 9: 89.6% (222,203 to 23,010). Cache-read tokens collapse from 183,375 (Round 1) to 19,034 (Round 9). Input tokens collapse from 15,581 to 1,323.",
+      "content_hash": "ce7e380e506609147d83fdd256afb2cc23bee4389cc49e156bb741ac98c0a1a2",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2604_17091::result_evolution_trajectory",
+      "label": "result_evolution_trajectory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_self_evolution"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 8"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Nine-round evolution trajectory results",
+      "type": "claim"
+    },
+    {
+      "content": "Cross-task evolution on 8-task web benchmark (GA vs OpenClaw, Claude Opus 4.6): GA shows consistent token convergence across repeated runs on all 8 tasks. High-complexity tasks (OpenClaw average >1,000k tokens, e.g., A1, B2, D1) achieve 83.5% average token saving in Run 3 vs Run 1. Mid-complexity tasks achieve 72.5% average saving. D2 achieves 90.1% saving despite low absolute cost, due to long-horizon structure. OpenClaw shows no convergence (e.g., A1 tokens: 1,370k to 2,330k to 2,130k). SOP self-evolution benefit scales with task complexity.",
+      "content_hash": "15b773a526e6a5294a15e8ca70ef903ad4c306e216c245f96e4df94cff8ae07f",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2604_17091::result_cross_task_evolution",
+      "label": "result_cross_task_evolution",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "claim_self_evolution"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604-17091.pdf, Figure 5"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Cross-task evolution convergence results",
+      "type": "claim"
+    },
+    {
+      "content": "Web browsing evaluation (GA and OpenClaw both using Claude Opus 4.6): WebCanvas (12 tasks, automatic): GA score 0.834, 0.18M tokens; OpenClaw score 0.722, 0.71M tokens. GA uses 25.4% of OpenClaw's tokens. BrowseComp-ZH (10 tasks, LLM judge): GA score 0.600, 0.47M tokens; OpenClaw score 0.200, 1.31M tokens. GA triples OpenClaw's score at one-third the token cost. Custom Tasks (22 tasks, human + LLM): GA score 0.577, 0.26M tokens; OpenClaw score 0.500, 0.76M tokens. Structural token reduction: 2.9x to 3.9x across all benchmarks.",
+      "content_hash": "b64f0737fccc841fb4163a887af7bebcf7cc356e295d34c45373ce0448f4bf1f",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2604_17091::result_web_browsing",
+      "label": "result_web_browsing",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_web_tools",
+              "web_density_design"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604-17091.pdf, Table 9"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Web browsing evaluation results",
+      "type": "claim"
+    },
+    {
+      "content": "GA's context density architecture (hierarchical memory, minimal tools, context compression) is the primary driver of its accuracy-efficiency advantage across benchmarks and backbone LLMs.",
+      "content_hash": "5284489ff8269e9244cf185316518ff8c213625cc01131e8a7bfae993164b4cf",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2604_17091::ga_density_architecture",
+      "label": "ga_density_architecture",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "The density-architecture hypothesis (hierarchical memory + minimal tools + compression = primary driver of advantage) is the paper's central claim and is supported by multiple experimental dimensions. Moderate-high prior because the evidence across benchmarks is consistent but alternative explanations (model quality, benchmark selection) are not fully ruled out."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Density architecture hypothesis for GA advantage",
+      "type": "claim"
+    },
+    {
+      "content": "compare(GA's context density architecture (hierarchical memory, minimal tools, context compression) is the primary driver of its accuracy-efficiency advantage across benchmarks and backbone LLMs., GA's superior performance on task completion benchmarks could be primarily due to better backbone model selection or model-specific optimizations rather than architectural innovations in context density management., On Lifelong AgentBench (sequential tasks with cross-task dependencies) with Claude Sonnet 4.6 backbone: GA achieves 100% accuracy, consuming only 222k input tokens, 20k output, 241k total tokens, efficiency 4.15. OpenClaw achieves 70% accuracy, consuming 1.43M input tokens, 1.45M total, efficiency 0.48. Claude Code achieves 75% accuracy, consuming 800k input tokens, 814k total, efficiency 0.92. GA uses 27.7% of Claude Code's input tokens and 15.5% of OpenClaw's input tokens while achieving higher task completion.)",
+      "content_hash": "8f9267eeef1566278372c96567c4945d397f8a6654d28dd04d67e9022c7f6e47",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2604_17091::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "GA achieves best Multi-Hop factual memory performance on LoCoMo: F1=43.33, BLEU=39.96, exceeding Mem0 (F1=39.32), A-MEM (F1=29.03), OpenClaw (F1=21.43).",
+      "content_hash": "eecc32343e85a613c46cd2a9a51f51bdc8be2921673bf87bb3597b58259c21bc",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2604_17091::obs_multihop",
+      "label": "obs_multihop",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_hierarchical_memory_factual"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "GA's Multi-Hop F1=43.33 exceeds Mem0 F1=39.32, A-MEM F1=29.03, OpenClaw F1=21.43 on LoCoMo. This is a directly measured experimental result. High prior."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GA best on Multi-Hop factual recall",
+      "type": "claim"
+    },
+    {
+      "content": "GA achieves best Temporal factual memory performance on LoCoMo: F1=52.23, BLEU=51.11, exceeding Mem0 (F1=50.03), A-MEM (F1=46.83), OpenClaw (F1=22.56).",
+      "content_hash": "7fb8174554e208a8bad055974a9962dd2ef02c1a4123925de6c0a1e93ab4ed20",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2604_17091::obs_temporal",
+      "label": "obs_temporal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_hierarchical_memory_factual"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "GA's Temporal F1=52.23 exceeds Mem0 F1=50.03, A-MEM F1=46.83, OpenClaw F1=22.56 on LoCoMo. This is a directly measured experimental result. High prior."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GA best on Temporal factual recall",
+      "type": "claim"
+    },
+    {
+      "content": "GA achieves best Open-Domain factual memory performance on LoCoMo: F1=20.41, BLEU=15.31, exceeding Mem0 (F1=18.32), A-MEM (F1=13.11), OpenClaw (F1=9.56). Open-Domain is the hardest category for all systems.",
+      "content_hash": "bd805b46568ab8807c6bc62513a30e61bc3d802f20af1ab49a7edd3cb5c5cce8",
+      "declaration_index": 24,
+      "exported": false,
+      "id": "github:2604_17091::obs_open_domain",
+      "label": "obs_open_domain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_hierarchical_memory_factual"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "GA's Open-Domain F1=20.41 exceeds Mem0 F1=18.32, A-MEM F1=13.11, OpenClaw F1=9.56 on LoCoMo. Directly measured. Slightly lower prior because open-domain is the hardest category and margin over Mem0 is smaller (2.09 F1 points)."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GA best on Open-Domain factual recall",
+      "type": "claim"
+    },
+    {
+      "content": "GA's hierarchical memory with validated commit and L1 routing achieves superior long-term factual retention across multi-hop, temporal, open-domain, and single-hop categories without requiring an embedding model or vector database.",
+      "content_hash": "721e6920fd5b10f66572e30f3e5518a607bb70cd33737fe2c2a81e3f831c4fe9",
+      "declaration_index": 25,
+      "exported": true,
+      "id": "github:2604_17091::law_hierarchical_memory_factual",
+      "label": "law_hierarchical_memory_factual",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "law_hierarchical_memory_factual"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Hierarchical memory law: superior factual retention across categories",
+      "type": "claim"
+    },
+    {
+      "content": "OpenClaw's more specialized browser tools and richer action space could outperform GA's atomic web_scan and web_execute_js on tasks requiring fine-grained browser interaction.",
+      "content_hash": "e76ac9a2e55c0aa24d7317b50c7ea785e60ce25db136039c53bf2ea3e4d3176d",
+      "declaration_index": 28,
+      "exported": false,
+      "id": "github:2604_17091::alt_web_tools",
+      "label": "alt_web_tools",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "The specialized-tools alternative is inconsistent with GA outperforming OpenClaw even on standard WebCanvas interactions where specialized tools should have the most advantage. Very low prior — the evidence across all three web benchmarks is strongly against this alternative."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative: specialized browser tools outperform atomic tools",
+      "type": "claim"
+    },
+    {
+      "content": "GA's context compression and web_scan DOM optimization maintain information density on web pages, enabling GA to outperform systems with specialized browser tools, especially on multi-hop reasoning tasks.",
+      "content_hash": "08ce5010414e84f654e94a731df388aece6d8a893430ac5ea5301df48fd0ca00",
+      "declaration_index": 29,
+      "exported": false,
+      "id": "github:2604_17091::web_density_design",
+      "label": "web_density_design",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "The web density design hypothesis (DOM compression + atomic browser tools = web performance advantage) is supported by the BrowseComp-ZH results (3x score advantage). Moderate prior because web performance depends on many factors including benchmark task design, and only two systems are compared."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Web density design hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "compare(GA's context compression and web_scan DOM optimization maintain information density on web pages, enabling GA to outperform systems with specialized browser tools, especially on multi-hop reasoning tasks., OpenClaw's more specialized browser tools and richer action space could outperform GA's atomic web_scan and web_execute_js on tasks requiring fine-grained browser interaction., Web browsing evaluation (GA and OpenClaw both using Claude Opus 4.6): WebCanvas (12 tasks, automatic): GA score 0.834, 0.18M tokens; OpenClaw score 0.722, 0.71M tokens. GA uses 25.4% of OpenClaw's tokens. BrowseComp-ZH (10 tasks, LLM judge): GA score 0.600, 0.47M tokens; OpenClaw score 0.200, 1.31M tokens. GA triples OpenClaw's score at one-third the token cost. Custom Tasks (22 tasks, human + LLM): GA score 0.577, 0.26M tokens; OpenClaw score 0.500, 0.76M tokens. Structural token reduction: 2.9x to 3.9x across all benchmarks.)",
+      "content_hash": "a7ebd2f9d5b89d0474bc74b976b4a1b75e5981e10d6284989714ca878db4c957",
+      "declaration_index": 30,
+      "exported": false,
+      "id": "github:2604_17091::_anon_001",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Permissions define the ceiling of agent capability. What an agent can perceive, act upon, and receive feedback from directly determines the complexity of reasoning chains and the difficulty of tasks it can solve. Restricting the action boundary during the exploration phase caps the capability ceiling at system design time. An agent restricted to reading a small set of files, unable to execute code or access external information, can only operate within a truncated state space regardless of model capability. Narrowing the exploration boundary is not a path toward useful agents.",
+      "content_hash": "76a5b8af0284754d38bea0a0fd696db4dcd2451c8d08322b9d822efc6a282dd8",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17091::claim_permissions_ceiling",
+      "label": "claim_permissions_ceiling",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "thesis_minimal_capability"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Permissions as agent capability ceiling",
+      "type": "claim"
+    },
+    {
+      "content": "Agent self-evolution has three progressive dimensions: (1) skill consolidation — converting verified execution traces into reusable SOPs and executable code (demonstrated in GA's longitudinal study); (2) autonomous exploration — using Reflect Mode and subagent dispatch to discover new skills during idle time without user instruction; (3) architectural self-update — agents reading and modifying the core codebase itself. Minimal architecture is the necessary prerequisite for reaching dimension (3). The full validation of the path from (1) to (3) is left as an open problem.",
+      "content_hash": "9aa15a77fa80a3e2b637b595eeed823027f2d702b154a13ba918d90c404b8731",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17091::claim_architecture_evolution_path",
+      "label": "claim_architecture_evolution_path",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GenericAgent2026"
+            ],
+            "referenced_claims": [
+              "thesis_minimal_architecture"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Three-dimensional agent evolution path",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::failure_positional_bias,github:2604_17091::failure_attention_dilution,github:2604_17091::failure_effective_window)",
+      "content_hash": "5848daf82b72cee0b166f01dc3fdcbc6f21a4867b8f1974fa89c684966e11c8a",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_2be880d5",
+      "label": "__conjunction_result_2be880d5",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::failure_positional_bias,github:2604_17091::failure_attention_dilution,github:2604_17091::failure_effective_window)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fa751a4e59abcf2b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_2be880d5,github:2604_17091::failure_compounding)",
+      "content_hash": "c2afe8f7290896674dae1d5fbc3811a0a171f8a2fe2d6a5be1f65c1cce6f646b",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_966ba5b1",
+      "label": "__implication_result_966ba5b1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_2be880d5,github:2604_17091::failure_compounding)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fa751a4e59abcf2b",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::failure_compounding,github:2604_17091::failure_experience_reuse)",
+      "content_hash": "fb714a4fd33afa9900d64546c4e2a17f7079972d53a5ea4360569f87a8815643",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_545b749b",
+      "label": "__conjunction_result_545b749b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::failure_compounding,github:2604_17091::failure_experience_reuse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f9562f41342cb5a2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_545b749b,github:2604_17091::thesis_density)",
+      "content_hash": "3c2f8982ef83476f717bf73d31f08e760cffe32e7799b1fb4bb59f5c36c1e144",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_e0d5d11d",
+      "label": "__implication_result_e0d5d11d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_545b749b,github:2604_17091::thesis_density)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f9562f41342cb5a2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_density,github:2604_17091::thesis_minimal_capability)",
+      "content_hash": "d19fb3d7d5ea1cf1a08bba706132e7053349f3f8e82139199ea8b3a94f1874fd",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_805b4a67",
+      "label": "__implication_result_805b4a67",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_density,github:2604_17091::thesis_minimal_capability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b3db7d5190068902",
+        "owning_strategy_type": "deduction",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_minimal_capability,github:2604_17091::claim_tool_minimality)",
+      "content_hash": "bc79dbb6be0fb86445c7ac68a1c01fce17b7f86b90850e66624a8ec09e393e10",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_809c6c8c",
+      "label": "__implication_result_809c6c8c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_minimal_capability,github:2604_17091::claim_tool_minimality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6de6306e94dcece3",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_density,github:2604_17091::claim_hierarchical_memory)",
+      "content_hash": "33bd773ab5f83de7f35846df3bb3efa68ab00c4f1d8b3c9aeb2956d58d504895",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_74c2a46f",
+      "label": "__implication_result_74c2a46f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_density,github:2604_17091::claim_hierarchical_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_db966ef2ecee7909",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::thesis_density,github:2604_17091::thesis_minimal_capability)",
+      "content_hash": "e903b93f19ef2c642f451f83b56e03c557129ccd0f29c2b109f95fec7e60b2b6",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_9a6b3a26",
+      "label": "__conjunction_result_9a6b3a26",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::thesis_density,github:2604_17091::thesis_minimal_capability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dda50e11a1f81c64",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_9a6b3a26,github:2604_17091::claim_self_evolution)",
+      "content_hash": "a66ceb3475d186a11245f9ed6a79c8a265a96ee84e05062f596aaf2db722faba",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_fecc16de",
+      "label": "__implication_result_fecc16de",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_9a6b3a26,github:2604_17091::claim_self_evolution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dda50e11a1f81c64",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_density,github:2604_17091::claim_context_compression)",
+      "content_hash": "f01cd4c95be926e2a3d841263dfaae4a1041dd3647c3c8b905d1d00ffb6f4f95",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_66bb7c86",
+      "label": "__implication_result_66bb7c86",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_density,github:2604_17091::claim_context_compression)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9f12c250c5b03a93",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::claim_failure_escalation)",
+      "content_hash": "abd1928c6c183b7ebeee5e7350d32c4629c980cf5d1e79337dae0ca931b1e822",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_7d0d4452",
+      "label": "__implication_result_7d0d4452",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::claim_failure_escalation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c814384329d79b8f",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::claim_triggered_commit)",
+      "content_hash": "10e7d0d8c2cf15e95e1b8fc90f7fd52692ffb747efba7cf356626b8e1dc10062",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_4cea0f4c",
+      "label": "__implication_result_4cea0f4c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::claim_triggered_commit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d4ec761a659cc050",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_context_compression,github:2604_17091::claim_web_scan_optimization)",
+      "content_hash": "cb870c76cb88ed0d048a716d1c248735879b5d21b895ca0d2dbefe5e3eb4c249",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_7ae5b2a0",
+      "label": "__implication_result_7ae5b2a0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_context_compression,github:2604_17091::claim_web_scan_optimization)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_02f1d14020fcf4b7",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::claim_l1_bounded)",
+      "content_hash": "3743a79b7f03b3fe80c1dd6e0e35306febe59e84722429dcc61f4983d27f0085",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_bba2456e",
+      "label": "__implication_result_bba2456e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::claim_l1_bounded)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f3d92897d0a62291",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::claim_cli_minimality)",
+      "content_hash": "48a62840ee473b1d459d5da899b404ad0cc703a835b4fe521f0cf3165c0cc90a",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_65bc1aa8",
+      "label": "__implication_result_65bc1aa8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::claim_cli_minimality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5ec4d6a19e21ce73",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_cli_minimality,github:2604_17091::claim_subagent_emergence)",
+      "content_hash": "524c8656aef1253c4904f5c94098b18b60f7b65a67235245bdf90463a05d02c2",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_20822ef1",
+      "label": "__implication_result_20822ef1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_cli_minimality,github:2604_17091::claim_subagent_emergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_64a4ee16669dc9aa",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_cli_minimality,github:2604_17091::claim_reflect_emergence)",
+      "content_hash": "ee27651647731b58229fcadd9983163316a7ded9fcbf7ab109c229e0cdefd300",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_afb44617",
+      "label": "__implication_result_afb44617",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_cli_minimality,github:2604_17091::claim_reflect_emergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7411dab32800a499",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::claim_subagent_emergence,github:2604_17091::claim_reflect_emergence)",
+      "content_hash": "0362338f9163b21c9ed5ed2721502ea92048ab47b912d89bfbf7ddaef1a6ebaf",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_7cea889a",
+      "label": "__conjunction_result_7cea889a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::claim_subagent_emergence,github:2604_17091::claim_reflect_emergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_781fcc3b33b39c98",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_7cea889a,github:2604_17091::claim_autonomous_exploration)",
+      "content_hash": "30310635ab85db9535dbd13ac669b35678ff4a38b7d8139d57050396db0d3e99",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_a71c13a4",
+      "label": "__implication_result_a71c13a4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_7cea889a,github:2604_17091::claim_autonomous_exploration)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_781fcc3b33b39c98",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::thesis_minimal_architecture,github:2604_17091::claim_cli_minimality)",
+      "content_hash": "9ede349aac7e28ebd6f435a16cb92aa9b10b0aa6aadf415d85ea45fd0b7ab781",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_69a99106",
+      "label": "__conjunction_result_69a99106",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::thesis_minimal_architecture,github:2604_17091::claim_cli_minimality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_748637eb58cb0441",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_69a99106,github:2604_17091::claim_architectural_self_update)",
+      "content_hash": "aab267a796ea4661a1934247fa937dd5bf2ce215d57ed3a0b82e9bbf603f8869",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_b5460e92",
+      "label": "__implication_result_b5460e92",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_69a99106,github:2604_17091::claim_architectural_self_update)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_748637eb58cb0441",
+        "owning_strategy_type": "support",
+        "prior": 0.62,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::result_sop_bench_ga_claude)",
+      "content_hash": "5fab67cc3512ae7e502f1e215cb39ed07b4d0ca9088610152053fca9ad9babf3",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_8012a996",
+      "label": "__implication_result_8012a996",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::result_sop_bench_ga_claude)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_259c3718b705a8ff",
+        "owning_strategy_type": "support",
+        "prior": 0.84,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_context_compression,github:2604_17091::result_realfin_ga)",
+      "content_hash": "647016d34d67ffa1f5127da3f95c633b8034e0f12f618d0c18a049f21bb4582a",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_65887d58",
+      "label": "__implication_result_65887d58",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_context_compression,github:2604_17091::result_realfin_ga)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_54605171dbf160f9",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::claim_tool_minimality,github:2604_17091::claim_context_compression)",
+      "content_hash": "91dedf14272c69025d44f4818a477b41695864942b6497956fb84cc6b1d473be",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_66c75a45",
+      "label": "__conjunction_result_66c75a45",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::claim_tool_minimality,github:2604_17091::claim_context_compression)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_56c6a50045058abf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_66c75a45,github:2604_17091::result_long_horizon_tool)",
+      "content_hash": "52363e5b17622ccbd7437a0971b1a3e9526e71e2a6074194e7a8c348550991ad",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_4f57a7a7",
+      "label": "__implication_result_4f57a7a7",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_66c75a45,github:2604_17091::result_long_horizon_tool)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_56c6a50045058abf",
+        "owning_strategy_type": "support",
+        "prior": 0.86,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::result_tool_distribution)",
+      "content_hash": "b0c91d9481829ac300067423032ebe17d6ec182224f43b18d5c7171c067cc1dc",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_6f543b2f",
+      "label": "__implication_result_6f543b2f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_tool_minimality,github:2604_17091::result_tool_distribution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_660b6dda0eda783a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_continuous_improvement)",
+      "content_hash": "9c960d47c894c36d8057d0c1129bddec7b9ea357117756d071d49fef10128a0e",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_3d26e57d",
+      "label": "__implication_result_3d26e57d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_continuous_improvement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_54c2affb7c7ea8fc",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_cross_task_evolution)",
+      "content_hash": "6edff0a442efdc2e4eee566a11b9989a3f2933d57211a223a1ee8aa245a9ba86",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_f1f351a0",
+      "label": "__implication_result_f1f351a0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_cross_task_evolution)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f4b024fc3d44633a",
+        "owning_strategy_type": "support",
+        "prior": 0.86,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::ga_density_architecture,github:2604_17091::result_lifelong_ga_claude)",
+      "content_hash": "53eebbfdf22f443cdf39a70aee04baeb94b0c12a6898292e38cafe82a3facaf6",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_928418ca",
+      "label": "__implication_result_928418ca",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::ga_density_architecture,github:2604_17091::result_lifelong_ga_claude)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7853b2c5a9c8fdfd",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::alt_model_advantage,github:2604_17091::result_lifelong_ga_claude)",
+      "content_hash": "95f1afd7beb9fb377142af67e6eb665535c124d18ceedcecbe512856563f5437",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_88527ff8",
+      "label": "__implication_result_88527ff8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::alt_model_advantage,github:2604_17091::result_lifelong_ga_claude)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b580551a50f2a761",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_17091::ga_density_architecture,github:2604_17091::result_lifelong_ga_claude)",
+      "content_hash": "980a4efa55ff43fe950c6f3595e411a66a1e5c781801494d8d8a5f860069841d",
+      "exported": false,
+      "id": "github:2604_17091::__equivalence_result_cdf401eb",
+      "label": "__equivalence_result_cdf401eb",
+      "metadata": {
+        "canonical_name": "matches(github:2604_17091::ga_density_architecture,github:2604_17091::result_lifelong_ga_claude)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_26f2d02d16ca246b",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_17091::alt_model_advantage,github:2604_17091::result_lifelong_ga_claude)",
+      "content_hash": "fbbc9da78abfd2ab7bbf27d82315cd7a28de8aaa768ee16c1e6769b04fde0ba2",
+      "exported": false,
+      "id": "github:2604_17091::__equivalence_result_c1c3ad56",
+      "label": "__equivalence_result_c1c3ad56",
+      "metadata": {
+        "canonical_name": "matches(github:2604_17091::alt_model_advantage,github:2604_17091::result_lifelong_ga_claude)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_26f2d02d16ca246b",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::result_condensed_memory_ablation)",
+      "content_hash": "0a5027c7faa3d82e88061804731ed1e41ff163cb8c0d614870cbb111d3591ddc",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_cc5abfa1",
+      "label": "__implication_result_cc5abfa1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_hierarchical_memory,github:2604_17091::result_condensed_memory_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ec7f981282bcc0d8",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_evolution_trajectory)",
+      "content_hash": "f1d07fb9e0881160420677a95bdbc15fb811f0a4f4c475497d2bd5dc9475ab6f",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_a41cf113",
+      "label": "__implication_result_a41cf113",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::claim_self_evolution,github:2604_17091::result_evolution_trajectory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5dbc4da756e05fc8",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_multihop)",
+      "content_hash": "8d43b0d91f31507d267fe174d8669cdeeac8f8b69cfb2a2980b33b7097e3de32",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_6b3b76b3",
+      "label": "__implication_result_6b3b76b3",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_multihop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_48ca1c428fe55217",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_temporal)",
+      "content_hash": "ced610a4909f248fbad923fd6ff5c7398d590256d3df21e238215f6d8d778df6",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_6113c175",
+      "label": "__implication_result_6113c175",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_temporal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ff7a5584a1d7a1f2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_open_domain)",
+      "content_hash": "73a8f101f3ed7a9d75d7bb2563f5f3916f28ab393cabcfe2a808d4ed8298517d",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_5c1e3d7b",
+      "label": "__implication_result_5c1e3d7b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::obs_open_domain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d28411b1d7b8baf5",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::result_factual_memory)",
+      "content_hash": "1a9d00e0a0fbee269b684bd68bcdc0d500ac498063b74a38f9b01155b2aba1df",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_aa84cf1e",
+      "label": "__implication_result_aa84cf1e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::law_hierarchical_memory_factual,github:2604_17091::result_factual_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_863e0846d09a9f6e",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::web_density_design,github:2604_17091::result_web_browsing)",
+      "content_hash": "fd2405f21bafbb398d88dbd61c023bd8bfd3cc000856cce525c60a9300c4bd50",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_b260772b",
+      "label": "__implication_result_b260772b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::web_density_design,github:2604_17091::result_web_browsing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_76ed6671b8031b65",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::alt_web_tools,github:2604_17091::result_web_browsing)",
+      "content_hash": "56ce217302c2896a602ee2709d4793722b37170d0d36a7e6ef09745da3d83f8e",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_77ce5394",
+      "label": "__implication_result_77ce5394",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::alt_web_tools,github:2604_17091::result_web_browsing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9919a20fe367864a",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_17091::web_density_design,github:2604_17091::result_web_browsing)",
+      "content_hash": "52d5d04adfc80a1b828056c5c446361da91a958db1df12e2e1f99f8bcf72eca9",
+      "exported": false,
+      "id": "github:2604_17091::__equivalence_result_7749c2e8",
+      "label": "__equivalence_result_7749c2e8",
+      "metadata": {
+        "canonical_name": "matches(github:2604_17091::web_density_design,github:2604_17091::result_web_browsing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6baf6eb31fb1de48",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_17091::alt_web_tools,github:2604_17091::result_web_browsing)",
+      "content_hash": "262456e4e84a355b717d4334fa8179cef7087fe7c591da9b4bd6475fffeeb601",
+      "exported": false,
+      "id": "github:2604_17091::__equivalence_result_2474c436",
+      "label": "__equivalence_result_2474c436",
+      "metadata": {
+        "canonical_name": "matches(github:2604_17091::alt_web_tools,github:2604_17091::result_web_browsing)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6baf6eb31fb1de48",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17091::result_lifelong_ga_claude,github:2604_17091::result_context_explosion,github:2604_17091::result_evolution_trajectory)",
+      "content_hash": "6e98d22c6ce0a04b5586597c5ddc65b579109eebdc4e9f026a8778bb54b3b6da",
+      "exported": false,
+      "id": "github:2604_17091::__conjunction_result_9890f520",
+      "label": "__conjunction_result_9890f520",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17091::result_lifelong_ga_claude,github:2604_17091::result_context_explosion,github:2604_17091::result_evolution_trajectory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9c749bcf6ec6e1d1",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::__conjunction_result_9890f520,github:2604_17091::thesis_token_efficiency)",
+      "content_hash": "dc61f94100190d278469cdcd07e67c45d70dc564946a679ee5cbba79bd774769",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_24ed7d0e",
+      "label": "__implication_result_24ed7d0e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::__conjunction_result_9890f520,github:2604_17091::thesis_token_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9c749bcf6ec6e1d1",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_minimal_capability,github:2604_17091::claim_permissions_ceiling)",
+      "content_hash": "bce67fef68ec88a2cb70b0d2098e4860d161112b7a2e570b162f9000b8361cad",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_a648b010",
+      "label": "__implication_result_a648b010",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_minimal_capability,github:2604_17091::claim_permissions_ceiling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_80156a485b5b0c77",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17091::thesis_minimal_architecture,github:2604_17091::claim_architecture_evolution_path)",
+      "content_hash": "613cad8028184dbdc679016cf527cd960db77262f7277bfcec6986df443a2f6d",
+      "exported": false,
+      "id": "github:2604_17091::__implication_result_cefca768",
+      "label": "__implication_result_cefca768",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17091::thesis_minimal_architecture,github:2604_17091::claim_architecture_evolution_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_99f18e0999b6d320",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_design",
+    "s3_architecture",
+    "s4_experiments",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Problem Statement and Core Thesis of GenericAgent",
+    "s2_design": "Section 2: GenericAgent Design Principles and Architecture",
+    "s3_architecture": "Section 3: Compositional Capabilities and System Architecture",
+    "s4_experiments": "Section 4: Experimental Evaluation",
+    "s5_discussion": "Section 5: Discussion and Key Findings"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_17091",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_17091::failure_compounding",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_2be880d5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::failure_positional_bias",
+              "github:2604_17091::failure_attention_dilution",
+              "github:2604_17091::failure_effective_window"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_966ba5b1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_2be880d5",
+              "github:2604_17091::failure_compounding"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The three failure modes identified in prior work (@failure_positional_bias, @failure_attention_dilution, @failure_effective_window) are mutually reinforcing. Positional bias makes it harder to retrieve relevant facts as context grows; attention dilution means irrelevant content competes for model capacity; and effective window contraction means an increasing fraction of the prompt is wasted. Together, beyond a threshold, adding context actively harms performance [@LostInMiddle2023; @EffectiveContext2024]."
+      },
+      "premises": [
+        "github:2604_17091::failure_positional_bias",
+        "github:2604_17091::failure_attention_dilution",
+        "github:2604_17091::failure_effective_window"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fa751a4e59abcf2b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::thesis_density",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_545b749b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::failure_compounding",
+              "github:2604_17091::failure_experience_reuse"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_e0d5d11d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_545b749b",
+              "github:2604_17091::thesis_density"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because @failure_compounding implies that context quality — not length — determines decision quality per step, and @failure_experience_reuse shows that without principled memory, each task starts from scratch at growing cost, the paper concludes that the binding constraint for long-horizon agents is how much decision-relevant information fits in the effective context window. This reframes agent design from 'extend context' to 'maximize density'."
+      },
+      "premises": [
+        "github:2604_17091::failure_compounding",
+        "github:2604_17091::failure_experience_reuse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f9562f41342cb5a2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::thesis_minimal_capability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_805b4a67",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_density",
+              "github:2604_17091::thesis_minimal_capability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Given @thesis_density, each step in the agent execution pipeline either preserves or degrades information density. Tool interfacing determines interface overhead before execution begins; context management determines what enters the model per step; memory formation determines cross-episode reuse. These three are the only places where density is structurally degraded, so they are the minimal complete capability set [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_density"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b3db7d5190068902",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_tool_minimality",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_809c6c8c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_minimal_capability",
+              "github:2604_17091::claim_tool_minimality"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "From @thesis_minimal_capability, tool interfacing is the first stage where information density is degraded. Keeping only 9 atomic tools means tool descriptions occupy a small, fixed fraction of the context budget. Complex behaviors emerge from compositional sequences of primitives, so minimal tool count does not constrain functional reach [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_minimal_capability"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6de6306e94dcece3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_memory_layers"
+      ],
+      "conclusion": "github:2604_17091::claim_hierarchical_memory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_74c2a46f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_density",
+              "github:2604_17091::claim_hierarchical_memory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given @thesis_density, the second density-degradation point is what enters the model's context per step. The L1/L2/L3/L4 hierarchy (@def_memory_layers) allows only the meta-memory and L1 (always-on, size-bounded) to stay in context, routing deeper retrieval through explicit tool calls. This ensures irrelevant procedural and factual knowledge never occupies the active context unless the current reasoning step explicitly needs it [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_density"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_db966ef2ecee7909",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_self_evolution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_9a6b3a26",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::thesis_density",
+              "github:2604_17091::thesis_minimal_capability"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_fecc16de",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_9a6b3a26",
+              "github:2604_17091::claim_self_evolution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "From @thesis_minimal_capability, memory formation is the third density requirement. @thesis_density implies that starting each task from scratch wastes context budget on re-understanding. GA's self-evolution converts verified execution traces into SOPs and code, so later tasks begin from compact, high-density representations rather than verbose re-exploration. The codification from SOP to executable code further compresses per-task token cost [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_density",
+        "github:2604_17091::thesis_minimal_capability"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dda50e11a1f81c64",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_hallucination_free_length",
+        "github:2604_17091::def_context_budget"
+      ],
+      "conclusion": "github:2604_17091::claim_context_compression",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_66bb7c86",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_density",
+              "github:2604_17091::claim_context_compression"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Given @thesis_density and the hallucination-free context length constraint (@def_hallucination_free_length: ~30k tokens for current models), GA targets a compact budget using the character-domain heuristic (@def_context_budget). The four-stage compression pipeline (per-tool truncation, assistant compression, FIFO eviction, anchor injection) actively maintains information density as conversation grows. Each stage targets a different density-degradation mechanism [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_density"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f12c250c5b03a93",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_failure_escalation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_7d0d4452",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_self_evolution",
+              "github:2604_17091::claim_failure_escalation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@claim_self_evolution requires that the agent can detect and recover from failures to maintain its evolutionary trajectory. The three-step escalation (localized fix → strategy switch → human intervention) prevents the agent from getting trapped in loops that would degrade rather than improve long-term performance [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_self_evolution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c814384329d79b8f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_triggered_commit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_4cea0f4c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_hierarchical_memory",
+              "github:2604_17091::claim_triggered_commit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@claim_hierarchical_memory requires memory quality control: unvalidated information must not silently pollute L2/L3. The triggered commit mechanism enforces a validation stage before committing, maintaining the quality invariant that L2/L3 contain only verified, reusable knowledge [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_hierarchical_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d4ec761a659cc050",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_web_scan_optimization",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_7ae5b2a0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_context_compression",
+              "github:2604_17091::claim_web_scan_optimization"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@claim_context_compression requires token efficiency at the tool output level. The web_scan DOM layout analysis (cloning DOM, computing visibility, overlay/partition analysis, pruning hidden elements) instantiates this at the web-observation layer — reducing raw HTML by an order of magnitude while preserving decision-relevant content [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_context_compression"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_02f1d14020fcf4b7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_memory_layers"
+      ],
+      "conclusion": "github:2604_17091::claim_l1_bounded",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_bba2456e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_hierarchical_memory",
+              "github:2604_17091::claim_l1_bounded"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "From @claim_hierarchical_memory, GA's L1 layer records only the existence of knowledge categories (@def_memory_layers). Since category count grows sublinearly with knowledge volume (new categories arise only for genuinely new knowledge types), L1 is bounded by the Kolmogorov complexity of the categorical structure. The LLM decodes category existence into full content retrieval via tool calls — decoupling index size from knowledge volume [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_hierarchical_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f3d92897d0a62291",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_cli_interface",
+        "github:2604_17091::def_atomic_tool"
+      ],
+      "conclusion": "github:2604_17091::claim_cli_minimality",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_65bc1aa8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_tool_minimality",
+              "github:2604_17091::claim_cli_minimality"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@claim_tool_minimality establishes that GA uses only 9 atomic tools. The CLI-only interface (@def_cli_interface) means all interactions go through a single command-line entrypoint. Together, the 9 atomic tools plus a unified CLI define an architecture with ~3,000 lines of core code. Because the interface is standard, subagent dispatch follows without new code: a subagent is just another CLI invocation [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_tool_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5ec4d6a19e21ce73",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_cli_interface",
+        "github:2604_17091::def_subagent_dispatch"
+      ],
+      "conclusion": "github:2604_17091::claim_subagent_emergence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_20822ef1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_cli_minimality",
+              "github:2604_17091::claim_subagent_emergence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@claim_cli_minimality establishes GA as a standalone CLI program. From @def_cli_interface and @def_subagent_dispatch, spawning a subagent is just running the GA CLI command in a subprocess. Context isolation follows from process-level memory separation. No dedicated manager is needed — the mechanism is already in the OS [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_cli_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_64a4ee16669dc9aa",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_cli_interface",
+        "github:2604_17091::def_reflect_mode"
+      ],
+      "conclusion": "github:2604_17091::claim_reflect_emergence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_afb44617",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_cli_minimality",
+              "github:2604_17091::claim_reflect_emergence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@claim_cli_minimality establishes GA as a standard CLI program. Reflect Mode (@def_reflect_mode) is a polling callback attached to the existing CLI agent loop — when idle, the callback fires and injects a prompt. No separate subsystem is needed; the loop already handles arbitrary prompts [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_cli_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7411dab32800a499",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_17091::def_skill_tree"
+      ],
+      "conclusion": "github:2604_17091::claim_autonomous_exploration",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_7cea889a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::claim_subagent_emergence",
+              "github:2604_17091::claim_reflect_emergence"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_a71c13a4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_7cea889a",
+              "github:2604_17091::claim_autonomous_exploration"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@claim_subagent_emergence provides the execution substrate for parallel exploration tasks. @claim_reflect_emergence provides the idle-time trigger mechanism. Together with the skill tree (@def_skill_tree) that indexes current capabilities and identifies gaps, these mechanisms enable the agent to identify capability gaps, trigger exploration during idle time, and crystallize results into new skill tree entries [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_subagent_emergence",
+        "github:2604_17091::claim_reflect_emergence"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_781fcc3b33b39c98",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_architectural_self_update",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_69a99106",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::thesis_minimal_architecture",
+              "github:2604_17091::claim_cli_minimality"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_b5460e92",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_69a99106",
+              "github:2604_17091::claim_architectural_self_update"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.62,
+        "reason": "@thesis_minimal_architecture argues that a sufficiently small codebase can be read and modified by the agent itself. @claim_cli_minimality establishes that GA's core is ~3,000 lines. At this scale, a subagent can parse, understand, and propose modifications to the core code — making architectural self-update a tractable next step for dimension (3) of agent evolution [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_minimal_architecture",
+        "github:2604_17091::claim_cli_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_748637eb58cb0441",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_sop_bench_ga_claude",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_8012a996",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_tool_minimality",
+              "github:2604_17091::result_sop_bench_ga_claude"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.84,
+        "reason": "@claim_tool_minimality predicts GA can achieve competitive accuracy with fewer token overheads from tool descriptions. On SOP-Bench, GA achieves 100% accuracy at 2.08M tokens, matching OpenClaw (100%, 2.64M) and outperforming Claude Code (85%, 1.25M). The accuracy advantage over Claude Code is consistent with lower context overhead [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_tool_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_259c3718b705a8ff",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_realfin_ga",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_65887d58",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_context_compression",
+              "github:2604_17091::result_realfin_ga"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@claim_context_compression predicts better handling of complex, multi-step financial workflows where context accumulates. GA achieves 65% on RealFin-Benchmark, outperforming Claude Code Opus (60%), CodeX (60%), and OpenClaw (35%), while using 35% of CodeX's tokens. Financial workflows have long implicit-intent chains that benefit from compression [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_context_compression"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_54605171dbf160f9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_long_horizon_tool",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_66c75a45",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::claim_tool_minimality",
+              "github:2604_17091::claim_context_compression"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_4f57a7a7",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_66c75a45",
+              "github:2604_17091::result_long_horizon_tool"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.86,
+        "reason": "@claim_tool_minimality predicts reduced tool call overhead; @claim_context_compression predicts lower accumulated context cost. Together they predict GA should match success rates with fewer tokens on long-horizon tasks. Observed: GA achieves 100% success with 188,829 tokens (35.1% of Claude Code's 537,413) and 11.0 requests vs 32.6 [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_tool_minimality",
+        "github:2604_17091::claim_context_compression"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_56c6a50045058abf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_tool_distribution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_6f543b2f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_tool_minimality",
+              "github:2604_17091::result_tool_distribution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@claim_tool_minimality claims that even rich-toolset systems concentrate execution in a few tools. The observed distribution confirms: Claude Code's top 4 tools account for 92% of calls (AgentTool 50.4%, WebFetchTool 22.1%, FileReadTool 10.6%, FileWriteTool 8.9%). This validates the atomicity principle — broad tool inventories add prompt overhead without proportional execution benefit [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_tool_minimality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_660b6dda0eda783a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_continuous_improvement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_3d26e57d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_self_evolution",
+              "github:2604_17091::result_continuous_improvement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "@claim_self_evolution predicts repeated task execution converts experience into L3 SOPs, reducing per-task cost over time. Observed: GA's operation time drops from 102s to ~66s and token consumption from 200,439 to ~100,000 across 5 runs, while CodeX, Claude Code, and OpenClaw remain stable. The reduction indicates high-value rule extraction, not mere history caching [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_self_evolution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_54c2affb7c7ea8fc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_cross_task_evolution",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_f1f351a0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_self_evolution",
+              "github:2604_17091::result_cross_task_evolution"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.86,
+        "reason": "@claim_self_evolution predicts SOP crystallization transfers across similar task structures. Observed on 8-task web benchmark: GA converges to lower token usage by Run 3 for all 8 tasks (72.5%-90.1% savings). High-complexity tasks benefit most (83.5% savings for tasks with OpenClaw average >1,000k tokens). OpenClaw shows no convergence (A1: 1,370k to 2,330k), confirming the advantage is from self-evolution, not the backbone model [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::claim_self_evolution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f4b024fc3d44633a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_lifelong_ga_claude",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_928418ca",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::ga_density_architecture",
+              "github:2604_17091::result_lifelong_ga_claude"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@ga_density_architecture predicts GA should achieve high accuracy with fewer tokens. The density mechanisms reduce per-step context cost (hierarchical memory), tool overhead (minimal tools), and history growth (context compression). This predicts the observed 100% accuracy at 222k tokens vs Claude Code 75% at 800k and OpenClaw 70% at 1.45M — a structural efficiency advantage."
+      },
+      "premises": [
+        "github:2604_17091::ga_density_architecture"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7853b2c5a9c8fdfd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_lifelong_ga_claude",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_88527ff8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::alt_model_advantage",
+              "github:2604_17091::result_lifelong_ga_claude"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "@alt_model_advantage suggests model selection drives GA's advantage. If so, using a weaker backbone (Minimax M2.7) should degrade GA's advantage relative to Claude Code or OpenClaw. The observation shows GA still achieves 90% at 423k with Minimax M2.7 vs OpenClaw 70% at 1.22M — some advantage persists across LLMs, suggesting architecture rather than just model quality."
+      },
+      "premises": [
+        "github:2604_17091::alt_model_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b580551a50f2a761",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__equivalence_result_cdf401eb",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_17091::ga_density_architecture",
+              "github:2604_17091::result_lifelong_ga_claude"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__equivalence_result_c1c3ad56",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_17091::alt_model_advantage",
+              "github:2604_17091::result_lifelong_ga_claude"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__equivalence_result_c1c3ad56",
+              "github:2604_17091::__equivalence_result_cdf401eb"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "GA achieves 100% accuracy at 241k total tokens on Lifelong AgentBench with Claude Sonnet 4.6, and 90% at 423k with Minimax M2.7. Both consistently outperform OpenClaw (70%/1.45M and 70%/1.22M) and Claude Code (75%/814k). Cross-LLM advantage persistence is inconsistent with a pure model-selection explanation and consistent with architectural density design."
+      },
+      "premises": [
+        "github:2604_17091::ga_density_architecture",
+        "github:2604_17091::alt_model_advantage",
+        "github:2604_17091::result_lifelong_ga_claude"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_26f2d02d16ca246b",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_17091::_anon_000",
+      "metadata": {
+        "reason": "Both density-design and model-selection hypotheses attempt to explain GA's superior accuracy and efficiency on Lifelong AgentBench. The cross-LLM consistency (advantage persists with both Claude Sonnet 4.6 and Minimax M2.7) favors the architectural density explanation."
+      },
+      "premises": [
+        "github:2604_17091::ga_density_architecture",
+        "github:2604_17091::alt_model_advantage",
+        "github:2604_17091::result_lifelong_ga_claude"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_84325b7be22269ee",
+      "sub_strategies": [
+        "lcs_7853b2c5a9c8fdfd",
+        "lcs_b580551a50f2a761",
+        "lcs_26f2d02d16ca246b"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_17091::result_condensed_memory_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_cc5abfa1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_hierarchical_memory",
+              "github:2604_17091::result_condensed_memory_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@claim_hierarchical_memory predicts that high-density, action-guiding memory outperforms verbose memory. The ablation confirms: Condensed Memory (165 tokens) matches Redundant-Memory TSR (66.48%) at 42.7% lower token cost, and outperforms Full-Memory (52.44%) at 71.3% fewer tokens. Background descriptions add contextual cost without behavioral value."
+      },
+      "premises": [
+        "github:2604_17091::claim_hierarchical_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ec7f981282bcc0d8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_evolution_trajectory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_a41cf113",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::claim_self_evolution",
+              "github:2604_17091::result_evolution_trajectory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@claim_self_evolution predicts that textual SOP then codified SOP conversion reduces per-task token cost. The nine-round study shows: total tokens collapse from 222,203 (Round 1) to 23,010 (Round 9), an 89.6% reduction. The dominant contribution is call count reduction (32 to 5), eliminating entire understand-reason-generate loops. The convergence band ~23k+/-1k in Rounds 6-9 indicates deterministic codified execution."
+      },
+      "premises": [
+        "github:2604_17091::claim_self_evolution"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5dbc4da756e05fc8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::obs_multihop",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_6b3b76b3",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::law_hierarchical_memory_factual",
+              "github:2604_17091::obs_multihop"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@law_hierarchical_memory_factual predicts GA performs best at factual recall. Multi-hop tasks require reasoning across fact chains — GA's L1/L2 routing and validated commit prevent stale facts from degrading multi-step reasoning."
+      },
+      "premises": [
+        "github:2604_17091::law_hierarchical_memory_factual"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_48ca1c428fe55217",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::obs_temporal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_6113c175",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::law_hierarchical_memory_factual",
+              "github:2604_17091::obs_temporal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@law_hierarchical_memory_factual predicts GA performs best at factual recall. Temporal tasks require time-ordered fact retrieval — hierarchical memory preserves temporal structure better than raw log storage."
+      },
+      "premises": [
+        "github:2604_17091::law_hierarchical_memory_factual"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ff7a5584a1d7a1f2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::obs_open_domain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_5c1e3d7b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::law_hierarchical_memory_factual",
+              "github:2604_17091::obs_open_domain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "@law_hierarchical_memory_factual predicts GA performs best at factual recall. Open-Domain is hardest because structural cues are weak — GA's categorical L1 index still provides routing even without strong retrieval signals."
+      },
+      "premises": [
+        "github:2604_17091::law_hierarchical_memory_factual"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d28411b1d7b8baf5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::law_hierarchical_memory_factual",
+      "metadata": {
+        "reason": "Multi-Hop and Temporal categories involve different reasoning demands (cross-fact chains vs. time-ordered sequences) and are independently evaluated. Both confirming @law_hierarchical_memory_factual provides independent corroboration of the memory architecture's generality."
+      },
+      "premises": [
+        "github:2604_17091::obs_multihop",
+        "github:2604_17091::obs_temporal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_beea4542d76e64c3",
+      "sub_strategies": [
+        "lcs_48ca1c428fe55217",
+        "lcs_ff7a5584a1d7a1f2"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_17091::law_hierarchical_memory_factual",
+      "metadata": {
+        "reason": "Open-Domain adds a third independent category (no structural cues) confirming @law_hierarchical_memory_factual. Three independent task categories converging supports the law's generality across memory challenges."
+      },
+      "premises": [
+        "github:2604_17091::obs_multihop",
+        "github:2604_17091::obs_temporal",
+        "github:2604_17091::obs_open_domain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0b332f85a75850aa",
+      "sub_strategies": [
+        "lcs_beea4542d76e64c3",
+        "lcs_d28411b1d7b8baf5"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_17091::result_factual_memory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_aa84cf1e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::law_hierarchical_memory_factual",
+              "github:2604_17091::result_factual_memory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "@law_hierarchical_memory_factual predicts GA outperforms embedding-based systems across factual recall categories. The summary LoCoMo results confirm: GA leads on all four categories (Multi-Hop F1=43.33, Temporal F1=52.23, Open-Domain F1=20.41, Single-Hop F1=45.69) without embedding model or vector database. The categorical L1 routing provides effective navigation without vector similarity search [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::law_hierarchical_memory_factual"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_863e0846d09a9f6e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_web_browsing",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_b260772b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::web_density_design",
+              "github:2604_17091::result_web_browsing"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@web_density_design predicts lower token usage and better multi-hop handling via DOM compression. Observed: GA uses 25.4% of OpenClaw's tokens on WebCanvas, 35.9% on BrowseComp-ZH, and 34.2% on Custom Tasks — consistent structural compression across all three benchmarks. BrowseComp-ZH (multi-hop) shows the largest score gap (0.600 vs 0.200), consistent with compounding context management benefit."
+      },
+      "premises": [
+        "github:2604_17091::web_density_design"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_76ed6671b8031b65",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::result_web_browsing",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_77ce5394",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::alt_web_tools",
+              "github:2604_17091::result_web_browsing"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "@alt_web_tools predicts specialized tools outperform atomic primitives on web tasks. OpenClaw has dedicated browser tools vs GA's web_scan + web_execute_js. If specialized tools win, OpenClaw should score higher on standard WebCanvas interactions (atomic element clicking, navigation). Observed: OpenClaw scores 0.722 vs GA's 0.834 on WebCanvas — specialized tools do not yield higher accuracy even on standard interactions."
+      },
+      "premises": [
+        "github:2604_17091::alt_web_tools"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9919a20fe367864a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__equivalence_result_7749c2e8",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_17091::web_density_design",
+              "github:2604_17091::result_web_browsing"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__equivalence_result_2474c436",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_17091::alt_web_tools",
+              "github:2604_17091::result_web_browsing"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__equivalence_result_2474c436",
+              "github:2604_17091::__equivalence_result_7749c2e8"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "GA outperforms OpenClaw on all three web benchmarks. BrowseComp-ZH (most multi-hop) shows the largest gap: GA 0.600 vs OpenClaw 0.200 at one-third the tokens. GA also wins WebCanvas (0.834 vs 0.722) at 25.4% of the token cost. The specialized-tools hypothesis is inconsistent with OpenClaw losing even on standard WebCanvas interactions."
+      },
+      "premises": [
+        "github:2604_17091::web_density_design",
+        "github:2604_17091::alt_web_tools",
+        "github:2604_17091::result_web_browsing"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6baf6eb31fb1de48",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_17091::_anon_001",
+      "metadata": {
+        "reason": "Both density-design and specialized-tools hypotheses attempt to explain web browsing performance differences. GA's advantage being largest on BrowseComp-ZH (most multi-hop, most context-sensitive) and persisting even on standard WebCanvas interactions favors the density-design explanation."
+      },
+      "premises": [
+        "github:2604_17091::web_density_design",
+        "github:2604_17091::alt_web_tools",
+        "github:2604_17091::result_web_browsing"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b15631dcbbc05d6f",
+      "sub_strategies": [
+        "lcs_76ed6671b8031b65",
+        "lcs_9919a20fe367864a",
+        "lcs_6baf6eb31fb1de48"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_17091::thesis_token_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__conjunction_result_9890f520",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17091::result_lifelong_ga_claude",
+              "github:2604_17091::result_context_explosion",
+              "github:2604_17091::result_evolution_trajectory"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17091::__implication_result_24ed7d0e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::__conjunction_result_9890f520",
+              "github:2604_17091::thesis_token_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "@result_lifelong_ga_claude shows GA using 27.7% of Claude Code's tokens while achieving higher accuracy (100% vs 75%). @result_context_explosion shows GA's prompt 10x smaller than Claude Code after extensive use. @result_evolution_trajectory shows 89.6% token reduction with maintained performance after self-evolution. Together, these systematically demonstrate that lower token consumption correlates with better task performance."
+      },
+      "premises": [
+        "github:2604_17091::result_lifelong_ga_claude",
+        "github:2604_17091::result_context_explosion",
+        "github:2604_17091::result_evolution_trajectory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9c749bcf6ec6e1d1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_permissions_ceiling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_a648b010",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_minimal_capability",
+              "github:2604_17091::claim_permissions_ceiling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@thesis_minimal_capability identifies tool interfacing as the first density degradation point. But permissions also define the reachable state space: an agent with read-only access cannot build executable skills (dimension 1 of evolution requires code_run); an agent without web access cannot retrieve external information. The capability ceiling imposed by permissions is therefore logically prior to any density optimization [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_minimal_capability"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_80156a485b5b0c77",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17091::claim_architecture_evolution_path",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17091::__implication_result_cefca768",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17091::thesis_minimal_architecture",
+              "github:2604_17091::claim_architecture_evolution_path"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "@thesis_minimal_architecture argues a small codebase is a necessary prerequisite for self-modification. The three-dimensional path organizes progression sequentially: skill consolidation (proven empirically via nine-round evolution study), autonomous exploration (implemented via Reflect Mode), and architectural self-update (conjectured, not yet validated). The progression is logically ordered — each dimension requires the previous [@GenericAgent2026]."
+      },
+      "premises": [
+        "github:2604_17091::thesis_minimal_architecture"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_99f18e0999b6d320",
+      "type": "support"
+    }
+  ]
+}

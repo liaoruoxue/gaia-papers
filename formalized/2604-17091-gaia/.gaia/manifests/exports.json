@@ -1,0 +1,169 @@
+{
+  "exports": [
+    {
+      "content": "Agent self-evolution has three progressive dimensions: (1) skill consolidation — converting verified execution traces into reusable SOPs and executable code (demonstrated in GA's longitudinal study); (2) autonomous exploration — using Reflect Mode and subagent dispatch to discover new skills during idle time without user instruction; (3) architectural self-update — agents reading and modifying the core codebase itself. Minimal architecture is the necessary prerequisite for reaching dimension (3). The full validation of the path from (1) to (3) is left as an open problem.",
+      "content_hash": "9aa15a77fa80a3e2b637b595eeed823027f2d702b154a13ba918d90c404b8731",
+      "label": "claim_architecture_evolution_path",
+      "qid": "github:2604_17091::claim_architecture_evolution_path",
+      "type": "claim"
+    },
+    {
+      "content": "Autonomous exploration in GA combines subagent dispatch (execution substrate) and Reflect Mode (trigger substrate) to enable the agent to explore new skills during idle time without user instruction. Skills are organized in a persistent skill tree. Exploration task generation decides what to explore based on current capability gaps in the skill tree.",
+      "content_hash": "574bc798d060933f71a2e38d72a3287abbd98a10859a15b6807698b5cb5fc75a",
+      "label": "claim_autonomous_exploration",
+      "qid": "github:2604_17091::claim_autonomous_exploration",
+      "type": "claim"
+    },
+    {
+      "content": "GA's extreme architectural minimality — approximately 3,000 lines of core code with a single CLI interface — is not a functional compromise but a deliberate design choice. Because the architecture is stripped down and purely CLI-based, advanced behaviors such as subagent dispatch and Reflect Mode emerge naturally from the single primitive without requiring new architectural layers.",
+      "content_hash": "f19d834f026ddae4eeb2db4098494a54ce4df2bf511aa8b12f909af875abcfb0",
+      "label": "claim_cli_minimality",
+      "qid": "github:2604_17091::claim_cli_minimality",
+      "type": "claim"
+    },
+    {
+      "content": "GA's context truncation and compression layer maintains information density during long-horizon execution through four staged mechanisms: (Stage 1) per-tool truncation thresholds (e.g., code_run: 10,000 chars; file_read: ~1,280 chars/line, 20,000 total; web_scan HTML: 35,000 chars); (Stage 2) assistant message compression — replacing earlier messages with one-line summaries, exempting the 4 most recent; (Stage 3) FIFO message eviction when $C_H > B$, reducing to 60% of budget; (Stage 4) working-memory anchor prompt injected after every tool invocation, containing the 20 most recent one-line turn summaries, current turn number, and a persistent key_info block maintained by the agent.",
+      "content_hash": "a01a0194b797192e60013559a1c28cdef7cfb3111e63326c9005e8529666e9c8",
+      "label": "claim_context_compression",
+      "qid": "github:2604_17091::claim_context_compression",
+      "type": "claim"
+    },
+    {
+      "content": "GA's on-demand hierarchical memory preserves context information density by keeping only the L1 index (category-level orientation, bounded in size) permanently in context while routing deeper factual and procedural knowledge (L2/L3) through tool calls only when needed. This prevents prior interactions, intermediate states, and execution traces from progressively consuming the context budget and burying decision-critical information.",
+      "content_hash": "5c7dab140d17d0c69799d2da950966eb3e1e4ae707d2ca7a7739ff7340551211",
+      "label": "claim_hierarchical_memory",
+      "qid": "github:2604_17091::claim_hierarchical_memory",
+      "type": "claim"
+    },
+    {
+      "content": "Permissions define the ceiling of agent capability. What an agent can perceive, act upon, and receive feedback from directly determines the complexity of reasoning chains and the difficulty of tasks it can solve. Restricting the action boundary during the exploration phase caps the capability ceiling at system design time. An agent restricted to reading a small set of files, unable to execute code or access external information, can only operate within a truncated state space regardless of model capability. Narrowing the exploration boundary is not a path toward useful agents.",
+      "content_hash": "76a5b8af0284754d38bea0a0fd696db4dcd2451c8d08322b9d822efc6a282dd8",
+      "label": "claim_permissions_ceiling",
+      "qid": "github:2604_17091::claim_permissions_ceiling",
+      "type": "claim"
+    },
+    {
+      "content": "GA's self-evolution mechanism converts verified past trajectories into reusable standard operating procedures (SOPs) and executable code stored in L3. This allows later tasks to begin from compact, task-relevant context rather than rebuilding understanding from scratch. The evolution pathway is: initial exploration → textual SOP → codified executable SOP, with autonomous exploration triggered via Reflect Mode using idle-time polling.",
+      "content_hash": "0a9e171de1e6f3001ab5b74715e72b5b278ac65e4ebdd7a4c480e3a0c981192c",
+      "label": "claim_self_evolution",
+      "qid": "github:2604_17091::claim_self_evolution",
+      "type": "claim"
+    },
+    {
+      "content": "Keeping the tool interface minimal — using 9 atomic tools rather than 53+ specialized tools — preserves context information density by preventing tool descriptions from consuming large fractions of the context budget before task execution begins. Tool minimality is not a functional restriction but the mechanism by which GA preserves general-purpose capability while reducing interface overhead and creating favorable conditions for experience consolidation.",
+      "content_hash": "bb5d7b7d949a6209d00c7d8c2e7bb7786715d24ce32ea52bbd6f927450752c37",
+      "label": "claim_tool_minimality",
+      "qid": "github:2604_17091::claim_tool_minimality",
+      "type": "claim"
+    },
+    {
+      "content": "GA's hierarchical memory with validated commit and L1 routing achieves superior long-term factual retention across multi-hop, temporal, open-domain, and single-hop categories without requiring an embedding model or vector database.",
+      "content_hash": "721e6920fd5b10f66572e30f3e5518a607bb70cd33737fe2c2a81e3f831c4fe9",
+      "label": "law_hierarchical_memory_factual",
+      "qid": "github:2604_17091::law_hierarchical_memory_factual",
+      "type": "claim"
+    },
+    {
+      "content": "Memory ablation on SOP-Bench dangerous_goods (GPT-5.4 backbone): No-Memory: TSR = 13.87%, memory size = 0 tokens. Full-Memory: TSR = 52.44%, memory size = 575 tokens. Redundant-Memory: TSR = 66.48%, memory size = 288 tokens. Condensed Memory: TSR = 66.48%, memory size = 165 tokens. Condensed memory achieves the same highest TSR (Task Success Rate) as Redundant-Memory while using 42.7% fewer tokens (165 vs 288), and outperforms Full-Memory (52.44%) while using 71.3% fewer tokens.",
+      "content_hash": "c7e41766b2b26e072b9e194714e82abff26105672c160732712bd7b744a998b8",
+      "label": "result_condensed_memory_ablation",
+      "qid": "github:2604_17091::result_condensed_memory_ablation",
+      "type": "claim"
+    },
+    {
+      "content": "Context explosion prevention after installing 20 skills with intensive use. Full prompt length on minimal 'Hello' request: GA: 2,298 tokens. Claude Code: 22,821 tokens. CodeX: 23,932 tokens. OpenClaw: 43,321 tokens. GA's prompt is 10.1x smaller than Claude Code, 10.4x smaller than CodeX, and 18.9x smaller than OpenClaw.",
+      "content_hash": "1a0e5d06a596e617e75546cb373ae6016f858f5d51c3b1bdc1337f317f398835",
+      "label": "result_context_explosion",
+      "qid": "github:2604_17091::result_context_explosion",
+      "type": "claim"
+    },
+    {
+      "content": "Cross-task evolution on 8-task web benchmark (GA vs OpenClaw, Claude Opus 4.6): GA shows consistent token convergence across repeated runs on all 8 tasks. High-complexity tasks (OpenClaw average >1,000k tokens, e.g., A1, B2, D1) achieve 83.5% average token saving in Run 3 vs Run 1. Mid-complexity tasks achieve 72.5% average saving. D2 achieves 90.1% saving despite low absolute cost, due to long-horizon structure. OpenClaw shows no convergence (e.g., A1 tokens: 1,370k to 2,330k to 2,130k). SOP self-evolution benefit scales with task complexity.",
+      "content_hash": "15b773a526e6a5294a15e8ca70ef903ad4c306e216c245f96e4df94cff8ae07f",
+      "label": "result_cross_task_evolution",
+      "qid": "github:2604_17091::result_cross_task_evolution",
+      "type": "claim"
+    },
+    {
+      "content": "Nine-round evolution trajectory on LangChain GitHub research task (Claude Opus 4.6): Round 1 (initial): 7m30s, 32 LLM calls, 15,581 input tokens, 222,203 total. Round 2-5 (SOP optimization): time decreases from 4m19s to 2m50s; calls decrease from 12 to 7; total tokens from 66,341 to 35,536. Round 6-9 (codified SOP): converges to ~23k +/- 1k total tokens; 5 LLM calls; time ~1m35s to 1m41s. Token reduction from Round 1 to Round 9: 89.6% (222,203 to 23,010). Cache-read tokens collapse from 183,375 (Round 1) to 19,034 (Round 9). Input tokens collapse from 15,581 to 1,323.",
+      "content_hash": "ce7e380e506609147d83fdd256afb2cc23bee4389cc49e156bb741ac98c0a1a2",
+      "label": "result_evolution_trajectory",
+      "qid": "github:2604_17091::result_evolution_trajectory",
+      "type": "claim"
+    },
+    {
+      "content": "Long-term factual memory evaluation on LoCoMo (GPT-5.4 backbone): GA achieves highest scores across all four categories: Multi-Hop: F1=43.33, BLEU=39.96 (vs Mem0 F1=39.32, A-MEM F1=29.03, OpenClaw F1=21.43). Temporal: F1=52.23, BLEU=51.11 (vs Mem0 F1=50.03, A-MEM F1=46.83, OpenClaw F1=22.56). Open-Domain: F1=20.41, BLEU=15.31 (vs Mem0 F1=18.32, A-MEM F1=13.11, OpenClaw F1=9.56). Single-Hop: F1=45.69, BLEU=40.66 (vs Mem0 F1=40.32, A-MEM F1=44.68, OpenClaw F1=23.44). GA does not use an embedding model or vector database.",
+      "content_hash": "ab272c495a34e3afdc977737df2c7847fb3cb201f473cd59e45f07180a890aa2",
+      "label": "result_factual_memory",
+      "qid": "github:2604_17091::result_factual_memory",
+      "type": "claim"
+    },
+    {
+      "content": "On Lifelong AgentBench (sequential tasks with cross-task dependencies) with Claude Sonnet 4.6 backbone: GA achieves 100% accuracy, consuming only 222k input tokens, 20k output, 241k total tokens, efficiency 4.15. OpenClaw achieves 70% accuracy, consuming 1.43M input tokens, 1.45M total, efficiency 0.48. Claude Code achieves 75% accuracy, consuming 800k input tokens, 814k total, efficiency 0.92. GA uses 27.7% of Claude Code's input tokens and 15.5% of OpenClaw's input tokens while achieving higher task completion.",
+      "content_hash": "6663ef0316f6c324b2c269f36fff0d268449d12dc8e9a3fc9b16c7a84163f68c",
+      "label": "result_lifelong_ga_claude",
+      "qid": "github:2604_17091::result_lifelong_ga_claude",
+      "type": "claim"
+    },
+    {
+      "content": "On five long-horizon complex tasks (document generation, SQL copilot, experiment analysis report, procurement decision-making, research paper feasibility analysis) using Claude Sonnet 4.6: GA: 100% success, 188,829 total tokens (35.1% of Claude Code's), 220.8s, 11.0 requests, 12.8 tool calls. Claude Code: 100% success, 537,413 total tokens, 320.8s, 32.6 requests, 22.6 tool calls. OpenClaw: 80% success, 633,101 total tokens, 183.1s, 15.0 requests, 16.6 tool calls.",
+      "content_hash": "8a094f0ea176ac5e1baa6481960f4191fdb769a0abdc179e752d0fa55f7d8002",
+      "label": "result_long_horizon_tool",
+      "qid": "github:2604_17091::result_long_horizon_tool",
+      "type": "claim"
+    },
+    {
+      "content": "On RealFin-Benchmark (financial workflows with implicit user intent) with mixed backbones: GA (Claude Sonnet 4.6) achieves 65% accuracy, 102k input tokens, 114k total, efficiency 5.70. Claude Code (Claude Opus 4.6): 60% accuracy, 290k input, 307k total, efficiency 1.95. Claude Code (Claude Sonnet 4.6): 55% accuracy, 226k input, 238k total, efficiency 2.31. OpenClaw (Claude Sonnet 4.6): 35% accuracy, 249k input, 251k total, efficiency 1.39. CodeX (GPT-5.4): 60% accuracy, 838k input, 892k total, efficiency 0.67. GA achieves the highest accuracy and efficiency on this benchmark.",
+      "content_hash": "78eb621920bee9783a3d7c9b48c2f0215b875ca28026751c21f26d9acad90819",
+      "label": "result_realfin_ga",
+      "qid": "github:2604_17091::result_realfin_ga",
+      "type": "claim"
+    },
+    {
+      "content": "On SOP-Bench (multi-step SOP execution benchmark) with Claude Sonnet 4.6 backbone: GA achieves 100% accuracy, consuming 2.02M input tokens, 53k output tokens, 2.08M total tokens, efficiency 0.48. OpenClaw achieves 100% accuracy, consuming 2.60M input tokens, 2.64M total, efficiency 0.38. Claude Code achieves 85% accuracy, consuming 1.23M input tokens, 1.25M total, efficiency 0.68.",
+      "content_hash": "d1ee209c8b73f98c04968a1eabef76cffe4d254d09f913caacc3c848cdf57fe0",
+      "label": "result_sop_bench_ga_claude",
+      "qid": "github:2604_17091::result_sop_bench_ga_claude",
+      "type": "claim"
+    },
+    {
+      "content": "Web browsing evaluation (GA and OpenClaw both using Claude Opus 4.6): WebCanvas (12 tasks, automatic): GA score 0.834, 0.18M tokens; OpenClaw score 0.722, 0.71M tokens. GA uses 25.4% of OpenClaw's tokens. BrowseComp-ZH (10 tasks, LLM judge): GA score 0.600, 0.47M tokens; OpenClaw score 0.200, 1.31M tokens. GA triples OpenClaw's score at one-third the token cost. Custom Tasks (22 tasks, human + LLM): GA score 0.577, 0.26M tokens; OpenClaw score 0.500, 0.76M tokens. Structural token reduction: 2.9x to 3.9x across all benchmarks.",
+      "content_hash": "b64f0737fccc841fb4163a887af7bebcf7cc356e295d34c45373ce0448f4bf1f",
+      "label": "result_web_browsing",
+      "qid": "github:2604_17091::result_web_browsing",
+      "type": "claim"
+    },
+    {
+      "content": "Long-horizon agent performance is determined not by context length, but by how much decision-relevant information is maintained within a finite context budget. Context information density — completeness × conciseness within the effective window — is the primary structural constraint for all LLM-based agent systems.",
+      "content_hash": "c30f0098b19fc3d1c5f1ef0df750a28ad8dfc83a9d422324ec5d4468c2d84a24",
+      "label": "thesis_density",
+      "qid": "github:2604_17091::thesis_density",
+      "type": "claim"
+    },
+    {
+      "content": "Minimal architecture (a few thousand lines of core code) is a necessary prerequisite for autonomous agent self-evolution. A system with hundreds of thousands of lines of code is opaque to the agent — it can neither understand nor modify it. In a minimal codebase, subagents can read and modify the core code, making architectural self-update a practically achievable next step.",
+      "content_hash": "2bf363d3231c98f07ba4a319dd0b0df2133c086722b0d1e56b0a31cea6bfa0f5",
+      "label": "thesis_minimal_architecture",
+      "qid": "github:2604_17091::thesis_minimal_architecture",
+      "type": "claim"
+    },
+    {
+      "content": "Under the structural constraint of context information density, an agent framework needs to implement only three capabilities: (1) tool interfacing — keeping the action space deliberately minimal to avoid prompt overhead; (2) context management — actively filtering task state and tool outputs before they enter the context; (3) memory formation — retaining verified experience across episodes into reusable representations. Any additional complexity that does not serve one of these three is, in the authors' view, actively degrading information density.",
+      "content_hash": "06e2a815222959c0bacf883ce66a538458e2e4315df77b88362b8022f6cbe69a",
+      "label": "thesis_minimal_capability",
+      "qid": "github:2604_17091::thesis_minimal_capability",
+      "type": "claim"
+    },
+    {
+      "content": "In long-horizon agentic settings, lower token consumption correlates with better task performance, not worse. An agent that consumes more tokens is more likely suffering from failures in context management — compensating for degraded per-step decision quality through additional interactions rather than improving it. Token consumption reflects the symptoms of context management quality.",
+      "content_hash": "dadb2c3380393451a126eae51185d276669c64fbabac60a04476037fafc97fd2",
+      "label": "thesis_token_efficiency",
+      "qid": "github:2604_17091::thesis_token_efficiency",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:5a69717bf3e9801acf0e59877ba095489b9918d4e6a5464fb28e18bd7246db48",
+  "manifest_schema_version": 1,
+  "package": "2604-17091",
+  "version": "0.1.0"
+}
