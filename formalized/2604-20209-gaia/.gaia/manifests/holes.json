@@ -1,0 +1,152 @@
+{
+  "holes": [
+    {
+      "content": "SGS's improvements over the RL baseline could be due to increased compute or hyperparameter differences rather than the Guide and problem-conditioning mechanisms, with the Guide component providing no additional benefit beyond the extra data.",
+      "content_hash": "c65c12e2db71582c10fcc62c8b5b25a1c9d0c3c44aa5731c6ef78b2e7935e8cd",
+      "interface_hash": "sha256:bcd5a60047339f49edf86efbf74f854cd925e80e187244070f0429def8828a51",
+      "label": "alt_sgs_no_gain",
+      "qid": "github:2604_20209::alt_sgs_no_gain",
+      "required_by": [
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ]
+    },
+    {
+      "content": "When CISPO is used as the Solver objective in SGS (instead of REINFORCE1/2), the Solver's entropy collapses rapidly, concentrating problem solve rates at 0 and 1. This starves the Conjecturer of training signal: problems with solve rate 0 or 1 receive Rsolve = 0. The Conjecturer cannot learn, and SGS with CISPO Solver achieves essentially the same asymptotic performance as standalone CISPO (57.5%), not the 67.1% of SGS with REINFORCE1/2.",
+      "content_hash": "33be7a7dd3e72071b109684c511d39b59186eff75b181e316aa6eb0ed44d4ba5",
+      "interface_hash": "sha256:9ccbb8e6e3ec29d34ab29d4b8e8fe0cc45c7a122fd5ab565ccbd97b43640bdf7",
+      "label": "cispo_solver_kills_conjecturer",
+      "qid": "github:2604_20209::cispo_solver_kills_conjecturer",
+      "required_by": [
+        "github:2604_20209::entropy_conjecturer_coupling"
+      ]
+    },
+    {
+      "content": "A 'Frozen Conjecturer' ablation (Conjecturer not trained, fixed distribution, analogous to AlphaProof's approach [@Hubert2025]) outperforms the RL baseline and No Problem Conditioning, but is inferior to both full SGS (67.1%) and No Guide (65.5%). The number of solvable synthetic problems per iteration decreases over time, showing the Solver quickly saturates the fixed Conjecturer's distribution, reverting the algorithm to RL alone.",
+      "content_hash": "3fba61b17d443e661d8f37745e56e620b92379fcd7999da6463655a1975d88a1",
+      "interface_hash": "sha256:a3ffb2835a325c740e077fbf2e55a1ffdc9f51929806aa0cbf7ce5cdb2b81611",
+      "label": "frozen_conjecturer_suboptimal",
+      "qid": "github:2604_20209::frozen_conjecturer_suboptimal",
+      "required_by": [
+        "github:2604_20209::conjecturer_collapse_hypothesis"
+      ]
+    },
+    {
+      "content": "SGS could be extended to non-verifiable domains by using approximate verification: for coding problems (unit tests as verifier), for natural language math (learned verifiers that have improved rapidly), and for embodied control (VLM reward function with neural world model for environment generation). Imperfect verification may not strictly prevent effective self-play.",
+      "content_hash": "e4e97e511a9a8044d17da56408bb39b6f92e307171dd1fa22dc915a17979adb7",
+      "interface_hash": "sha256:2d1e7aa6cda320222cb0f88d697bc6f2862406f3d40bb1ac9c718922177072b5",
+      "label": "future_non_verifiable",
+      "qid": "github:2604_20209::future_non_verifiable",
+      "required_by": [
+        "github:2604_20209::conclusion_sgs_sustains_learning"
+      ]
+    },
+    {
+      "content": "Language models can assess whether a subproblem is useful for achieving a goal. This capability enables an LLM acting as a Guide to score synthetic problems by their relevance to unsolved target problems and by how clean and natural they are, providing useful supervision against Conjecturer collapse.",
+      "content_hash": "992949b6d534e092255e2fe830ebcb52494a55a1805866c7eab989ff32914358",
+      "interface_hash": "sha256:42b5d5f09028780090aa737b57641017a6fd0f5dba7ada60c17a08d2f2159310",
+      "label": "guide_hypothesis",
+      "qid": "github:2604_20209::guide_hypothesis",
+      "required_by": [
+        "github:2604_20209::sgs_higher_asymptotic_rate",
+        "github:2604_20209::sgs_two_mechanisms"
+      ]
+    },
+    {
+      "content": "In current SGS experiments, the Guide is frozen (not trained). A frozen Guide is sufficient to prevent Conjecturer collapse in the tested regime, but may be insufficient for scaling SGS to solve the most challenging problems. As self-play progresses, the characteristics of useful stepping-stone problems evolve, and a frozen Guide may fail to adapt. A natural extension is to train the Guide on Solver training dynamics (e.g., labeling synthetic problems that quickly lead to their target being solved as high reward).",
+      "content_hash": "69c6703be923b0609ce2ea1515910bde324458cdc2ff161128ef58e9658f3f5c",
+      "interface_hash": "sha256:2dddebc1aa1d8fe15d70617bc1f1ff9389b8bf6dfa417aed13f9438e4952383e",
+      "label": "limitation_frozen_guide",
+      "qid": "github:2604_20209::limitation_frozen_guide",
+      "required_by": [
+        "github:2604_20209::conclusion_sgs_sustains_learning"
+      ]
+    },
+    {
+      "content": "SGS experiments fix model size (7B) and scale along the compute axis. The interaction between SGS and model scale (larger Conjecturer producing higher-quality synthetic problems) is not tested. The hypothesis that SGS scales well with model size is stated but not confirmed.",
+      "content_hash": "544a70a01c97173c90b3946098af8ef2045b1af87e29d9cc2e00ca08dd06c557",
+      "interface_hash": "sha256:9506c90d35f6a3f4f2228346bf2d346ac537dd91add9648300efc63a9f6c5912",
+      "label": "limitation_model_size",
+      "qid": "github:2604_20209::limitation_model_size",
+      "required_by": [
+        "github:2604_20209::conclusion_sgs_sustains_learning"
+      ]
+    },
+    {
+      "content": "SGS is currently applied only to Lean4 formal theorem proving, a verifiable domain where the Conjecturer only needs to produce an initial state (problem statement) and the verification reward is provided automatically by the Lean4 compiler. Extending SGS to non-verifiable domains requires the Conjecturer to specify an entire MDP (goal, environment/simulator, and reward function), which is substantially harder.",
+      "content_hash": "620c9f4ede47265e70240276b381c2122322d9aa17c41aa66d3f9b440bf441d9",
+      "interface_hash": "sha256:2483cce11597092af9f6acca893b16fc1151fad1e81c419060d7a3dbc5e5a5db",
+      "label": "limitation_verifiable_domain",
+      "qid": "github:2604_20209::limitation_verifiable_domain",
+      "required_by": [
+        "github:2604_20209::conclusion_sgs_sustains_learning"
+      ]
+    },
+    {
+      "content": "The 'No Guide' ablation (SGS without Rguide, using only Rsolve for the Conjecturer) achieves a fitted asymptotic cumulative solve rate of 65.5% on D3k, lower than full SGS at 67.1%. However, No Guide substantially outperforms the RL baseline (60.3%) and No Problem Conditioning. The No Guide Conjecturer produces more solvable synthetic problems than SGS, yet achieves lower target solve rates.",
+      "content_hash": "d3cc8afd04d20246e002f0a9107b440596dd753564435a8c24a7ef1ecd8b1133",
+      "interface_hash": "sha256:178e55e4fc4e38337434756f16a06e04602fb51b63a87f84c4585f9c98a95c4a",
+      "label": "no_guide_lower_performance",
+      "qid": "github:2604_20209::no_guide_lower_performance",
+      "required_by": [
+        "github:2604_20209::conjecturer_collapse_hypothesis"
+      ]
+    },
+    {
+      "content": "With REINFORCE1/2 as the Solver objective in SGS, the Solver's entropy remains stable throughout training. The Conjecturer can produce problems with a spread of intermediate solve rates, providing sufficient training signal. The presence of synthetic problems appears to stabilize Solver entropy in a positive feedback loop.",
+      "content_hash": "bd94464d490bb0ca589c1cc6225f840be6bddf97ceff72f16fd81d2f986729a7",
+      "interface_hash": "sha256:8404e6cfb3b5361906414fe601c46f10562f82fcae968b3526071a6b842e7836",
+      "label": "reinforce_half_stable_entropy",
+      "qid": "github:2604_20209::reinforce_half_stable_entropy",
+      "required_by": [
+        "github:2604_20209::entropy_conjecturer_coupling"
+      ]
+    },
+    {
+      "content": "In SGS, for each unsolved problem x in the current batch, the Conjecturer gϕ generates one synthetic problem x̃ ~ gϕ(·|x) conditioned on x. Only unsolved problems generate synthetic problems; solved problems do not. This conditioning ensures synthetic problems are directed toward the Solver's current learning frontier.",
+      "content_hash": "741893a916f3db568730e6c66368ba4cf47560af07a08b800266849ca937f16a",
+      "interface_hash": "sha256:3d199105cb40de7169b322575549176ea4f4834e5d474541a5e39ccd05df2a6e",
+      "label": "sgs_conjecturer_conditions_on_unsolved",
+      "qid": "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+      "required_by": [
+        "github:2604_20209::sgs_combined_reward",
+        "github:2604_20209::sgs_progress_on_never_solved"
+      ]
+    },
+    {
+      "content": "The Guide ρ evaluates each synthetic problem x̃ relative to its conditioning target x, producing a quality score Rguide = ρ(x, x̃) ∈ [0, 1]. This score is based on (1) how relevant x̃ is to x, and (2) how elegantly x̃ is formulated (simple conclusion, no redundant premises). A synthetic problem that is superficially related but messy or overly complex receives a low Guide score and is thus down-weighted in the Conjecturer update.",
+      "content_hash": "20f25af87e36bab4963b9317f970ec8f890fcd0c0c15f6de620cc9f685ca25c1",
+      "interface_hash": "sha256:d8b19773feb46ebfe6dabb758f4825b9b724eb3b1d5f2b90136253977478c047",
+      "label": "sgs_guide_scores_quality",
+      "qid": "github:2604_20209::sgs_guide_scores_quality",
+      "required_by": [
+        "github:2604_20209::no_guide_conjecturer_collapse",
+        "github:2604_20209::sgs_combined_reward",
+        "github:2604_20209::sgs_progress_on_never_solved"
+      ]
+    },
+    {
+      "content": "SGS outperforms STP (Self-play Theorem Prover, the closest related self-play method for Lean4 theorem proving [@Dong2025]) after 1M total model generations, with superior scaling behavior over longer runs.",
+      "content_hash": "8793dc44ca64abc0c8f094a0756a93f4b4201e7c290af737df51bcc709fe712c",
+      "interface_hash": "sha256:9f9eba7245852ed77a7417ed71bc5e73bc56c89e38012b6e455c1984f7786f93",
+      "label": "sgs_outperforms_stp",
+      "qid": "github:2604_20209::sgs_outperforms_stp",
+      "required_by": [
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ]
+    },
+    {
+      "content": "When a problem is sufficiently difficult, standard reinforcement learning (RL) techniques fail due to sparse or absent reward signals. Asymmetric self-play is proposed as a solution: a Conjecturer bridges the gap between current Solver capability and hard unsolved problems.",
+      "content_hash": "f2e66794d0e4bee43fea868db8c0c7cd777439137b69d9f1c20c0a70dcdd46c8",
+      "interface_hash": "sha256:647931397f5409d94cc16e3955d0865138fd05025e9e80d82fb65a840bf1b8f8",
+      "label": "sparse_reward_problem",
+      "qid": "github:2604_20209::sparse_reward_problem",
+      "required_by": [
+        "github:2604_20209::conjecturer_collapse_hypothesis"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:d66e9bdccf311b571adbbde7b337d4dff66d84cf2edc9d94bc1861e39112a199",
+  "manifest_schema_version": 1,
+  "package": "2604-20209",
+  "version": "0.1.0"
+}

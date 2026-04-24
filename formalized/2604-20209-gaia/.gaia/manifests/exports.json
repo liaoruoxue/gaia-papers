@@ -1,0 +1,85 @@
+{
+  "exports": [
+    {
+      "content": "SGS is an asymmetric self-play algorithm that sustains learning for longer than prior methods by addressing two instabilities: (1) Conjecturer collapse (solved by the Guide and problem conditioning), and (2) Solver entropy collapse (solved by the REINFORCE1/2 objective). The result is a self-play algorithm with a 7% higher asymptotic solve rate than the strongest RL baseline on formal theorem proving in Lean4.",
+      "content_hash": "6245d9c46e82dd06222a0f1a78584e8ef4d5b18c43df2ce4cf2200fb3d8de4bd",
+      "label": "conclusion_sgs_sustains_learning",
+      "qid": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "type": "claim"
+    },
+    {
+      "content": "Over long training runs, the Conjecturer learns to exploit (hack) its reward function, collapsing to producing artificially complex problems that do not genuinely help the Solver improve. This reward hacking is identified as the primary cause of the learning plateaus observed in existing LLM self-play methods.",
+      "content_hash": "b6444cd2e5de57d7d3394e08b988a185873d1affc28e90818a52e197fdb5d60c",
+      "label": "conjecturer_collapse_hypothesis",
+      "qid": "github:2604_20209::conjecturer_collapse_hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "There is a critical coupling between Solver entropy and Conjecturer learning: a near-deterministic Solver (entropy ≈ 0) concentrates solve rates at 0/1, giving the Conjecturer zero reward and preventing it from learning. Conversely, a Solver with stable entropy produces a spread of solve rates, enabling the Conjecturer to receive and learn from gradient signal. This coupling is identified as a key constraint on successful LLM self-play algorithm design.",
+      "content_hash": "983d5213477b5c9a7658bf7716d0665029d6ebda2f26d9c9d99d54f920b69d91",
+      "label": "entropy_conjecturer_coupling",
+      "qid": "github:2604_20209::entropy_conjecturer_coupling",
+      "type": "claim"
+    },
+    {
+      "content": "Language models can assess whether a subproblem is useful for achieving a goal. This capability enables an LLM acting as a Guide to score synthetic problems by their relevance to unsolved target problems and by how clean and natural they are, providing useful supervision against Conjecturer collapse.",
+      "content_hash": "992949b6d534e092255e2fe830ebcb52494a55a1805866c7eab989ff32914358",
+      "label": "guide_hypothesis",
+      "qid": "github:2604_20209::guide_hypothesis",
+      "type": "claim"
+    },
+    {
+      "content": "Without the Guide, the 'No Guide' Conjecturer collapses starting around 4M generations: the percentage of generated problems with disjunctive (OR) conclusions rises above 80% (vs. <10% in D3k baseline), and the average conclusion length grows to nearly 10 times the D3k average. These are inelegant, complex problems that hack the solve-rate reward without being useful for solving target theorems.",
+      "content_hash": "57597534b21cac79b1ddf53448ed979ccfd2b76162e8dd886eec25cb322d8bf5",
+      "label": "no_guide_conjecturer_collapse",
+      "qid": "github:2604_20209::no_guide_conjecturer_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "The combined Conjecturer reward for a synthetic problem x̃ is Rsynth = Rsolve · Rguide. This multiplicative formulation ensures that a synthetic problem must be both appropriately difficult for the Solver (captured by Rsolve) and high quality according to the Guide (captured by Rguide) to receive high reward. Either factor being zero zeroes out the reward.",
+      "content_hash": "096afc7fac61b703f28e61ccf90fd0b4505098d0c253dd28a9247201ca15ae97",
+      "label": "sgs_combined_reward",
+      "qid": "github:2604_20209::sgs_combined_reward",
+      "type": "claim"
+    },
+    {
+      "content": "SGS achieves a fitted asymptotic cumulative solve rate of 67.1% on D3k, compared to 60.3% for the REINFORCE1/2 baseline — a 7% higher asymptotic solve rate. Both are fitted using the sigmoidal scaling law to runs of 8M+ total model generations.",
+      "content_hash": "68fc8852db4538d7374908ae7039910b6bb671b77febe7fd8a8990b07b9f3904",
+      "label": "sgs_higher_asymptotic_rate",
+      "qid": "github:2604_20209::sgs_higher_asymptotic_rate",
+      "type": "claim"
+    },
+    {
+      "content": "SGS outperforms STP (Self-play Theorem Prover, the closest related self-play method for Lean4 theorem proving [@Dong2025]) after 1M total model generations, with superior scaling behavior over longer runs.",
+      "content_hash": "8793dc44ca64abc0c8f094a0756a93f4b4201e7c290af737df51bcc709fe712c",
+      "label": "sgs_outperforms_stp",
+      "qid": "github:2604_20209::sgs_outperforms_stp",
+      "type": "claim"
+    },
+    {
+      "content": "Of the 1,346 problems that the RL baseline never solves in 4M generations, SGS solves almost 10% of them after 8M generations. The RL baseline solves 0% of these problems. SGS shows steady and sustained progress on these hard problems from the very beginning of training.",
+      "content_hash": "58131761c88950de043cf49b64723d623445b41f39ca5d1cd34fa4a905823ce1",
+      "label": "sgs_progress_on_never_solved",
+      "qid": "github:2604_20209::sgs_progress_on_never_solved",
+      "type": "claim"
+    },
+    {
+      "content": "At 6.3 million total model generations, SGS applied to the 7B parameter DeepSeek-Prover-V2-7B model exceeds the pass@4 of the much larger 671B parameter DeepSeek-Prover-V2-671B model on D3k. This demonstrates that sustained self-play training can close the gap between a 7B and 671B parameter model.",
+      "content_hash": "f3c63c4b279469bac313afb4d10c6270f986c8a457df7c0c93c2b328ce7fbfa7",
+      "label": "sgs_surpasses_671b",
+      "qid": "github:2604_20209::sgs_surpasses_671b",
+      "type": "claim"
+    },
+    {
+      "content": "SGS uses two mechanisms to prevent Conjecturer degradation: (1) conditioning the Conjecturer on unsolved target problems, so synthetic problems are directed toward the learning frontier; (2) using the Guide to score synthetic problems on relevance and elegance, down-weighting problems that are superficially related to targets but messy, overly complex, or inelegant.",
+      "content_hash": "409b94aee494b59474b301ce38c76a4da5fd46323e2eec8b718c26d7c25430c0",
+      "label": "sgs_two_mechanisms",
+      "qid": "github:2604_20209::sgs_two_mechanisms",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:d66e9bdccf311b571adbbde7b337d4dff66d84cf2edc9d94bc1861e39112a199",
+  "manifest_schema_version": 1,
+  "package": "2604-20209",
+  "version": "0.1.0"
+}

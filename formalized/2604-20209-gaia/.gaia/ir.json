@@ -1,0 +1,2524 @@
+{
+  "ir_hash": "sha256:d66e9bdccf311b571adbbde7b337d4dff66d84cf2edc9d94bc1861e39112a199",
+  "knowledges": [
+    {
+      "content": "Asymmetric self-play is a paradigm in which a Conjecturer model proposes new learning problems and a Solver model attempts to solve them, with both improving together through iterative interaction [@Sukhbaatar2017; @Florensa2018].",
+      "content_hash": "555858e6daa237156cc1ca467d354c4c5e06c2c7e1f08b03ce81a20799d20d4f",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20209::setup_asymmetric_selfplay",
+      "label": "setup_asymmetric_selfplay",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Florensa2018",
+              "Sukhbaatar2017"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Asymmetric self-play paradigm",
+      "type": "setting"
+    },
+    {
+      "content": "Lean4 is a formal theorem proving language in which problem solutions (proofs) can be automatically verified by the Lean4 compiler. In the formal theorem proving setting, target problems are Lean4 theorem statements and solutions are formally verified proofs.",
+      "content_hash": "89f61b361a8cf82cc1d2453dadd9f7ead6ca31308dce477f299bc1ecde012f2c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20209::setup_lean4_domain",
+      "label": "setup_lean4_domain",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Lean4 formal theorem proving domain",
+      "type": "setting"
+    },
+    {
+      "content": "In standard LLM self-play methods, the Conjecturer is rewarded solely according to the Solver's pass rate on synthetic problems: a higher Solver pass rate on a problem indicates the problem may be too easy, while a zero pass rate indicates it may be too hard. The reward favors intermediate difficulty.",
+      "content_hash": "773cd4d5249b678840e33a851c85c75533929296931cb48d5c4f9f7ca77f92f1",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20209::setup_conjecturer_reward",
+      "label": "setup_conjecturer_reward",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Standard Conjecturer reward (pass-rate only)",
+      "type": "setting"
+    },
+    {
+      "content": "The ideal property of asymmetric self-play is that, in principle, nothing bounds its learning: as the Solver improves, the Conjecturer produces harder problems, enabling continuous improvement [@Silver2017].",
+      "content_hash": "cfe039c080fbff26af75145a2762e3c69feace2775e2a0c1246b5d1fd84a5423",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20209::setup_selfplay_ideal",
+      "label": "setup_selfplay_ideal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Silver2017"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Theoretical unbounded learning potential of self-play",
+      "type": "setting"
+    },
+    {
+      "content": "When a problem is sufficiently difficult, standard reinforcement learning (RL) techniques fail due to sparse or absent reward signals. Asymmetric self-play is proposed as a solution: a Conjecturer bridges the gap between current Solver capability and hard unsolved problems.",
+      "content_hash": "f2e66794d0e4bee43fea868db8c0c7cd777439137b69d9f1c20c0a70dcdd46c8",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20209::sparse_reward_problem",
+      "label": "sparse_reward_problem",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Well-established problem in RL literature: sparse rewards make it hard to learn complex behaviors. Asymmetric self-play as a solution is proposed in Sukhbaatar 2017 and Florensa 2018, with substantial empirical support."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Sparse reward motivates asymmetric self-play",
+      "type": "claim"
+    },
+    {
+      "content": "Existing LLM self-play methods do not sustain learning over long training periods, instead hitting learning plateaus. Prior works on LLM self-play do not run training for as long as SGS does in this paper.",
+      "content_hash": "9b6fa66c349f9c32d17058c911ed437eb3b716da96ae182cec32e10542e41882",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20209::existing_selfplay_plateaus",
+      "label": "existing_selfplay_plateaus",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "frozen_conjecturer_suboptimal",
+              "setup_asymmetric_selfplay",
+              "sparse_reward_problem"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Existing LLM self-play hits learning plateaus",
+      "type": "claim"
+    },
+    {
+      "content": "Over long training runs, the Conjecturer learns to exploit (hack) its reward function, collapsing to producing artificially complex problems that do not genuinely help the Solver improve. This reward hacking is identified as the primary cause of the learning plateaus observed in existing LLM self-play methods.",
+      "content_hash": "b6444cd2e5de57d7d3394e08b988a185873d1affc28e90818a52e197fdb5d60c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_20209::conjecturer_collapse_hypothesis",
+      "label": "conjecturer_collapse_hypothesis",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "conjecturer_collapse_hypothesis",
+              "existing_selfplay_plateaus",
+              "no_guide_conjecturer_collapse",
+              "no_guide_lower_performance",
+              "setup_conjecturer_reward"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Conjecturer reward-hacking causes learning plateaus (hypothesis)",
+      "type": "claim"
+    },
+    {
+      "content": "Under a pass-rate-only Conjecturer reward, the quality of synthetic problems degrades over the course of training, leading to a learning plateau. Specifically, the Conjecturer produces problems that maximize solve-rate reward without being genuinely useful for improving Solver performance on target problems.",
+      "content_hash": "1e6f30764a2de0d05ca1b4117dc8120aeb59c1cfed727587a95ea9d2fc5bb46d",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20209::quality_degrades",
+      "label": "quality_degrades",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "conjecturer_collapse_hypothesis",
+              "no_problem_cond_fails",
+              "setup_conjecturer_reward",
+              "setup_rsolve"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Synthetic problem quality degrades under pass-rate-only reward",
+      "type": "claim"
+    },
+    {
+      "content": "Language models can assess whether a subproblem is useful for achieving a goal. This capability enables an LLM acting as a Guide to score synthetic problems by their relevance to unsolved target problems and by how clean and natural they are, providing useful supervision against Conjecturer collapse.",
+      "content_hash": "992949b6d534e092255e2fe830ebcb52494a55a1805866c7eab989ff32914358",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_20209::guide_hypothesis",
+      "label": "guide_hypothesis",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "LLMs as Guides is validated by the ablation showing 1.6% performance gap between SGS (with Guide) and No Guide, and by the Guide's ability to keep disjunctive conclusion rates near the D3k baseline (<10%) while No Guide collapses to >80%."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLMs can assess subproblem usefulness (core SGS hypothesis)",
+      "type": "claim"
+    },
+    {
+      "content": "In Self-Guided Self-Play (SGS), a single language model takes on three distinct roles: (1) Solver πθ: attempts to solve both target and synthetic problems; (2) Conjecturer gϕ: generates synthetic problems conditioned on unsolved target problems; (3) Guide ρ: an LLM-based judge that evaluates synthetic problem quality. All three roles are initialized from the same base model.",
+      "content_hash": "0a109a95b18db95ab2bdb6e2652d25425abe0000b6ce5ac7fac838cdf7ca35bf",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20209::setup_sgs_roles",
+      "label": "setup_sgs_roles",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "SGS three-role architecture",
+      "type": "setting"
+    },
+    {
+      "content": "SGS operates on a fixed dataset D = {x1, ..., xN} of hard problems with verifiable solutions. The goal is to solve as many problems in D as possible given a large compute budget. In the paper's experiments, D = D3k, a dataset of 3,323 formal math problems in Lean4.",
+      "content_hash": "ba7ede0ea009b72379ac3049f4aad8434447638f14481a37a08da97a418ee557",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20209::setup_dataset",
+      "label": "setup_dataset",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Fixed target problem dataset",
+      "type": "setting"
+    },
+    {
+      "content": "The Conjecturer is prompted with an unsolved target problem and asked to produce a related lemma or theorem in Lean4. The prompt instructs the Conjecturer to produce a statement that: (1) is conceptually related but simpler to solve than the target, (2) is not identical to the target, and (3) is not equivalent through variable renaming. The output must be a syntactically correct Lean4 theorem statement.",
+      "content_hash": "f9387e5ee45ad3f856cccb5b321835f5217e74e0aa6a2065907fac6dde12dbdb",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20209::setup_conjecturer_prompt",
+      "label": "setup_conjecturer_prompt",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Conjecturer prompt structure",
+      "type": "setting"
+    },
+    {
+      "content": "The Guide scores each synthetic problem on two dimensions: (1) relevance — how well the synthetic problem relates to the unsolved target problem; (2) elegance — whether the problem is formulated clearly with a simple conclusion and no redundant premises. The Guide is a copy of the base model fine-tuned on 2,048 well-formatted examples generated by GPT-4.1 mini to ensure reliable output formatting (>99% well-formatted).",
+      "content_hash": "0faab144d4d4f1910b5daaab0b2ab3046c3d3a84f54b2aa51604ec65a9595ffc",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20209::setup_guide_rubric",
+      "label": "setup_guide_rubric",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Guide scoring rubric: relevance and elegance",
+      "type": "setting"
+    },
+    {
+      "content": "The solve-rate reward Rsolve for a synthetic problem x̃ is defined as follows. Let s(x̃) = (1/k) Σ v(yᵢ_x̃) be the empirical solve rate across k Solver rollouts. Rsolve = 0 if s(x̃) = 0 (too difficult) or if s(x̃) is in the top 30% of solve rates within the current batch (too easy). For all other synthetic problems, Rsolve = 1 − s(x̃), thereby favoring harder problems within the solvable range.",
+      "content_hash": "b5fd58cc120c7fc9ad6fefc74d5e2325ea0ef29517917168a29a8e435f002686",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20209::setup_rsolve",
+      "label": "setup_rsolve",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Solve-rate reward Rsolve definition",
+      "type": "setting"
+    },
+    {
+      "content": "The Guide reward Rguide = ρ(x, x̃) ∈ [0, 1] is produced by the Guide LLM, indicating how well the synthetic problem x̃ relates to the unsolved target x and how elegant a conjecture it is. The combined Conjecturer reward is Rsynth = Rsolve · Rguide, linearly normalized within its batch to [0, 1].",
+      "content_hash": "6c2254d7a1f646c7f0aedbd4bf0c5d96266f52d0514cfa6826a9a2fcfd2aafbe",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20209::setup_rguide",
+      "label": "setup_rguide",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Guide reward Rguide and combined Conjecturer reward",
+      "type": "setting"
+    },
+    {
+      "content": "The Solver is updated using the REINFORCE1/2 objective: a REINFORCE objective applied only to problems with empirical solve rate ≤ 0.5, promoting learning on hard problems. Because the reward is binary (correct/incorrect proof), this reduces to a simple log-likelihood objective over all correct rollouts for problems with solve rate ≤ 0.5.",
+      "content_hash": "8d205f419e70521b21fe9b374b6895a5ea345c37f264e28fff3b08e37a6c19a6",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20209::setup_solver_objective",
+      "label": "setup_solver_objective",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "REINFORCE1/2 Solver update objective",
+      "type": "setting"
+    },
+    {
+      "content": "A length penalty is applied to all RL updates. Rollouts consuming between 80% and 100% of the context window (8192 tokens) receive a negative reward scaling linearly from 0 to −1. Additionally, proofs using the 'try' tactic receive zero reward, as this tactic can cause infinite loops.",
+      "content_hash": "f262862f929a9e82e84e18101cc07343d9c2405dedfe838e0670aeb4ffb7a6ca",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20209::setup_length_penalty",
+      "label": "setup_length_penalty",
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Length penalty and tactic reward shaping",
+      "type": "setting"
+    },
+    {
+      "content": "SGS uses two mechanisms to prevent Conjecturer degradation: (1) conditioning the Conjecturer on unsolved target problems, so synthetic problems are directed toward the learning frontier; (2) using the Guide to score synthetic problems on relevance and elegance, down-weighting problems that are superficially related to targets but messy, overly complex, or inelegant.",
+      "content_hash": "409b94aee494b59474b301ce38c76a4da5fd46323e2eec8b718c26d7c25430c0",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_20209::sgs_two_mechanisms",
+      "label": "sgs_two_mechanisms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "conjecturer_collapse_hypothesis",
+              "guide_hypothesis",
+              "setup_sgs_roles"
+            ]
+          }
+        }
+      },
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "SGS two anti-collapse mechanisms",
+      "type": "claim"
+    },
+    {
+      "content": "In SGS, for each unsolved problem x in the current batch, the Conjecturer gϕ generates one synthetic problem x̃ ~ gϕ(·|x) conditioned on x. Only unsolved problems generate synthetic problems; solved problems do not. This conditioning ensures synthetic problems are directed toward the Solver's current learning frontier.",
+      "content_hash": "741893a916f3db568730e6c66368ba4cf47560af07a08b800266849ca937f16a",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+      "label": "sgs_conjecturer_conditions_on_unsolved",
+      "metadata": {
+        "prior": 0.98,
+        "prior_justification": "Definitional property of SGS algorithm: by construction the Conjecturer generates one synthetic problem per unsolved target (Algorithm 1 in paper). Deterministic design choice."
+      },
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Conjecturer conditioning on unsolved problems",
+      "type": "claim"
+    },
+    {
+      "content": "The Guide ρ evaluates each synthetic problem x̃ relative to its conditioning target x, producing a quality score Rguide = ρ(x, x̃) ∈ [0, 1]. This score is based on (1) how relevant x̃ is to x, and (2) how elegantly x̃ is formulated (simple conclusion, no redundant premises). A synthetic problem that is superficially related but messy or overly complex receives a low Guide score and is thus down-weighted in the Conjecturer update.",
+      "content_hash": "20f25af87e36bab4963b9317f970ec8f890fcd0c0c15f6de620cc9f685ca25c1",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_20209::sgs_guide_scores_quality",
+      "label": "sgs_guide_scores_quality",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Definitional property of SGS algorithm: Guide scoring is a core component (Algorithm 1, Section 3.2). The rubric (relevance + elegance) is explicitly stated."
+      },
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Guide scores synthetic problem quality",
+      "type": "claim"
+    },
+    {
+      "content": "The combined Conjecturer reward for a synthetic problem x̃ is Rsynth = Rsolve · Rguide. This multiplicative formulation ensures that a synthetic problem must be both appropriately difficult for the Solver (captured by Rsolve) and high quality according to the Guide (captured by Rguide) to receive high reward. Either factor being zero zeroes out the reward.",
+      "content_hash": "096afc7fac61b703f28e61ccf90fd0b4505098d0c253dd28a9247201ca15ae97",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_20209::sgs_combined_reward",
+      "label": "sgs_combined_reward",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "setup_rguide",
+              "setup_rsolve",
+              "sgs_conjecturer_conditions_on_unsolved",
+              "sgs_guide_scores_quality"
+            ]
+          }
+        }
+      },
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Combined Conjecturer reward Rsynth = Rsolve · Rguide",
+      "type": "claim"
+    },
+    {
+      "content": "DeepSeek-Prover-V2-7B, when used as the Guide without fine-tuning, produces correctly formatted reviewer outputs only 54.7% of the time — an unacceptably high error rate for an untrained Guide component. After supervised fine-tuning (SFT) on 2,048 examples of well-formatted Guide outputs (generated by GPT-4.1 mini), the rate of correctly formatted Guide outputs rises to over 99%.",
+      "content_hash": "8a20c547e9b3fcbec3da5d25dce759f706f43ff3529e1f5e18c693b701be3392",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_20209::guide_sft_prevents_format_errors",
+      "label": "guide_sft_prevents_format_errors",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Empirical measurement from Section 4.1: base model without SFT produces 54.7% well-formatted outputs; after SFT on 2,048 examples, >99%. Direct measurement."
+      },
+      "module": "s3_algorithm",
+      "parameters": [],
+      "title": "Guide SFT improves format compliance from 54.7% to >99%",
+      "type": "claim"
+    },
+    {
+      "content": "The D3k dataset is constructed from Goedel-Pset-V1 (auto-formalized problems from NuminaMath-CoT) through four filtering steps: (1) remove problems with >50% pass rate on STP-7B (easy problems); (2) remove problems whose negation can be proved by Kimina-Prover-Preview and remove those proved >2/8 times (false + easy problems); (3) subsample to 5,000 problems; (4) use GPT-5 mini to remove problems labeled 'unsolvable' due to formalization errors, yielding 3,323 problems [@Lin2025a; @Li2024].",
+      "content_hash": "506d1d5d31924901543fb104bbc60373b31afb144fbf611a54dd4832fd7af344",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20209::setup_d3k_construction",
+      "label": "setup_d3k_construction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2024",
+              "Lin2025a"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "D3k dataset construction procedure",
+      "type": "setting"
+    },
+    {
+      "content": "D3k contains 3,323 formal math problems in Lean4. By difficulty: roughly 80% are competition or undergraduate level. By area: Algebra (~35%), Number Theory (~25%), Geometry (~15%), and other areas. All problems are publicly released on HuggingFace at LukeBailey181Pub/D_3k.",
+      "content_hash": "1ad78ff0ef4d65c9ecdcce1eb35df4296613418fcceab38fa6a41b5d6845b757",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20209::setup_d3k_composition",
+      "label": "setup_d3k_composition",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "D3k dataset composition",
+      "type": "setting"
+    },
+    {
+      "content": "All experiments use DeepSeek-Prover-V2-7B (DSPv2-7B) [@Ren2025] as the base model for initializing Solver, Conjecturer, and Guide in SGS. DSPv2-7B was pre-trained with large-scale RL for Lean4, but has poor instruction-following capabilities, achieving 51.5% correct Conjecturer output format before RL training.",
+      "content_hash": "3acdc36fde5c97097516656bf9479e82a993e9bf53b22c5b10bd02d7b99e6946",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20209::setup_base_model",
+      "label": "setup_base_model",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ren2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Base model: DeepSeek-Prover-V2-7B",
+      "type": "setting"
+    },
+    {
+      "content": "Training infrastructure: up to 64 GPU workers (1 GPU, 32 GB memory each) for generation; up to 128 CPU workers (33 CPU threads each) for verification. Training uses a single H200 node with ZeRO Stage-2. Batch size: 3,323 (full dataset). Rollouts: k=8 per problem. Max sequence length: 8,192 tokens. Temperature: 1.0. Adam optimizer, β1=0.9, β2=0.95, gradient clipping at norm 1.0. Lean4 version 4.15.0, 200s timeout.",
+      "content_hash": "4546ca3c7983aa02c1267a5b6067b6e3892e5e26de74ef9384b29124a5730aca",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_20209::setup_training_infra",
+      "label": "setup_training_infra",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Training infrastructure and hyperparameters",
+      "type": "setting"
+    },
+    {
+      "content": "Cumulative solve rate is modeled with the sigmoidal scaling law: RC = R0 + (A − R0) · 1 / (1 + (Cmid/C)^B), where RC is the cumulative solve rate at C model generations, R0 is the initial solve rate, A is the asymptotic cumulative solve rate, Cmid is the curve midpoint, and B controls the rate of approach to asymptote. Parameters A, Cmid, B are fit by minimizing sum of squared residuals using SciPy's curve_fit. The initial solve rate R0 is fixed to the first observed value (not a free parameter) [@Khatri2025; @Ruan2024].",
+      "content_hash": "ea15dd6bfae87c75ad480a8c497f75696b72b5e6a703156d3e508fe0a017e521",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20209::setup_scaling_law_form",
+      "label": "setup_scaling_law_form",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Khatri2025",
+              "Ruan2024"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Sigmoidal scaling law for cumulative solve rate",
+      "type": "setting"
+    },
+    {
+      "content": "The fitted scaling law is validated by removing 10%, 20%, and 30% of final training data and checking stability. With 50% random data drop (100 independent fits), the standard deviation of fitted asymptote is 1.1%. Differences below 1.1% in fitted asymptotes are treated cautiously. The scaling law is treated as a useful additional metric, not a substitute for long-run empirical performance.",
+      "content_hash": "0796a8f0b627d704495592f80ebfc62c7d9e8845b85ca6c859f748cf1d82ef0b",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_20209::setup_scaling_law_robustness",
+      "label": "setup_scaling_law_robustness",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Scaling law robustness and uncertainty",
+      "type": "setting"
+    },
+    {
+      "content": "Three RL baselines are benchmarked on D3k: (1) REINFORCE1/2: achieves 60.3% fitted asymptotic cumulative solve rate; (2) Expert Iteration (EI): achieves 60.0% asymptotic solve rate; (3) CISPO: achieves 57.5% asymptotic solve rate. REINFORCE1/2 performs best. CISPO performs worst due to entropy collapse. Learning rates were individually tuned: CISPO at 1e-6, EI and REINFORCE1/2 at 3e-6.",
+      "content_hash": "478eac4fbd4db9a931d6fd78f7733914fb01ad4e2e0a0bb3eea0e20ca60b4914",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_20209::rl_baselines_comparison",
+      "label": "rl_baselines_comparison",
+      "metadata": {
+        "prior": 0.96,
+        "prior_justification": "Directly observed experimental result from Figure 4: REINFORCE1/2 at 60.3%, EI at 60.0%, CISPO at 57.5%. High-confidence empirical measurement with tuned hyperparameters.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 4"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "RL baseline comparison on D3k",
+      "type": "claim"
+    },
+    {
+      "content": "CISPO, when used as a standalone RL objective on D3k, undergoes rapid entropy collapse. The Solver's average entropy drops quickly toward near-zero, concentrating the distribution of problem solve rates at 0 and 1. This makes CISPO unsuitable for long-running self-play because a near-deterministic Solver starves the Conjecturer of training signal.",
+      "content_hash": "fdf88d0ea6ae24090ea4ea92f7971f12ab55601c16e09c7bd13eb4991d4ebd55",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_20209::cispo_entropy_collapse",
+      "label": "cispo_entropy_collapse",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly observed in Figure 4 and 11: CISPO's entropy drops to near-zero. Well-documented phenomenon confirmed by ablation experiment.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 4 and 11"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "CISPO undergoes entropy collapse as RL baseline",
+      "type": "claim"
+    },
+    {
+      "content": "REINFORCE1/2 is the best-performing RL baseline on D3k, achieving a fitted asymptotic cumulative solve rate of 60.3%, compared to 60.0% for Expert Iteration and 57.5% for CISPO. REINFORCE1/2 is selected as the Solver objective for SGS.",
+      "content_hash": "a4dadc1e9bbbf0092d107d2aaff2dbd469e690810eb7c3432a72a34b7e6a5de2",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_20209::reinforce_half_best_baseline",
+      "label": "reinforce_half_best_baseline",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "cispo_entropy_collapse",
+              "rl_baselines_comparison"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "REINFORCE1/2 selected as best RL baseline (60.3% asymptotic solve rate)",
+      "type": "claim"
+    },
+    {
+      "content": "SGS achieves a fitted asymptotic cumulative solve rate of 67.1% on D3k, compared to 60.3% for the REINFORCE1/2 baseline — a 7% higher asymptotic solve rate. Both are fitted using the sigmoidal scaling law to runs of 8M+ total model generations.",
+      "content_hash": "68fc8852db4538d7374908ae7039910b6bb671b77febe7fd8a8990b07b9f3904",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_20209::sgs_higher_asymptotic_rate",
+      "label": "sgs_higher_asymptotic_rate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026",
+              "Dong2025"
+            ],
+            "referenced_claims": [
+              "guide_hypothesis",
+              "sgs_outperforms_stp",
+              "sgs_two_mechanisms"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 1 and 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SGS asymptotic solve rate 67.1% vs RL baseline 60.3% (7% gain)",
+      "type": "claim"
+    },
+    {
+      "content": "SGS's improvements over the RL baseline could be due to increased compute or hyperparameter differences rather than the Guide and problem-conditioning mechanisms, with the Guide component providing no additional benefit beyond the extra data.",
+      "content_hash": "c65c12e2db71582c10fcc62c8b5b25a1c9d0c3c44aa5731c6ef78b2e7935e8cd",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_20209::alt_sgs_no_gain",
+      "label": "alt_sgs_no_gain",
+      "metadata": {
+        "prior": 0.28,
+        "prior_justification": "The alternative (no benefit from self-guidance beyond extra data) is contradicted by: (1) No Guide ablation showing 1.6% gap, and (2) No Guide Conjecturer collapse to >80% disjunctive conclusions. The alternative has some merit (conditioning alone helps) but the Guide's specific benefit is empirically demonstrated."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative: SGS gains not from self-guidance but from more compute",
+      "type": "claim"
+    },
+    {
+      "content": "SGS (with Guide + problem conditioning) predicts a 7% higher asymptotic solve rate than RL alone, reaching 67.1%, because the Guide steers the Conjecturer away from degenerate problems and toward the Solver's learning frontier.",
+      "content_hash": "b319944487a74d07d009f85494865b8b7b98a7c4bbce2158215e1818255c32d4",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_20209::pred_sgs",
+      "label": "pred_sgs",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "SGS's predicted higher performance is well-motivated by the two anti-collapse mechanisms (Guide + problem conditioning) and the Guide hypothesis. Prediction is specific and falsifiable: 67.1% vs 60.3% baseline."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SGS predicts higher asymptotic solve rate via guided conjecturer",
+      "type": "claim"
+    },
+    {
+      "content": "If SGS's gains were purely from extra training data without Guide quality control, the 'No Guide' ablation (which also uses synthetic problems but without Rguide) would achieve a similar asymptotic solve rate to full SGS.",
+      "content_hash": "aa0fbe52a12bc7507d204c4c05678093558448849f23f8aa3d20c1877ad13f00",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_20209::pred_alt_sgs",
+      "label": "pred_alt_sgs",
+      "metadata": {
+        "prior": 0.4,
+        "prior_justification": "The alternative (SGS gains are purely from more data, not Guide quality) is partially plausible -- more training data does help. But the No Guide ablation shows the alternative predicts ~65.5%, not 67.1%, and No Guide Conjecturer collapses to disjunctive problems."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative predicts No Guide would match SGS solve rate",
+      "type": "claim"
+    },
+    {
+      "content": "compare(SGS (with Guide + problem conditioning) predicts a 7% higher asymptotic solve rate than RL alone, reaching 67.1%, because the Guide steers the Conjecturer away from degenerate problems and toward the Solver's learning frontier., If SGS's gains were purely from extra training data without Guide quality control, the 'No Guide' ablation (which also uses synthetic problems but without Rguide) would achieve a similar asymptotic solve rate to full SGS., SGS achieves a fitted asymptotic cumulative solve rate of 67.1% on D3k, compared to 60.3% for the REINFORCE1/2 baseline — a 7% higher asymptotic solve rate. Both are fitted using the sigmoidal scaling law to runs of 8M+ total model generations.)",
+      "content_hash": "fc185e9c2ac1d4258c299de0e05587cf7ef43d80d8dee50f84f62ab4109313d3",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_20209::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "At 6.3 million total model generations, SGS applied to the 7B parameter DeepSeek-Prover-V2-7B model exceeds the pass@4 of the much larger 671B parameter DeepSeek-Prover-V2-671B model on D3k. This demonstrates that sustained self-play training can close the gap between a 7B and 671B parameter model.",
+      "content_hash": "f3c63c4b279469bac313afb4d10c6270f986c8a457df7c0c93c2b328ce7fbfa7",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_20209::sgs_surpasses_671b",
+      "label": "sgs_surpasses_671b",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026",
+              "Ren2025"
+            ],
+            "referenced_claims": [
+              "setup_base_model",
+              "sgs_higher_asymptotic_rate"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SGS 7B surpasses DSPv2-671B pass@4 at 6.3M generations",
+      "type": "claim"
+    },
+    {
+      "content": "Of the 1,346 problems that the RL baseline never solves in 4M generations, SGS solves almost 10% of them after 8M generations. The RL baseline solves 0% of these problems. SGS shows steady and sustained progress on these hard problems from the very beginning of training.",
+      "content_hash": "58131761c88950de043cf49b64723d623445b41f39ca5d1cd34fa4a905823ce1",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2604_20209::sgs_progress_on_never_solved",
+      "label": "sgs_progress_on_never_solved",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "sgs_conjecturer_conditions_on_unsolved",
+              "sgs_guide_scores_quality"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 13"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SGS solves ~10% of problems RL never solves (1,346 hard problems)",
+      "type": "claim"
+    },
+    {
+      "content": "SGS outperforms STP (Self-play Theorem Prover, the closest related self-play method for Lean4 theorem proving [@Dong2025]) after 1M total model generations, with superior scaling behavior over longer runs.",
+      "content_hash": "8793dc44ca64abc0c8f094a0756a93f4b4201e7c290af737df51bcc709fe712c",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2604_20209::sgs_outperforms_stp",
+      "label": "sgs_outperforms_stp",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Dong2025"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly observed in Figure 12: SGS surpasses STP after 1M generations. STP is the most closely related prior method (Dong & Ma 2025).",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 12"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "SGS outperforms STP (closest prior Lean4 self-play) after 1M generations",
+      "type": "claim"
+    },
+    {
+      "content": "The Solver's pass@8 on target statements increases steadily over 200 SGS iterations from approximately 42.5% to approximately 60% without catastrophic forgetting. The Solver does not suffer from distributional collapse over the course of training.",
+      "content_hash": "8b6aae46d6ab7772334925d119744c6cce1b7e287628cf29649b8f2b489a50c4",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2604_20209::solver_improves_steadily",
+      "label": "solver_improves_steadily",
+      "metadata": {
+        "prior": 0.94,
+        "prior_justification": "Directly observed in Figure 3: Solver pass@8 increases from ~42.5% to ~60% over 200 iterations without catastrophic forgetting.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Solver pass@8 increases steadily over 200 iterations without forgetting",
+      "type": "claim"
+    },
+    {
+      "content": "The Conjecturer's average reward increases across SGS training, driven primarily by a stable Guide reward (Rguide begins high and critically remains stable throughout training) and an increasing solve-rate reward (Rsolve increases during training). The overall Conjecturer reward varies between 0 and 7.",
+      "content_hash": "b9e9f0046ee8038822090550431c933a3fe3c5c5ff95ac03062652302268c5ad",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2604_20209::conjecturer_reward_stable",
+      "label": "conjecturer_reward_stable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "guide_sft_prevents_format_errors",
+              "setup_guide_rubric"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Conjecturer reward increases: stable Rguide, rising Rsolve",
+      "type": "claim"
+    },
+    {
+      "content": "As the Solver approaches solving a target problem, more synthetic problems generated for that target are suitable for Solver training (i.e., have non-zero, non-trivial solve rates). For the final 300 target theorems solved by SGS, the fraction of synthetic problems trained on increases monotonically across ten equally-sized buckets of pre-solve iterations.",
+      "content_hash": "dc20ce6ca7f7496b084e0042fc2dbe2bf590a7136a79678c0ed1d3101f3fd02f",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2604_20209::synth_progress_toward_target",
+      "label": "synth_progress_toward_target",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "sgs_conjecturer_conditions_on_unsolved",
+              "solver_improves_steadily"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 5"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Synthetic problem solve rate increases as Solver approaches target",
+      "type": "claim"
+    },
+    {
+      "content": "Without problem conditioning (Conjecturer prompted with a fixed generic prompt instead of the unsolved target problem, with only Rsolve reward), the Conjecturer produces many solvable problems but these are completely useless for solving target problems. The 'No Problem Conditioning' ablation does not outperform the RL baseline (60.3% asymptotic solve rate), despite generating more solvable synthetic problems.",
+      "content_hash": "3f67a3b119f72d8e3258992368a3c0d351fef1787a8b129b77f1aa8a332df50f",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2604_20209::no_problem_cond_fails",
+      "label": "no_problem_cond_fails",
+      "metadata": {
+        "prior": 0.94,
+        "prior_justification": "Directly observed in Figure 6: No Problem Conditioning does not outperform RL baseline (60.3%), despite producing many solvable synthetic problems. Clear empirical result.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "No Problem Conditioning ablation fails to improve over RL baseline",
+      "type": "claim"
+    },
+    {
+      "content": "The 'No Guide' ablation (SGS without Rguide, using only Rsolve for the Conjecturer) achieves a fitted asymptotic cumulative solve rate of 65.5% on D3k, lower than full SGS at 67.1%. However, No Guide substantially outperforms the RL baseline (60.3%) and No Problem Conditioning. The No Guide Conjecturer produces more solvable synthetic problems than SGS, yet achieves lower target solve rates.",
+      "content_hash": "d3cc8afd04d20246e002f0a9107b440596dd753564435a8c24a7ef1ecd8b1133",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2604_20209::no_guide_lower_performance",
+      "label": "no_guide_lower_performance",
+      "metadata": {
+        "prior": 0.94,
+        "prior_justification": "Directly observed in Figure 6: No Guide achieves 65.5% vs SGS 67.1%. Empirical measurement with fitted scaling laws, difference (1.6%) exceeds 1.1% uncertainty threshold.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "No Guide ablation: 65.5% solve rate vs SGS 67.1%",
+      "type": "claim"
+    },
+    {
+      "content": "Without the Guide, the 'No Guide' Conjecturer collapses starting around 4M generations: the percentage of generated problems with disjunctive (OR) conclusions rises above 80% (vs. <10% in D3k baseline), and the average conclusion length grows to nearly 10 times the D3k average. These are inelegant, complex problems that hack the solve-rate reward without being useful for solving target theorems.",
+      "content_hash": "57597534b21cac79b1ddf53448ed979ccfd2b76162e8dd886eec25cb322d8bf5",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2604_20209::no_guide_conjecturer_collapse",
+      "label": "no_guide_conjecturer_collapse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "setup_rguide",
+              "sgs_guide_scores_quality"
+            ]
+          }
+        },
+        "source_figure": "artifacts/2604.20209.pdf, Figure 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "No Guide Conjecturer collapse: >80% disjunctive conclusions, 10x longer",
+      "type": "claim"
+    },
+    {
+      "content": "A 'Frozen Conjecturer' ablation (Conjecturer not trained, fixed distribution, analogous to AlphaProof's approach [@Hubert2025]) outperforms the RL baseline and No Problem Conditioning, but is inferior to both full SGS (67.1%) and No Guide (65.5%). The number of solvable synthetic problems per iteration decreases over time, showing the Solver quickly saturates the fixed Conjecturer's distribution, reverting the algorithm to RL alone.",
+      "content_hash": "3fba61b17d443e661d8f37745e56e620b92379fcd7999da6463655a1975d88a1",
+      "declaration_index": 24,
+      "exported": false,
+      "id": "github:2604_20209::frozen_conjecturer_suboptimal",
+      "label": "frozen_conjecturer_suboptimal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hubert2025"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly observed in Figure 6: Frozen Conjecturer outperforms RL but is inferior to SGS and No Guide. The decreasing solvable synthetic problem count is directly observed.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Frozen Conjecturer suboptimal: Solver saturates fixed distribution",
+      "type": "claim"
+    },
+    {
+      "content": "When CISPO is used as the Solver objective in SGS (instead of REINFORCE1/2), the Solver's entropy collapses rapidly, concentrating problem solve rates at 0 and 1. This starves the Conjecturer of training signal: problems with solve rate 0 or 1 receive Rsolve = 0. The Conjecturer cannot learn, and SGS with CISPO Solver achieves essentially the same asymptotic performance as standalone CISPO (57.5%), not the 67.1% of SGS with REINFORCE1/2.",
+      "content_hash": "33be7a7dd3e72071b109684c511d39b59186eff75b181e316aa6eb0ed44d4ba5",
+      "declaration_index": 25,
+      "exported": false,
+      "id": "github:2604_20209::cispo_solver_kills_conjecturer",
+      "label": "cispo_solver_kills_conjecturer",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly observed in Figure 7: SGS with CISPO Solver achieves ~57.5% asymptotic solve rate (same as standalone CISPO), confirming that entropy collapse starves the Conjecturer.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 7"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "CISPO Solver entropy collapse starves Conjecturer in SGS",
+      "type": "claim"
+    },
+    {
+      "content": "With REINFORCE1/2 as the Solver objective in SGS, the Solver's entropy remains stable throughout training. The Conjecturer can produce problems with a spread of intermediate solve rates, providing sufficient training signal. The presence of synthetic problems appears to stabilize Solver entropy in a positive feedback loop.",
+      "content_hash": "bd94464d490bb0ca589c1cc6225f840be6bddf97ceff72f16fd81d2f986729a7",
+      "declaration_index": 26,
+      "exported": false,
+      "id": "github:2604_20209::reinforce_half_stable_entropy",
+      "label": "reinforce_half_stable_entropy",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly observed in Figure 7 (SGS with REINFORCE1/2 vs CISPO): REINFORCE1/2 maintains stable entropy throughout training, confirmed by solve rate distribution.",
+        "source_figure": "artifacts/2604.20209.pdf, Figure 7"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "REINFORCE1/2 maintains stable Solver entropy, enabling Conjecturer learning",
+      "type": "claim"
+    },
+    {
+      "content": "There is a critical coupling between Solver entropy and Conjecturer learning: a near-deterministic Solver (entropy ≈ 0) concentrates solve rates at 0/1, giving the Conjecturer zero reward and preventing it from learning. Conversely, a Solver with stable entropy produces a spread of solve rates, enabling the Conjecturer to receive and learn from gradient signal. This coupling is identified as a key constraint on successful LLM self-play algorithm design.",
+      "content_hash": "983d5213477b5c9a7658bf7716d0665029d6ebda2f26d9c9d99d54f920b69d91",
+      "declaration_index": 27,
+      "exported": true,
+      "id": "github:2604_20209::entropy_conjecturer_coupling",
+      "label": "entropy_conjecturer_coupling",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "cispo_solver_kills_conjecturer",
+              "reinforce_half_stable_entropy",
+              "setup_rsolve"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Solver entropy-Conjecturer learning coupling is key to SGS success",
+      "type": "claim"
+    },
+    {
+      "content": "SGS is currently applied only to Lean4 formal theorem proving, a verifiable domain where the Conjecturer only needs to produce an initial state (problem statement) and the verification reward is provided automatically by the Lean4 compiler. Extending SGS to non-verifiable domains requires the Conjecturer to specify an entire MDP (goal, environment/simulator, and reward function), which is substantially harder.",
+      "content_hash": "620c9f4ede47265e70240276b381c2122322d9aa17c41aa66d3f9b440bf441d9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_20209::limitation_verifiable_domain",
+      "label": "limitation_verifiable_domain",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Factual statement about current SGS experiments: only Lean4 formal math is tested. The extension challenge (full MDP specification) is straightforward engineering assessment."
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "SGS limited to verifiable domains; non-verifiable extension is open problem",
+      "type": "claim"
+    },
+    {
+      "content": "In current SGS experiments, the Guide is frozen (not trained). A frozen Guide is sufficient to prevent Conjecturer collapse in the tested regime, but may be insufficient for scaling SGS to solve the most challenging problems. As self-play progresses, the characteristics of useful stepping-stone problems evolve, and a frozen Guide may fail to adapt. A natural extension is to train the Guide on Solver training dynamics (e.g., labeling synthetic problems that quickly lead to their target being solved as high reward).",
+      "content_hash": "69c6703be923b0609ce2ea1515910bde324458cdc2ff161128ef58e9658f3f5c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_20209::limitation_frozen_guide",
+      "label": "limitation_frozen_guide",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Paper's stated limitation: Guide is not trained during SGS. The concern about future scalability is a reasonable engineering judgment about adaptation requirements."
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Frozen Guide may be insufficient for hardest problems; trainable Guide is future work",
+      "type": "claim"
+    },
+    {
+      "content": "SGS experiments fix model size (7B) and scale along the compute axis. The interaction between SGS and model scale (larger Conjecturer producing higher-quality synthetic problems) is not tested. The hypothesis that SGS scales well with model size is stated but not confirmed.",
+      "content_hash": "544a70a01c97173c90b3946098af8ef2045b1af87e29d9cc2e00ca08dd06c557",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_20209::limitation_model_size",
+      "label": "limitation_model_size",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Factual: all experiments use 7B parameter model. The hypothesis about larger model scaling is stated but not tested -- correctly labeled as future work."
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "SGS model-size scaling not tested; hypothesis pending confirmation",
+      "type": "claim"
+    },
+    {
+      "content": "SGS is an asymmetric self-play algorithm that sustains learning for longer than prior methods by addressing two instabilities: (1) Conjecturer collapse (solved by the Guide and problem conditioning), and (2) Solver entropy collapse (solved by the REINFORCE1/2 objective). The result is a self-play algorithm with a 7% higher asymptotic solve rate than the strongest RL baseline on formal theorem proving in Lean4.",
+      "content_hash": "6245d9c46e82dd06222a0f1a78584e8ef4d5b18c43df2ce4cf2200fb3d8de4bd",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "label": "conclusion_sgs_sustains_learning",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bailey2026"
+            ],
+            "referenced_claims": [
+              "conclusion_sgs_sustains_learning",
+              "entropy_conjecturer_coupling",
+              "future_non_verifiable",
+              "limitation_frozen_guide",
+              "limitation_model_size",
+              "limitation_verifiable_domain",
+              "sgs_higher_asymptotic_rate",
+              "sgs_two_mechanisms"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "SGS conclusion: sustains self-play learning via Guide and entropy management",
+      "type": "claim"
+    },
+    {
+      "content": "SGS could be extended to non-verifiable domains by using approximate verification: for coding problems (unit tests as verifier), for natural language math (learned verifiers that have improved rapidly), and for embodied control (VLM reward function with neural world model for environment generation). Imperfect verification may not strictly prevent effective self-play.",
+      "content_hash": "e4e97e511a9a8044d17da56408bb39b6f92e307171dd1fa22dc915a17979adb7",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_20209::future_non_verifiable",
+      "label": "future_non_verifiable",
+      "metadata": {
+        "prior": 0.75,
+        "prior_justification": "Extension to non-verifiable domains via approximate verification is plausible (learned verifiers for math have improved; code unit tests are practical) but untested in SGS context. Moderate confidence given the rapid progress in learned verifiers."
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Future work: SGS extension to non-verifiable domains via approximate verification",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::existing_selfplay_plateaus,github:2604_20209::conjecturer_collapse_hypothesis)",
+      "content_hash": "8abac78ebeac6eb550a2868be9f035eaf400baff0bf0474850894c39428348f5",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_403e784a",
+      "label": "__implication_result_403e784a",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::existing_selfplay_plateaus,github:2604_20209::conjecturer_collapse_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_56ca21e8670c3bff",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::conjecturer_collapse_hypothesis,github:2604_20209::quality_degrades)",
+      "content_hash": "947cf9f018eb5b9180023e7e1ed67681b769c591b011549ec27e9e2c69ac4bd0",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_ccc9c92e",
+      "label": "__implication_result_ccc9c92e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::conjecturer_collapse_hypothesis,github:2604_20209::quality_degrades)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1776f3969580b361",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::sparse_reward_problem,github:2604_20209::existing_selfplay_plateaus)",
+      "content_hash": "78e0f5ea752ffbc61ad122c0209187e757a3c2848ca80f0a34325d38744258d4",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_f9e81223",
+      "label": "__implication_result_f9e81223",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::sparse_reward_problem,github:2604_20209::existing_selfplay_plateaus)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e491a7c92a46cc4c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::guide_hypothesis,github:2604_20209::conjecturer_collapse_hypothesis)",
+      "content_hash": "ec49c848c9b259afcc18252be40f081b24111a59bf6fa9249b908e5c5955f7e3",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_b2a1c94f",
+      "label": "__conjunction_result_b2a1c94f",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::guide_hypothesis,github:2604_20209::conjecturer_collapse_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bf47bdb844559ca7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_b2a1c94f,github:2604_20209::sgs_two_mechanisms)",
+      "content_hash": "b0e5ad1da72e63176c7b1f965f81de3b449da78d76e20e5cf865391801a7747e",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_04aa1f28",
+      "label": "__implication_result_04aa1f28",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_b2a1c94f,github:2604_20209::sgs_two_mechanisms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bf47bdb844559ca7",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::sgs_guide_scores_quality,github:2604_20209::sgs_conjecturer_conditions_on_unsolved)",
+      "content_hash": "8605270de570bcdc3f19428ea558120e53fabd66faf85e4e9cee4f238b32d9ca",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_f60687ca",
+      "label": "__conjunction_result_f60687ca",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::sgs_guide_scores_quality,github:2604_20209::sgs_conjecturer_conditions_on_unsolved)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_29abba2042521306",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_f60687ca,github:2604_20209::sgs_combined_reward)",
+      "content_hash": "421a4c7d54e17479ddab920b080bd00b76e25567b87355df6521a22d2ad71eb9",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_ffce6b81",
+      "label": "__implication_result_ffce6b81",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_f60687ca,github:2604_20209::sgs_combined_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_29abba2042521306",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::rl_baselines_comparison,github:2604_20209::cispo_entropy_collapse)",
+      "content_hash": "ceffd947d65d90f8d6db5466445e3552daede00425dabfdbaf5fd768fe743a99",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_a66fe457",
+      "label": "__conjunction_result_a66fe457",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::rl_baselines_comparison,github:2604_20209::cispo_entropy_collapse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e9ff5db6054d667f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_a66fe457,github:2604_20209::reinforce_half_best_baseline)",
+      "content_hash": "86576eaf4049dd4344efc6d0ef3831a88537cdf29660250547d36208f5f9c152",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_5a2f0283",
+      "label": "__implication_result_5a2f0283",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_a66fe457,github:2604_20209::reinforce_half_best_baseline)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e9ff5db6054d667f",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_20209::pred_sgs,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "362ba9f6c0ed229a7db329922f6b661db03080a9c9397600869f6489a4cf965a",
+      "exported": false,
+      "id": "github:2604_20209::__equivalence_result_a7a37228",
+      "label": "__equivalence_result_a7a37228",
+      "metadata": {
+        "canonical_name": "matches(github:2604_20209::pred_sgs,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_1a6b5f220e5bf843",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_20209::pred_alt_sgs,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "a79f23c868795350d40a57bbcb74704296a4f04f6420150ec626b328c688f6c6",
+      "exported": false,
+      "id": "github:2604_20209::__equivalence_result_091e4e1f",
+      "label": "__equivalence_result_091e4e1f",
+      "metadata": {
+        "canonical_name": "matches(github:2604_20209::pred_alt_sgs,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_1a6b5f220e5bf843",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::sgs_two_mechanisms,github:2604_20209::guide_hypothesis)",
+      "content_hash": "5b8742800c96c5071524c72ab49ea54fb1800bc562d6e1979828178a080b9890",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_2af6efb3",
+      "label": "__conjunction_result_2af6efb3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::sgs_two_mechanisms,github:2604_20209::guide_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_457c945a9f975108",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_2af6efb3,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "65596408e58c8ae49b7a16526b66c129d04835a16ea58f38cf5f6e60e959be35",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_5e8b41cc",
+      "label": "__implication_result_5e8b41cc",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_2af6efb3,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_457c945a9f975108",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::alt_sgs_no_gain,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "97cec6942a4ce7557c7c69d78a5ff54974ec6608a1ed842a79c343e96b278fc7",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_687e2647",
+      "label": "__implication_result_687e2647",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::alt_sgs_no_gain,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f736662ada1ec258",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::sgs_higher_asymptotic_rate,github:2604_20209::sgs_surpasses_671b)",
+      "content_hash": "2af3b44de55073f28e443ff8b553b573e859d78ea18b23931916f1874b8436d3",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_b2ee7dd8",
+      "label": "__implication_result_b2ee7dd8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::sgs_higher_asymptotic_rate,github:2604_20209::sgs_surpasses_671b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5bd1ae9f9e145c9d",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::sgs_conjecturer_conditions_on_unsolved,github:2604_20209::sgs_guide_scores_quality)",
+      "content_hash": "881be7c66e01c4b7176a5f086674df921b04f6b6597c30222f150959988b1081",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_327a062d",
+      "label": "__conjunction_result_327a062d",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::sgs_conjecturer_conditions_on_unsolved,github:2604_20209::sgs_guide_scores_quality)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b73a659f075f6eaf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_327a062d,github:2604_20209::sgs_progress_on_never_solved)",
+      "content_hash": "85bf7b51c4f7bab6b85c38f9445e5b842426ae6d6d608105c81318a6ce8b6432",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_580d726c",
+      "label": "__implication_result_580d726c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_327a062d,github:2604_20209::sgs_progress_on_never_solved)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b73a659f075f6eaf",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::sgs_outperforms_stp,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "5ab087f31f07bdd5e40f599ea7c888b21834bed9af972e92f2256eb31b68ba14",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_52db3a6e",
+      "label": "__implication_result_52db3a6e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::sgs_outperforms_stp,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7d6890531616b704",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::guide_sft_prevents_format_errors,github:2604_20209::conjecturer_reward_stable)",
+      "content_hash": "5e9116ad9a2b847eae06a08aaf8ec9392bb24d339736b1911d1b5638684da1a8",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_da8bd011",
+      "label": "__implication_result_da8bd011",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::guide_sft_prevents_format_errors,github:2604_20209::conjecturer_reward_stable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_26369809a9c566fa",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::sgs_conjecturer_conditions_on_unsolved,github:2604_20209::solver_improves_steadily)",
+      "content_hash": "8319593b986609543b165cfe6a972fa10c1916f658405d59e3a86bc50cbd814e",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_cdfd706a",
+      "label": "__conjunction_result_cdfd706a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::sgs_conjecturer_conditions_on_unsolved,github:2604_20209::solver_improves_steadily)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aff112adaacdb64b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_cdfd706a,github:2604_20209::synth_progress_toward_target)",
+      "content_hash": "5d7a29c2573b489f9aa04ee6897bcc2a637eea6957f2a0c826f78747eea8a9c8",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_3af39d08",
+      "label": "__implication_result_3af39d08",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_cdfd706a,github:2604_20209::synth_progress_toward_target)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aff112adaacdb64b",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::no_problem_cond_fails,github:2604_20209::quality_degrades)",
+      "content_hash": "0b8e4a5ab20a7454d8fc9374921fa05b5a431514758b53a24aa6df7bece22fdb",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_cfa71a03",
+      "label": "__implication_result_cfa71a03",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::no_problem_cond_fails,github:2604_20209::quality_degrades)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8dc80414b7ad2893",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::sgs_guide_scores_quality,github:2604_20209::no_guide_conjecturer_collapse)",
+      "content_hash": "28570c40de5a3147adbba00da97fd0b3c514a403ce12fb10180e0dd40716a7dd",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_e601385e",
+      "label": "__implication_result_e601385e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::sgs_guide_scores_quality,github:2604_20209::no_guide_conjecturer_collapse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_10924b6421072e2a",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::no_guide_conjecturer_collapse,github:2604_20209::no_guide_lower_performance)",
+      "content_hash": "15f8462ef302184142d96b14527ec4f7c3b8c30ba2a53f99322a4bedb865fc1c",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_d122c841",
+      "label": "__conjunction_result_d122c841",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::no_guide_conjecturer_collapse,github:2604_20209::no_guide_lower_performance)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fd24e5fd37e329a0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_d122c841,github:2604_20209::conjecturer_collapse_hypothesis)",
+      "content_hash": "502d13d214fba0210784c0b268a9e73ef55ae883e001483711a95a7c89bc8a9b",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_869ad28e",
+      "label": "__implication_result_869ad28e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_d122c841,github:2604_20209::conjecturer_collapse_hypothesis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fd24e5fd37e329a0",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::frozen_conjecturer_suboptimal,github:2604_20209::existing_selfplay_plateaus)",
+      "content_hash": "34d035baa59ce264e1aef70105de3972a6ab7bb68d387cf7531309ab523c0212",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_08a12dda",
+      "label": "__implication_result_08a12dda",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::frozen_conjecturer_suboptimal,github:2604_20209::existing_selfplay_plateaus)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e7a4661a770b6b71",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::cispo_solver_kills_conjecturer,github:2604_20209::reinforce_half_stable_entropy)",
+      "content_hash": "8c82dedce52204c584688bb1643aebca848b3ec1f4bf0e46994ed314a51743af",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_27de4791",
+      "label": "__conjunction_result_27de4791",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::cispo_solver_kills_conjecturer,github:2604_20209::reinforce_half_stable_entropy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_20d1a06c147da6d8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_27de4791,github:2604_20209::entropy_conjecturer_coupling)",
+      "content_hash": "2b3446a91dbd4c8d2cb1f095c7e648de709660899a8c14e27d31aad8432198e0",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_72e9ad24",
+      "label": "__implication_result_72e9ad24",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_27de4791,github:2604_20209::entropy_conjecturer_coupling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_20d1a06c147da6d8",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::sgs_two_mechanisms,github:2604_20209::entropy_conjecturer_coupling,github:2604_20209::sgs_higher_asymptotic_rate)",
+      "content_hash": "67f376e0a02cd990b065bccb95ff297122e6d661d933a990d8c45a3ece414b5d",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_6da8fef3",
+      "label": "__conjunction_result_6da8fef3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::sgs_two_mechanisms,github:2604_20209::entropy_conjecturer_coupling,github:2604_20209::sgs_higher_asymptotic_rate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_62f99611f3557650",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_6da8fef3,github:2604_20209::conclusion_sgs_sustains_learning)",
+      "content_hash": "765d6d9ae7120c8686aa731ca6486714772afb0b95967b4a0e4f086656b02341",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_d04bd31d",
+      "label": "__implication_result_d04bd31d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_6da8fef3,github:2604_20209::conclusion_sgs_sustains_learning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_62f99611f3557650",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_20209::limitation_verifiable_domain,github:2604_20209::future_non_verifiable)",
+      "content_hash": "5682bfa077081d56ef3de969f2d9788d8fd5437ee712eecd46a0fab069854d0f",
+      "exported": false,
+      "id": "github:2604_20209::__conjunction_result_c2433f9e",
+      "label": "__conjunction_result_c2433f9e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_20209::limitation_verifiable_domain,github:2604_20209::future_non_verifiable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aa51feda250f92e5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::__conjunction_result_c2433f9e,github:2604_20209::conclusion_sgs_sustains_learning)",
+      "content_hash": "017d8b2213581e617ee73ca7f2e4a2c9f5f69639e90d4ac870b2efd560c800ea",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_3457dbb0",
+      "label": "__implication_result_3457dbb0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::__conjunction_result_c2433f9e,github:2604_20209::conclusion_sgs_sustains_learning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aa51feda250f92e5",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::limitation_frozen_guide,github:2604_20209::conclusion_sgs_sustains_learning)",
+      "content_hash": "6eee3f78c1d4421fb410accc8af0e90645f3088bcb5b0e9449a980ab890cbcef",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_701bfd01",
+      "label": "__implication_result_701bfd01",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::limitation_frozen_guide,github:2604_20209::conclusion_sgs_sustains_learning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e52146b9fd89b9f4",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_20209::limitation_model_size,github:2604_20209::conclusion_sgs_sustains_learning)",
+      "content_hash": "e805291ca9a7c914d2b085fd9b15ead3952b49127f2fc42bb82d95072a3f20c8",
+      "exported": false,
+      "id": "github:2604_20209::__implication_result_92c2f518",
+      "label": "__implication_result_92c2f518",
+      "metadata": {
+        "canonical_name": "implies(github:2604_20209::limitation_model_size,github:2604_20209::conclusion_sgs_sustains_learning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c67b69c1520c98db",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_algorithm",
+    "s4_experiments",
+    "s5_conclusion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Scaling LLM Self-Play",
+    "s3_algorithm": "Section 3: The SGS Algorithm",
+    "s4_experiments": "Section 4: Experimental Results",
+    "s5_conclusion": "Section 5: Limitations and Conclusion"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_20209",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_20209::setup_conjecturer_reward"
+      ],
+      "conclusion": "github:2604_20209::conjecturer_collapse_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_403e784a",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::existing_selfplay_plateaus",
+              "github:2604_20209::conjecturer_collapse_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because the Conjecturer is rewarded only for the Solver's pass rate (@setup_conjecturer_reward), it is incentivized to find problems that maximize this metric, not problems that are genuinely useful for improving the Solver on hard target problems. Given that existing methods hit plateaus (@existing_selfplay_plateaus), the most parsimonious explanation is that the Conjecturer learns to exploit the reward rather than produce genuinely useful problems. This hypothesis is confirmed empirically in §4.4 of the paper [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::existing_selfplay_plateaus"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_56ca21e8670c3bff",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_conjecturer_reward"
+      ],
+      "conclusion": "github:2604_20209::quality_degrades",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_ccc9c92e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::conjecturer_collapse_hypothesis",
+              "github:2604_20209::quality_degrades"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If the Conjecturer hacks its reward (@conjecturer_collapse_hypothesis) and the reward is defined only by Solver pass rate (@setup_conjecturer_reward), then the Conjecturer will shift toward problems that are technically solvable (non-zero pass rate) but superficially complex -- maximizing pass-rate reward while providing no signal toward the target problems. The outcome is degraded synthetic data quality."
+      },
+      "premises": [
+        "github:2604_20209::conjecturer_collapse_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1776f3969580b361",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_asymmetric_selfplay"
+      ],
+      "conclusion": "github:2604_20209::existing_selfplay_plateaus",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_f9e81223",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::sparse_reward_problem",
+              "github:2604_20209::existing_selfplay_plateaus"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Sparse reward (@sparse_reward_problem) limits standard RL on hard problems. Asymmetric self-play (@setup_asymmetric_selfplay) addresses this, but in practice existing LLM self-play implementations still plateau because the Conjecturer degrades rather than continuously improving the learning frontier. The sparse reward context frames why LLM self-play is needed and why its plateaus matter [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sparse_reward_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e491a7c92a46cc4c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_sgs_roles"
+      ],
+      "conclusion": "github:2604_20209::sgs_two_mechanisms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_b2a1c94f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::guide_hypothesis",
+              "github:2604_20209::conjecturer_collapse_hypothesis"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_04aa1f28",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_b2a1c94f",
+              "github:2604_20209::sgs_two_mechanisms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "Since the Conjecturer collapses when rewarded only by pass rate (@conjecturer_collapse_hypothesis), two complementary interventions are needed. First, conditioning on unsolved targets (@setup_sgs_roles) directs the Conjecturer toward problems near the Solver's learning frontier. Second, because language models can assess subproblem usefulness (@guide_hypothesis), a Guide model can provide a quality signal that penalizes the degenerate, inelegant problems that arise from reward hacking. Together, these define the two anti-collapse mechanisms of SGS [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::guide_hypothesis",
+        "github:2604_20209::conjecturer_collapse_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bf47bdb844559ca7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_rsolve",
+        "github:2604_20209::setup_rguide"
+      ],
+      "conclusion": "github:2604_20209::sgs_combined_reward",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_f60687ca",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::sgs_guide_scores_quality",
+              "github:2604_20209::sgs_conjecturer_conditions_on_unsolved"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_ffce6b81",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_f60687ca",
+              "github:2604_20209::sgs_combined_reward"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "The combined reward follows directly from the definitions of Rsolve (@setup_rsolve) and Rguide (@setup_rguide): Rsynth = Rsolve · Rguide. The Guide scores quality (@sgs_guide_scores_quality) and conditioning on unsolved problems (@sgs_conjecturer_conditions_on_unsolved) together instantiate both components. The multiplicative structure is a deliberate design choice: both difficulty appropriateness and quality must be satisfied for non-zero reward [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_guide_scores_quality",
+        "github:2604_20209::sgs_conjecturer_conditions_on_unsolved"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_29abba2042521306",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_20209::reinforce_half_best_baseline",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_a66fe457",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::rl_baselines_comparison",
+              "github:2604_20209::cispo_entropy_collapse"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_5a2f0283",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_a66fe457",
+              "github:2604_20209::reinforce_half_best_baseline"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "Empirical comparison of all three baselines (@rl_baselines_comparison) shows REINFORCE1/2 at 60.3% dominates Expert Iteration (60.0%) and CISPO (57.5%). CISPO's poor performance is explained by its entropy collapse (@cispo_entropy_collapse). REINFORCE1/2 avoids this collapse and thus provides the strongest foundation for the Conjecturer in SGS [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::rl_baselines_comparison",
+        "github:2604_20209::cispo_entropy_collapse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e9ff5db6054d667f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__equivalence_result_a7a37228",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_20209::pred_sgs",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__equivalence_result_091e4e1f",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_20209::pred_alt_sgs",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__equivalence_result_091e4e1f",
+              "github:2604_20209::__equivalence_result_a7a37228"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The empirical result shows SGS at 67.1% vs No Guide at 65.5%, a 1.6% gap that exceeds the 1.1% scaling law uncertainty threshold. This shows the Guide provides genuine benefit beyond extra synthetic data. Furthermore, No Guide's Conjecturer collapses to disjunctive problems (Figure 2), confirming that pass-rate-only reward is insufficient. SGS explains the observation better."
+      },
+      "premises": [
+        "github:2604_20209::pred_sgs",
+        "github:2604_20209::pred_alt_sgs",
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1a6b5f220e5bf843",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_20209::sgs_higher_asymptotic_rate",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_2af6efb3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::sgs_two_mechanisms",
+              "github:2604_20209::guide_hypothesis"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_5e8b41cc",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_2af6efb3",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "SGS's two anti-collapse mechanisms (@sgs_two_mechanisms) — Guide scoring and problem conditioning — are predicted to keep the Conjecturer productive over long runs. The @guide_hypothesis asserts that LLMs can assess subproblem usefulness. These together predict that SGS will sustain improvement beyond what RL alone achieves, consistent with the empirically observed 67.1% asymptotic rate [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_two_mechanisms",
+        "github:2604_20209::guide_hypothesis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_457c945a9f975108",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::sgs_higher_asymptotic_rate",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_687e2647",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::alt_sgs_no_gain",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "If extra synthetic data without quality control were sufficient, the No Guide variant would match or approach SGS performance. The No Guide variant gets more solvable synthetic problems per iteration (Figure 6 right), which under this alternative should produce at least equal performance. The alternative partially explains the observed gain but predicts smaller difference between SGS and No Guide."
+      },
+      "premises": [
+        "github:2604_20209::alt_sgs_no_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f736662ada1ec258",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::_anon_000",
+      "metadata": {
+        "reason": "Both self-guidance and more-data hypotheses attempt to explain SGS's superior solve rate"
+      },
+      "premises": [
+        "github:2604_20209::sgs_two_mechanisms",
+        "github:2604_20209::guide_hypothesis",
+        "github:2604_20209::alt_sgs_no_gain",
+        "github:2604_20209::pred_sgs",
+        "github:2604_20209::pred_alt_sgs",
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f8a61a8f2d6ce139",
+      "sub_strategies": [
+        "lcs_457c945a9f975108",
+        "lcs_f736662ada1ec258",
+        "lcs_1a6b5f220e5bf843"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_base_model"
+      ],
+      "conclusion": "github:2604_20209::sgs_surpasses_671b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_b2ee7dd8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::sgs_higher_asymptotic_rate",
+              "github:2604_20209::sgs_surpasses_671b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The sustained improvement of SGS to 67.1% asymptotic solve rate (@sgs_higher_asymptotic_rate) on a 7B model (@setup_base_model), combined with sufficient compute (6.3M generations), yields a cumulative solve rate that exceeds the pass@4 benchmark of the 671B counterpart. The 671B model is used as a yardstick of compute-efficient upper bound for a single inference run, making this comparison meaningful [@Bailey2026; @Ren2025]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5bd1ae9f9e145c9d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::sgs_progress_on_never_solved",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_327a062d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+              "github:2604_20209::sgs_guide_scores_quality"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_580d726c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_327a062d",
+              "github:2604_20209::sgs_progress_on_never_solved"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "Conditioning on unsolved problems (@sgs_conjecturer_conditions_on_unsolved) ensures that synthetic problems are generated specifically for the hard, unsolved problems. The Guide (@sgs_guide_scores_quality) ensures these synthetic problems are relevant and well-formed stepping stones. Together, this creates a curriculum targeted at exactly the problems that pure RL cannot reach, explaining steady progress on the hardest 1,346 problems [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+        "github:2604_20209::sgs_guide_scores_quality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b73a659f075f6eaf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::sgs_higher_asymptotic_rate",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_52db3a6e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::sgs_outperforms_stp",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "STP [@Dong2025] is the most closely related Lean4 self-play baseline. The fact that SGS outperforms STP after 1M generations and shows superior scaling (@sgs_outperforms_stp) provides additional evidence of the same 7% asymptotic advantage over competing methods. Both comparisons (vs RL baseline and vs STP) confirm the superior scaling of SGS [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_outperforms_stp"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7d6890531616b704",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_guide_rubric"
+      ],
+      "conclusion": "github:2604_20209::conjecturer_reward_stable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_da8bd011",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::guide_sft_prevents_format_errors",
+              "github:2604_20209::conjecturer_reward_stable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The Guide is initialized with a well-calibrated prompt and fine-tuned for reliable output formatting (@guide_sft_prevents_format_errors, @setup_guide_rubric). Because the Guide is not further trained during SGS, its scoring criteria remain stable. The initial Conjecturer prompt already provides a good prior for producing relevant problems, so Rguide begins high and the Guide's stability ensures it remains high throughout training [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::guide_sft_prevents_format_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_26369809a9c566fa",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::synth_progress_toward_target",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_cdfd706a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+              "github:2604_20209::solver_improves_steadily"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_3af39d08",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_cdfd706a",
+              "github:2604_20209::synth_progress_toward_target"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The Conjecturer conditions on unsolved problems (@sgs_conjecturer_conditions_on_unsolved), so as the Solver improves (@solver_improves_steadily) and gets closer to solving a target, it gains the ability to solve increasingly difficult synthetic variants of that target. This creates a self-reinforcing feedback loop: approaching the target unlocks more training signal from synthetic problems, accelerating convergence [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_conjecturer_conditions_on_unsolved",
+        "github:2604_20209::solver_improves_steadily"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aff112adaacdb64b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_rsolve"
+      ],
+      "conclusion": "github:2604_20209::quality_degrades",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_cfa71a03",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::no_problem_cond_fails",
+              "github:2604_20209::quality_degrades"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The No Problem Conditioning ablation (@no_problem_cond_fails) directly demonstrates that a pass-rate-only reward (@setup_rsolve) without target conditioning produces many solvable problems that provide no benefit for target solve rate. This confirms that synthetic problem quality (relevance to targets) degrades when the reward does not incorporate target conditioning or quality signals [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::no_problem_cond_fails"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8dc80414b7ad2893",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_rguide"
+      ],
+      "conclusion": "github:2604_20209::no_guide_conjecturer_collapse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_e601385e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::sgs_guide_scores_quality",
+              "github:2604_20209::no_guide_conjecturer_collapse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The Guide (@sgs_guide_scores_quality) scores problems low if they are inelegant or have redundant premises (@setup_rguide). Without this signal, the Conjecturer is free to exploit the solve-rate reward by producing long disjunctive statements that are technically solvable (each disjunct may be simple) but are artificial constructions unrelated to the target problem. The observed collapse pattern (disjunctive conclusions, 10x length increase) is the empirical confirmation of this mechanism [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_guide_scores_quality"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_10924b6421072e2a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::conjecturer_collapse_hypothesis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_d122c841",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::no_guide_conjecturer_collapse",
+              "github:2604_20209::no_guide_lower_performance"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_869ad28e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_d122c841",
+              "github:2604_20209::conjecturer_collapse_hypothesis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The No Guide ablation (@no_guide_lower_performance) shows that without the Guide, despite producing more solvable synthetic problems, the Conjecturer collapses to degenerate problems (@no_guide_conjecturer_collapse). This confirms the core hypothesis that Conjecturer reward hacking (@conjecturer_collapse_hypothesis) is the mechanism causing lower performance: more data does not help if the data quality degrades [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::no_guide_conjecturer_collapse",
+        "github:2604_20209::no_guide_lower_performance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fd24e5fd37e329a0",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_rsolve"
+      ],
+      "conclusion": "github:2604_20209::existing_selfplay_plateaus",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_08a12dda",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::frozen_conjecturer_suboptimal",
+              "github:2604_20209::existing_selfplay_plateaus"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The frozen Conjecturer ablation (@frozen_conjecturer_suboptimal) shows that a static problem distribution leads the Solver to saturate it, after which the algorithm reverts to RL alone and plateaus. This directly demonstrates one pathway to learning plateaus in self-play: when the Conjecturer cannot adapt to the improving Solver, the benefit of synthetic problems vanishes [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::frozen_conjecturer_suboptimal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e7a4661a770b6b71",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_20209::setup_rsolve"
+      ],
+      "conclusion": "github:2604_20209::entropy_conjecturer_coupling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_27de4791",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::cispo_solver_kills_conjecturer",
+              "github:2604_20209::reinforce_half_stable_entropy"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_72e9ad24",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_27de4791",
+              "github:2604_20209::entropy_conjecturer_coupling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The CISPO ablation (@cispo_solver_kills_conjecturer) directly shows the failure mode: entropy collapse → solve rates concentrated at 0/1 → Rsolve = 0 for all synthetic problems (@setup_rsolve) → Conjecturer gets no gradient → no self-play improvement. The REINFORCE1/2 result (@reinforce_half_stable_entropy) confirms the converse: stable entropy → spread of solve rates → Conjecturer learns. The causal structure is: Solver objective choice → entropy → Conjecturer reward signal → self-play effectiveness [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::cispo_solver_kills_conjecturer",
+        "github:2604_20209::reinforce_half_stable_entropy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_20d1a06c147da6d8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_6da8fef3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::sgs_two_mechanisms",
+              "github:2604_20209::entropy_conjecturer_coupling",
+              "github:2604_20209::sgs_higher_asymptotic_rate"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_d04bd31d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_6da8fef3",
+              "github:2604_20209::conclusion_sgs_sustains_learning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The two anti-collapse mechanisms of SGS (@sgs_two_mechanisms) directly address Conjecturer degradation. The identification of the Solver entropy-Conjecturer coupling (@entropy_conjecturer_coupling) and selection of REINFORCE1/2 as the Solver objective addresses the second instability. The empirical result of 7% higher asymptotic solve rate (@sgs_higher_asymptotic_rate) confirms that both interventions together produce a self-play algorithm that sustains improvement over long training runs [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::sgs_two_mechanisms",
+        "github:2604_20209::entropy_conjecturer_coupling",
+        "github:2604_20209::sgs_higher_asymptotic_rate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_62f99611f3557650",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__conjunction_result_c2433f9e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_20209::limitation_verifiable_domain",
+              "github:2604_20209::future_non_verifiable"
+            ]
+          },
+          {
+            "conclusion": "github:2604_20209::__implication_result_3457dbb0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::__conjunction_result_c2433f9e",
+              "github:2604_20209::conclusion_sgs_sustains_learning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "The limitation to verifiable domains (@limitation_verifiable_domain) is not fundamental: approximate verifiers exist for coding, natural language math, and embodied control (@future_non_verifiable). This generalizability further supports the core claim that SGS sustains self-play learning (@conclusion_sgs_sustains_learning) beyond the specific Lean4 domain tested [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::limitation_verifiable_domain",
+        "github:2604_20209::future_non_verifiable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aa51feda250f92e5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_701bfd01",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::limitation_frozen_guide",
+              "github:2604_20209::conclusion_sgs_sustains_learning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "The frozen Guide limitation (@limitation_frozen_guide) highlights that current SGS results are a lower bound on potential performance. If the Guide were trained to adapt over the course of self-play, the sustained learning benefit would likely be even larger. This limitation contextualizes the 7% improvement as achievable without a trainable Guide [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::limitation_frozen_guide"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e52146b9fd89b9f4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_20209::conclusion_sgs_sustains_learning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_20209::__implication_result_92c2f518",
+            "operator": "implication",
+            "variables": [
+              "github:2604_20209::limitation_model_size",
+              "github:2604_20209::conclusion_sgs_sustains_learning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The model-size limitation (@limitation_model_size) means that SGS's scaling only along the compute axis (not model size) is a conservative test. The hypothesis that a larger Conjecturer would produce higher-quality synthetic problems further supports the claim that SGS can sustain learning, with model-scale improvements as an additional lever [@Bailey2026]."
+      },
+      "premises": [
+        "github:2604_20209::limitation_model_size"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c67b69c1520c98db",
+      "type": "support"
+    }
+  ]
+}
