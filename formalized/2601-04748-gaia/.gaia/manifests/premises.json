@@ -1,0 +1,124 @@
+{
+  "ir_hash": "sha256:cde6198a3d47c7e3bb385c45be6ff4c626c78510c41942a4f9d3581439317037",
+  "manifest_schema_version": 1,
+  "package": "2601-04748",
+  "premises": [
+    {
+      "content": "The following multi-agent architectures are compilable to SAS:\n\n| Architecture | Structure | Compilable |\n|---|---|---|\n| Pipeline | $a_1 \\to a_2 \\to \\cdots \\to a_n$ | Yes |\n| Router-Workers | Router $\\to$ {Workers} $\\to$ Aggregator | Yes |\n| Iterative Refinement | Writer $\\leftrightarrow$ Critic (loop) | Yes |\n| Debate / Adversarial | Proponent $\\leftrightarrow$ Opponent | No |\n| Parallel Sampling | Independent agents, best-of-n | No |\n| Private Information | Agents with hidden state | No |",
+      "content_hash": "3b498aae7f3aa8db8566e05578e8c82761695dad58131460ea2c89538bfe0e56",
+      "exported": true,
+      "interface_hash": "sha256:562c6f3ed6304f8c34583edafee49a5a18492ca7250d562bb8aee5141baf8fd8",
+      "label": "compilable_architectures",
+      "qid": "github:2601_04748::compilable_architectures",
+      "required_by": [
+        "github:2601_04748::compilation_accuracy",
+        "github:2601_04748::compilation_latency_reduction",
+        "github:2601_04748::compilation_token_reduction"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The proposed accuracy scaling model $ACC \\approx \\alpha / (1 + (|S|/\\kappa)^\\gamma)$ fits empirical data with excellent quality:\n\n| Model | $\\alpha$ | $\\kappa$ | $\\gamma$ | $R^2$ |\n|---|---|---|---|---|\n| GPT-4o-mini | 0.96 | 91.8 | 1.72 | 0.978 |\n| GPT-4o | 0.98 | 83.5 | 1.56 | 0.968 |",
+      "content_hash": "aca8bbb19f02d3f05e2b1550098689a5c908767e59e8270b54845d56254f913b",
+      "exported": false,
+      "interface_hash": "sha256:cfdd3e0412e663b33091f7ae16109ad7e816820817f586254bc1315059e3ef26",
+      "label": "h1_fit_quality",
+      "qid": "github:2601_04748::h1_fit_quality",
+      "required_by": [
+        "github:2601_04748::h1_phase_transition"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The fitted decay exponent $\\gamma > 1$ (1.72 for GPT-4o-mini, 1.56 for GPT-4o) indicates super-linear degradation, consistent with phase transition behavior rather than gradual decay. Accuracy remains near $\\alpha$ for $|S| \\ll \\kappa$, then collapses precipitously when $|S| \\gg \\kappa$.",
+      "content_hash": "fe41c0ed22de4cbb223973faaeb5a1182cfbafbd29905e54d7266e3867822252",
+      "exported": false,
+      "interface_hash": "sha256:6221d7f6e45068688a96517276c90b6c3eeef9ed760a1c9c55ac34b0f5418842",
+      "label": "h1_gamma_super_linear",
+      "qid": "github:2601_04748::h1_gamma_super_linear",
+      "required_by": [
+        "github:2601_04748::h1_phase_transition"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The fitted capacity threshold $\\kappa$ is 91.8 for GPT-4o-mini and 83.5 for GPT-4o, representing the library size at which accuracy drops to half its maximum ($\\alpha/2 \\approx 0.48$–$0.49$). Interestingly, GPT-4o exhibits a slightly lower $\\kappa$ than GPT-4o-mini, contrary to the intuition that stronger models should have higher capacity. The authors offer two explanations: (1) fitting variance with limited data points, or (2) model capability and selection capacity may be partially independent.",
+      "content_hash": "b2310fc9195745146cfbc99c786933635c84827f4fe8a5cefab5000d8255fcc6",
+      "exported": true,
+      "interface_hash": "sha256:af15e5aa9ef32909a46215e87162006d7e63723487d0aefd087d3d154296113c",
+      "label": "h1_kappa_values",
+      "qid": "github:2601_04748::h1_kappa_values",
+      "required_by": [
+        "github:2601_04748::guideline_monitor_size",
+        "github:2601_04748::h1_phase_transition",
+        "github:2601_04748::h4_hierarchy_mitigation"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Adding semantic competitors significantly degrades selection accuracy at fixed total library size:\n\n- Adding **1 competitor** per skill reduces accuracy by **7–30%** (Low condition).\n- Adding **2 competitors** causes **17–63%** degradation (High condition).\n- GPT-4o-mini shows larger drops than GPT-4o (e.g., 70% vs 37% accuracy at $n_{base}=10, n_{comp}=2$).\n- At identical $|S| = 20$, replacing unique skills with base-competitor pairs causes 18–30% accuracy drop.\n- The no-competitor condition maintains 100% accuracy at $|S| = 20$ where mixed-similarity libraries (H1) show measurable degradation.",
+      "content_hash": "286a5dd9388134ec0e604c3e176bfc9ee7ed33447adf44b5556a71440c0ef6c4",
+      "exported": true,
+      "interface_hash": "sha256:74fbcf358fb1d05c694058b74f6af5e9ea3a928459f573a3772d41895c358a3b",
+      "label": "h2_competitor_results",
+      "qid": "github:2601_04748::h2_competitor_results",
+      "required_by": [
+        "github:2601_04748::guideline_invest_descriptors",
+        "github:2601_04748::guideline_minimize_confusability",
+        "github:2601_04748::h1_phase_transition",
+        "github:2601_04748::h2_confusability"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "GPT-4o consistently outperforms GPT-4o-mini under high confusability conditions, achieving 70% vs 37% accuracy at $n_{base}=10, n_{comp}=2$. This suggests that model capability provides partial mitigation against confusability, though does not eliminate the fundamental scaling challenge.",
+      "content_hash": "948d796dfcab59e565f78011fdc655f16046662af7832286afe393b61c2b148f",
+      "exported": false,
+      "interface_hash": "sha256:7b10f50a8c9e8a263a2ff46cd1eca93e31b4d3e1ab942580a8e465b5ce3aca44",
+      "label": "h2_gpt4o_advantage",
+      "qid": "github:2601_04748::h2_gpt4o_advantage",
+      "required_by": [
+        "github:2601_04748::h2_confusability"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Contrary to hypothesis H3 (instructional saturation), the three policy complexity levels (simple ~30 tokens, medium ~100 tokens, complex ~300 tokens) show **largely overlapping accuracy curves** for both GPT-4o-mini and GPT-4o. The differences between conditions fall within standard error bounds at most library sizes. All complexity levels follow the same phase transition pattern observed in H1, with accuracy declining sharply beyond approximately $|S| = 50$.",
+      "content_hash": "958941d1ee6cd7c73db6170c12f01f93c86f78ef37813916843f93596ae7f625",
+      "exported": true,
+      "interface_hash": "sha256:4ea67bb3789fc03168dab9ccec88ca9cc93961904c67c91b9e9629102a42e49e",
+      "label": "h3_null_result",
+      "qid": "github:2601_04748::h3_null_result",
+      "required_by": [
+        "github:2601_04748::guideline_invest_descriptors"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "GPT-4o shows higher flat accuracy than GPT-4o-mini at large $|S|$ (63% vs 45%), but also derives smaller benefit from hierarchical routing (+10% vs +40%). This pattern suggests that stronger models partially compensate for scaling challenges through better semantic discrimination, but hierarchical routing remains beneficial for all models.",
+      "content_hash": "8212ead827605884fc1415cc078394b7b7b8331537567057e73cdde132139ee6",
+      "exported": false,
+      "interface_hash": "sha256:585cbb19b78f4e651faa16c548733f305cc8d484221bc25783eeec6b6b864788",
+      "label": "h4_gpt4o_smaller_benefit",
+      "qid": "github:2601_04748::h4_gpt4o_smaller_benefit",
+      "required_by": [
+        "github:2601_04748::h4_hierarchy_mitigation"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Hierarchical routing substantially recovers accuracy when library size exceeds the capacity threshold ($|S| \\geq 60$, approaching $\\kappa \\approx 90$):\n\n| Method | GPT-4o-mini at $|S|=120$ | GPT-4o at $|S|=120$ | Improvement (mini) |\n|---|---|---|---|\n| Flat Selection | ~45% | ~63% | baseline |\n| Naive Domain Hierarchy | ~83–85% | ~72% | +37–40% |\n| Confusability-Aware Hierarchy | ~83–85% | ~72% | +37–40% |\n\nBoth hierarchical methods perform similarly because the experimental design naturally aligns domain boundaries with confusability clusters.",
+      "content_hash": "1ad6b1d03d7db118a88a5206ec183931e43beeefaf0beaf8ca8c69c0b6708b20",
+      "exported": true,
+      "interface_hash": "sha256:e30d86bb6b0aa8574dd0a655baa4ed88a8ec40adccaf4b4c547e706a8e561d2c",
+      "label": "h4_hierarchy_results",
+      "qid": "github:2601_04748::h4_hierarchy_results",
+      "required_by": [
+        "github:2601_04748::guideline_adopt_hierarchy",
+        "github:2601_04748::h4_hierarchy_mitigation"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

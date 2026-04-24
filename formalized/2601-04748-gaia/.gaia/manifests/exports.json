@@ -1,0 +1,176 @@
+{
+  "exports": [
+    {
+      "content": "A multi-agent system $\\mathcal{M}$ is compilable if and only if all three conditions hold:\n\n- **C1 (Serializable Communication)**: The communication graph $G$ admits a topological ordering — agent interactions can be sequenced without information loss.\n- **C2 (Shared History)**: Agent outputs depend only on shared history $h$, with no private state.\n- **C3 (Homogeneous Backbone)**: All agents use the same underlying model.\n\nConversely, compilation fails when agents require true parallelism (independent sampling), private information, adversarial objectives, or heterogeneous capabilities.",
+      "content_hash": "2fb069dbb8753296401da551a685e88c59a9f32f0386d6aa8c06bbfe7c0c3319",
+      "label": "compilability_conditions",
+      "qid": "github:2601_04748::compilability_conditions",
+      "type": "setting"
+    },
+    {
+      "content": "The following multi-agent architectures are compilable to SAS:\n\n| Architecture | Structure | Compilable |\n|---|---|---|\n| Pipeline | $a_1 \\to a_2 \\to \\cdots \\to a_n$ | Yes |\n| Router-Workers | Router $\\to$ {Workers} $\\to$ Aggregator | Yes |\n| Iterative Refinement | Writer $\\leftrightarrow$ Critic (loop) | Yes |\n| Debate / Adversarial | Proponent $\\leftrightarrow$ Opponent | No |\n| Parallel Sampling | Independent agents, best-of-n | No |\n| Private Information | Agents with hidden state | No |",
+      "content_hash": "3b498aae7f3aa8db8566e05578e8c82761695dad58131460ea2c89538bfe0e56",
+      "label": "compilable_architectures",
+      "qid": "github:2601_04748::compilable_architectures",
+      "type": "claim"
+    },
+    {
+      "content": "Compiled SAS achieves accuracy within −2.0% to +4.0% of the original MAS across all benchmarks:\n\n| Task | MAS Accuracy | SAS Accuracy | Accuracy Δ |\n|---|---|---|---|\n| GSM8K | 94.0% | 92.0% | −2.0% |\n| HumanEval | 100.0% | 100.0% | 0.0% |\n| HotpotQA | 84.0% | 88.0% | +4.0% |\n| Average | — | — | +0.7% |",
+      "content_hash": "c5a4801d285cfbc8bcab1562e84543716c4f9df43b7549c79f3e241f0de0d07b",
+      "label": "compilation_accuracy",
+      "qid": "github:2601_04748::compilation_accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "MAS-to-SAS compilation reduces end-to-end latency by 49.5% on average:\n\n| Task | MAS Avg. Latency (ms) | SAS Avg. Latency (ms) | Latency Reduction |\n|---|---|---|---|\n| GSM8K | 10565 | 7537 | 28.7% |\n| HumanEval | 7227 | 2970 | 58.9% |\n| HotpotQA | 11671 | 4559 | 60.9% |\n\nThe primary factor is the reduction from 3–4 sequential API calls to a single call. GSM8K shows a smaller latency reduction (28.7%) despite significant token savings, suggesting mathematical reasoning computation dominates latency for that task.",
+      "content_hash": "35e573f6ef0d8cc256d04d851bd859e324843fdf6bbdd991cace8def03482f50",
+      "label": "compilation_latency_reduction",
+      "qid": "github:2601_04748::compilation_latency_reduction",
+      "type": "claim"
+    },
+    {
+      "content": "MAS-to-SAS compilation reduces token consumption by 53.7% on average:\n\n| Task | MAS Avg. Tokens | SAS Avg. Tokens | Token Reduction |\n|---|---|---|---|\n| GSM8K | 1407 | 616 | 56.2% |\n| HumanEval | 1400 | 749 | 46.5% |\n| HotpotQA | 4359 | 1816 | 58.4% |\n\nThe reduction stems from eliminating redundant context repetition across agent calls — the SAS shares a single context window rather than re-encoding task descriptions and intermediate results for each specialized agent.",
+      "content_hash": "33f616d0ee95e4455fced478e53ac01d3505932f2ec5f09c17d5e47af9d6d3e4",
+      "label": "compilation_token_reduction",
+      "qid": "github:2601_04748::compilation_token_reduction",
+      "type": "claim"
+    },
+    {
+      "content": "A multi-agent system can be 'compiled' into an equivalent single-agent system (SAS) by encoding each agent's behavior as a skill, thereby eliminating inter-agent communication overhead while preserving functional capability. The compilation trades inter-agent communication for skill selection.",
+      "content_hash": "617c1d2c72e36a4c3086275641e60418f0dbb6f290b6babd280d6f9d0910b322",
+      "label": "compilation_view",
+      "qid": "github:2601_04748::compilation_view",
+      "type": "claim"
+    },
+    {
+      "content": "Skill-based systems (SAS) can approximate multi-agent system (MAS) performance with significantly lower token usage (−53.7% on average) and latency (−49.5% on average) across three benchmarks (GSM8K, HumanEval, HotpotQA), while formally characterizing the compilation process from MAS to SAS.",
+      "content_hash": "f1673cabb39302680e1bd3c4311edea821dc94e7ebf828181596681aa2e15959",
+      "label": "contribution_compilation",
+      "qid": "github:2601_04748::contribution_compilation",
+      "type": "claim"
+    },
+    {
+      "content": "Hierarchical routing mitigates the skill selection scaling limits observed in flat libraries. When flat selection degrades at large library sizes ($|S| \\gg \\kappa$), hierarchical routing maintains approximately 72–85% accuracy vs. 45–63% for flat selection, providing a cognitive-science-grounded framework for scalable skill-based agents.",
+      "content_hash": "bc69402df54343d02cb8a5ad9d0d85978bc570f44ff05dac13523e39afdaf6d0",
+      "label": "contribution_hierarchy",
+      "qid": "github:2601_04748::contribution_hierarchy",
+      "type": "claim"
+    },
+    {
+      "content": "Skill selection exhibits non-linear scaling limits: selection accuracy remains high up to a critical library size threshold $\\kappa$ (approximately 83–92 skills for tested GPT models), then drops sharply. Semantic confusability among skills, not library size alone, is the primary driver of this degradation.",
+      "content_hash": "11ab150496aa8bc3c2304b732e3f944ed5dade1cfec271e3f670be469bd815e1",
+      "label": "contribution_scaling",
+      "qid": "github:2601_04748::contribution_scaling",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 3 (Adopt hierarchy at scale):** For large $|S| \\gg \\kappa$, implement hierarchical routing with confusability-aware grouping. Each routing stage should involve fewer than $\\kappa$ options. Semantically similar skills (competitors) should be explicitly grouped together to ensure first-stage categories are semantically distinct.",
+      "content_hash": "ffde254725d1fcc0d6987731894f7dbc1e021248bc77c22ab07fd07b92d287d6",
+      "label": "guideline_adopt_hierarchy",
+      "qid": "github:2601_04748::guideline_adopt_hierarchy",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 4 (Invest in descriptors):** Since selection relies primarily on skill descriptors $\\delta$ (not execution policies $\\pi$, per H3 null result), invest effort in crafting distinctive, specific descriptions. Descriptor quality has a larger impact on selection accuracy than policy complexity.",
+      "content_hash": "8a106fbf00472f904dc0120c421c4726f6fb9ea5d7f43f2225aa29ab09f88abd",
+      "label": "guideline_invest_descriptors",
+      "qid": "github:2601_04748::guideline_invest_descriptors",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 2 (Minimize confusability):** Before adding skills, audit semantic overlap. Merge or differentiate skills with similarity above threshold rather than accumulating near-duplicates. Skill descriptors should emphasize unique characteristics and avoid generic descriptions that could apply to multiple skills (e.g., prefer 'compute rolling 7-day average' over 'process data').",
+      "content_hash": "f00c23a1fea0c33941c3039c0468cdff98cc1db7ae0a0748d03c7a16c9545bc2",
+      "label": "guideline_minimize_confusability",
+      "qid": "github:2601_04748::guideline_minimize_confusability",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 1 (Monitor library size):** Track $|S|$ relative to the model's capacity ($\\kappa \\approx 50$–$100$ for tested GPT models). Performance degrades sharply beyond this threshold. The inflection point — where accuracy begins to decline most rapidly — occurs earlier than $\\kappa$ itself, so libraries should be kept below the inflection point for flat selection, or hierarchical routing should be adopted for larger libraries.",
+      "content_hash": "53aae3f7af9d5bd10d476de4cece0a362cf812d46e4de0b83ec539fd7fde8b3d",
+      "label": "guideline_monitor_size",
+      "qid": "github:2601_04748::guideline_monitor_size",
+      "type": "claim"
+    },
+    {
+      "content": "The fitted capacity threshold $\\kappa$ is 91.8 for GPT-4o-mini and 83.5 for GPT-4o, representing the library size at which accuracy drops to half its maximum ($\\alpha/2 \\approx 0.48$–$0.49$). Interestingly, GPT-4o exhibits a slightly lower $\\kappa$ than GPT-4o-mini, contrary to the intuition that stronger models should have higher capacity. The authors offer two explanations: (1) fitting variance with limited data points, or (2) model capability and selection capacity may be partially independent.",
+      "content_hash": "b2310fc9195745146cfbc99c786933635c84827f4fe8a5cefab5000d8255fcc6",
+      "label": "h1_kappa_values",
+      "qid": "github:2601_04748::h1_kappa_values",
+      "type": "claim"
+    },
+    {
+      "content": "**H1 (Non-linear Phase Transition):** LLM skill selection accuracy exhibits a phase transition: accuracy remains high when $|S| < \\kappa$ but suffers sharp, non-linear degradation once library size exceeds the capacity threshold $\\kappa$. The transition is phase-like rather than gradual — accuracy is relatively stable until $|S| \\approx \\kappa$, then drops precipitously. This mirrors the breakdown of Hick's Law beyond ~8 choices (F1) and threshold effects in Cognitive Load Theory when working memory is exceeded (F2).",
+      "content_hash": "ddd8945979964be2cb7958119f33b38eeffc64e354c05e11d40381fcf98b7438",
+      "label": "h1_phase_transition",
+      "qid": "github:2601_04748::h1_phase_transition",
+      "type": "claim"
+    },
+    {
+      "content": "Adding semantic competitors significantly degrades selection accuracy at fixed total library size:\n\n- Adding **1 competitor** per skill reduces accuracy by **7–30%** (Low condition).\n- Adding **2 competitors** causes **17–63%** degradation (High condition).\n- GPT-4o-mini shows larger drops than GPT-4o (e.g., 70% vs 37% accuracy at $n_{base}=10, n_{comp}=2$).\n- At identical $|S| = 20$, replacing unique skills with base-competitor pairs causes 18–30% accuracy drop.\n- The no-competitor condition maintains 100% accuracy at $|S| = 20$ where mixed-similarity libraries (H1) show measurable degradation.",
+      "content_hash": "286a5dd9388134ec0e604c3e176bfc9ee7ed33447adf44b5556a71440c0ef6c4",
+      "label": "h2_competitor_results",
+      "qid": "github:2601_04748::h2_competitor_results",
+      "type": "claim"
+    },
+    {
+      "content": "**H2 (Confusability-Driven Errors):** Selection degradation is driven primarily by semantic confusability among skills, not mere library size. Adding semantically similar 'competitor' skills degrades accuracy more than adding an equivalent number of distinct skills. This follows from the interference term $\\epsilon \\cdot I(S)$ in the scaling model and similarity-based interference in cognitive science (F3).",
+      "content_hash": "94b65c400ec5457e9520ea2877610bc83ad8febe5159aeaad60f64da67ae891a",
+      "label": "h2_confusability",
+      "qid": "github:2601_04748::h2_confusability",
+      "type": "claim"
+    },
+    {
+      "content": "Contrary to hypothesis H3 (instructional saturation), the three policy complexity levels (simple ~30 tokens, medium ~100 tokens, complex ~300 tokens) show **largely overlapping accuracy curves** for both GPT-4o-mini and GPT-4o. The differences between conditions fall within standard error bounds at most library sizes. All complexity levels follow the same phase transition pattern observed in H1, with accuracy declining sharply beyond approximately $|S| = 50$.",
+      "content_hash": "958941d1ee6cd7c73db6170c12f01f93c86f78ef37813916843f93596ae7f625",
+      "label": "h3_null_result",
+      "qid": "github:2601_04748::h3_null_result",
+      "type": "claim"
+    },
+    {
+      "content": "**H4 (Mitigation via Hierarchy):** When flat selection fails ($|S| > \\kappa$), hierarchical organization can restore reliable scaling by ensuring each decision point involves fewer than $\\kappa$ options. This transforms an intractable single decision into a sequence of tractable sub-decisions, mirroring chunking (F4) and menu design principles.",
+      "content_hash": "88b06bdd98c9545aca3453430d56619045633d4a74a2f6af78fc78139d9a4e1f",
+      "label": "h4_hierarchy_mitigation",
+      "qid": "github:2601_04748::h4_hierarchy_mitigation",
+      "type": "claim"
+    },
+    {
+      "content": "Hierarchical routing substantially recovers accuracy when library size exceeds the capacity threshold ($|S| \\geq 60$, approaching $\\kappa \\approx 90$):\n\n| Method | GPT-4o-mini at $|S|=120$ | GPT-4o at $|S|=120$ | Improvement (mini) |\n|---|---|---|---|\n| Flat Selection | ~45% | ~63% | baseline |\n| Naive Domain Hierarchy | ~83–85% | ~72% | +37–40% |\n| Confusability-Aware Hierarchy | ~83–85% | ~72% | +37–40% |\n\nBoth hierarchical methods perform similarly because the experimental design naturally aligns domain boundaries with confusability clusters.",
+      "content_hash": "1ad6b1d03d7db118a88a5206ec183931e43beeefaf0beaf8ca8c69c0b6708b20",
+      "label": "h4_hierarchy_results",
+      "qid": "github:2601_04748::h4_hierarchy_results",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 3 (Limited model coverage):** Results are based on two OpenAI models (GPT-4o-mini and GPT-4o). Generalization to other architectures (open-source models, different scales, multimodal models) requires further study. Whether capacity thresholds are universal or architecture-specific is unknown.",
+      "content_hash": "76cf7151db89f0d14bcf7dc77889785b1cd4211a0ea5d53bbc87a3e8a810591f",
+      "label": "limitation_model_coverage",
+      "qid": "github:2601_04748::limitation_model_coverage",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 2 (Selection-only evaluation):** The experiments measure selection accuracy (whether the correct skill is identified) but not end-to-end task performance (whether the downstream task is completed correctly). The propagation of selection errors to final task outcomes remains unquantified.",
+      "content_hash": "2e7830f08bd285a3c1a1ac04cec70e3c429c5f7a8d75c3b45de888fdb558a609",
+      "label": "limitation_selection_only",
+      "qid": "github:2601_04748::limitation_selection_only",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 1 (Synthetic data):** While enabling controlled experiments, synthetic skill libraries may not capture the full complexity of real-world skill distributions. Results on naturally-occurring skill distributions (e.g., from software development, long-horizon planning, or scientific workflows) remain to be validated.",
+      "content_hash": "2db1b41edea0fddd89d215de31cbd517a2713b4ec7094b446ad44a81a71a5471",
+      "label": "limitation_synthetic",
+      "qid": "github:2601_04748::limitation_synthetic",
+      "type": "claim"
+    },
+    {
+      "content": "The proposed functional form for skill selection accuracy as a function of library size $|S|$ and semantic interference $I(S)$ is: $$ACC(\\sigma, S) \\approx \\frac{\\alpha}{1 + (|S|/\\kappa)^\\gamma} - \\epsilon \\cdot I(S)$$ where: $\\alpha \\leq 1$ is asymptotic accuracy at small $|S|$; $\\kappa$ is the capacity threshold (library size at which accuracy drops to $\\alpha/2$); $\\gamma > 1$ controls sharpness of the phase transition (super-linear); $\\epsilon > 0$ is sensitivity to semantic interference $I(S)$.",
+      "content_hash": "dd905eea1efaadf032d2441b5ea80374f80582c379e5a8018d0ad8d2d5c5ac7e",
+      "label": "scaling_model",
+      "qid": "github:2601_04748::scaling_model",
+      "type": "setting"
+    }
+  ],
+  "ir_hash": "sha256:cde6198a3d47c7e3bb385c45be6ff4c626c78510c41942a4f9d3581439317037",
+  "manifest_schema_version": 1,
+  "package": "2601-04748",
+  "version": "0.1.0"
+}

@@ -1,0 +1,1949 @@
+{
+  "ir_hash": "sha256:cde6198a3d47c7e3bb385c45be6ff4c626c78510c41942a4f9d3581439317037",
+  "knowledges": [
+    {
+      "content": "Multi-agent AI systems (MAS), where specialized agents collaborate via explicit communication, have proven effective for complex reasoning tasks. Systems such as AutoGen and MetaGPT improve reasoning performance on challenging benchmarks [@Wu2024].",
+      "content_hash": "6c1286a44bcca0764bc3e18e47c8a7c15a4cb45ac628240cdd8b3ad80ee47fed",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_04748::mas_effectiveness",
+      "label": "mas_effectiveness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wu2024"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "MAS effectiveness",
+      "type": "claim"
+    },
+    {
+      "content": "Multi-agent systems incur significant computational overhead due to repeated context exchange, multi-round coordination, and verbose natural language interactions. This overhead arises because each agent call re-encodes the task description, intermediate results, and instructions.",
+      "content_hash": "4920c78e461d9a56c555e97fe3508a65a78413b1c168a9ef440b0bca8d152499",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_04748::mas_overhead",
+      "label": "mas_overhead",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "MAS computational overhead",
+      "type": "claim"
+    },
+    {
+      "content": "A skill is a tuple $s = (\\delta, \\pi, \\xi)$ where: $\\delta$ (skill descriptor) is a semantic description used for skill selection; $\\pi$ (execution policy) specifies how to perform the skill; $\\xi \\in \\mathcal{T} \\cup \\{\\emptyset\\}$ is the execution backend — an external tool ($\\xi = t$, externalized skill) or null ($\\xi = \\emptyset$, internalized skill). Unlike tools, which are automatically triggered, skills are chosen based on the meaning and content of user requests, encapsulating not just what to do but how to reason [@Anthropic2025].",
+      "content_hash": "b060a810b1b7e3703b33d741220c714bf59fbf6a6e7d21d5a9d6e6c1b0b700a6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_04748::skill_definition",
+      "label": "skill_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Anthropic2025"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 2.2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Skill definition",
+      "type": "setting"
+    },
+    {
+      "content": "A Single-Agent with Skills (SAS) is a tuple $S = \\langle a, \\mathcal{S}, \\sigma \\rangle$ where: $a$ is a base language model; $\\mathcal{S} = \\{s_1, \\ldots, s_k\\}$ is a skill library; $\\sigma : \\mathcal{H} \\times \\mathcal{D} \\rightarrow \\mathcal{S}$ is a skill selector mapping context and skill descriptors $\\mathcal{D} = \\{\\delta_1, \\ldots, \\delta_k\\}$ to a skill. The selector $\\sigma$ operates over skill descriptors, not full skill specifications, reflecting that selection is based on semantic descriptors rather than complete procedural knowledge.",
+      "content_hash": "a92818d7359673e54f37f04e5bb6eea7cca4611263a8170bdd71ce14d4df67bd",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_04748::sas_definition",
+      "label": "sas_definition",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "SAS definition",
+      "type": "setting"
+    },
+    {
+      "content": "A multi-agent system can be 'compiled' into an equivalent single-agent system (SAS) by encoding each agent's behavior as a skill, thereby eliminating inter-agent communication overhead while preserving functional capability. The compilation trades inter-agent communication for skill selection.",
+      "content_hash": "617c1d2c72e36a4c3086275641e60418f0dbb6f290b6babd280d6f9d0910b322",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_04748::compilation_view",
+      "label": "compilation_view",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.3"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Compilation view: MAS to SAS",
+      "type": "claim"
+    },
+    {
+      "content": "Can a single agent that selects from a library of skills (SAS) achieve similar modularity benefits to a multi-agent system (MAS), while reducing computational overhead?",
+      "content_hash": "47ee1c88b7bd5635c29f9be8e3dedd9bca71d1a814047a4e2a12ac0d0a9fb463",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_04748::q_compilation_feasibility",
+      "label": "q_compilation_feasibility",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q1: Compilation feasibility",
+      "type": "question"
+    },
+    {
+      "content": "How does the size of the skill library affect an LLM's ability to select the correct skill? Does skill selection exhibit capacity-limited scaling analogous to human decision-making?",
+      "content_hash": "84b28624677b325c27e1b6282f6ad5cf6d3224010708769911bb392dc70758a8",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_04748::q_skill_scaling",
+      "label": "q_skill_scaling",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q2: Skill selection scaling",
+      "type": "question"
+    },
+    {
+      "content": "Skill-based systems (SAS) can approximate multi-agent system (MAS) performance with significantly lower token usage (−53.7% on average) and latency (−49.5% on average) across three benchmarks (GSM8K, HumanEval, HotpotQA), while formally characterizing the compilation process from MAS to SAS.",
+      "content_hash": "f1673cabb39302680e1bd3c4311edea821dc94e7ebf828181596681aa2e15959",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2601_04748::contribution_compilation",
+      "label": "contribution_compilation",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 1, Table 3"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 1: Compilation efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "Skill selection exhibits non-linear scaling limits: selection accuracy remains high up to a critical library size threshold $\\kappa$ (approximately 83–92 skills for tested GPT models), then drops sharply. Semantic confusability among skills, not library size alone, is the primary driver of this degradation.",
+      "content_hash": "11ab150496aa8bc3c2304b732e3f944ed5dade1cfec271e3f670be469bd815e1",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_04748::contribution_scaling",
+      "label": "contribution_scaling",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 2: Scaling limits identified",
+      "type": "claim"
+    },
+    {
+      "content": "Hierarchical routing mitigates the skill selection scaling limits observed in flat libraries. When flat selection degrades at large library sizes ($|S| \\gg \\kappa$), hierarchical routing maintains approximately 72–85% accuracy vs. 45–63% for flat selection, providing a cognitive-science-grounded framework for scalable skill-based agents.",
+      "content_hash": "bc69402df54343d02cb8a5ad9d0d85978bc570f44ff05dac13523e39afdaf6d0",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_04748::contribution_hierarchy",
+      "label": "contribution_hierarchy",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 3: Hierarchical routing as mitigation",
+      "type": "claim"
+    },
+    {
+      "content": "The coordination cost of solving task $x$ in a multi-agent system (MAS) over $T$ rounds is: $$C_{MAS}(x) = \\sum_{t=1}^{T} |y^{(t)}| + T \\cdot c_{sync}$$ where $|y^{(t)}|$ denotes message length and $c_{sync}$ captures synchronization overhead per round.",
+      "content_hash": "45fe0bf65f7edeafff53296304ac92cc6ebe702b95dbd81c3cf72c59d1fbaa9c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_04748::mas_cost_def",
+      "label": "mas_cost_def",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.1, Eq. 1"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "MAS cost definition",
+      "type": "setting"
+    },
+    {
+      "content": "The cost of a single-agent with skills (SAS) over $T'$ rounds is: $$C_{SAS}(x) = \\sum_{t=1}^{T'} \\left[ C_{select}(\\sigma, \\mathcal{S}) + C_{exec}(s^{(t)}) \\right]$$ where $C_{select}$ is the cognitive cost of skill selection and $C_{exec}$ is execution cost.",
+      "content_hash": "116cf79dbb786c2e2e5d3a073ebd7622b56f8ef48b638671ff50aff6a6e9c259",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_04748::sas_cost_def",
+      "label": "sas_cost_def",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.2, Eq. 2"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "SAS cost definition",
+      "type": "setting"
+    },
+    {
+      "content": "A compilation $\\Phi$ is cost-efficient if the selection overhead is less than the communication overhead: $$\\sum_t C_{select}(\\sigma, |\\mathcal{S}|) < \\sum_t C_{comm}(G, \\Pi)$$ The central trade-off: compilation eliminates inter-agent communication but introduces a selection bottleneck.",
+      "content_hash": "282d02f0bc21d18dc5b37e33b75fa93dce5d15547630d234a2b99cb74c4c55ba",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_04748::efficiency_condition",
+      "label": "efficiency_condition",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.4, Eq. 9"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Efficiency condition",
+      "type": "setting"
+    },
+    {
+      "content": "A multi-agent system $\\mathcal{M}$ is compilable if and only if all three conditions hold:\n\n- **C1 (Serializable Communication)**: The communication graph $G$ admits a topological ordering — agent interactions can be sequenced without information loss.\n- **C2 (Shared History)**: Agent outputs depend only on shared history $h$, with no private state.\n- **C3 (Homogeneous Backbone)**: All agents use the same underlying model.\n\nConversely, compilation fails when agents require true parallelism (independent sampling), private information, adversarial objectives, or heterogeneous capabilities.",
+      "content_hash": "2fb069dbb8753296401da551a685e88c59a9f32f0386d6aa8c06bbfe7c0c3319",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2601_04748::compilability_conditions",
+      "label": "compilability_conditions",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 3.1, Proposition 3.1"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilability conditions (C1, C2, C3)",
+      "type": "setting"
+    },
+    {
+      "content": "The following multi-agent architectures are compilable to SAS:\n\n| Architecture | Structure | Compilable |\n|---|---|---|\n| Pipeline | $a_1 \\to a_2 \\to \\cdots \\to a_n$ | Yes |\n| Router-Workers | Router $\\to$ {Workers} $\\to$ Aggregator | Yes |\n| Iterative Refinement | Writer $\\leftrightarrow$ Critic (loop) | Yes |\n| Debate / Adversarial | Proponent $\\leftrightarrow$ Opponent | No |\n| Parallel Sampling | Independent agents, best-of-n | No |\n| Private Information | Agents with hidden state | No |",
+      "content_hash": "3b498aae7f3aa8db8566e05578e8c82761695dad58131460ea2c89538bfe0e56",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_04748::compilable_architectures",
+      "label": "compilable_architectures",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The compilability table reflects straightforward analysis of communication graph structure. Conditions C1-C3 are logically sound. High confidence but not 1.0 because compilability of 'Iterative Refinement' with potential private state is somewhat underspecified at the boundary.",
+        "source": "artifacts/2601.04748.pdf, Section 3.1, Table 1"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilable architectures (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "**Phase 1 (Capability Decomposition):** For each agent $a_i$ with system prompt $\\rho_i$, a decomposition function $f_{decomp}$ extracts a set of discrete atomic capabilities $K_i$: $$K_i = f_{decomp}(\\rho_i) = \\{\\kappa_{i,1}, \\kappa_{i,2}, \\ldots\\}$$ Each capability $\\kappa$ represents a specific functional unit (e.g., 'perform code review') derived from the agent's role, independent of implementation.",
+      "content_hash": "3c4278c8b0b011490bc80e6c7501c2e5c315ebeb1e68c049798ac5137248b371",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_04748::compilation_phase1",
+      "label": "compilation_phase1",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.3.1, Eq. 3"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation Phase 1: Capability decomposition",
+      "type": "setting"
+    },
+    {
+      "content": "**Phase 2 (Backend Assignment):** For each capability $\\kappa$, the compiler determines the execution backend $\\xi$: externalized ($\\xi = t \\in \\mathcal{T}$) if the capability requires external grounding, or internalized ($\\xi = \\emptyset$) if purely cognitive. The skill descriptor $\\delta$ is generated to semanticize $\\kappa$ for retrieval.",
+      "content_hash": "552f60ee273df73a4c67be1f3cd7f6c06a5a5f5e7d106f7eb24ce1ad2877c94c",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_04748::compilation_phase2",
+      "label": "compilation_phase2",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.3.2, Eq. 4"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation Phase 2: Backend assignment",
+      "type": "setting"
+    },
+    {
+      "content": "**Phase 3 (Topology Internalization):** The explicit communication edges in the MAS graph are transformed into implicit input/output constraints within skill definitions using a constraint injection function $f_{inject}$: $$\\pi^{final}_k = f_{inject}(\\pi^{base}_k, N_{out}(a_i))$$ where $N_{out}(a_i)$ is the set of downstream agents. This appends handover constraints ensuring output format compatibility with downstream skills.",
+      "content_hash": "b8bfb54dd205850cfa0248b4e12002ed06c529ee58c707bcfaaa9eb4a2524476",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_04748::compilation_phase3",
+      "label": "compilation_phase3",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 2.3.3, Eq. 5-6"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation Phase 3: Topology internalization",
+      "type": "setting"
+    },
+    {
+      "content": "Compilation efficiency experiments use three benchmarks, each matched to a compilable MAS architecture:\n\n| Benchmark | Architecture | MAS Agents | SAS Skills | API Calls |\n|---|---|---|---|---|\n| GSM8K (grad school math) | Pipeline | Decomposer, Solver, Verifier | decompose, solve, verify | 3→1 |\n| HumanEval (Python code generation) | Iterative | Coder, Critic, Refiner | code, critique, refine | 3→1 |\n| HotpotQA (multi-hop QA) | Router-Workers | Router, Retriever, Reasoner, Aggregator | analyze, retrieve, reason, synthesize | 4→1 |\n\nAll experiments use GPT-4o-mini as the backbone model (satisfying condition C3). The compiled SAS performs equivalent computation in a single API call using structured output sections.",
+      "content_hash": "76a078418c5dd0ba528d1b9b6cb1698691416edd7bffbc946c323dbdbdee2355",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2601_04748::exp_setup_compilation",
+      "label": "exp_setup_compilation",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 3.2.1, Table 2"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Compiled SAS achieves accuracy within −2.0% to +4.0% of the original MAS across all benchmarks:\n\n| Task | MAS Accuracy | SAS Accuracy | Accuracy Δ |\n|---|---|---|---|\n| GSM8K | 94.0% | 92.0% | −2.0% |\n| HumanEval | 100.0% | 100.0% | 0.0% |\n| HotpotQA | 84.0% | 88.0% | +4.0% |\n| Average | — | — | +0.7% |",
+      "content_hash": "c5a4801d285cfbc8bcab1562e84543716c4f9df43b7549c79f3e241f0de0d07b",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_04748::compilation_accuracy",
+      "label": "compilation_accuracy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2026"
+            ],
+            "referenced_claims": [
+              "compilability_conditions",
+              "compilable_architectures",
+              "exp_setup_compilation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 3.2.2, Table 3"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation: accuracy preserved (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "MAS-to-SAS compilation reduces token consumption by 53.7% on average:\n\n| Task | MAS Avg. Tokens | SAS Avg. Tokens | Token Reduction |\n|---|---|---|---|\n| GSM8K | 1407 | 616 | 56.2% |\n| HumanEval | 1400 | 749 | 46.5% |\n| HotpotQA | 4359 | 1816 | 58.4% |\n\nThe reduction stems from eliminating redundant context repetition across agent calls — the SAS shares a single context window rather than re-encoding task descriptions and intermediate results for each specialized agent.",
+      "content_hash": "33f616d0ee95e4455fced478e53ac01d3505932f2ec5f09c17d5e47af9d6d3e4",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2601_04748::compilation_token_reduction",
+      "label": "compilation_token_reduction",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 3.2.2, Table 3"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation: token reduction 53.7% avg (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "MAS-to-SAS compilation reduces end-to-end latency by 49.5% on average:\n\n| Task | MAS Avg. Latency (ms) | SAS Avg. Latency (ms) | Latency Reduction |\n|---|---|---|---|\n| GSM8K | 10565 | 7537 | 28.7% |\n| HumanEval | 7227 | 2970 | 58.9% |\n| HotpotQA | 11671 | 4559 | 60.9% |\n\nThe primary factor is the reduction from 3–4 sequential API calls to a single call. GSM8K shows a smaller latency reduction (28.7%) despite significant token savings, suggesting mathematical reasoning computation dominates latency for that task.",
+      "content_hash": "35e573f6ef0d8cc256d04d851bd859e324843fdf6bbdd991cace8def03482f50",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2601_04748::compilation_latency_reduction",
+      "label": "compilation_latency_reduction",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 3.2.2, Table 3"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "Compilation: latency reduction 49.5% avg (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "On HotpotQA, the compiled SAS outperforms the MAS by 4.0% accuracy (88% vs 84%). This improvement is attributed to the unified context enabling better information integration across retrieval and reasoning steps, compared to the MAS where retrieved passages must be passed between agents multiple times.",
+      "content_hash": "d398d41dd9f5dca764fdb7497c48b19d9ab34d4f8eb43fd979b32217e4a675bd",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2601_04748::hotpotqa_improvement",
+      "label": "hotpotqa_improvement",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 3.2.2"
+      },
+      "module": "s2_compilation",
+      "parameters": [],
+      "title": "HotpotQA: SAS outperforms MAS",
+      "type": "claim"
+    },
+    {
+      "content": "**Hick's Law (F1):** Human choice reaction time scales logarithmically with the number of alternatives: $RT = a + b \\cdot \\log_2(n+1)$, where $n$ is the number of equally probable options. Critically, Longstreth (1988) demonstrated that this relationship breaks down beyond approximately 8 choices ($\\sim$3 bits), becoming curvilinear as the binary subdivision strategy fails [@Hick1952; @Longstreth1988].",
+      "content_hash": "a6ae67c57ed5bc0bd3f5e110800b0c9699ce80a057b24d2d7c365622909a11f2",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_04748::f1_hicks_law",
+      "label": "f1_hicks_law",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hick1952",
+              "Longstreth1988"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 4.1"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "F1: Hick's Law — decision time vs. alternatives",
+      "type": "setting"
+    },
+    {
+      "content": "**Cognitive Load Theory (F2):** Miller's 'magical number seven' identified fundamental limits on immediate memory span (approximately 7 ± 2 items) [@Miller1956]. Sweller's Cognitive Load Theory extends this to complex tasks, distinguishing intrinsic load (inherent task complexity) from extraneous load (unnecessary processing demands). When total cognitive load exceeds working memory capacity, performance degrades sharply — a threshold effect rather than gradual decline [@Sweller1988].",
+      "content_hash": "62ab4cbf77e9960e4ad22a2b26d91df90c82c1e26ef99cde395ebe8923a9a4fc",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_04748::f2_cognitive_load",
+      "label": "f2_cognitive_load",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Miller1956",
+              "Sweller1988"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 4.1"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "F2: Cognitive Load Theory — working memory capacity limits",
+      "type": "setting"
+    },
+    {
+      "content": "**Similarity-Based Interference (F3):** Shepard's Universal Law of Generalization establishes that confusion probability decays exponentially with psychological distance: $g(d) = e^{-d/\\lambda}$ [@Shepard1987]. Anderson's ACT-R model provides a mechanistic account through the fan effect: as more facts share a retrieval cue, associative strength to each fact decreases, leading to slower retrieval and reduced accuracy [@Anderson1974]. The Generalized Context Model formalizes how classification errors increase with both option count and inter-option similarity [@Nosofsky1986].",
+      "content_hash": "056e6b9ab5e58b96a1983f2d22d32802839d70af67a1d56753ce556ed1f5218e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_04748::f3_similarity_interference",
+      "label": "f3_similarity_interference",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Anderson1974",
+              "Nosofsky1986",
+              "Shepard1987"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 4.1"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "F3: Similarity-based interference — fan effect and confusability",
+      "type": "setting"
+    },
+    {
+      "content": "**Hierarchical Processing and Chunking (F4):** Chase and Simon's chunking theory demonstrates that experts manage complexity through hierarchical organization — chess masters perceive board positions as approximately 7 chunks rather than 32 individual pieces [@Chase1973]. Menu design research finds optimal breadth of 4–8 items per level, matching working memory capacity. Tversky's Elimination-by-Aspects model formalizes how stepwise narrowing of options makes large choice sets more manageable [@Tversky1972].",
+      "content_hash": "9b34c2e1a1c121fd6b9ea81e024a30380a9905fcb430f2fce0d222ccf16d6585",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_04748::f4_hierarchical_chunking",
+      "label": "f4_hierarchical_chunking",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Chase1973",
+              "Tversky1972"
+            ]
+          }
+        },
+        "source": "artifacts/2601.04748.pdf, Section 4.1"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "F4: Hierarchical processing — chunking and menu design",
+      "type": "setting"
+    },
+    {
+      "content": "The proposed functional form for skill selection accuracy as a function of library size $|S|$ and semantic interference $I(S)$ is: $$ACC(\\sigma, S) \\approx \\frac{\\alpha}{1 + (|S|/\\kappa)^\\gamma} - \\epsilon \\cdot I(S)$$ where: $\\alpha \\leq 1$ is asymptotic accuracy at small $|S|$; $\\kappa$ is the capacity threshold (library size at which accuracy drops to $\\alpha/2$); $\\gamma > 1$ controls sharpness of the phase transition (super-linear); $\\epsilon > 0$ is sensitivity to semantic interference $I(S)$.",
+      "content_hash": "dd905eea1efaadf032d2441b5ea80374f80582c379e5a8018d0ad8d2d5c5ac7e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_04748::scaling_model",
+      "label": "scaling_model",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 4.3, Eq. 10"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "Scaling model: accuracy vs. library size and interference",
+      "type": "setting"
+    },
+    {
+      "content": "**H1 (Non-linear Phase Transition):** LLM skill selection accuracy exhibits a phase transition: accuracy remains high when $|S| < \\kappa$ but suffers sharp, non-linear degradation once library size exceeds the capacity threshold $\\kappa$. The transition is phase-like rather than gradual — accuracy is relatively stable until $|S| \\approx \\kappa$, then drops precipitously. This mirrors the breakdown of Hick's Law beyond ~8 choices (F1) and threshold effects in Cognitive Load Theory when working memory is exceeded (F2).",
+      "content_hash": "ddd8945979964be2cb7958119f33b38eeffc64e354c05e11d40381fcf98b7438",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_04748::h1_phase_transition",
+      "label": "h1_phase_transition",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 4.4"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "H1: Non-linear phase transition in skill selection",
+      "type": "claim"
+    },
+    {
+      "content": "**H2 (Confusability-Driven Errors):** Selection degradation is driven primarily by semantic confusability among skills, not mere library size. Adding semantically similar 'competitor' skills degrades accuracy more than adding an equivalent number of distinct skills. This follows from the interference term $\\epsilon \\cdot I(S)$ in the scaling model and similarity-based interference in cognitive science (F3).",
+      "content_hash": "94b65c400ec5457e9520ea2877610bc83ad8febe5159aeaad60f64da67ae891a",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2601_04748::h2_confusability",
+      "label": "h2_confusability",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 4.4"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "H2: Confusability-driven degradation",
+      "type": "claim"
+    },
+    {
+      "content": "**H3 (Instructional Saturation):** Skills with more complex execution policies $\\pi$ (verbose, detailed instructions) consume additional processing bandwidth, reducing effective capacity $\\kappa$ by increasing extraneous cognitive load. Including full execution policies in the selection prompt should degrade accuracy more than using only skill descriptors (F2).",
+      "content_hash": "3383c1a181ac0541b938cd4be882907be3a5f2d74c910e3f035a7ee048063b4a",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_04748::h3_instructional_saturation",
+      "label": "h3_instructional_saturation",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 4.4"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "H3: Policy complexity reduces effective capacity",
+      "type": "claim"
+    },
+    {
+      "content": "**H4 (Mitigation via Hierarchy):** When flat selection fails ($|S| > \\kappa$), hierarchical organization can restore reliable scaling by ensuring each decision point involves fewer than $\\kappa$ options. This transforms an intractable single decision into a sequence of tractable sub-decisions, mirroring chunking (F4) and menu design principles.",
+      "content_hash": "88b06bdd98c9545aca3453430d56619045633d4a74a2f6af78fc78139d9a4e1f",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_04748::h4_hierarchy_mitigation",
+      "label": "h4_hierarchy_mitigation",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 4.4"
+      },
+      "module": "s4_cognitive_theory",
+      "parameters": [],
+      "title": "H4: Hierarchical routing mitigates scaling limits",
+      "type": "claim"
+    },
+    {
+      "content": "Scaling experiments use a synthetic skill library spanning 8 domains (mathematics, coding, writing, analysis, translation, question-answering, formatting, extraction), each with 5 subtypes — 40 distinct skill categories total. Each category has 5 skill templates, yielding a pool of 200 unique skills. Skill descriptors follow the pattern '[Skill Name]: [Capability Description]'. Models evaluated: GPT-4o-mini and GPT-4o, temperature $T = 0$ for deterministic outputs. Selection accuracy is measured with 3 random seeds per condition for standard error estimates. Library sizes range from $|S| \\in \\{5, 10, 20, 50, 100, 150, 200\\}$.",
+      "content_hash": "c5badff2268199a2322eda74cfa815caa0329fbfac6dc72ed3a1f9f806f7feb6",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_04748::exp_setup_scaling",
+      "label": "exp_setup_scaling",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Scaling experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Three similarity distributions control semantic overlap among skills in the library:\n\n- **Low (Diverse):** Skills sampled round-robin across all 8 domains, maximizing semantic distance.\n- **High (Similar):** Skills sampled from 2–3 semantically related domains (e.g., mathematics, analysis, extraction).\n- **Mixed:** Skills sampled uniformly at random across all domains — a naturalistic distribution with both related and unrelated skills (default for most experiments).",
+      "content_hash": "49688ab8d0185e854a2ea9ef3b049c239f2e545d9da2bbb77f73ceb8e22501b7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_04748::similarity_distributions",
+      "label": "similarity_distributions",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.1"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Similarity distributions for library construction",
+      "type": "setting"
+    },
+    {
+      "content": "The proposed accuracy scaling model $ACC \\approx \\alpha / (1 + (|S|/\\kappa)^\\gamma)$ fits empirical data with excellent quality:\n\n| Model | $\\alpha$ | $\\kappa$ | $\\gamma$ | $R^2$ |\n|---|---|---|---|---|\n| GPT-4o-mini | 0.96 | 91.8 | 1.72 | 0.978 |\n| GPT-4o | 0.98 | 83.5 | 1.56 | 0.968 |",
+      "content_hash": "aca8bbb19f02d3f05e2b1550098689a5c908767e59e8270b54845d56254f913b",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_04748::h1_fit_quality",
+      "label": "h1_fit_quality",
+      "metadata": {
+        "caption": "Figure 2: Scaling law fit quality. The proposed functional form achieves excellent fit (R² > 0.97) for both models.",
+        "figure": "artifacts/2601.04748.pdf, Figure 2",
+        "prior": 0.88,
+        "prior_justification": "The scaling model achieves R^2 > 0.97 for both models — very high fit quality. Direct data analysis result from controlled experiment. Tempered by: only 2 model families tested, synthetic library may not generalize, and limited data points for fitting (6-7 library sizes). High fit may be partly due to flexible functional form.",
+        "source": "artifacts/2601.04748.pdf, Section 5.2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H1: Scaling model fit quality (Figure 2)",
+      "type": "claim"
+    },
+    {
+      "content": "The fitted decay exponent $\\gamma > 1$ (1.72 for GPT-4o-mini, 1.56 for GPT-4o) indicates super-linear degradation, consistent with phase transition behavior rather than gradual decay. Accuracy remains near $\\alpha$ for $|S| \\ll \\kappa$, then collapses precipitously when $|S| \\gg \\kappa$.",
+      "content_hash": "fe41c0ed22de4cbb223973faaeb5a1182cfbafbd29905e54d7266e3867822252",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_04748::h1_gamma_super_linear",
+      "label": "h1_gamma_super_linear",
+      "metadata": {
+        "prior": 0.87,
+        "prior_justification": "The super-linear decay exponent gamma > 1 (1.72 and 1.56) is a direct read-off from fitted model with high R^2. High confidence in the measurement. Some uncertainty: exponent is a fitted parameter (extrapolation beyond measured range uncertain), and gamma > 1 boundary is sensitive to fitting noise at a small number of data points.",
+        "source": "artifacts/2601.04748.pdf, Section 5.2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H1: Super-linear degradation (γ > 1)",
+      "type": "claim"
+    },
+    {
+      "content": "The fitted capacity threshold $\\kappa$ is 91.8 for GPT-4o-mini and 83.5 for GPT-4o, representing the library size at which accuracy drops to half its maximum ($\\alpha/2 \\approx 0.48$–$0.49$). Interestingly, GPT-4o exhibits a slightly lower $\\kappa$ than GPT-4o-mini, contrary to the intuition that stronger models should have higher capacity. The authors offer two explanations: (1) fitting variance with limited data points, or (2) model capability and selection capacity may be partially independent.",
+      "content_hash": "b2310fc9195745146cfbc99c786933635c84827f4fe8a5cefab5000d8255fcc6",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_04748::h1_kappa_values",
+      "label": "h1_kappa_values",
+      "metadata": {
+        "prior": 0.82,
+        "prior_justification": "The capacity threshold kappa ~83-92 is derived from model fit. Moderate-high confidence as a practical guideline. Lower confidence than fit quality because: (1) model-specific and may not generalize to other architectures, (2) counterintuitive finding that GPT-4o has lower kappa than GPT-4o-mini suggests fitting noise may be significant, and (3) the authors acknowledge this may reflect fitting variance.",
+        "source": "artifacts/2601.04748.pdf, Section 5.2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H1: Capacity threshold κ ≈ 83–92 for GPT models",
+      "type": "claim"
+    },
+    {
+      "content": "H2 experiment design: For each base skill (e.g., 'Calculate Sum: Add all numbers together'), 0, 1, or 2 competitor skills are generated with similar descriptions but different operations (e.g., 'Compute Average: Compute the mean of all values'). Three confusability conditions:\n\n- **No Competitors ($n_{comp}=0$):** Each skill is semantically distinct. $|S| = n_{base}$.\n- **Low Confusability ($n_{comp}=1$):** Each base skill has one competitor. $|S| = 2 \\times n_{base}$.\n- **High Confusability ($n_{comp}=2$):** Each base skill has two competitors. $|S| = 3 \\times n_{base}$.\n\nGround truth is unambiguous: each task requires the base skill's specific operation (e.g., 'compute the sum'), and only the base skill produces the correct answer.",
+      "content_hash": "7afbc3caae2ffa51342501809dc24ddd16e1778b3bb7b6e22ddc766116fe353d",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_04748::h2_competitor_experiment",
+      "label": "h2_competitor_experiment",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H2: Competitor experiment design",
+      "type": "setting"
+    },
+    {
+      "content": "Adding semantic competitors significantly degrades selection accuracy at fixed total library size:\n\n- Adding **1 competitor** per skill reduces accuracy by **7–30%** (Low condition).\n- Adding **2 competitors** causes **17–63%** degradation (High condition).\n- GPT-4o-mini shows larger drops than GPT-4o (e.g., 70% vs 37% accuracy at $n_{base}=10, n_{comp}=2$).\n- At identical $|S| = 20$, replacing unique skills with base-competitor pairs causes 18–30% accuracy drop.\n- The no-competitor condition maintains 100% accuracy at $|S| = 20$ where mixed-similarity libraries (H1) show measurable degradation.",
+      "content_hash": "286a5dd9388134ec0e604c3e176bfc9ee7ed33447adf44b5556a71440c0ef6c4",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2601_04748::h2_competitor_results",
+      "label": "h2_competitor_results",
+      "metadata": {
+        "caption": "Figure 3: Effect of skill competitors on selection accuracy. Higher confusability leads to lower accuracy at fixed library size.",
+        "figure": "artifacts/2601.04748.pdf, Figure 3",
+        "prior": 0.92,
+        "prior_justification": "The competitor experiment is well-controlled: ground truth is unambiguous by construction (only the base skill performs the correct operation). The accuracy drops (7-30% for 1 competitor, 17-63% for 2 competitors) are large effects measured across multiple nbase values with 3 random seeds. Main caveat: synthetic competitors may not represent real-world confusability distributions.",
+        "source": "artifacts/2601.04748.pdf, Section 5.3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H2: Competitor degradation 7–63% (Figure 3)",
+      "type": "claim"
+    },
+    {
+      "content": "GPT-4o consistently outperforms GPT-4o-mini under high confusability conditions, achieving 70% vs 37% accuracy at $n_{base}=10, n_{comp}=2$. This suggests that model capability provides partial mitigation against confusability, though does not eliminate the fundamental scaling challenge.",
+      "content_hash": "948d796dfcab59e565f78011fdc655f16046662af7832286afe393b61c2b148f",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_04748::h2_gpt4o_advantage",
+      "label": "h2_gpt4o_advantage",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "The GPT-4o vs GPT-4o-mini comparison under high confusability (70% vs 37% at nbase=10, ncomp=2) is a direct measurement from controlled experiment with large effect size. Tempered by: only two model families tested, temperature=0 removes variance information, and comparison is at a single operating point rather than across the full curve.",
+        "source": "artifacts/2601.04748.pdf, Section 5.3"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H2: GPT-4o shows higher confusability resistance",
+      "type": "claim"
+    },
+    {
+      "content": "Contrary to hypothesis H3 (instructional saturation), the three policy complexity levels (simple ~30 tokens, medium ~100 tokens, complex ~300 tokens) show **largely overlapping accuracy curves** for both GPT-4o-mini and GPT-4o. The differences between conditions fall within standard error bounds at most library sizes. All complexity levels follow the same phase transition pattern observed in H1, with accuracy declining sharply beyond approximately $|S| = 50$.",
+      "content_hash": "958941d1ee6cd7c73db6170c12f01f93c86f78ef37813916843f93596ae7f625",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_04748::h3_null_result",
+      "label": "h3_null_result",
+      "metadata": {
+        "caption": "Figure 4: Effect of execution policy complexity on selection accuracy. Three complexity levels show largely overlapping performance curves.",
+        "figure": "artifacts/2601.04748.pdf, Figure 4",
+        "prior": 0.78,
+        "prior_justification": "The null result (policy complexity has negligible effect) is supported by overlapping curves within standard error bounds. However, null results are epistemically weaker — absence of evidence is not strong evidence of absence. Study uses only 3 complexity levels with moderate granularity (30/100/300 tokens). Finer studies or different policy types might reveal effects.",
+        "source": "artifacts/2601.04748.pdf, Section 5.4"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H3: Policy complexity has negligible effect on accuracy (Figure 4)",
+      "type": "claim"
+    },
+    {
+      "content": "The null result for H3 (policy complexity not affecting accuracy) may be explained by transformer architectures efficiently filtering relevant information from long contexts — the attention mechanism may effectively ignore execution policy tokens during skill selection, mitigating the expected extraneous cognitive load from complex policies.",
+      "content_hash": "3c76127456373d834a88717160eb508e1413d6cd8e6a23b537e329b02d7a8958",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2601_04748::h3_transformer_explanation",
+      "label": "h3_transformer_explanation",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.4"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H3 null result: transformer attention filters policy tokens",
+      "type": "claim"
+    },
+    {
+      "content": "H4 experiment compares three selection strategies at library sizes beyond the capacity threshold:\n\n- **Flat Selection:** Direct selection from all $|S|$ skills (baseline).\n- **Naive Domain Hierarchy:** Two-stage selection — Stage 1 selects domain category, Stage 2 selects within domain.\n- **Confusability-Aware Hierarchy:** Two-stage selection — Stage 1 selects among distinct clusters, Stage 2 disambiguates within a small cluster of similar skills.\n\nLibrary sizes: $|S| \\in \\{12, 18, 24, 30, 60, 90, 120\\}$ (constructed with $n_{groups}$ groups of 3 semantically similar skills each — 1 base + 2 competitors).",
+      "content_hash": "b7b19adfbfa2e14f1158fd6183a0e83cd0945e73d4594f15523fdce6711aff1b",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2601_04748::h4_hierarchy_experiment",
+      "label": "h4_hierarchy_experiment",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H4: Hierarchy experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Hierarchical routing substantially recovers accuracy when library size exceeds the capacity threshold ($|S| \\geq 60$, approaching $\\kappa \\approx 90$):\n\n| Method | GPT-4o-mini at $|S|=120$ | GPT-4o at $|S|=120$ | Improvement (mini) |\n|---|---|---|---|\n| Flat Selection | ~45% | ~63% | baseline |\n| Naive Domain Hierarchy | ~83–85% | ~72% | +37–40% |\n| Confusability-Aware Hierarchy | ~83–85% | ~72% | +37–40% |\n\nBoth hierarchical methods perform similarly because the experimental design naturally aligns domain boundaries with confusability clusters.",
+      "content_hash": "1ad6b1d03d7db118a88a5206ec183931e43beeefaf0beaf8ca8c69c0b6708b20",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2601_04748::h4_hierarchy_results",
+      "label": "h4_hierarchy_results",
+      "metadata": {
+        "caption": "Figure 5: Effect of hierarchical routing on selection accuracy. At large library sizes (|S|≥60), hierarchy maintains ~72-85% accuracy while flat selection degrades to ~45-63%.",
+        "figure": "artifacts/2601.04748.pdf, Figure 5",
+        "prior": 0.9,
+        "prior_justification": "The hierarchical routing improvement (+37-40% for GPT-4o-mini, +9-10% for GPT-4o at |S|=120) is a large, consistent effect across both models. Experiment compares three methods with the same tasks and ground truth. High confidence. Caveat: the hierarchical design is well-aligned with confusability structure by construction, which may overestimate benefits for more complex real-world hierarchies.",
+        "source": "artifacts/2601.04748.pdf, Section 5.5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H4: Hierarchy improves accuracy +37–40% at large libraries (Figure 5)",
+      "type": "claim"
+    },
+    {
+      "content": "GPT-4o shows higher flat accuracy than GPT-4o-mini at large $|S|$ (63% vs 45%), but also derives smaller benefit from hierarchical routing (+10% vs +40%). This pattern suggests that stronger models partially compensate for scaling challenges through better semantic discrimination, but hierarchical routing remains beneficial for all models.",
+      "content_hash": "8212ead827605884fc1415cc078394b7b7b8331537567057e73cdde132139ee6",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2601_04748::h4_gpt4o_smaller_benefit",
+      "label": "h4_gpt4o_smaller_benefit",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The observation that GPT-4o benefits less from hierarchy (+10% vs +40%) is consistent with GPT-4o having better baseline semantic discrimination. Effect is directionally consistent with the model capability interpretation. Some uncertainty: only two model families compared, and the difference could partly reflect different kappa values rather than discrimination ability per se.",
+        "source": "artifacts/2601.04748.pdf, Section 5.5"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "H4: Stronger models get smaller hierarchical benefit",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 1 (Monitor library size):** Track $|S|$ relative to the model's capacity ($\\kappa \\approx 50$–$100$ for tested GPT models). Performance degrades sharply beyond this threshold. The inflection point — where accuracy begins to decline most rapidly — occurs earlier than $\\kappa$ itself, so libraries should be kept below the inflection point for flat selection, or hierarchical routing should be adopted for larger libraries.",
+      "content_hash": "53aae3f7af9d5bd10d476de4cece0a362cf812d46e4de0b83ec539fd7fde8b3d",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2601_04748::guideline_monitor_size",
+      "label": "guideline_monitor_size",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 1: Monitor library size vs κ",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 2 (Minimize confusability):** Before adding skills, audit semantic overlap. Merge or differentiate skills with similarity above threshold rather than accumulating near-duplicates. Skill descriptors should emphasize unique characteristics and avoid generic descriptions that could apply to multiple skills (e.g., prefer 'compute rolling 7-day average' over 'process data').",
+      "content_hash": "f00c23a1fea0c33941c3039c0468cdff98cc1db7ae0a0748d03c7a16c9545bc2",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2601_04748::guideline_minimize_confusability",
+      "label": "guideline_minimize_confusability",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 2: Minimize semantic confusability",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 3 (Adopt hierarchy at scale):** For large $|S| \\gg \\kappa$, implement hierarchical routing with confusability-aware grouping. Each routing stage should involve fewer than $\\kappa$ options. Semantically similar skills (competitors) should be explicitly grouped together to ensure first-stage categories are semantically distinct.",
+      "content_hash": "ffde254725d1fcc0d6987731894f7dbc1e021248bc77c22ab07fd07b92d287d6",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2601_04748::guideline_adopt_hierarchy",
+      "label": "guideline_adopt_hierarchy",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 3: Adopt hierarchical routing for large libraries",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 4 (Invest in descriptors):** Since selection relies primarily on skill descriptors $\\delta$ (not execution policies $\\pi$, per H3 null result), invest effort in crafting distinctive, specific descriptions. Descriptor quality has a larger impact on selection accuracy than policy complexity.",
+      "content_hash": "8a106fbf00472f904dc0120c421c4726f6fb9ea5d7f43f2225aa29ab09f88abd",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2601_04748::guideline_invest_descriptors",
+      "label": "guideline_invest_descriptors",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 4: Invest in distinctive skill descriptors",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 5 (Match model to task):** Stronger models show higher $\\kappa$ and better confusability resistance. For applications with inherently large or confusable skill libraries, model capability investment yields direct accuracy benefits. GPT-4o shows approximately 18–26% higher accuracy than GPT-4o-mini under high confusability conditions.",
+      "content_hash": "272f797db7ff4abe03ac6eee7665a22980dcb55503ba0432da70e4cce4969b16",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_04748::guideline_match_model",
+      "label": "guideline_match_model",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 5: Match model capability to library complexity",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Guideline 6 (Consider alternative architectures):** For large skill libraries, the scaling limitations suggest that multi-agent architectures with specialized routers may outperform monolithic single-agent approaches. The SAS paradigm is optimal for small-to-medium libraries ($|S| < \\kappa$); for very large libraries, the MAS overhead may be justified.",
+      "content_hash": "e53aa70a05ae218d2e21051c6fee1e6cf46b04a418860acd68353ac0a6b28737",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_04748::guideline_consider_mas",
+      "label": "guideline_consider_mas",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Guideline 6: Consider MAS for very large skill libraries",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 1 (Synthetic data):** While enabling controlled experiments, synthetic skill libraries may not capture the full complexity of real-world skill distributions. Results on naturally-occurring skill distributions (e.g., from software development, long-horizon planning, or scientific workflows) remain to be validated.",
+      "content_hash": "2db1b41edea0fddd89d215de31cbd517a2713b4ec7094b446ad44a81a71a5471",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2601_04748::limitation_synthetic",
+      "label": "limitation_synthetic",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Limitation 1: Synthetic skill libraries",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 2 (Selection-only evaluation):** The experiments measure selection accuracy (whether the correct skill is identified) but not end-to-end task performance (whether the downstream task is completed correctly). The propagation of selection errors to final task outcomes remains unquantified.",
+      "content_hash": "2e7830f08bd285a3c1a1ac04cec70e3c429c5f7a8d75c3b45de888fdb558a609",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2601_04748::limitation_selection_only",
+      "label": "limitation_selection_only",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Limitation 2: Selection accuracy not end-to-end performance",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 3 (Limited model coverage):** Results are based on two OpenAI models (GPT-4o-mini and GPT-4o). Generalization to other architectures (open-source models, different scales, multimodal models) requires further study. Whether capacity thresholds are universal or architecture-specific is unknown.",
+      "content_hash": "76cf7151db89f0d14bcf7dc77889785b1cd4211a0ea5d53bbc87a3e8a810591f",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_04748::limitation_model_coverage",
+      "label": "limitation_model_coverage",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Limitation 3: Only two OpenAI models tested",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation 4 (Hierarchy design):** The hierarchical approaches tested were relatively simple (naive domain and confusability-aware two-stage routing). More sophisticated routing mechanisms (learned, dynamic, or adaptive routing) may yield different results. Designing the optimal hierarchy structure is not addressed.",
+      "content_hash": "ed76260ff9143b92bf39ecc2144dd35a529aeb1f2882f8cc58a360f6a0cc07e1",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2601_04748::limitation_hierarchy_design",
+      "label": "limitation_hierarchy_design",
+      "metadata": {
+        "source": "artifacts/2601.04748.pdf, Section 5.6"
+      },
+      "module": "s6_guidelines",
+      "parameters": [],
+      "title": "Limitation 4: Simple hierarchical routing only",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_accuracy)",
+      "content_hash": "9e4e2bda351b06f332d39df69c2026bf47c17faa9514a9691d0cf9711f0d3199",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_8637f2c0",
+      "label": "__implication_result_8637f2c0",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_08b3d43d4912fbde",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_token_reduction)",
+      "content_hash": "44534b1b4a1072342545dab853b0a6c5badc30c5ea0b490a55dea40077622435",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_332e5c21",
+      "label": "__implication_result_332e5c21",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_token_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef7cb0e211cb0de4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_latency_reduction)",
+      "content_hash": "c212fe13023742818ed3b8a947b7d256aad692a23f0ef61cba061b6ddb0d4fdc",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_7907456a",
+      "label": "__implication_result_7907456a",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::compilable_architectures,github:2601_04748::compilation_latency_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fa6cd061c6361626",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::compilation_accuracy,github:2601_04748::hotpotqa_improvement)",
+      "content_hash": "6ce286552865d55e297f182cd418ec0b192fed5e1d3a443eb89bff0db620f746",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_485485e1",
+      "label": "__implication_result_485485e1",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::compilation_accuracy,github:2601_04748::hotpotqa_improvement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3f3927133f5eb8b8",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::compilation_accuracy,github:2601_04748::compilation_token_reduction,github:2601_04748::compilation_latency_reduction)",
+      "content_hash": "a5010b0559e901bb90458e5a110d4bd553109f844234635afb2066a1b3a55a84",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_c38a2059",
+      "label": "__conjunction_result_c38a2059",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::compilation_accuracy,github:2601_04748::compilation_token_reduction,github:2601_04748::compilation_latency_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6344da79d277ac3d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_c38a2059,github:2601_04748::compilation_view)",
+      "content_hash": "434ba3fd33047787476ee269c0ad43eacf9efaa5aeae064da52adc8632f8fe9f",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_d3c380a2",
+      "label": "__implication_result_d3c380a2",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_c38a2059,github:2601_04748::compilation_view)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6344da79d277ac3d",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h1_fit_quality,github:2601_04748::h1_gamma_super_linear,github:2601_04748::h1_kappa_values)",
+      "content_hash": "996da101d9f83d7df813e2e25305517a2eee65227eff7c0a734160c94307bfe6",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_389387ec",
+      "label": "__conjunction_result_389387ec",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h1_fit_quality,github:2601_04748::h1_gamma_super_linear,github:2601_04748::h1_kappa_values)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fddfd6811cc6c06b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_389387ec,github:2601_04748::h1_phase_transition)",
+      "content_hash": "6aa16388fafdba1597709e08c63f5e55c994593b52151aebe6d78f849fc73eff",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_d9d84629",
+      "label": "__implication_result_d9d84629",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_389387ec,github:2601_04748::h1_phase_transition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fddfd6811cc6c06b",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h2_competitor_results,github:2601_04748::h2_gpt4o_advantage)",
+      "content_hash": "dcb08cc53a265855bfa4ef5b16476cae0b3489971949eca02ce622de802ed867",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_08f2d7ec",
+      "label": "__conjunction_result_08f2d7ec",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h2_competitor_results,github:2601_04748::h2_gpt4o_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_674a5c398821c027",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_08f2d7ec,github:2601_04748::h2_confusability)",
+      "content_hash": "0ba2301738868cee2c4c30cdffd54dd78962252b041253f8dff6d914c4a4a2f8",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_a21202ca",
+      "label": "__implication_result_a21202ca",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_08f2d7ec,github:2601_04748::h2_confusability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_674a5c398821c027",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::h3_null_result,github:2601_04748::h3_instructional_saturation)",
+      "content_hash": "74b56bc1f752e83b7b510935781e7ae32c561df8c6341456936a15f5874bdfb3",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_4194853f",
+      "label": "__implication_result_4194853f",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::h3_null_result,github:2601_04748::h3_instructional_saturation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5523f0fd7496aafa",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h4_hierarchy_results,github:2601_04748::h4_gpt4o_smaller_benefit,github:2601_04748::h1_kappa_values)",
+      "content_hash": "4236b6b5b05eba4998b52a9e5ab2bbba347463475eda2881b6c1f10f2ea6de87",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_d8b66e4e",
+      "label": "__conjunction_result_d8b66e4e",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h4_hierarchy_results,github:2601_04748::h4_gpt4o_smaller_benefit,github:2601_04748::h1_kappa_values)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_67ef0a81f0757a02",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_d8b66e4e,github:2601_04748::h4_hierarchy_mitigation)",
+      "content_hash": "85e683b51c4fb8b455238e6e11cc176e5d7297ef7c446c3e30b0ffaccc4c79c4",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_2281ed96",
+      "label": "__implication_result_2281ed96",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_d8b66e4e,github:2601_04748::h4_hierarchy_mitigation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_67ef0a81f0757a02",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h2_confusability,github:2601_04748::h2_competitor_results)",
+      "content_hash": "e660458151ded4f7e5f37ecf619b47f514dd1fc659c6825b4088c859153158b9",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_ea2aef85",
+      "label": "__conjunction_result_ea2aef85",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h2_confusability,github:2601_04748::h2_competitor_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2491cd5b179bbaba",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_ea2aef85,github:2601_04748::h1_phase_transition)",
+      "content_hash": "5d9c1c1bb7d83199077449db7908cb97a9d70934f62c712a4a0591f002998bb4",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_d4bb3f4a",
+      "label": "__implication_result_d4bb3f4a",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_ea2aef85,github:2601_04748::h1_phase_transition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2491cd5b179bbaba",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h1_kappa_values,github:2601_04748::h1_phase_transition)",
+      "content_hash": "856694bab64cb1fd1cc1e923e4ffd9954d71fa035baaa9fbb08ff9e73887dfe0",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_6ec14568",
+      "label": "__conjunction_result_6ec14568",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h1_kappa_values,github:2601_04748::h1_phase_transition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c3c6dae8f2ff8602",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_6ec14568,github:2601_04748::guideline_monitor_size)",
+      "content_hash": "c7fe93eca42a378642703dc61261d5f30f59e602f49db67a4b345f296326de10",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_8535a900",
+      "label": "__implication_result_8535a900",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_6ec14568,github:2601_04748::guideline_monitor_size)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3c6dae8f2ff8602",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h2_competitor_results,github:2601_04748::h2_confusability)",
+      "content_hash": "8fa3ebe3f3eb1429577561bc665e20e1612a2084cd7bf72e7f7011ac74fbd384",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_bf964329",
+      "label": "__conjunction_result_bf964329",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h2_competitor_results,github:2601_04748::h2_confusability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fdfe7739cf072178",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_bf964329,github:2601_04748::guideline_minimize_confusability)",
+      "content_hash": "ef03588784327b552fab580c51c8705737a75d3f40cf27beae2d5aa37e797c3e",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_93041a42",
+      "label": "__implication_result_93041a42",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_bf964329,github:2601_04748::guideline_minimize_confusability)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fdfe7739cf072178",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h4_hierarchy_results,github:2601_04748::h4_hierarchy_mitigation)",
+      "content_hash": "0100f1bba9e1cb116c354c7df33f37bfe03a90aaad22d6661e1c2acc833f12d3",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_a93b61bb",
+      "label": "__conjunction_result_a93b61bb",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h4_hierarchy_results,github:2601_04748::h4_hierarchy_mitigation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dfaf636593cfb41f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_a93b61bb,github:2601_04748::guideline_adopt_hierarchy)",
+      "content_hash": "9b33e540704c2922bb7676fc1d14007edf92611ecbb233773f375c25c88b2484",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_2dbed459",
+      "label": "__implication_result_2dbed459",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_a93b61bb,github:2601_04748::guideline_adopt_hierarchy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dfaf636593cfb41f",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_04748::h3_null_result,github:2601_04748::h2_competitor_results)",
+      "content_hash": "bf7ecb7684254d9794894742c590f12631b8a61e9963d89cbfe36e5d963d4763",
+      "exported": false,
+      "id": "github:2601_04748::__conjunction_result_00c11940",
+      "label": "__conjunction_result_00c11940",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_04748::h3_null_result,github:2601_04748::h2_competitor_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9cc0fdc466c5b3d8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_04748::__conjunction_result_00c11940,github:2601_04748::guideline_invest_descriptors)",
+      "content_hash": "d8383320dbbee3d0788e0d3d2f95ce4fc6a80d0b8dd5b542aacfade773be6ef7",
+      "exported": false,
+      "id": "github:2601_04748::__implication_result_8cc02180",
+      "label": "__implication_result_8cc02180",
+      "metadata": {
+        "canonical_name": "implies(github:2601_04748::__conjunction_result_00c11940,github:2601_04748::guideline_invest_descriptors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9cc0fdc466c5b3d8",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_compilation",
+    "s4_cognitive_theory",
+    "s5_experiments",
+    "s6_guidelines"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Multi-Agent Systems vs Single-Agent with Skills",
+    "s2_compilation": "Section 2-3: MAS-to-SAS Compilation — Formalization and Efficiency",
+    "s4_cognitive_theory": "Section 4: Cognitive Foundations and Scaling Hypotheses",
+    "s5_experiments": "Section 5: Scaling Experiments — H1 through H4",
+    "s6_guidelines": "Section 5.6 & 6: Practical Guidelines and Conclusions"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2601_04748",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2601_04748::exp_setup_compilation"
+      ],
+      "conclusion": "github:2601_04748::compilation_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__implication_result_8637f2c0",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::compilable_architectures",
+              "github:2601_04748::compilation_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given compilability conditions C1-C3 (@compilability_conditions) are satisfied for all three benchmark architectures (@compilable_architectures) and the experimental design uses the same GPT-4o-mini backbone for MAS and SAS (@exp_setup_compilation), the SAS faithfully encodes agent behavior as skills and manages sequential skill invocation within a single context window. The shared context enables coherent state management across skill invocations, preserving the reasoning structure without explicit inter-agent communication [@Li2026]."
+      },
+      "premises": [
+        "github:2601_04748::compilable_architectures"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_08b3d43d4912fbde",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::exp_setup_compilation",
+        "github:2601_04748::sas_cost_def",
+        "github:2601_04748::mas_cost_def"
+      ],
+      "conclusion": "github:2601_04748::compilation_token_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__implication_result_332e5c21",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::compilable_architectures",
+              "github:2601_04748::compilation_token_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::compilable_architectures"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Token reduction follows directly from the cost structure difference between MAS and SAS (@mas_cost_def, @sas_cost_def). In MAS, each agent call re-encodes the full task description, intermediate results, and instructions — a cost that scales with the number of agents. The SAS shares a single context window, paying encoding cost only once. The HotpotQA reduction is largest (58.4%) because its 4-agent pipeline requires passing retrieved passages between agents multiple times (@exp_setup_compilation). These compiled architectures satisfy C1 (serializable communication), enabling the single-context approach."
+        }
+      ],
+      "strategy_id": "lcs_ef7cb0e211cb0de4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::exp_setup_compilation",
+        "github:2601_04748::sas_cost_def",
+        "github:2601_04748::mas_cost_def"
+      ],
+      "conclusion": "github:2601_04748::compilation_latency_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__implication_result_7907456a",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::compilable_architectures",
+              "github:2601_04748::compilation_latency_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::compilable_architectures"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Latency reduction results from reducing sequential API calls from 3-4 (MAS) to 1 (SAS), eliminating inter-agent communication overhead and network round-trip delays (@mas_cost_def, @sas_cost_def). The smaller improvement for GSM8K (28.7%) despite similar token savings suggests mathematical computation time — not communication — dominates latency for that task (@exp_setup_compilation). The compiled architectures (@compilable_architectures) satisfy conditions enabling this serial consolidation."
+        }
+      ],
+      "strategy_id": "lcs_fa6cd061c6361626",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::exp_setup_compilation"
+      ],
+      "conclusion": "github:2601_04748::hotpotqa_improvement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__implication_result_485485e1",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::compilation_accuracy",
+              "github:2601_04748::hotpotqa_improvement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7
+      },
+      "premises": [
+        "github:2601_04748::compilation_accuracy"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The HotpotQA improvement is explained by the information integration advantage of SAS: the unified context window allows the model to cross-reference retrieved facts and reasoning steps without serialized hand-off, avoiding information loss that occurs when passing passages through distinct agent boundaries (@exp_setup_compilation). The +4.0% improvement is consistent with the claim that sequential MAS architectures may lose information at agent boundaries [@Li2026]."
+        }
+      ],
+      "strategy_id": "lcs_3f3927133f5eb8b8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::compilation_view",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_c38a2059",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::compilation_accuracy",
+              "github:2601_04748::compilation_token_reduction",
+              "github:2601_04748::compilation_latency_reduction"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_d3c380a2",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_c38a2059",
+              "github:2601_04748::compilation_view"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85
+      },
+      "premises": [
+        "github:2601_04748::compilation_accuracy",
+        "github:2601_04748::compilation_token_reduction",
+        "github:2601_04748::compilation_latency_reduction"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The compilation view (@compilation_view) is supported by empirical evidence that accuracy is preserved within ±4% (@compilation_accuracy), tokens are reduced 53.7% (@compilation_token_reduction), and latency is reduced 49.5% (@compilation_latency_reduction). Together these demonstrate that MAS-to-SAS compilation is both faithful (behavioral equivalence) and cost-efficient (lower C_SAS than C_MAS for the tested benchmarks) [@Li2026]."
+        }
+      ],
+      "strategy_id": "lcs_6344da79d277ac3d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::exp_setup_scaling"
+      ],
+      "conclusion": "github:2601_04748::h1_phase_transition",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_389387ec",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h1_fit_quality",
+              "github:2601_04748::h1_gamma_super_linear",
+              "github:2601_04748::h1_kappa_values"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_d9d84629",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_389387ec",
+              "github:2601_04748::h1_phase_transition"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::h1_fit_quality",
+        "github:2601_04748::h1_gamma_super_linear",
+        "github:2601_04748::h1_kappa_values"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "H1 is confirmed by excellent model fit ($R^2 > 0.97$, @h1_fit_quality) and the measured super-linear decay exponent ($\\gamma > 1$, @h1_gamma_super_linear). The identified capacity threshold $\\kappa \\approx 83–92$ (@h1_kappa_values) demarcates the stable-accuracy regime from the collapse regime. Under the controlled experimental setup (@exp_setup_scaling), the phase transition pattern is clearly observed across both GPT-4o-mini and GPT-4o, consistent with the theoretical prediction derived from Hick's Law and Cognitive Load Theory [@Li2026]."
+        }
+      ],
+      "strategy_id": "lcs_fddfd6811cc6c06b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::h2_competitor_experiment",
+        "github:2601_04748::exp_setup_scaling"
+      ],
+      "conclusion": "github:2601_04748::h2_confusability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_08f2d7ec",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h2_competitor_results",
+              "github:2601_04748::h2_gpt4o_advantage"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_a21202ca",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_08f2d7ec",
+              "github:2601_04748::h2_confusability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92
+      },
+      "premises": [
+        "github:2601_04748::h2_competitor_results",
+        "github:2601_04748::h2_gpt4o_advantage"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "H2 is confirmed by the competitor experiment (@h2_competitor_experiment): at identical total library size $|S| = 20$, replacing unique skills with base-competitor pairs causes 18–30% accuracy drop (@h2_competitor_results). The no-competitor condition maintains 100% accuracy at $|S| = 20$ where mixed-similarity libraries (H1) show degradation, directly demonstrating that semantic structure — not library size alone — determines selection difficulty. The GPT-4o advantage under high confusability (@h2_gpt4o_advantage) shows partial mitigation but not elimination, consistent with F3 interference being a fundamental challenge [@Shepard1987]."
+        }
+      ],
+      "strategy_id": "lcs_674a5c398821c027",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::exp_setup_scaling"
+      ],
+      "conclusion": "github:2601_04748::h3_instructional_saturation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__implication_result_4194853f",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::h3_null_result",
+              "github:2601_04748::h3_instructional_saturation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3
+      },
+      "premises": [
+        "github:2601_04748::h3_null_result"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "H3 is NOT confirmed: the null result (@h3_null_result) shows no significant difference between policy complexity levels under controlled conditions (@exp_setup_scaling). The overlapping curves suggest that transformer attention mechanisms efficiently filter execution policy tokens during selection, contrary to the cognitive load prediction. This provides weak or no support for H3 — the hypothesis that policy verbosity reduces $\\kappa$ is not supported by these experiments, though the explanation (@h3_transformer_explanation) remains speculative."
+        }
+      ],
+      "strategy_id": "lcs_5523f0fd7496aafa",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_04748::h4_hierarchy_experiment"
+      ],
+      "conclusion": "github:2601_04748::h4_hierarchy_mitigation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_d8b66e4e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h4_hierarchy_results",
+              "github:2601_04748::h4_gpt4o_smaller_benefit",
+              "github:2601_04748::h1_kappa_values"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_2281ed96",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_d8b66e4e",
+              "github:2601_04748::h4_hierarchy_mitigation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::h4_hierarchy_results",
+        "github:2601_04748::h4_gpt4o_smaller_benefit",
+        "github:2601_04748::h1_kappa_values"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "H4 is confirmed: when library size exceeds the capacity threshold identified in H1 ($|S| \\geq 60 \\approx \\kappa$, @h1_kappa_values), hierarchical routing recovers substantial accuracy (+37–40% for GPT-4o-mini, @h4_hierarchy_results). The two-stage hierarchical design ensures Stage 1 involves ~10–40 distinct clusters (well below $\\kappa$) and Stage 2 involves only 3 skills per cluster. This operationalizes the chunking principle (F4): by keeping each decision point below capacity, hierarchical routing restores reliable selection at scales otherwise intractable for flat selection (@h4_hierarchy_experiment). The smaller benefit for GPT-4o (@h4_gpt4o_smaller_benefit) is consistent with model capability providing partial compensation."
+        }
+      ],
+      "strategy_id": "lcs_67ef0a81f0757a02",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::h1_phase_transition",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_ea2aef85",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h2_confusability",
+              "github:2601_04748::h2_competitor_results"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_d4bb3f4a",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_ea2aef85",
+              "github:2601_04748::h1_phase_transition"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85
+      },
+      "premises": [
+        "github:2601_04748::h2_confusability",
+        "github:2601_04748::h2_competitor_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "The phase transition observed in H1 (@h1_phase_transition) is mechanistically explained by H2 (@h2_confusability): as libraries grow with mixed-similarity sampling, the expected number of semantically similar skill pairs increases, causing the interference term $\\epsilon \\cdot I(S)$ to grow. The competitor experiment results (@h2_competitor_results) show that the 'no-competitor' condition maintains 100% accuracy at library sizes where mixed-similarity libraries show degradation — directly demonstrating that confusability accumulation drives the H1 capacity collapse."
+        }
+      ],
+      "strategy_id": "lcs_2491cd5b179bbaba",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::guideline_monitor_size",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_6ec14568",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h1_kappa_values",
+              "github:2601_04748::h1_phase_transition"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_8535a900",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_6ec14568",
+              "github:2601_04748::guideline_monitor_size"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::h1_kappa_values",
+        "github:2601_04748::h1_phase_transition"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Guideline 1 follows directly from the identified capacity threshold $\\kappa \\approx 83–92$ (@h1_kappa_values) and the sharp phase transition in accuracy (@h1_phase_transition). Since accuracy collapses non-linearly beyond $\\kappa$, monitoring library size against this threshold is a practical proxy for predicting degradation."
+        }
+      ],
+      "strategy_id": "lcs_c3c6dae8f2ff8602",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::guideline_minimize_confusability",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_bf964329",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h2_competitor_results",
+              "github:2601_04748::h2_confusability"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_93041a42",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_bf964329",
+              "github:2601_04748::guideline_minimize_confusability"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::h2_competitor_results",
+        "github:2601_04748::h2_confusability"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Guideline 2 follows from H2 experimental results (@h2_competitor_results) showing that semantic competitors cause 7–63% accuracy drops at fixed library size. Since confusability is an independent failure mode from library size (@h2_confusability), minimizing overlap provides accuracy benefits even when $|S|$ cannot be reduced."
+        }
+      ],
+      "strategy_id": "lcs_fdfe7739cf072178",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::guideline_adopt_hierarchy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_a93b61bb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h4_hierarchy_results",
+              "github:2601_04748::h4_hierarchy_mitigation"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_2dbed459",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_a93b61bb",
+              "github:2601_04748::guideline_adopt_hierarchy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9
+      },
+      "premises": [
+        "github:2601_04748::h4_hierarchy_results",
+        "github:2601_04748::h4_hierarchy_mitigation"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Guideline 3 follows from H4 experimental results (@h4_hierarchy_results) showing +37–40% accuracy improvement from hierarchical routing at $|S| \\geq 60$. The mechanism — keeping each decision point below $\\kappa$ (@h4_hierarchy_mitigation) — directly informs the practical recommendation to keep each routing stage below $\\kappa$ options."
+        }
+      ],
+      "strategy_id": "lcs_dfaf636593cfb41f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_04748::guideline_invest_descriptors",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_04748::__conjunction_result_00c11940",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_04748::h3_null_result",
+              "github:2601_04748::h2_competitor_results"
+            ]
+          },
+          {
+            "conclusion": "github:2601_04748::__implication_result_8cc02180",
+            "operator": "implication",
+            "variables": [
+              "github:2601_04748::__conjunction_result_00c11940",
+              "github:2601_04748::guideline_invest_descriptors"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8
+      },
+      "premises": [
+        "github:2601_04748::h3_null_result",
+        "github:2601_04748::h2_competitor_results"
+      ],
+      "scope": "local",
+      "steps": [
+        {
+          "reasoning": "Guideline 4 follows from the H3 null result (@h3_null_result): policy complexity does not significantly affect selection accuracy, while H2 experiments show that descriptor quality (confusability) strongly affects accuracy (@h2_competitor_results). This asymmetry implies that investment in distinctive descriptors has higher return than investment in policy quality."
+        }
+      ],
+      "strategy_id": "lcs_9cc0fdc466c5b3d8",
+      "type": "support"
+    }
+  ]
+}
