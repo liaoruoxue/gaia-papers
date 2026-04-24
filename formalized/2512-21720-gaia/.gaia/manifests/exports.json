@@ -1,0 +1,169 @@
+{
+  "exports": [
+    {
+      "content": "Downstream QA accuracy increases strongly with compressor size. On LongHealth, 7-8B compressors are up to 3.1x more accurate than 1-1.5B compressors, and surpass the GPT-4o-only baseline (no compression) by 4 percentage points. On FinanceBench, 7-8B compressors are up to 2.6x more accurate than 1-1.5B compressors and recover 97% of the GPT-4o-only baseline accuracy. The same scaling behavior holds for Gemma-3 models.",
+      "content_hash": "b368ee473d944b5a706b4aa9508097c04031076db7733b6c65b70eb5c8433e2a",
+      "label": "accuracy_scales_with_compressor",
+      "qid": "github:2512_21720::accuracy_scales_with_compressor",
+      "type": "claim"
+    },
+    {
+      "content": "Bit efficiency (bits of mutual information per output token, R = I(X; Z | Q) / L) increases with compressor model size. This is doubly driven: larger compressors carry more mutual information AND generate fewer tokens, amplifying bit efficiency gains. A 7B Qwen-2.5 compressor conveys 5.5x more bits per token than the 1.5B counterpart.",
+      "content_hash": "c45ab36ed5add8dd80bd3bc58d92cab996594c61e56651b9af39a2809d45ba40",
+      "label": "bit_efficiency_scales_with_compressor",
+      "qid": "github:2512_21720::bit_efficiency_scales_with_compressor",
+      "type": "claim"
+    },
+    {
+      "content": "Logistic regression predicting per-sample binary correctness on LongHealth and FinanceBench reveals that compressor model family is the single most important factor in downstream accuracy, with Qwen-2.5 compressors outperforming Llama. Scaling the compressor size matters substantially more than scaling the predictor size.",
+      "content_hash": "eca79c5f34bcce6c12c997add73f488622a3db8ebd87dbce9cae1f6953f7527d",
+      "label": "compressor_family_most_important",
+      "qid": "github:2512_21720::compressor_family_most_important",
+      "type": "claim"
+    },
+    {
+      "content": "Scaling the compressor LM yields substantially more performance gain per unit of compute than scaling the predictor LM. A 7B Qwen-2.5 compressor is 1.6x more accurate, 4.6x more concise, and conveys 5.5x more bits of mutual information per token than its 1.5B counterpart.",
+      "content_hash": "33c1f071fbe89b27dbdbfcee0ae93fa383caf1009cf42b75e77e3ba8c2f1bc22",
+      "label": "compressor_scaling_dominates",
+      "qid": "github:2512_21720::compressor_scaling_dominates",
+      "type": "claim"
+    },
+    {
+      "content": "In a Deep Research pipeline, local compressors as small as 3B parameters can recover 99% of frontier-LM accuracy (GPT-4o baseline) while reducing API costs to 26% of the uncompressed baseline (a 74% cost reduction).",
+      "content_hash": "ba27eaf269728b0a4e3d0aa56ab0f2620ed43fe52eee36b6c61b73fc370872e3",
+      "label": "deep_research_cost_reduction",
+      "qid": "github:2512_21720::deep_research_cost_reduction",
+      "type": "claim"
+    },
+    {
+      "content": "FLOPs-per-generation scale sublinearly with compressor model size because larger compressors generate fewer tokens. For Qwen-2.5, scaling from 1.5B to 7B parameters increases FLOPs-per-generation by only 1.3% on LongHealth. Different model families exhibit distinct scaling behaviors in FLOPs-per-generation.",
+      "content_hash": "fa3bd536daa91524adb4263d8d4f647be4e547c4888bcfdf7fb02b58253c92f8",
+      "label": "flops_sublinear_with_compressor",
+      "qid": "github:2512_21720::flops_sublinear_with_compressor",
+      "type": "claim"
+    },
+    {
+      "content": "Larger compressor models are more token-efficient: 7-12B compressors produce outputs up to 4.6x shorter than their 1-1.5B counterparts within the same model family, without sacrificing accuracy. Qwen-2.5 models are more concise than Llama and Gemma-3 models, indicating that model families differ substantially in their compression communication profiles.",
+      "content_hash": "1b33d0998ec067729a7556571d516a20d487355f91c165c6b7b99e4e8d8ffd71",
+      "label": "larger_compressors_more_concise",
+      "qid": "github:2512_21720::larger_compressors_more_concise",
+      "type": "claim"
+    },
+    {
+      "content": "The Monte Carlo mutual information estimator for LM compressions is defined as: I_hat(X; Z) = (1/NM) sum_{i=1}^{N} sum_{j=1}^{M} [log p(z_ij|x_i) - log((1/N) sum_{l=1}^{N} p(z_ij|x_l))], where z_ij ~ p(z|x_i) for i=1..N, j=1..M and x_l ~ p(x) for l=1..N. N is the number of contexts sampled from the data distribution; M is the number of compressions generated per context. This estimator bypasses the intractable marginal p(z).",
+      "content_hash": "ab6b421a9635806705b9580f7618c6b98bc4bbb502da2ac62986b3a56663e87c",
+      "label": "mc_estimator_def",
+      "qid": "github:2512_21720::mc_estimator_def",
+      "type": "setting"
+    },
+    {
+      "content": "The Monte Carlo mutual information estimator I_hat(X; Z) is upper bounded by log(N), where N is the number of contexts sampled. The bound is tight when p(z_ij|x_i) >> p(z_ij|x_l) for all l != i (i.e., compressions are highly specific to their source contexts).",
+      "content_hash": "7da6d247ffff15c4fac16eeffd4ffde35695ff375c6245974d95c220788659b4",
+      "label": "mc_estimator_upper_bound",
+      "qid": "github:2512_21720::mc_estimator_upper_bound",
+      "type": "claim"
+    },
+    {
+      "content": "Mutual information I(X; Z | Q) between the raw context X and its compression Z, conditioned on query Q, is a task-agnostic proxy for compression quality — analogous to how perplexity serves as a task-agnostic proxy for downstream LM performance.",
+      "content_hash": "81397baa88454e54556d3aaa80cb764d0cd64aecee8e1f27a79cc72a8f8ce7ef",
+      "label": "mi_as_proxy_proposal",
+      "qid": "github:2512_21720::mi_as_proxy_proposal",
+      "type": "claim"
+    },
+    {
+      "content": "Rate-distortion curves fit with exponential decay functions D(R) = C * exp(-b*R) + D_0 show strong correlation between bit efficiency R and distortion D (1 - accuracy) across both compressor families (Qwen-2.5 and Llama) and all predictor sizes on LongHealth. The fitted curves confirm that scaling predictors beyond 70B yields only marginal distortion reduction.",
+      "content_hash": "ec462bd6283907c1ee8a3b7fe430698f8b7ca5ea6846d8328d60e72f6a4611ee",
+      "label": "mi_correlates_with_accuracy",
+      "qid": "github:2512_21720::mi_correlates_with_accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Mutual information estimated from Llama compressors on FineWeb is strongly negatively correlated with predictor perplexity: Pearson r = -0.84, R-squared = 0.71. Higher MI in the compression corresponds to lower predictor perplexity on the held-out text.",
+      "content_hash": "19953a88b4aa3274fd33c7140d68010de0b97f6f5cbf4137695859112372fcd9",
+      "label": "mi_correlates_with_perplexity",
+      "qid": "github:2512_21720::mi_correlates_with_perplexity",
+      "type": "claim"
+    },
+    {
+      "content": "The Monte Carlo MI estimator I_hat(X; Z) is practical for LM systems because it requires only log probabilities p(z|x) from an inference server — no access to the full vocabulary distribution or training of an auxiliary model is needed. This allows use of accelerated inference engines such as SGLang [@Zheng2024].",
+      "content_hash": "90ece7ee1c3648a701ad51ccab8fa7305749d43c24bc0d9f9c709b9a2d6b787e",
+      "label": "mi_estimator_practical",
+      "qid": "github:2512_21720::mi_estimator_practical",
+      "type": "claim"
+    },
+    {
+      "content": "Estimated conditional mutual information I_hat(X; Z | Q) increases with compressor model size across all evaluated model families (Llama-3, Qwen-2.5, Gemma-3) and datasets. On LongHealth, Qwen-2.5 and Gemma-3 compressions saturate in mutual information at the largest model sizes, while Llama compressors are far from the theoretical maximum log(N). On FinanceBench, MI saturation occurs already at the 3B scale.",
+      "content_hash": "31b6dd13de260f212d46b2c3f5afe6f55425c310539d2f97fc9794a6715eee74",
+      "label": "mi_scales_with_compressor",
+      "qid": "github:2512_21720::mi_scales_with_compressor",
+      "type": "claim"
+    },
+    {
+      "content": "Further rate-distortion analysis across Qwen-2.5 and Llama compressors reveals that distortion is primarily determined by compressor model family and size, not by whether the predictor is from the same model family as the compressor. Predictors do not perform better when paired with compressors of the same family.",
+      "content_hash": "3e549657fd25e1539a32bc2e871e9b69f79d98e32555897ec0a717585707cf23",
+      "label": "predictor_family_independence",
+      "qid": "github:2512_21720::predictor_family_independence",
+      "type": "claim"
+    },
+    {
+      "content": "Scaling the predictor LM provides only marginal accuracy improvements once a baseline predictor capacity (approximately 8B-70B parameters) is reached. The accuracy gain from increasing the predictor from 70B to 405B is within 12% on LongHealth and within 1% on FinanceBench.",
+      "content_hash": "8fbe69878074aff3c5228488f57bef2e731ee7d6c716073ccb8063654fa62fc2",
+      "label": "predictor_scaling_marginal",
+      "qid": "github:2512_21720::predictor_scaling_marginal",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: 'Front-load' compute into local compressors to reduce remote costs. Scaling compressors is more effective than scaling predictors. By running larger compressors on-device (locally), practitioners can reduce predictor serving costs in the cloud.",
+      "content_hash": "4d1d0c8ed220d95e43843035cda48b5bb223f31196d9cb29acd0fc0fd3ab9acb",
+      "label": "principle_frontload_compute",
+      "qid": "github:2512_21720::principle_frontload_compute",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Optimize for information density. Mutual information between an input context and an agent's output is a task-agnostic indicator of compression quality and is tightly linked to downstream performance and predictor perplexity.",
+      "content_hash": "8a8d671a0ddaddf9d1b5e60c9a7a67645fedbab809a28c1f15978c2e978ba03c",
+      "label": "principle_information_density",
+      "qid": "github:2512_21720::principle_information_density",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Expect model family to differ in scaling trends. The choice of compressor and predictor model family yields offsets in rate-distortion curves and scaling effects. Qwen-2.5 compressors scale more compute-efficiently than Llama and Gemma-3; Qwen-2.5 predictors yield higher accuracies than Llama predictors.",
+      "content_hash": "87a1f5aef95dd6491584c7eaaca27aab51aa6b17105620f89e27b2906e338fde",
+      "label": "principle_model_family_matters",
+      "qid": "github:2512_21720::principle_model_family_matters",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Compressors can be scaled at a sublinear computational cost. Because larger compressor models are more information-efficient — they omit fewer tokens while retaining higher information density — FLOPs-per-generation scale sublinearly as a function of compressor model size.",
+      "content_hash": "fe13a5e1c636798b1356654bc8e7b42e69139b81ae6f4f984534e2a4971eaad1",
+      "label": "principle_sublinear_scaling",
+      "qid": "github:2512_21720::principle_sublinear_scaling",
+      "type": "claim"
+    },
+    {
+      "content": "The mutual information scaling trends produced by the Monte Carlo estimator remain consistent across different choices of proxy model (Appendix E.1.4) and also when no proxy model is used (evaluating log probabilities under the compressor itself, as shown for Qwen-3 in Appendix E.1.5).",
+      "content_hash": "b0bd8bec4ffbdd823197f457ac0185fdc5c462e8ea37ce7f99eba2894c7dbf9d",
+      "label": "proxy_consistency",
+      "qid": "github:2512_21720::proxy_consistency",
+      "type": "claim"
+    },
+    {
+      "content": "A Qwen-2.5-14B compressor paired with a GPT-4o predictor achieves a RACE score 2.3% higher than the uncompressed baseline (providing raw web search data to GPT-4o), at only 28.1% of the API cost of the uncompressed baseline — a cost reduction of 71.9%.",
+      "content_hash": "22aa926c92394331a38bd5871fcc885f5ce8dbafba4cf6208e174ab85a6c06d7",
+      "label": "qwen14b_deep_research_result",
+      "qid": "github:2512_21720::qwen14b_deep_research_result",
+      "type": "claim"
+    },
+    {
+      "content": "Qwen-2.5 compressors as small as 3B parameters paired with GPT-4o predictors recover 99% of frontier-LM accuracy (GPT-4o uncompressed baseline) on DeepResearch Bench at 26% of the API cost (74% cost reduction).",
+      "content_hash": "e1a97f688c024d05488e3ba9e680a6c64f30608b5022862a6c40e61201c21b8c",
+      "label": "small_compressor_deep_research",
+      "qid": "github:2512_21720::small_compressor_deep_research",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:edbfd73d7dcbe1b7acd6d18c4868586252667aca594c6d7d92ecec9c91da0e3a",
+  "manifest_schema_version": 1,
+  "package": "2512-21720",
+  "version": "0.1.0"
+}

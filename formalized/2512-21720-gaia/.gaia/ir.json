@@ -1,0 +1,2279 @@
+{
+  "ir_hash": "sha256:edbfd73d7dcbe1b7acd6d18c4868586252667aca594c6d7d92ecec9c91da0e3a",
+  "knowledges": [
+    {
+      "content": "Agentic language model (LM) systems — such as Deep Research and Claude Code — power modern AI workflows. These systems commonly leverage multi-LM architectures to overcome context window limitations, coordinating multiple models to manage reasoning and memory.",
+      "content_hash": "f7c15f3f1553dfaacb58e47bdae15c0356ccd02781e763b5a3723dbdcfe56a33",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_21720::agentic_lm_systems",
+      "label": "agentic_lm_systems",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agentic LM systems background",
+      "type": "setting"
+    },
+    {
+      "content": "A recurring pattern in multi-LM agentic systems is the compressor-predictor architecture: a smaller 'compressor' LM distills a raw, long context X into a compact text summary Z, which a larger 'predictor' LM then consumes to produce a final answer Y. The compressor can run locally on-device; the predictor may run in the cloud.",
+      "content_hash": "3fe1909ca495d2238592ae9aa71d4f5a56ca775d2a34757b334ba81fb309a167",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_21720::compressor_predictor_pattern",
+      "label": "compressor_predictor_pattern",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Compressor-predictor architectural pattern",
+      "type": "setting"
+    },
+    {
+      "content": "Context rot refers to the empirical failure mode where LLM performance degrades as the number of input tokens increases beyond effective context capacity, causing models to miss or misweight relevant information in long contexts.",
+      "content_hash": "8cd86acdd752cf7fff274e10e2114763d813921a3fe2fe7349168af97a66eca3",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_21720::context_rot_def",
+      "label": "context_rot_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context rot definition",
+      "type": "setting"
+    },
+    {
+      "content": "In information theory, a noisy channel model describes a communication system where a sender encodes a source X into a transmitted signal Z, which a receiver decodes to recover Y. Channel capacity and mutual information I(X; Z) quantify how much information the channel preserves about the original source.",
+      "content_hash": "d45cc35ae09b7e7c3e65eed1dade45a104c88e80ab151ec3388fb96fb77ef10f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_21720::noisy_channel_framing",
+      "label": "noisy_channel_framing",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Noisy channel information-theoretic framing",
+      "type": "setting"
+    },
+    {
+      "content": "Should practitioners scale the compressor LM or the predictor LM to most improve downstream performance in a compressor-predictor agentic system?",
+      "content_hash": "68e2a33354b8b97b5492d7e7e2275a011c6584fd113bfd88dc555bde7f11351f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_21720::rq_compressor_vs_predictor",
+      "label": "rq_compressor_vs_predictor",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ1: Compressor vs predictor scaling",
+      "type": "question"
+    },
+    {
+      "content": "Can mutual information I(X; Z | Q) between the raw context X and its compression Z (conditioned on query Q) serve as a task-independent proxy for compression quality and downstream performance?",
+      "content_hash": "0cb0018c07b4ac7c25b2b7f96ac9b364e7e6ccedc4db71fb909c034963391d9b",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_21720::rq_mi_proxy",
+      "label": "rq_mi_proxy",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ2: Mutual information as task-agnostic proxy",
+      "type": "question"
+    },
+    {
+      "content": "Can small local compressor LMs (3B parameters) substitute for frontier-LM compressors in Deep Research pipelines while recovering nearly all of the accuracy at reduced API cost?",
+      "content_hash": "ee22c3eca08dd0ff8c2b86305e12a741b4e5aed0695b6f373039f24c6bc83695",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_21720::rq_deep_research",
+      "label": "rq_deep_research",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RQ3: Local compressors in Deep Research",
+      "type": "question"
+    },
+    {
+      "content": "The design of compressor-predictor agentic systems is currently largely ad hoc: there is no principled way to evaluate compressor quality independently of the downstream task, and attributing gains to the compressor versus predictor requires costly, task-specific pairwise sweeps.",
+      "content_hash": "c0a49f753850e435b0c63081aefbce9a7ea711c7f7ca5c5ae2fc26f9fb13c1de",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_21720::design_adhoc",
+      "label": "design_adhoc",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "The claim that agentic system design is largely ad hoc is a contextual framing supported by the absence of principled frameworks in the related work. Moderate-high confidence: characterizes field state, harder to verify precisely.",
+        "source_section": "Introduction"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Current agentic system design is ad hoc",
+      "type": "claim"
+    },
+    {
+      "content": "Mutual information I(X; Z | Q) between the raw context X and its compression Z, conditioned on query Q, is a task-agnostic proxy for compression quality — analogous to how perplexity serves as a task-agnostic proxy for downstream LM performance.",
+      "content_hash": "81397baa88454e54556d3aaa80cb764d0cd64aecee8e1f27a79cc72a8f8ce7ef",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2512_21720::mi_as_proxy_proposal",
+      "label": "mi_as_proxy_proposal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "He2025",
+              "Kaplan2020"
+            ],
+            "referenced_claims": [
+              "design_adhoc",
+              "mc_estimator_def",
+              "mi_correlates_with_accuracy",
+              "mi_correlates_with_perplexity",
+              "mi_definition",
+              "mi_estimator_clipping",
+              "mi_estimator_practical",
+              "noisy_channel_framing",
+              "proxy_consistency"
+            ]
+          }
+        },
+        "source_section": "Introduction, Abstract"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "MI as task-agnostic compression quality proxy",
+      "type": "claim"
+    },
+    {
+      "content": "Scaling the compressor LM yields substantially more performance gain per unit of compute than scaling the predictor LM. A 7B Qwen-2.5 compressor is 1.6x more accurate, 4.6x more concise, and conveys 5.5x more bits of mutual information per token than its 1.5B counterpart.",
+      "content_hash": "33c1f071fbe89b27dbdbfcee0ae93fa383caf1009cf42b75e77e3ba8c2f1bc22",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2512_21720::compressor_scaling_dominates",
+      "label": "compressor_scaling_dominates",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "accuracy_scales_with_compressor",
+              "flops_sublinear_with_compressor",
+              "local_compute_trade",
+              "predictor_scaling_marginal"
+            ]
+          }
+        },
+        "source_section": "Abstract, Section 3.1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Compressor scaling dominates predictor scaling",
+      "type": "claim"
+    },
+    {
+      "content": "In a Deep Research pipeline, local compressors as small as 3B parameters can recover 99% of frontier-LM accuracy (GPT-4o baseline) while reducing API costs to 26% of the uncompressed baseline (a 74% cost reduction).",
+      "content_hash": "ba27eaf269728b0a4e3d0aa56ab0f2620ed43fe52eee36b6c61b73fc370872e3",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2512_21720::deep_research_cost_reduction",
+      "label": "deep_research_cost_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "qwen14b_deep_research_result",
+              "small_compressor_deep_research"
+            ]
+          }
+        },
+        "source_section": "Abstract, Section 3.5"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Local compressors achieve near-frontier accuracy at 26% API cost",
+      "type": "claim"
+    },
+    {
+      "content": "Mutual information I(X; Z) between two random variables X and Z is defined via the KL divergence: I(X; Z) = D_KL(p(x,z) || p(x)p(z)) = E_{x,z~p(x,z)}[log p(z|x)/p(z)]. Larger I(X; Z) indicates that Z retains more information about X.",
+      "content_hash": "eae4a2dc27d94101b3a5a521d4cbdb3d867c9bab11a4c4bad1a68edb80968217",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_21720::mi_definition",
+      "label": "mi_definition",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Mutual information definition",
+      "type": "setting"
+    },
+    {
+      "content": "The Monte Carlo mutual information estimator for LM compressions is defined as: I_hat(X; Z) = (1/NM) sum_{i=1}^{N} sum_{j=1}^{M} [log p(z_ij|x_i) - log((1/N) sum_{l=1}^{N} p(z_ij|x_l))], where z_ij ~ p(z|x_i) for i=1..N, j=1..M and x_l ~ p(x) for l=1..N. N is the number of contexts sampled from the data distribution; M is the number of compressions generated per context. This estimator bypasses the intractable marginal p(z).",
+      "content_hash": "ab6b421a9635806705b9580f7618c6b98bc4bbb502da2ac62986b3a56663e87c",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2512_21720::mc_estimator_def",
+      "label": "mc_estimator_def",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Monte Carlo MI estimator definition",
+      "type": "setting"
+    },
+    {
+      "content": "Rate-distortion theory formalizes the trade-off between rate R (information conveyed per token, measured in bits of mutual information per output token) and distortion D (prediction error). Rate R = I(X; Z | Q) / L, where L is the number of output tokens. Distortion D = 1 - ACC(Z), where ACC(Z) is downstream task accuracy. The canonical Gaussian rate-distortion function is R(D) = (1/2) log(sigma^2(X)/D) for 0 <= D <= sigma^2.",
+      "content_hash": "96e9718747b19630bb712e9817e80071cb7f451f2114fd1d07b7d3c53b9f041d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_21720::rate_distortion_def",
+      "label": "rate_distortion_def",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Rate-distortion theory setup",
+      "type": "setting"
+    },
+    {
+      "content": "Bit efficiency (also called information rate) is defined as R = I(X; Z | Q) / L, where I(X; Z | Q) is the mutual information between context X and compression Z conditioned on query Q, and L is the number of output tokens in the compression Z. Bit efficiency measures how many bits of task-relevant information are conveyed per output token.",
+      "content_hash": "56dcdb68f757dc2325fe3d18c6fb2638d90aa7af447f842e138319f7126a1795",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_21720::bit_efficiency_def",
+      "label": "bit_efficiency_def",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Bit efficiency (information rate) definition",
+      "type": "setting"
+    },
+    {
+      "content": "Because LMs at 1-3B scale can assign high likelihoods to nonsensical token sequences (indicating miscalibration), the MI estimator uses a proxy model at the 7-8B scale from a different model family to evaluate log probabilities p(z|x). The proxy model is not the compressor itself — it serves only as a probability evaluator.",
+      "content_hash": "d5a03e528fa8f3e04d90ad9296fb6dcacc5e2aa70aaaf49e771755402576f0f1",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_21720::proxy_model_setting",
+      "label": "proxy_model_setting",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Proxy model for MI estimation",
+      "type": "setting"
+    },
+    {
+      "content": "FLOPs per token for a dense transformer LM is approximated as: C_dense ~ 2 * N_params + 2 * n_layer * n_ctx * d_attn, where N_params is the number of model parameters, n_ctx is the number of input context tokens, n_layer is the number of layers, and d_attn is the attention head dimension. FLOPs-per-generation is the product of FLOPs-per-token and the number of generated tokens.",
+      "content_hash": "593f1743135ec0cb446cc072c9bb6c7f1370ccca7add62d6cfe79b4711d80e93",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_21720::flops_per_generation_def",
+      "label": "flops_per_generation_def",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "FLOPs-per-generation compute cost definition",
+      "type": "setting"
+    },
+    {
+      "content": "Five datasets are used for empirical evaluation: (a) LongHealth — synthetic clinical reports with 20 patient histories, treated as QA [@Adams2024]; (b) FinanceBench — 150 10-K filings paired with QA tasks [@Islam2023]; (c) QASPER — 5,049 scientific paper QA pairs [@Dasigi2021]; (d) WildChat — large-scale LM conversation dataset [@Zhao2024]; (e) FineWeb — processed web pages from CommonCrawl [@Penedo2024]. Accuracy is measured by a GPT-4o-mini judge for LongHealth, FinanceBench, and QASPER; perplexity under Llama-3.1-8B is used for WildChat and FineWeb.",
+      "content_hash": "50aa32d5685758b7877d8bbf832151ba7c4c36712ce59bc6d2406d6f9d426712",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_21720::experimental_datasets",
+      "label": "experimental_datasets",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Adams2024",
+              "Dasigi2021",
+              "Islam2023",
+              "Penedo2024",
+              "Zhao2024"
+            ]
+          }
+        }
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Five evaluation datasets",
+      "type": "setting"
+    },
+    {
+      "content": "Compressor models are drawn from three open-source LM families: Llama-3 [@Grattafiori2024], Qwen-2.5 [@Qwen2025], and Gemma-3 [@GemmaTeam2025]. All are GPT-style (non-reasoning) autoregressive architectures. Additional preliminary experiments use Qwen-3 family reasoning and mixture-of-experts (MoE) models. Compressor sizes range from 0.5B to 14B parameters.",
+      "content_hash": "3018eeaae819d0ba23c47e984724a7c46b349f7563eed6a511c6a88966c37ec4",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_21720::compressor_model_families",
+      "label": "compressor_model_families",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "GemmaTeam2025",
+              "Grattafiori2024",
+              "Qwen2025"
+            ]
+          }
+        }
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Compressor model families and sizes",
+      "type": "setting"
+    },
+    {
+      "content": "Predictor models are larger frontier or open-source LMs: GPT-4o [@He2025] and Llama-3 (1B, 8B, 70B, 405B) and Qwen-2.5 (72B) families. Predictors receive the compressor's summary Z and a query Q to produce the final answer Y.",
+      "content_hash": "6b4008fc27e35a0456ed138d64d675856cb906ed46832566d9c5320706fede3c",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_21720::predictor_models",
+      "label": "predictor_models",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "He2025"
+            ]
+          }
+        }
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Predictor model set",
+      "type": "setting"
+    },
+    {
+      "content": "The Monte Carlo mutual information estimator I_hat(X; Z) is upper bounded by log(N), where N is the number of contexts sampled. The bound is tight when p(z_ij|x_i) >> p(z_ij|x_l) for all l != i (i.e., compressions are highly specific to their source contexts).",
+      "content_hash": "7da6d247ffff15c4fac16eeffd4ffde35695ff375c6245974d95c220788659b4",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2512_21720::mc_estimator_upper_bound",
+      "label": "mc_estimator_upper_bound",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mc_estimator_def",
+              "mi_definition",
+              "mi_estimator_practical",
+              "noisy_channel_framing"
+            ]
+          }
+        },
+        "source_section": "Section 2.2, Appendix B.2"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "MI estimator upper bound: log(N)",
+      "type": "claim"
+    },
+    {
+      "content": "The Monte Carlo MI estimator I_hat(X; Z) is practical for LM systems because it requires only log probabilities p(z|x) from an inference server — no access to the full vocabulary distribution or training of an auxiliary model is needed. This allows use of accelerated inference engines such as SGLang [@Zheng2024].",
+      "content_hash": "90ece7ee1c3648a701ad51ccab8fa7305749d43c24bc0d9f9c709b9a2d6b787e",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2512_21720::mi_estimator_practical",
+      "label": "mi_estimator_practical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zheng2024"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "The estimator requiring only log probabilities is verifiable from the mathematical definition. Practical use of SGLang is demonstrated in the experiments. Very high confidence — definitional property of the estimator.",
+        "source_section": "Section 2.2"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "MI estimator practical feasibility",
+      "type": "claim"
+    },
+    {
+      "content": "The conditional MI estimator I_hat(X; Z | Q) can produce small negative values due to finite-sample Monte Carlo variance; these are corrected by clipping MI to zero. With S=5 random seeds per experiment, variance is controlled across all reported results.",
+      "content_hash": "a303ad98d50309ac7b6062777da3a2caa30628a6be0be6bf457541b240ab63ee",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2512_21720::mi_estimator_clipping",
+      "label": "mi_estimator_clipping",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Clipping negative MI values to zero is a stated methodological choice. S=5 random seeds is verifiable experimental design. Definitional properties of the experimental setup.",
+        "source_section": "Section 2.2"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "MI estimator clipping and seed control",
+      "type": "claim"
+    },
+    {
+      "content": "The mutual information scaling trends produced by the Monte Carlo estimator remain consistent across different choices of proxy model (Appendix E.1.4) and also when no proxy model is used (evaluating log probabilities under the compressor itself, as shown for Qwen-3 in Appendix E.1.5).",
+      "content_hash": "b0bd8bec4ffbdd823197f457ac0185fdc5c462e8ea37ce7f99eba2894c7dbf9d",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2512_21720::proxy_consistency",
+      "label": "proxy_consistency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mi_estimator_clipping",
+              "mi_estimator_practical",
+              "proxy_model_setting"
+            ]
+          }
+        },
+        "source_section": "Section 3.2, Appendix E.1.4, E.1.5"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "MI scaling trends robust to proxy model choice",
+      "type": "claim"
+    },
+    {
+      "content": "The Gaussian rate-distortion function D(R) = C * exp(-b*R) + D_0 (with offset D_0 for non-zero distortion floor, and fitted parameters C, b) captures the qualitative shape of observed rate-distortion curves in LM compression-prediction systems, even though LM data distributions are not Gaussian. It serves as a simplified model for comparing different predictors.",
+      "content_hash": "af43f56d5edb58d656ccc39ae8bcac86889dc25e1c76868b004b27d92613ab15",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2512_21720::gaussian_rd_qualitative",
+      "label": "gaussian_rd_qualitative",
+      "metadata": {
+        "source_section": "Appendix B.3"
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Gaussian R-D function as qualitative model",
+      "type": "claim"
+    },
+    {
+      "content": "Downstream QA accuracy increases strongly with compressor size. On LongHealth, 7-8B compressors are up to 3.1x more accurate than 1-1.5B compressors, and surpass the GPT-4o-only baseline (no compression) by 4 percentage points. On FinanceBench, 7-8B compressors are up to 2.6x more accurate than 1-1.5B compressors and recover 97% of the GPT-4o-only baseline accuracy. The same scaling behavior holds for Gemma-3 models.",
+      "content_hash": "b368ee473d944b5a706b4aa9508097c04031076db7733b6c65b70eb5c8433e2a",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2512_21720::accuracy_scales_with_compressor",
+      "label": "accuracy_scales_with_compressor",
+      "metadata": {
+        "caption": "Fig. 2 (Left): Downstream accuracy vs compressor model size on LongHealth and FinanceBench",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.92,
+        "prior_justification": "Measured directly on LongHealth and FinanceBench with S=5 random seeds. 3.1x and 2.6x accuracy improvements are large-magnitude, consistent across three model families (Llama-3, Qwen-2.5, Gemma-3) and replicated across datasets.",
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Accuracy scales with compressor size",
+      "type": "claim"
+    },
+    {
+      "content": "Larger compressor models are more token-efficient: 7-12B compressors produce outputs up to 4.6x shorter than their 1-1.5B counterparts within the same model family, without sacrificing accuracy. Qwen-2.5 models are more concise than Llama and Gemma-3 models, indicating that model families differ substantially in their compression communication profiles.",
+      "content_hash": "1b33d0998ec067729a7556571d516a20d487355f91c165c6b7b99e4e8d8ffd71",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2512_21720::larger_compressors_more_concise",
+      "label": "larger_compressors_more_concise",
+      "metadata": {
+        "caption": "Fig. 2 (Middle): Compression length vs compressor model size",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.9,
+        "prior_justification": "Token count is a direct, deterministic measurement. The 4.6x conciseness gain for 7-12B vs 1-1.5B compressors is measured across multiple model families; token counting is not subject to LLM judge error.",
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Larger compressors produce shorter outputs",
+      "type": "claim"
+    },
+    {
+      "content": "FLOPs-per-generation scale sublinearly with compressor model size because larger compressors generate fewer tokens. For Qwen-2.5, scaling from 1.5B to 7B parameters increases FLOPs-per-generation by only 1.3% on LongHealth. Different model families exhibit distinct scaling behaviors in FLOPs-per-generation.",
+      "content_hash": "fa3bd536daa91524adb4263d8d4f647be4e547c4888bcfdf7fb02b58253c92f8",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_21720::flops_sublinear_with_compressor",
+      "label": "flops_sublinear_with_compressor",
+      "metadata": {
+        "caption": "Fig. 2 (Right): GFLOPs-per-compression vs compressor model size",
+        "figure": "artifacts/2512.21720.pdf",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "accuracy_scales_with_compressor",
+              "larger_compressors_more_concise"
+            ]
+          }
+        },
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "FLOPs-per-generation scale sublinearly with compressor size",
+      "type": "claim"
+    },
+    {
+      "content": "Scaling the predictor LM provides only marginal accuracy improvements once a baseline predictor capacity (approximately 8B-70B parameters) is reached. The accuracy gain from increasing the predictor from 70B to 405B is within 12% on LongHealth and within 1% on FinanceBench.",
+      "content_hash": "8fbe69878074aff3c5228488f57bef2e731ee7d6c716073ccb8063654fa62fc2",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_21720::predictor_scaling_marginal",
+      "label": "predictor_scaling_marginal",
+      "metadata": {
+        "caption": "Fig. 3: Scaling compressors vs predictors on LongHealth",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.88,
+        "prior_justification": "Measured across Llama predictor sizes (1B, 8B, 70B, 405B) on LongHealth and FinanceBench with S=5 seeds. The <12% and <1% gains from 70B->405B are direct accuracy comparisons with clear numerical grounding.",
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Predictor scaling yields marginal gains beyond 70B",
+      "type": "claim"
+    },
+    {
+      "content": "Logistic regression predicting per-sample binary correctness on LongHealth and FinanceBench reveals that compressor model family is the single most important factor in downstream accuracy, with Qwen-2.5 compressors outperforming Llama. Scaling the compressor size matters substantially more than scaling the predictor size.",
+      "content_hash": "eca79c5f34bcce6c12c997add73f488622a3db8ebd87dbce9cae1f6953f7527d",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_21720::compressor_family_most_important",
+      "label": "compressor_family_most_important",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Based on logistic regression over correctness on LongHealth and FinanceBench. Feature importance analysis is standard but may be sensitive to collinearity between compressor size and family. Moderate-high confidence.",
+        "source_section": "Section 3.4"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Compressor family is the most important design factor",
+      "type": "claim"
+    },
+    {
+      "content": "Errors in the compression step fall into three categories: (a) compression contains an incorrect answer: 36.3% of compressor errors; (b) compression contains no answer: 33.3% of compressor errors; (c) compression omits necessary details: 30.4% of compressor errors. These categories are roughly equally distributed.",
+      "content_hash": "b25b659bba70d4777fa664485ede7768a2a294d1b87e0a9a6dc49145dd0906a7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_21720::compressor_error_taxonomy",
+      "label": "compressor_error_taxonomy",
+      "metadata": {
+        "source_section": "Section 3.1, Appendix D.7"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Compressor error taxonomy (three categories)",
+      "type": "claim"
+    },
+    {
+      "content": "Consumer hardware (Google Pixel phones, Apple MacBook laptops) can now run open-weight LMs up to 27B parameters without aggressive quantization under FP16 precision. This enables front-loading computation into local compressors to reduce cloud serving costs for predictors.",
+      "content_hash": "59cb8e9b768b9e6f39fdbc5642f25c86269c4531feda265fa3d16a4164f05ac0",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_21720::local_compute_trade",
+      "label": "local_compute_trade",
+      "metadata": {
+        "caption": "Fig. 1 (Right): LM sizes runnable on consumer hardware",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.9,
+        "prior_justification": "Consumer hardware capability (27B models on MacBook, Pixel phones) is supported by published benchmarks and memory estimates from Modal. High confidence in current-generation hardware facts; trends expected to continue.",
+        "source_section": "Section 3.1"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Local hardware can host 27B-parameter compressors",
+      "type": "claim"
+    },
+    {
+      "content": "Estimated conditional mutual information I_hat(X; Z | Q) increases with compressor model size across all evaluated model families (Llama-3, Qwen-2.5, Gemma-3) and datasets. On LongHealth, Qwen-2.5 and Gemma-3 compressions saturate in mutual information at the largest model sizes, while Llama compressors are far from the theoretical maximum log(N). On FinanceBench, MI saturation occurs already at the 3B scale.",
+      "content_hash": "31b6dd13de260f212d46b2c3f5afe6f55425c310539d2f97fc9794a6715eee74",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_21720::mi_scales_with_compressor",
+      "label": "mi_scales_with_compressor",
+      "metadata": {
+        "caption": "Fig. 4 (Left): Mutual information vs compressor model size on LongHealth",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.87,
+        "prior_justification": "MI is estimated via Monte Carlo estimator with proxy models at 7-8B scale. Scaling trend is consistent across model families and validated with multiple proxy choices (Appendix E.1.4). Slight uncertainty from proxy model dependency.",
+        "source_section": "Section 3.2"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Mutual information scales with compressor size",
+      "type": "claim"
+    },
+    {
+      "content": "Bit efficiency (bits of mutual information per output token, R = I(X; Z | Q) / L) increases with compressor model size. This is doubly driven: larger compressors carry more mutual information AND generate fewer tokens, amplifying bit efficiency gains. A 7B Qwen-2.5 compressor conveys 5.5x more bits per token than the 1.5B counterpart.",
+      "content_hash": "c45ab36ed5add8dd80bd3bc58d92cab996594c61e56651b9af39a2809d45ba40",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2512_21720::bit_efficiency_scales_with_compressor",
+      "label": "bit_efficiency_scales_with_compressor",
+      "metadata": {
+        "caption": "Fig. 4 (Right): Bit efficiency vs compressor model size on LongHealth",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.88,
+        "prior_justification": "Bit efficiency combines MI (estimated) and token count (direct). Both component trends are well-established. The 5.5x bits-per-token for 7B vs 1.5B Qwen-2.5 is the headline quantitative result.",
+        "source_section": "Section 3.2"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Bit efficiency scales with compressor size",
+      "type": "claim"
+    },
+    {
+      "content": "Compressor scaling trends in accuracy, compute cost, MI, and bit efficiency are consistent across different conciseness instructions (3, 6, or 9 sentences). Compressors instructed to be more concise are more token-efficient and thus compute-efficient, but the relative improvements from larger compressors persist regardless of prompted output length.",
+      "content_hash": "e29bff9f592c91e66e00a1034273841aec3746b8e974f2a51479a14e3c958906",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_21720::scaling_robust_to_conciseness_prompt",
+      "label": "scaling_robust_to_conciseness_prompt",
+      "metadata": {
+        "caption": "Fig. 5: Scaling behavior across instructed conciseness levels",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.87,
+        "prior_justification": "Tested across 3 different conciseness prompt levels (3, 6, 9 sentences) on LongHealth and FinanceBench. Consistency across prompt variants increases confidence in the core scaling findings.",
+        "source_section": "Section 3.2"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Compressor scaling robust to conciseness prompt instructions",
+      "type": "claim"
+    },
+    {
+      "content": "Rate-distortion curves fit with exponential decay functions D(R) = C * exp(-b*R) + D_0 show strong correlation between bit efficiency R and distortion D (1 - accuracy) across both compressor families (Qwen-2.5 and Llama) and all predictor sizes on LongHealth. The fitted curves confirm that scaling predictors beyond 70B yields only marginal distortion reduction.",
+      "content_hash": "ec462bd6283907c1ee8a3b7fe430698f8b7ca5ea6846d8328d60e72f6a4611ee",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2512_21720::mi_correlates_with_accuracy",
+      "label": "mi_correlates_with_accuracy",
+      "metadata": {
+        "caption": "Fig. 6 (Left): Rate-distortion curves for Llama compressors on LongHealth",
+        "figure": "artifacts/2512.21720.pdf",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "bit_efficiency_scales_with_compressor",
+              "mi_scales_with_compressor",
+              "rate_distortion_def"
+            ]
+          }
+        },
+        "source_section": "Section 3.3"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "MI rate-distortion curves fit accuracy data",
+      "type": "claim"
+    },
+    {
+      "content": "Mutual information estimated from Llama compressors on FineWeb is strongly negatively correlated with predictor perplexity: Pearson r = -0.84, R-squared = 0.71. Higher MI in the compression corresponds to lower predictor perplexity on the held-out text.",
+      "content_hash": "19953a88b4aa3274fd33c7140d68010de0b97f6f5cbf4137695859112372fcd9",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2512_21720::mi_correlates_with_perplexity",
+      "label": "mi_correlates_with_perplexity",
+      "metadata": {
+        "caption": "Fig. 6 (Right): MI vs perplexity for Llama compressors on FineWeb",
+        "figure": "artifacts/2512.21720.pdf",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mc_estimator_def",
+              "mi_scales_with_compressor"
+            ]
+          }
+        },
+        "source_section": "Section 3.3"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "MI strongly correlated with perplexity (r=-0.84) on FineWeb",
+      "type": "claim"
+    },
+    {
+      "content": "Further rate-distortion analysis across Qwen-2.5 and Llama compressors reveals that distortion is primarily determined by compressor model family and size, not by whether the predictor is from the same model family as the compressor. Predictors do not perform better when paired with compressors of the same family.",
+      "content_hash": "3e549657fd25e1539a32bc2e871e9b69f79d98e32555897ec0a717585707cf23",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2512_21720::predictor_family_independence",
+      "label": "predictor_family_independence",
+      "metadata": {
+        "source_section": "Section 3.3"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Predictor performance independent of compressor-predictor family match",
+      "type": "claim"
+    },
+    {
+      "content": "The Deep Research evaluation uses DeepResearch Bench [@Du2025], which assesses system performance across four dimensions: Comprehensiveness, Depth, Instruction-following, and Readability, combined into a RACE (Reference-based Adaptive Criteria Evaluation) score. The pipeline: a predictor LM decomposes research tasks into subtasks executed by compressors in parallel; results are aggregated into a final report. Costs are based on GPT-4o API rates as of August 2025 ($2.50/1M input tokens, $10.00/1M output tokens).",
+      "content_hash": "746ab893da171d910dc81774494f1c499935967c4a666b0e7527dc817c2b8b25",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2512_21720::deep_research_setup",
+      "label": "deep_research_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Du2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Deep Research evaluation setup (DeepResearch Bench)",
+      "type": "setting"
+    },
+    {
+      "content": "A Qwen-2.5-14B compressor paired with a GPT-4o predictor achieves a RACE score 2.3% higher than the uncompressed baseline (providing raw web search data to GPT-4o), at only 28.1% of the API cost of the uncompressed baseline — a cost reduction of 71.9%.",
+      "content_hash": "22aa926c92394331a38bd5871fcc885f5ce8dbafba4cf6208e174ab85a6c06d7",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2512_21720::qwen14b_deep_research_result",
+      "label": "qwen14b_deep_research_result",
+      "metadata": {
+        "caption": "Fig. 7 (Left): RACE score vs cost for GPT-4o predictor with Qwen-2.5 compressors",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.87,
+        "prior_justification": "RACE score and cost reported for Qwen-2.5-14B + GPT-4o on DeepResearch Bench. The 2.3% RACE improvement and 71.9% cost reduction are specific quantitative claims based on API pricing as of August 2025 — time-sensitive but documented.",
+        "source_section": "Section 3.5"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Qwen-2.5-14B achieves +2.3% RACE at 28.1% cost",
+      "type": "claim"
+    },
+    {
+      "content": "Qwen-2.5 compressors as small as 3B parameters paired with GPT-4o predictors recover 99% of frontier-LM accuracy (GPT-4o uncompressed baseline) on DeepResearch Bench at 26% of the API cost (74% cost reduction).",
+      "content_hash": "e1a97f688c024d05488e3ba9e680a6c64f30608b5022862a6c40e61201c21b8c",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2512_21720::small_compressor_deep_research",
+      "label": "small_compressor_deep_research",
+      "metadata": {
+        "caption": "Fig. 7: Deep Research Scaling Results",
+        "figure": "artifacts/2512.21720.pdf",
+        "prior": 0.86,
+        "prior_justification": "3B compressor recovering 99% frontier accuracy at 26% API cost is the paper's practical demonstration on DeepResearch Bench. Confidence slightly lower than 14B result because smaller models are more variable.",
+        "source_section": "Section 3.5"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "3B compressor achieves 99% frontier accuracy at 26% API cost",
+      "type": "claim"
+    },
+    {
+      "content": "In the Deep Research pipeline, larger predictor models consistently improve RACE scores, while larger compressors provide substantial performance gains at minimal additional API costs. Both compressor and predictor scaling contribute, but compressors provide larger gains per unit of additional API spend.",
+      "content_hash": "26b24cc27cf1cd83a9f5b3f78716c8983486cc95d9674c7f40644c27c886ffd3",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2512_21720::deep_research_predictor_scaling",
+      "label": "deep_research_predictor_scaling",
+      "metadata": {
+        "source_section": "Section 3.5"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "title": "Deep Research: both axes improve RACE, compressors more cost-efficient",
+      "type": "claim"
+    },
+    {
+      "content": "compare(Downstream QA accuracy increases strongly with compressor size. On LongHealth, 7-8B compressors are up to 3.1x more accurate than 1-1.5B compressors, and surpass the GPT-4o-only baseline (no compression) by 4 percentage points. On FinanceBench, 7-8B compressors are up to 2.6x more accurate than 1-1.5B compressors and recover 97% of the GPT-4o-only baseline accuracy. The same scaling behavior holds for Gemma-3 models., Scaling the predictor LM provides only marginal accuracy improvements once a baseline predictor capacity (approximately 8B-70B parameters) is reached. The accuracy gain from increasing the predictor from 70B to 405B is within 12% on LongHealth and within 1% on FinanceBench., Scaling the compressor LM yields substantially more performance gain per unit of compute than scaling the predictor LM. A 7B Qwen-2.5 compressor is 1.6x more accurate, 4.6x more concise, and conveys 5.5x more bits of mutual information per token than its 1.5B counterpart.)",
+      "content_hash": "e94f466489013ff4f77d22af7f0ae6e590e3051ef9dc9d7addfd8170a64fe910",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2512_21720::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "accuracy_scales_with_compressor",
+              "compressor_scaling_dominates",
+              "predictor_scaling_marginal"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Compressors can be scaled at a sublinear computational cost. Because larger compressor models are more information-efficient — they omit fewer tokens while retaining higher information density — FLOPs-per-generation scale sublinearly as a function of compressor model size.",
+      "content_hash": "fe13a5e1c636798b1356654bc8e7b42e69139b81ae6f4f984534e2a4971eaad1",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2512_21720::principle_sublinear_scaling",
+      "label": "principle_sublinear_scaling",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "accuracy_scales_with_compressor",
+              "flops_sublinear_with_compressor"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Principle: sublinear compute scaling of compressors",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: 'Front-load' compute into local compressors to reduce remote costs. Scaling compressors is more effective than scaling predictors. By running larger compressors on-device (locally), practitioners can reduce predictor serving costs in the cloud.",
+      "content_hash": "4d1d0c8ed220d95e43843035cda48b5bb223f31196d9cb29acd0fc0fd3ab9acb",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2512_21720::principle_frontload_compute",
+      "label": "principle_frontload_compute",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "compressor_scaling_dominates",
+              "local_compute_trade"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Principle: front-load compute into local compressors",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Optimize for information density. Mutual information between an input context and an agent's output is a task-agnostic indicator of compression quality and is tightly linked to downstream performance and predictor perplexity.",
+      "content_hash": "8a8d671a0ddaddf9d1b5e60c9a7a67645fedbab809a28c1f15978c2e978ba03c",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_21720::principle_information_density",
+      "label": "principle_information_density",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mi_correlates_with_accuracy",
+              "mi_correlates_with_perplexity"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Principle: optimize for information density (MI)",
+      "type": "claim"
+    },
+    {
+      "content": "Design principle: Expect model family to differ in scaling trends. The choice of compressor and predictor model family yields offsets in rate-distortion curves and scaling effects. Qwen-2.5 compressors scale more compute-efficiently than Llama and Gemma-3; Qwen-2.5 predictors yield higher accuracies than Llama predictors.",
+      "content_hash": "87a1f5aef95dd6491584c7eaaca27aab51aa6b17105620f89e27b2906e338fde",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_21720::principle_model_family_matters",
+      "label": "principle_model_family_matters",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "compressor_family_most_important",
+              "scaling_robust_to_conciseness_prompt"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Principle: model family drives rate-distortion offsets",
+      "type": "claim"
+    },
+    {
+      "content": "At the 1-3B model scale, the MI estimator relies on proxy models and log probabilities, introducing potential variance and biases. Small compressor models may be miscalibrated, causing the proxy to partially correct for miscalibration rather than purely measuring MI.",
+      "content_hash": "276e53ace57f904317f5dc432956badbfa2f1e739f542f8b5a423ae4b779eeca",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_21720::limitation_proxy_variance",
+      "label": "limitation_proxy_variance",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Proxy model dependency at 1-3B scale is an acknowledged methodological limitation stated by the authors. Small model miscalibration is a widely recognized empirical phenomenon.",
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Limitation: proxy model variance at 1-3B scale",
+      "type": "claim"
+    },
+    {
+      "content": "The paper primarily focuses on GPT-style non-reasoning models with single-round communication, limiting generalizability to reasoning-augmented models (e.g., chain-of-thought, o1-style) and iterative multi-agent workflows. Reasoning traces introduce additional structure that may violate the single-pass compressor-predictor model.",
+      "content_hash": "ea76ca7678654b4c310eab60d5e4a4db02987e71c685ab145894a1c1764e03c3",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_21720::limitation_non_reasoning_focus",
+      "label": "limitation_non_reasoning_focus",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "limitation_non_reasoning_focus",
+              "limitation_proxy_variance",
+              "proxy_model_setting"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Limitation: focus on non-reasoning single-round models",
+      "type": "claim"
+    },
+    {
+      "content": "Mixture-of-experts (MoE) models may exhibit different scaling behaviors from dense models because their effective compute cost depends on the number of activated experts rather than total parameter count. The FLOPs-per-generation formula for dense models (@flops_per_generation_def) does not apply directly to MoE architectures.",
+      "content_hash": "0d380b0e1ba7405f87758ebcb04a4e08bae995fa719b3a7eeaf79bf764592828",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_21720::limitation_moe_compute",
+      "label": "limitation_moe_compute",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "flops_per_generation_def"
+            ]
+          }
+        },
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Limitation: MoE compute cost differs from dense models",
+      "type": "claim"
+    },
+    {
+      "content": "The paper defines compression as text summarization. Other forms of agentic compression — structured extraction, function-call generation, code summarization — are not studied, and the MI estimator's applicability to these settings is not demonstrated.",
+      "content_hash": "640920566337e9cbfae265e44906f32b75d656ed42fb8fed7deef2d1b128fd6a",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_21720::limitation_compression_scope",
+      "label": "limitation_compression_scope",
+      "metadata": {
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Limitation: compression defined as summarization only",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative MI estimators such as InfoNCE offer promising improvements over the current Monte Carlo estimator for LM outputs. Future work should compare estimator quality and sample efficiency across different MI estimation methods.",
+      "content_hash": "fc2f6686fe605d2fe673a50bfcfaa40b6d2e3c5cb1e6fd5dab05cdff1223c801",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_21720::future_better_mi_estimator",
+      "label": "future_better_mi_estimator",
+      "metadata": {
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Future work: improved MI estimators (e.g., InfoNCE)",
+      "type": "claim"
+    },
+    {
+      "content": "Training objectives based on rate-distortion analysis represent a promising avenue for optimizing compressor-predictor communication. Rather than using pretrained compressors, compressors could be fine-tuned to maximize mutual information with downstream task labels.",
+      "content_hash": "47dac4c49471ba591796b428b87a175327665abe23ed1aa71c3c2cc193b8edbc",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_21720::future_training_objective",
+      "label": "future_training_objective",
+      "metadata": {
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Future work: rate-distortion-based training objectives",
+      "type": "claim"
+    },
+    {
+      "content": "Information-theoretic principles could guide compressor routing strategies: when estimated MI is below a threshold, fall back to remote full-context processing rather than using the local compressor. This would create a principled adaptive routing policy.",
+      "content_hash": "52f0995bce06c8b5914d68549453489790cd797bf8f9fd06ce776dc9cad44cd3",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2512_21720::future_routing_strategies",
+      "label": "future_routing_strategies",
+      "metadata": {
+        "source_section": "Section 4"
+      },
+      "module": "s4_discussion",
+      "parameters": [],
+      "title": "Future work: MI-guided compressor routing",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::design_adhoc,github:2512_21720::mi_as_proxy_proposal)",
+      "content_hash": "53c751868cbfaf7d7b360edd747c9c7511cabc307a5f0eefcc2c5e046d3016d0",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_b7058710",
+      "label": "__implication_result_b7058710",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::design_adhoc,github:2512_21720::mi_as_proxy_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_20ce891c0df1fa49",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::mi_estimator_practical,github:2512_21720::mc_estimator_upper_bound)",
+      "content_hash": "9e9816e70167107ad74f2b5796fc8e157f2d70b0525476949cf410c6ffd0a4c5",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_bf032ccf",
+      "label": "__implication_result_bf032ccf",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::mi_estimator_practical,github:2512_21720::mc_estimator_upper_bound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9bd9382d2385d5ed",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::mi_estimator_practical,github:2512_21720::mi_estimator_clipping)",
+      "content_hash": "02ae383ba85c9840aa9ae3331addd04406bd116e1297df6eca217587cdb4b30a",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_3cbbaa20",
+      "label": "__conjunction_result_3cbbaa20",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::mi_estimator_practical,github:2512_21720::mi_estimator_clipping)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1eb922793bb6c0bb",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_3cbbaa20,github:2512_21720::proxy_consistency)",
+      "content_hash": "9db9687c157304620687ab642b4b4e90af5c91d9ba830c65ffe6e7b249065f2b",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_17a213cb",
+      "label": "__implication_result_17a213cb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_3cbbaa20,github:2512_21720::proxy_consistency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1eb922793bb6c0bb",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::mi_estimator_practical,github:2512_21720::mi_estimator_clipping)",
+      "content_hash": "02ae383ba85c9840aa9ae3331addd04406bd116e1297df6eca217587cdb4b30a",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_41ec79b3",
+      "label": "__conjunction_result_41ec79b3",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::mi_estimator_practical,github:2512_21720::mi_estimator_clipping)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d0aa4cda8f87215b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_41ec79b3,github:2512_21720::mi_as_proxy_proposal)",
+      "content_hash": "064db35ffc8f0f3380f62d4de6c993771e121a1f7aef1adf6531574e4a266519",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_99f1f0cb",
+      "label": "__implication_result_99f1f0cb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_41ec79b3,github:2512_21720::mi_as_proxy_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d0aa4cda8f87215b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::larger_compressors_more_concise)",
+      "content_hash": "4c939decad646ad49771b83fc2009941dda5baefc304716ce2f266b04095e9c5",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_75b9bbb0",
+      "label": "__conjunction_result_75b9bbb0",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::larger_compressors_more_concise)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fb70c5fcd70e8dd5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_75b9bbb0,github:2512_21720::flops_sublinear_with_compressor)",
+      "content_hash": "5ce2db79c670bb70080bddecec585a96339ee52e3ef420f9aab5ee2644f1e0a4",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_d1fdd086",
+      "label": "__implication_result_d1fdd086",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_75b9bbb0,github:2512_21720::flops_sublinear_with_compressor)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fb70c5fcd70e8dd5",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "a8175cd6b3cc5290e155e79081efecbb28ab381e2021fa342d358875d5f77a67",
+      "exported": false,
+      "id": "github:2512_21720::__equivalence_result_9d5d2fb7",
+      "label": "__equivalence_result_9d5d2fb7",
+      "metadata": {
+        "canonical_name": "matches(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_855beacdcc3686ae",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2512_21720::predictor_scaling_marginal,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "6384ab74e6901e69129a93c5e1ef8043eac53d286da859ee8468b645cf34b9e4",
+      "exported": false,
+      "id": "github:2512_21720::__equivalence_result_72295519",
+      "label": "__equivalence_result_72295519",
+      "metadata": {
+        "canonical_name": "matches(github:2512_21720::predictor_scaling_marginal,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_855beacdcc3686ae",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "31e865e4eb2844dd93c916cf02799e7259da68205888e2491e5bffafa6d3d8e8",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_50a124f6",
+      "label": "__implication_result_50a124f6",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::accuracy_scales_with_compressor,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_df137bf23c2de125",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::predictor_scaling_marginal,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "fcc9b8ae8a7ac4ad96da6cb20a06f3d5ae1dfdf5eb287906c253ab589432e68d",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_f3f5e77b",
+      "label": "__implication_result_f3f5e77b",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::predictor_scaling_marginal,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6d6425ec2246e475",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::mi_scales_with_compressor,github:2512_21720::bit_efficiency_scales_with_compressor)",
+      "content_hash": "cc05c5f05cc0ef4e706b17952d273b58d81cfd01fb8dec632aa8d7838978b706",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_8fb8438f",
+      "label": "__conjunction_result_8fb8438f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::mi_scales_with_compressor,github:2512_21720::bit_efficiency_scales_with_compressor)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f09f769aa0633354",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_8fb8438f,github:2512_21720::mi_correlates_with_accuracy)",
+      "content_hash": "2a2de15b61c0eb643388dd9b8943ae86bc692a7af0bd567895f3b34598b7d3e0",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_64581e77",
+      "label": "__implication_result_64581e77",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_8fb8438f,github:2512_21720::mi_correlates_with_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f09f769aa0633354",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::mi_scales_with_compressor,github:2512_21720::mi_correlates_with_perplexity)",
+      "content_hash": "581ffd08356d5a8843c4b4e5797ce4ccae15848ddbf7bfe6c70577cc27e34d84",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_edd6d9c1",
+      "label": "__implication_result_edd6d9c1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::mi_scales_with_compressor,github:2512_21720::mi_correlates_with_perplexity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2c59b1d9e64f0dda",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::mi_correlates_with_accuracy,github:2512_21720::mi_correlates_with_perplexity,github:2512_21720::proxy_consistency)",
+      "content_hash": "7db51c8764661743ab58b2bc75a6442cdf75ae826d1ed5dc0e451d7c3b1c2b00",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_cb7278b3",
+      "label": "__conjunction_result_cb7278b3",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::mi_correlates_with_accuracy,github:2512_21720::mi_correlates_with_perplexity,github:2512_21720::proxy_consistency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_126971373d1c56bc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_cb7278b3,github:2512_21720::mi_as_proxy_proposal)",
+      "content_hash": "413fa6bb43687cb353b451c3abf47c0efa96f0fd664f669b69ddfe34c7dfd518",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_b15253f4",
+      "label": "__implication_result_b15253f4",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_cb7278b3,github:2512_21720::mi_as_proxy_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_126971373d1c56bc",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::qwen14b_deep_research_result,github:2512_21720::small_compressor_deep_research)",
+      "content_hash": "f25aba38967d01e1c5b9d5365edcd51188c820d7fdacb4fb5a07f39ed6d0175c",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_01b33e8f",
+      "label": "__conjunction_result_01b33e8f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::qwen14b_deep_research_result,github:2512_21720::small_compressor_deep_research)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_23530222b2e7663e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_01b33e8f,github:2512_21720::deep_research_cost_reduction)",
+      "content_hash": "e042739ca5959ef625ba8b428bb57405b95f0ce50f74e4a3b0fde024dc32993c",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_5e80098e",
+      "label": "__implication_result_5e80098e",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_01b33e8f,github:2512_21720::deep_research_cost_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_23530222b2e7663e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::local_compute_trade,github:2512_21720::flops_sublinear_with_compressor)",
+      "content_hash": "588da4a526ac362b67b2393d494f611849504baf85c505e09b1a70fff9bb155a",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_fe80a084",
+      "label": "__conjunction_result_fe80a084",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::local_compute_trade,github:2512_21720::flops_sublinear_with_compressor)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ecef4d8a45676bae",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_fe80a084,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "95de9b4141b80e2680058d62c9435d74147d42d93c9bece61df7acad8898dfd0",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_812b083a",
+      "label": "__implication_result_812b083a",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_fe80a084,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ecef4d8a45676bae",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::flops_sublinear_with_compressor,github:2512_21720::accuracy_scales_with_compressor)",
+      "content_hash": "b55fb34b879cca4447d6994a225f2350913f90f9c617f81eee8894bc1a822396",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_7b8ab035",
+      "label": "__conjunction_result_7b8ab035",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::flops_sublinear_with_compressor,github:2512_21720::accuracy_scales_with_compressor)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_26b7c98804374516",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_7b8ab035,github:2512_21720::principle_sublinear_scaling)",
+      "content_hash": "f80daff995b50314d48466abbd667999d7c4815350a8282fa6bc69e1ed1723cf",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_fe13b27d",
+      "label": "__implication_result_fe13b27d",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_7b8ab035,github:2512_21720::principle_sublinear_scaling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_26b7c98804374516",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::local_compute_trade,github:2512_21720::compressor_scaling_dominates)",
+      "content_hash": "89889c363f51567a71be928ba416b1433cd34d9e8483b6180721410810dcb4c3",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_669c6db7",
+      "label": "__conjunction_result_669c6db7",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::local_compute_trade,github:2512_21720::compressor_scaling_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e8e4387a0e16b4e5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_669c6db7,github:2512_21720::principle_frontload_compute)",
+      "content_hash": "bb19b7200f4bfd8a492b6dfda6a1ba648c703981063878a50bc2c76368a806cd",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_1c91d349",
+      "label": "__implication_result_1c91d349",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_669c6db7,github:2512_21720::principle_frontload_compute)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e8e4387a0e16b4e5",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::mi_correlates_with_accuracy,github:2512_21720::mi_correlates_with_perplexity)",
+      "content_hash": "fdb0222ce59edcf9970d584576085e8092b74c8ed72229a2ff2396839a6cf50d",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_4e649851",
+      "label": "__conjunction_result_4e649851",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::mi_correlates_with_accuracy,github:2512_21720::mi_correlates_with_perplexity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a14e0ea9332d0ba1",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_4e649851,github:2512_21720::principle_information_density)",
+      "content_hash": "6ff7c976924e8aa1a688909d0acc74291c420a44389d66d481fd988f0cae51c6",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_5b42eb5b",
+      "label": "__implication_result_5b42eb5b",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_4e649851,github:2512_21720::principle_information_density)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a14e0ea9332d0ba1",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_21720::compressor_family_most_important,github:2512_21720::scaling_robust_to_conciseness_prompt)",
+      "content_hash": "a807b33884e76721cfd28f85ea2ba537c8a4dabaa10f84044a66731b39c4b6c3",
+      "exported": false,
+      "id": "github:2512_21720::__conjunction_result_fa0bd369",
+      "label": "__conjunction_result_fa0bd369",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_21720::compressor_family_most_important,github:2512_21720::scaling_robust_to_conciseness_prompt)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_190e142e19797180",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::__conjunction_result_fa0bd369,github:2512_21720::principle_model_family_matters)",
+      "content_hash": "bbf3a6da8a4b0ec47a83ce401f4f3b5b43d172155aa36fa4f42c8efb8ea68fe3",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_dde7a27a",
+      "label": "__implication_result_dde7a27a",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::__conjunction_result_fa0bd369,github:2512_21720::principle_model_family_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_190e142e19797180",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_21720::limitation_proxy_variance,github:2512_21720::limitation_non_reasoning_focus)",
+      "content_hash": "7d42e7764173aa5d2c2244336809d999f784b049089ca193473dcd7652c820d7",
+      "exported": false,
+      "id": "github:2512_21720::__implication_result_8d993b3c",
+      "label": "__implication_result_8d993b3c",
+      "metadata": {
+        "canonical_name": "implies(github:2512_21720::limitation_proxy_variance,github:2512_21720::limitation_non_reasoning_focus)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_db9f03b7fd2c9b78",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_framework",
+    "s3_results",
+    "s4_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Information-Theoretic Perspective on Agentic System Design",
+    "s2_framework": "Section 2: Preliminaries — Information-Theoretic Framework and MI Estimator",
+    "s3_results": "Section 3: Empirical Results — Scaling, MI Correlation, and Deep Research",
+    "s4_discussion": "Section 4: Discussion — Design Principles, Limitations, and Future Work"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2512_21720",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2512_21720::mi_as_proxy_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_b7058710",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::design_adhoc",
+              "github:2512_21720::mi_as_proxy_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Because there is no task-agnostic way to evaluate compressor quality (@design_adhoc), the authors are motivated to adopt an information-theoretic framing: viewing the compressor as a noisy channel (@noisy_channel_framing), mutual information I(X; Z | Q) naturally captures how much of the original context is preserved in the compression — without requiring a downstream task."
+      },
+      "premises": [
+        "github:2512_21720::design_adhoc"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_20ce891c0df1fa49",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_21720::mi_definition",
+        "github:2512_21720::noisy_channel_framing",
+        "github:2512_21720::mc_estimator_def"
+      ],
+      "conclusion": "github:2512_21720::mc_estimator_upper_bound",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_bf032ccf",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::mi_estimator_practical",
+              "github:2512_21720::mc_estimator_upper_bound"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Starting from the KL divergence representation of MI (@mi_definition) and treating the compressor as a noisy channel (@noisy_channel_framing), the MC estimator (@mc_estimator_def) is derived by replacing the intractable marginal p(z) with a sample average. From this definition, for any z_ij and x_l: sum_l p(z_ij|x_l) >= p(z_ij|x_i), so each estimator term <= log N. Averaging yields I_hat(X;Z) <= log N (proved in Appendix B.2). The estimator is practical via log probabilities (@mi_estimator_practical)."
+      },
+      "premises": [
+        "github:2512_21720::mi_estimator_practical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9bd9382d2385d5ed",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_21720::proxy_model_setting"
+      ],
+      "conclusion": "github:2512_21720::proxy_consistency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_3cbbaa20",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::mi_estimator_practical",
+              "github:2512_21720::mi_estimator_clipping"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_17a213cb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_3cbbaa20",
+              "github:2512_21720::proxy_consistency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "If the MI estimator works via log probabilities (@mi_estimator_practical) and uses clipping to handle finite-sample variance (@mi_estimator_clipping), and proxy models are needed only for small miscalibrated compressors (@proxy_model_setting), then qualitative scaling trends should be robust to proxy choice: the relative ordering of model sizes is stable across proxy families. Empirical ablations in Appendix E.1.4 and E.1.5 confirm this consistency."
+      },
+      "premises": [
+        "github:2512_21720::mi_estimator_practical",
+        "github:2512_21720::mi_estimator_clipping"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1eb922793bb6c0bb",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_21720::mi_definition",
+        "github:2512_21720::mc_estimator_def"
+      ],
+      "conclusion": "github:2512_21720::mi_as_proxy_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_41ec79b3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::mi_estimator_practical",
+              "github:2512_21720::mi_estimator_clipping"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_99f1f0cb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_41ec79b3",
+              "github:2512_21720::mi_as_proxy_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "MI (@mi_definition) directly quantifies how much of the original context X is preserved in compression Z. The MC estimator (@mc_estimator_def) makes this computable in practice using only log probabilities (@mi_estimator_practical), with finite-sample artifacts corrected by clipping (@mi_estimator_clipping). Because MI is computed solely from the compression without task labels, it is inherently task-agnostic, analogous to how perplexity quantifies LM quality without task-specific labels [@Kaplan2020]."
+      },
+      "premises": [
+        "github:2512_21720::mi_estimator_practical",
+        "github:2512_21720::mi_estimator_clipping"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d0aa4cda8f87215b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::flops_sublinear_with_compressor",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_75b9bbb0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::accuracy_scales_with_compressor",
+              "github:2512_21720::larger_compressors_more_concise"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_d1fdd086",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_75b9bbb0",
+              "github:2512_21720::flops_sublinear_with_compressor"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Since larger compressors are both more accurate (@accuracy_scales_with_compressor) and more concise (@larger_compressors_more_concise), the total FLOPs-per-generation scales sublinearly: the increase in parameters (and thus FLOPs/token) is partially offset by the decrease in output token count. For Qwen-2.5, this near-cancellation means that going from 1.5B to 7B costs only 1.3% more FLOPs on LongHealth."
+      },
+      "premises": [
+        "github:2512_21720::accuracy_scales_with_compressor",
+        "github:2512_21720::larger_compressors_more_concise"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fb70c5fcd70e8dd5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__equivalence_result_9d5d2fb7",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_21720::accuracy_scales_with_compressor",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__equivalence_result_72295519",
+            "operator": "equivalence",
+            "variables": [
+              "github:2512_21720::predictor_scaling_marginal",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__equivalence_result_72295519",
+              "github:2512_21720::__equivalence_result_9d5d2fb7"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The two alternatives are: (H) scaling compressors drives performance (@accuracy_scales_with_compressor: 3.1x accuracy gain, LongHealth), and (Alt) scaling predictors drives performance (@predictor_scaling_marginal: <12% gain from 70B to 405B). At fixed total compute, compressor scaling yields steeper accuracy improvements. The observation (@compressor_scaling_dominates) matches the compressor-scaling hypothesis far better: equal FLOPs in the compressor yield dramatically larger returns."
+      },
+      "premises": [
+        "github:2512_21720::accuracy_scales_with_compressor",
+        "github:2512_21720::predictor_scaling_marginal",
+        "github:2512_21720::compressor_scaling_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_855beacdcc3686ae",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2512_21720::compressor_scaling_dominates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_50a124f6",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::accuracy_scales_with_compressor",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The accuracy gains from compressor scaling (@accuracy_scales_with_compressor: up to 3.1x improvement) directly support the claim that compressor scaling dominates system performance. The evidence is consistent across three model families (Llama-3, Qwen-2.5, Gemma-3) and two datasets (LongHealth, FinanceBench)."
+      },
+      "premises": [
+        "github:2512_21720::accuracy_scales_with_compressor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_df137bf23c2de125",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::compressor_scaling_dominates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_f3f5e77b",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::predictor_scaling_marginal",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "The marginal returns from predictor scaling (@predictor_scaling_marginal: <12% gain from 70B to 405B on LongHealth) undermine the alternative hypothesis that predictor scaling drives performance. They provide indirect support that compressor scaling is the dominant lever, since the alternative explanation (scale the predictor) fails."
+      },
+      "premises": [
+        "github:2512_21720::predictor_scaling_marginal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6d6425ec2246e475",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::_anon_000",
+      "metadata": {
+        "reason": "The observation is that scaling compressors improves accuracy far more than scaling predictors at matched compute budgets. Two hypotheses: (H) compressor scaling dominates, (Alt) predictor scaling drives gains. The compressor scaling evidence (@accuracy_scales_with_compressor) is 3.1x on LongHealth; the predictor scaling evidence is marginal (@predictor_scaling_marginal). Abduction selects the better explanation: compressor scaling."
+      },
+      "premises": [
+        "github:2512_21720::accuracy_scales_with_compressor",
+        "github:2512_21720::predictor_scaling_marginal",
+        "github:2512_21720::compressor_scaling_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8429b6e8dafb883c",
+      "sub_strategies": [
+        "lcs_df137bf23c2de125",
+        "lcs_6d6425ec2246e475",
+        "lcs_855beacdcc3686ae"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2512_21720::mi_correlates_with_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_8fb8438f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::mi_scales_with_compressor",
+              "github:2512_21720::bit_efficiency_scales_with_compressor"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_64581e77",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_8fb8438f",
+              "github:2512_21720::mi_correlates_with_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Since MI increases with compressor size (@mi_scales_with_compressor) and bit efficiency also increases (@bit_efficiency_scales_with_compressor), and since accuracy is also higher for larger compressors, the rate-distortion framework (@rate_distortion_def) predicts that fitting D(R) curves should reveal a strong inverse relationship. The exponential-decay fit on rate-distortion data confirms this quantitatively."
+      },
+      "premises": [
+        "github:2512_21720::mi_scales_with_compressor",
+        "github:2512_21720::bit_efficiency_scales_with_compressor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f09f769aa0633354",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_21720::mc_estimator_def"
+      ],
+      "conclusion": "github:2512_21720::mi_correlates_with_perplexity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_edd6d9c1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::mi_scales_with_compressor",
+              "github:2512_21720::mi_correlates_with_perplexity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "MI (estimated via the MC estimator @mc_estimator_def) measures information preserved in the compression. Since MI scales with compressor size (@mi_scales_with_compressor), and perplexity under a separate Llama-3.1-8B model measures how predictable the compressed text is as a substitute for the original, higher MI should correspond to lower perplexity. On FineWeb with Llama compressors, this yields r=-0.84, R^2=0.71 — strong empirical confirmation of MI as a task-agnostic performance proxy."
+      },
+      "premises": [
+        "github:2512_21720::mi_scales_with_compressor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2c59b1d9e64f0dda",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::mi_as_proxy_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_cb7278b3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::mi_correlates_with_accuracy",
+              "github:2512_21720::mi_correlates_with_perplexity",
+              "github:2512_21720::proxy_consistency"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_b15253f4",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_cb7278b3",
+              "github:2512_21720::mi_as_proxy_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "MI predicts downstream accuracy (via rate-distortion: @mi_correlates_with_accuracy), predicts perplexity (r=-0.84: @mi_correlates_with_perplexity), and is robust to proxy model choice (@proxy_consistency). Together these provide strong empirical validation that MI is a reliable task-agnostic proxy for compression quality [@He2025]."
+      },
+      "premises": [
+        "github:2512_21720::mi_correlates_with_accuracy",
+        "github:2512_21720::mi_correlates_with_perplexity",
+        "github:2512_21720::proxy_consistency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_126971373d1c56bc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::deep_research_cost_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_01b33e8f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::qwen14b_deep_research_result",
+              "github:2512_21720::small_compressor_deep_research"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_5e80098e",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_01b33e8f",
+              "github:2512_21720::deep_research_cost_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The Deep Research experiment directly validates the cost-reduction principle: a Qwen-2.5-14B compressor achieves +2.3% RACE at 28.1% cost (@qwen14b_deep_research_result), and a 3B compressor recovers 99% accuracy at 26% cost (@small_compressor_deep_research). Both results confirm the abstract's 74% cost-reduction claim under real API pricing conditions (GPT-4o rates, August 2025)."
+      },
+      "premises": [
+        "github:2512_21720::qwen14b_deep_research_result",
+        "github:2512_21720::small_compressor_deep_research"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23530222b2e7663e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::compressor_scaling_dominates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_fe80a084",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::local_compute_trade",
+              "github:2512_21720::flops_sublinear_with_compressor"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_812b083a",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_fe80a084",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Consumer hardware can now host up to 27B-parameter compressors (@local_compute_trade), and FLOPs-per-generation scale sublinearly with compressor size (@flops_sublinear_with_compressor). This means that front-loading compute into local compressors is both technically feasible and economically rational: larger on-device compressors reduce cloud predictor serving costs while providing the dominant performance gains."
+      },
+      "premises": [
+        "github:2512_21720::local_compute_trade",
+        "github:2512_21720::flops_sublinear_with_compressor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ecef4d8a45676bae",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::principle_sublinear_scaling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_7b8ab035",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::flops_sublinear_with_compressor",
+              "github:2512_21720::accuracy_scales_with_compressor"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_fe13b27d",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_7b8ab035",
+              "github:2512_21720::principle_sublinear_scaling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "FLOPs-per-generation scale sublinearly with compressor size (@flops_sublinear_with_compressor) because larger compressors generate fewer tokens (@accuracy_scales_with_compressor — larger compressors also happen to be more concise). This empirical combination supports the stated principle: parameter count grows roughly linearly in compute/token, but token count decreases, yielding sublinear overall scaling per generation."
+      },
+      "premises": [
+        "github:2512_21720::flops_sublinear_with_compressor",
+        "github:2512_21720::accuracy_scales_with_compressor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_26b7c98804374516",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::principle_frontload_compute",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_669c6db7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::local_compute_trade",
+              "github:2512_21720::compressor_scaling_dominates"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_1c91d349",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_669c6db7",
+              "github:2512_21720::principle_frontload_compute"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Consumer hardware can already host compressors up to 27B parameters (@local_compute_trade), and scaling compressors yields more performance than scaling predictors (@compressor_scaling_dominates). Therefore, the practical recommendation is to run the largest compressor that fits on local hardware, and serve only the predictor remotely — cutting cloud API costs substantially, as demonstrated in the Deep Research results."
+      },
+      "premises": [
+        "github:2512_21720::local_compute_trade",
+        "github:2512_21720::compressor_scaling_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e8e4387a0e16b4e5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::principle_information_density",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_4e649851",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::mi_correlates_with_accuracy",
+              "github:2512_21720::mi_correlates_with_perplexity"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_5b42eb5b",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_4e649851",
+              "github:2512_21720::principle_information_density"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "MI predicts accuracy via rate-distortion curves (@mi_correlates_with_accuracy) and predicts perplexity with r=-0.84 (@mi_correlates_with_perplexity). Together these empirical results justify adopting information density (bits of MI per output token) as the primary optimization target for compressor design, rather than task-specific metrics."
+      },
+      "premises": [
+        "github:2512_21720::mi_correlates_with_accuracy",
+        "github:2512_21720::mi_correlates_with_perplexity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a14e0ea9332d0ba1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_21720::principle_model_family_matters",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__conjunction_result_fa0bd369",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_21720::compressor_family_most_important",
+              "github:2512_21720::scaling_robust_to_conciseness_prompt"
+            ]
+          },
+          {
+            "conclusion": "github:2512_21720::__implication_result_dde7a27a",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::__conjunction_result_fa0bd369",
+              "github:2512_21720::principle_model_family_matters"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Logistic regression reveals compressor model family as the most important factor (@compressor_family_most_important — Qwen-2.5 outperforms Llama). Scaling trends are robust to prompt variations (@scaling_robust_to_conciseness_prompt), confirming that model capacity, not prompt formatting, drives the family-level differences."
+      },
+      "premises": [
+        "github:2512_21720::compressor_family_most_important",
+        "github:2512_21720::scaling_robust_to_conciseness_prompt"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_190e142e19797180",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_21720::proxy_model_setting"
+      ],
+      "conclusion": "github:2512_21720::limitation_non_reasoning_focus",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_21720::__implication_result_8d993b3c",
+            "operator": "implication",
+            "variables": [
+              "github:2512_21720::limitation_proxy_variance",
+              "github:2512_21720::limitation_non_reasoning_focus"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The MI estimator at small scales relies on a proxy model (@proxy_model_setting) because 1-3B models can assign high likelihoods to nonsensical sequences (@limitation_proxy_variance). This proxy dependency compounds with the focus on non-reasoning single-round models (@limitation_non_reasoning_focus): reasoning traces would require even more calibration, making proxy-based MI estimation harder to validate."
+      },
+      "premises": [
+        "github:2512_21720::limitation_proxy_variance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_db9f03b7fd2c9b78",
+      "type": "support"
+    }
+  ]
+}
