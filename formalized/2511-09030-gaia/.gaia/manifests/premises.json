@@ -1,0 +1,48 @@
+{
+  "ir_hash": "sha256:4e3935e861137cc0d7dc2e71f84d374f01272f207b64af765c832369d5bbe725",
+  "manifest_schema_version": 1,
+  "package": "2511-09030",
+  "premises": [
+    {
+      "content": "Under MAD (m=1), each agent in the system is responsible for exactly one step of the task. Each agent's input consists solely of the current state and the overall strategy — no history of prior actions is included in the context. This is by design: the entire MAKER system is built on this one-step-per-agent principle.",
+      "content_hash": "565c13f0c1b2405c5619d49b8ed0ad71cc0c7646fc4a9b6fc73d95e01a81a73d",
+      "exported": false,
+      "interface_hash": "sha256:b4898cad786f940cd61ba0d705e502dbe87ad00195fcaf08c7ad7897030a4eee",
+      "label": "mad_one_step_per_agent",
+      "qid": "github:2511_09030::mad_one_step_per_agent",
+      "required_by": [
+        "github:2511_09030::cost_exponential_with_m",
+        "github:2511_09030::cost_scales_log_linearly",
+        "github:2511_09030::mad_enables_error_correction",
+        "github:2511_09030::red_flag_reduces_collisions",
+        "github:2511_09030::voting_pfull_high_mad"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "MAKER (MAD + first-to-ahead-by-k voting + red-flagging) predicts zero errors on the 1,048,575-step 20-disk Towers of Hanoi task given p=0.99777 and k_min=3, since the theoretical p_full at these parameters is extremely close to 1.",
+      "content_hash": "3ef4d2ae59ec5cf21cecf4a335c9b9d2b5f3faf71a8c93b24378190ae05c4f0c",
+      "exported": false,
+      "interface_hash": "sha256:1fc3d6d55d8325e1723ce323bad9d865df226d32213184878a5fc7bb95f7df39",
+      "label": "pred_maker",
+      "qid": "github:2511_09030::pred_maker",
+      "required_by": [
+        "github:2511_09030::maker_zero_errors"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "A single LLM agent (no decomposition, m = s = 1,048,575) predicts certain failure: the probability of zero errors is (1-0.00223)^1048575 which is astronomically small, effectively zero. No practically feasible model achieves zero errors without decomposition.",
+      "content_hash": "effda931a6f26d92298a326a92182450985d27f93880a071f81c16aa5163b169",
+      "exported": false,
+      "interface_hash": "sha256:5f08581144663b81de5984e31a5489f48cb69ea66e9e78c3703c50bcb29b6449",
+      "label": "pred_single_agent",
+      "qid": "github:2511_09030::pred_single_agent",
+      "required_by": [
+        "github:2511_09030::maker_zero_errors"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

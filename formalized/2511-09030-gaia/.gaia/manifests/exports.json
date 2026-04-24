@@ -1,0 +1,85 @@
+{
+  "exports": [
+    {
+      "content": "When each agent is assigned m > 1 steps per subtask, the expected cost to complete an s-step task with reliability t scales exponentially in m: E[cost] = Theta(p^(-m) * c * s * ln(s)). Concretely, for a 1-million-step task with p=0.99 and t=0.9, the expected cost for m=100 steps/agent is many orders of magnitude higher than for m=1. This makes non-maximal decomposition infeasible for large s.",
+      "content_hash": "f2a95462d9d2338cd56185349dfb03cf399cb2080fb3549c1e31d4bcd058668f",
+      "label": "cost_exponential_with_m",
+      "qid": "github:2511_09030::cost_exponential_with_m",
+      "type": "claim"
+    },
+    {
+      "content": "Under MAD (m=1), the expected cost to solve an s-step task with target reliability t scales as Theta(s * ln(s)): E[cost] = Theta(p^(-1) * c * s * ln(s)) where c is the cost per LLM sample. Specifically, k_min = Theta(ln(s)) votes are required per step (Eq. 14), and the ln(s) factor corresponds to votes that can be parallelized. Thus the parallelized wall-clock time cost scales only as Theta(ln(s)).",
+      "content_hash": "ca32ead69235c10988fc5554a4006a16e3b0721f6b5755365176e7a961ffb649",
+      "label": "cost_scales_log_linearly",
+      "qid": "github:2511_09030::cost_scales_log_linearly",
+      "type": "claim"
+    },
+    {
+      "content": "The empirical per-step error rate (1-p) of gpt-4.1-mini at temperature tau=0.1 on the 20-disk Towers of Hanoi task is approximately 0.00223 (0.223%), estimated from 10,000 random single-step samples. The mean number of output tokens per step is 538 tokens. This gives a k_min = 3 votes required and estimated total cost of $3.5K for the full million-step task at target reliability t=0.95.",
+      "content_hash": "e2c120f7549cd5b86733037c7270a337251ecdfa10d41516d325d24bad46849c",
+      "label": "error_rate_mini_low",
+      "qid": "github:2511_09030::error_rate_mini_low",
+      "type": "claim"
+    },
+    {
+      "content": "The per-step error rates of LLMs on the Towers of Hanoi task do not notably decrease as the number of disks (i.e., as the log of the solution length) increases from 10 to 20 disks. This stability suggests the per-step error rate p is approximately independent of task length, an encouraging sign for scalability.",
+      "content_hash": "6238101b7d67870eaec1b9367ae14af89956caaab22349f75b9d43878c06fa81",
+      "label": "error_rate_stable",
+      "qid": "github:2511_09030::error_rate_stable",
+      "type": "claim"
+    },
+    {
+      "content": "In two independent runs of gpt-4.1-mini (tau=0.1) on 10,000 random single-step samples, zero steps had errors in both runs. This empirical result demonstrates that errors are effectively decorrelated across independent samples of the same step, validating the i.i.d. assumption required for the voting error correction to work.",
+      "content_hash": "b0f3bcaa835748d84233dbd63ca63dad5829932780474579db042c84bb66756b",
+      "label": "errors_decorrelated",
+      "qid": "github:2511_09030::errors_decorrelated",
+      "type": "claim"
+    },
+    {
+      "content": "The modularity induced by MAD (one step per agent) makes error correction at the subtask level both effective and scalable: because each agent handles a single step, multiple independent samples of that step can be drawn cheaply, and voting can be applied to identify the correct action. This is impossible or prohibitively expensive with a single large LLM call.",
+      "content_hash": "652dc7aa335145b07fc335b66a6979dd95e9a66420f1775af9c23a4b7a4f5415",
+      "label": "mad_enables_error_correction",
+      "qid": "github:2511_09030::mad_enables_error_correction",
+      "type": "claim"
+    },
+    {
+      "content": "The MAKER framework's log-linear cost scaling (Theta(s*ln(s))) suggests it can scale far beyond one million steps in principle, and potentially to tasks at the level of organizational and societal complexity (billions of steps). The framework has been preliminarily extended to large-digit multiplication, showing promising results on a task notoriously difficult for transformer-based models.",
+      "content_hash": "1b2e09fb523694087204968ab1502f81d024a571d13ba5b7eb66daaafde3640d",
+      "label": "maker_scalable_beyond",
+      "qid": "github:2511_09030::maker_scalable_beyond",
+      "type": "claim"
+    },
+    {
+      "content": "MAKER, using gpt-4.1-mini (tau=0.1) with k_min=3 first-to-ahead-by-k voting and red-flagging, successfully solved the 20-disk Towers of Hanoi task (1,048,575 sequential steps) with zero errors. This is the first demonstration of an LLM-based system solving a task with over one million steps without any error.",
+      "content_hash": "fe74855bbe5b13863bd1bd2de814a10cf7a38740dd180f2ad41f4e144c5bee46",
+      "label": "maker_zero_errors",
+      "qid": "github:2511_09030::maker_zero_errors",
+      "type": "claim"
+    },
+    {
+      "content": "MDAPs (Massively Decomposed Agentic Processes) represent an orthogonal direction to AI scaling compared to the predominant approach of building larger and more intelligent base LLMs. Rather than increasing the intelligence (cost per token) of the underlying model, MDAPs achieve reliability through extreme decomposition and error correction, enabling tasks beyond the reach of even the most expensive models.",
+      "content_hash": "d6e00ce138b3e36d53f513292aaddb89352def529d01cb0e32ada24b587d186b",
+      "label": "mdap_orthogonal_direction",
+      "qid": "github:2511_09030::mdap_orthogonal_direction",
+      "type": "claim"
+    },
+    {
+      "content": "Red-flagging (discarding responses with max-token-cutoff violations) substantially reduces the number of collision steps — steps where both the first two votes are incorrect. With a high max-token cutoff (repairing parser), collision counts exceed the i.i.d. expectation of 1-2 by a large margin. Switching to the red-flagging parser (stricter token cutoff) reduces collision counts to near the i.i.d. baseline, confirming that red-flagging successfully decorrelates errors.",
+      "content_hash": "652c3049271ed0d4e370ec055313c8e0cc5dc5fcd8396ae2399a1a6ae91684e3",
+      "label": "red_flag_reduces_collisions",
+      "qid": "github:2511_09030::red_flag_reduces_collisions",
+      "type": "claim"
+    },
+    {
+      "content": "Under MAD (m=1), the full-task success probability p_full = (1 + ((1-p)/p)^k)^(-s) can be maintained arbitrarily close to 1 for any per-step success rate p > 0.5, by choosing a sufficiently large vote margin k. For a 1-million-step task, high probability of success is achievable with practical values of k even when the per-step error rate approaches 1-in-10 (p=0.9).",
+      "content_hash": "5d31a8e99d799233158ed889678405047a73aca01d0bef0086ce52cb2573346a",
+      "label": "voting_pfull_high_mad",
+      "qid": "github:2511_09030::voting_pfull_high_mad",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:4e3935e861137cc0d7dc2e71f84d374f01272f207b64af765c832369d5bbe725",
+  "manifest_schema_version": 1,
+  "package": "2511-09030",
+  "version": "0.1.0"
+}

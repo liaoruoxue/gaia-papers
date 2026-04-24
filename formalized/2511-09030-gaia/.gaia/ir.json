@@ -1,0 +1,2021 @@
+{
+  "ir_hash": "sha256:4e3935e861137cc0d7dc2e71f84d374f01272f207b64af765c832369d5bbe725",
+  "knowledges": [
+    {
+      "content": "Large language models (LLMs) have a persistent per-step error rate. A system with a 1% per-step error rate is expected to fail after only 100 steps of a million-step task: the probability that all s steps are correct is (1-p)^s, which decays exponentially to zero as s grows.",
+      "content_hash": "b62c7dac480f0690604f9629915240d84ee2fb565b7961b7221c0d662c9fd6e0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_09030::setting_llm_error_rate",
+      "label": "setting_llm_error_rate",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM persistent error rate and exponential decay",
+      "type": "setting"
+    },
+    {
+      "content": "The Towers of Hanoi problem is used as a benchmark for LLM long-horizon execution. The puzzle requires moving D disks from one peg to another obeying the rule that a larger disk never sits atop a smaller one. The optimal number of steps to complete the task with D disks is 2^D - 1. With 10 disks this is 1,023 steps; with 20 disks it is 1,048,575 steps (just over one million).",
+      "content_hash": "929621e9135e81c70cdda9b426c9ad3c4338dab5bb451815190545e184aa727f",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_09030::setting_hanoi_benchmark",
+      "label": "setting_hanoi_benchmark",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Towers of Hanoi benchmark definition",
+      "type": "setting"
+    },
+    {
+      "content": "Massively Decomposed Agentic Processes (MDAPs) is a framework category for LLM-based systems that decompose tasks into minimal subtasks, apply error correction at the subtask level through voting, and use red-flagging to reduce correlated errors. MAKER (Maximal Agentic decomposition with Error-correction and Red-flagging) is the first implementation of this framework.",
+      "content_hash": "8f09d11351af3888674840d55f9f7fa186f607df105d33acee7522facec3b8e6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_09030::setting_mdap_framework",
+      "label": "setting_mdap_framework",
+      "module": "motivation",
+      "parameters": [],
+      "title": "MDAP framework and MAKER definition",
+      "type": "setting"
+    },
+    {
+      "content": "State-of-the-art LLMs degrade catastrophically on the Towers of Hanoi benchmark: they can complete the task with a high success rate up to five or six disks, after which the success rate plummets to zero. This means LLMs inevitably fail on any task requiring correct execution of more than a few hundred dependent steps. [@Shojaee2025]",
+      "content_hash": "6da35762f64b0edee7f5a815f02bf380786f541822cdf62f309b0052952c39ac",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_09030::llm_degrade_hanoi",
+      "label": "llm_degrade_hanoi",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shojaee2025"
+            ]
+          }
+        },
+        "prior": 0.97,
+        "prior_justification": "Directly observed and reported in prior work (Shojaee et al. 2025). The catastrophic degradation at 5-6 disks is a crisp empirical finding."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM catastrophic degradation on long-horizon Towers of Hanoi",
+      "type": "claim"
+    },
+    {
+      "content": "Because LLMs are auto-regressive, when generating the i-th action in a long task, a single agent is increasingly burdened by the growing context produced in generating all prior actions. As context increases, LLM outputs become increasingly unreliable, leading to eventual failure on tasks requiring thousands of sequential correct decisions.",
+      "content_hash": "8eb6beff6f27b90813706b7debf56b67b427ba32f46090d37e829180cf31f711",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_09030::llm_context_burden",
+      "label": "llm_context_burden",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Well-established mechanism in the LLM literature; auto-regressive models are known to degrade with growing context. High confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Growing context burden degrades LLM reliability",
+      "type": "claim"
+    },
+    {
+      "content": "A single LLM agent assigned to an s-step task faces an exponentially decaying probability of producing a fully correct action sequence. The probability that all s actions are correct is (1-e)^s where e is the per-step error rate, making million-step task completion essentially impossible without error correction.",
+      "content_hash": "6a1fbd6e7d7c094408be3b44a0bd32b1c1398d1949f2266c414049258e30b7a6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_09030::single_agent_infeasible",
+      "label": "single_agent_infeasible",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_single_agent",
+              "llm_context_burden",
+              "llm_degrade_hanoi"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Single-agent approach is infeasible for million-step tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Can an LLM-based agentic system be designed to reliably solve tasks requiring over one million sequential steps with zero errors, and what framework enables this?",
+      "content_hash": "981d31fef97f88c3919de1909e1f6a3da03cce628887341f7e807275562aae75",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2511_09030::rq_million_steps",
+      "label": "rq_million_steps",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "MDAPs (Massively Decomposed Agentic Processes) represent an orthogonal direction to AI scaling compared to the predominant approach of building larger and more intelligent base LLMs. Rather than increasing the intelligence (cost per token) of the underlying model, MDAPs achieve reliability through extreme decomposition and error correction, enabling tasks beyond the reach of even the most expensive models.",
+      "content_hash": "d6e00ce138b3e36d53f513292aaddb89352def529d01cb0e32ada24b587d186b",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2511_09030::mdap_orthogonal_direction",
+      "label": "mdap_orthogonal_direction",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The framing is well-supported by Figure 1 showing MAKER achieving what no base LLM can. The orthogonality argument is conceptually clear and empirically supported by the experimental results."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "MDAPs as orthogonal AI scaling direction",
+      "type": "claim"
+    },
+    {
+      "content": "Maximal Agentic Decomposition (MAD) is the extreme case of task decomposition where m=1, i.e., each subtask consists of exactly one step. A templating function phi maps the current state x_i and subtask specification to an LLM prompt. Extractors psi_a and psi_x parse the action and next state from the LLM response. The solution is computed recursively: r_{i+1} ~ M(phi(x_i)), a_{i+1} = psi_a(r_{i+1}), x_{i+1} = psi_x(r_{i+1}) for i = 0, ..., s-1.",
+      "content_hash": "6cefdd918910043ff1dc9b8e37c63dd4e3937d267c817bc27e30b22a7d1e8b8b",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_09030::setting_mad_definition",
+      "label": "setting_mad_definition",
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Maximal Agentic Decomposition (MAD) formal definition",
+      "type": "setting"
+    },
+    {
+      "content": "Under MAD (m=1), each agent in the system is responsible for exactly one step of the task. Each agent's input consists solely of the current state and the overall strategy — no history of prior actions is included in the context. This is by design: the entire MAKER system is built on this one-step-per-agent principle.",
+      "content_hash": "565c13f0c1b2405c5619d49b8ed0ad71cc0c7646fc4a9b6fc73d95e01a81a73d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_09030::mad_one_step_per_agent",
+      "label": "mad_one_step_per_agent",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "By definition of MAKER/MAD, each agent handles exactly one step. This is the foundational design choice of the system, not an empirical hypothesis."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MAD assigns exactly one step per agent with bounded context",
+      "type": "claim"
+    },
+    {
+      "content": "With MAD (m=1 step per agent), each agent's context is limited to the minimal information needed to execute its single assigned step, consisting of the overall strategy and the current state. This focused context prevents the confusion from irrelevant prior steps that accumulates in single-agent approaches, and allows the use of smaller LLMs with more limited context sizes.",
+      "content_hash": "8471b5e9229df4925132053f0008582a2e61451d7eaca0786bc5b04961d427e0",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_09030::mad_reduces_context",
+      "label": "mad_reduces_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_one_step_per_agent"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MAD reduces per-agent context burden",
+      "type": "claim"
+    },
+    {
+      "content": "The modularity induced by MAD (one step per agent) makes error correction at the subtask level both effective and scalable: because each agent handles a single step, multiple independent samples of that step can be drawn cheaply, and voting can be applied to identify the correct action. This is impossible or prohibitively expensive with a single large LLM call.",
+      "content_hash": "652dc7aa335145b07fc335b66a6979dd95e9a66420f1775af9c23a4b7a4f5415",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2511_09030::mad_enables_error_correction",
+      "label": "mad_enables_error_correction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_reduces_context"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MAD modularity enables efficient per-step error correction",
+      "type": "claim"
+    },
+    {
+      "content": "First-to-ahead-by-k voting: For each step, independent samples (votes) are drawn from the LLM agent. Let V[y] be the vote count for candidate y. A candidate y wins when V[y] >= k + max_{v != y} V[v], i.e., when it leads all other candidates by at least k votes. This is equivalent to the gambler's ruin framework where the correct answer races against the single most-likely alternative.",
+      "content_hash": "a6b9602c412e11b849d905d886039bffe60d1193f680e02f159ebb1e4a585d1f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2511_09030::setting_voting_algorithm",
+      "label": "setting_voting_algorithm",
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "First-to-ahead-by-k voting algorithm definition",
+      "type": "setting"
+    },
+    {
+      "content": "Scaling law derivation: For a task with s steps, per-step success rate p, decomposition level m (steps per subtask), and vote margin k, the key probabilities are: p_vote = p^m (probability correct vote for a subtask of m steps), p_alt = (1-p)*p^(m-1) (probability of alternative), p_sub = 1 / (1 + ((1-p)/p)^k) (probability voting succeeds on one subtask, from gambler's ruin hitting probability), p_full = p_sub^(s/m) = (1 + ((1-p)/p)^k)^(-s/m) (probability full task succeeds). These are Equations 10-13 in [@Meyerson2025].",
+      "content_hash": "021c8d731cc9a5692d00961145a9f2941057f91538490c770292141e22540f8d",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_09030::setting_voting_formula",
+      "label": "setting_voting_formula",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Meyerson2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Voting scaling law formulas (Eqs. 10-13)",
+      "type": "setting"
+    },
+    {
+      "content": "Under MAD (m=1), the full-task success probability p_full = (1 + ((1-p)/p)^k)^(-s) can be maintained arbitrarily close to 1 for any per-step success rate p > 0.5, by choosing a sufficiently large vote margin k. For a 1-million-step task, high probability of success is achievable with practical values of k even when the per-step error rate approaches 1-in-10 (p=0.9).",
+      "content_hash": "5d31a8e99d799233158ed889678405047a73aca01d0bef0086ce52cb2573346a",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2511_09030::voting_pfull_high_mad",
+      "label": "voting_pfull_high_mad",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 3a",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_one_step_per_agent"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Voting maintains near-perfect reliability at 1M steps for any p > 0.5",
+      "type": "claim"
+    },
+    {
+      "content": "Under MAD (m=1), the expected cost to solve an s-step task with target reliability t scales as Theta(s * ln(s)): E[cost] = Theta(p^(-1) * c * s * ln(s)) where c is the cost per LLM sample. Specifically, k_min = Theta(ln(s)) votes are required per step (Eq. 14), and the ln(s) factor corresponds to votes that can be parallelized. Thus the parallelized wall-clock time cost scales only as Theta(ln(s)).",
+      "content_hash": "ca32ead69235c10988fc5554a4006a16e3b0721f6b5755365176e7a961ffb649",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2511_09030::cost_scales_log_linearly",
+      "label": "cost_scales_log_linearly",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 4b",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Meyerson2025"
+            ],
+            "referenced_claims": [
+              "mad_one_step_per_agent"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MAKER cost scales log-linearly with number of steps under MAD",
+      "type": "claim"
+    },
+    {
+      "content": "When each agent is assigned m > 1 steps per subtask, the expected cost to complete an s-step task with reliability t scales exponentially in m: E[cost] = Theta(p^(-m) * c * s * ln(s)). Concretely, for a 1-million-step task with p=0.99 and t=0.9, the expected cost for m=100 steps/agent is many orders of magnitude higher than for m=1. This makes non-maximal decomposition infeasible for large s.",
+      "content_hash": "f2a95462d9d2338cd56185349dfb03cf399cb2080fb3549c1e31d4bcd058668f",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2511_09030::cost_exponential_with_m",
+      "label": "cost_exponential_with_m",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 5",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_reduces_context"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Non-maximal decomposition causes exponential cost explosion",
+      "type": "claim"
+    },
+    {
+      "content": "A non-decomposed single-agent approach (m = s, one LLM call for the entire task) is the alternative to MAD. Its expected cost for high reliability grows as p^(-s), an exponential in s — completely infeasible for s = 1,000,000.",
+      "content_hash": "39e3e2af358aebd83dec4231728623cbdcb2ffd7694233c7be5ae6594c7e7905",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2511_09030::alt_single_agent",
+      "label": "alt_single_agent",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Mathematical fact: the expected cost of a non-decomposed single-agent approach grows as p^(-s) (exponential in s), which is infeasible at s=1M for any p<1."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Single-agent alternative: exponential cost in s",
+      "type": "claim"
+    },
+    {
+      "content": "Red-flagging discards LLM responses with high-level indicators of unreliability before they enter the vote count. Two red flag types are used: (1) Overly long responses (exceeding a max token cutoff), indicating the model is over-analyzing a situation in a cycle of confusion. (2) Incorrectly formatted responses (failing to match the required output schema), indicating the model's reasoning has gone off the rails. Flagged responses are discarded and a new sample is drawn, at bounded cost under MAD.",
+      "content_hash": "55663777ef215aaa4b2c7190a7b30f2b78f17f0c651173fb6286ab449029f237",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2511_09030::setting_red_flag_types",
+      "label": "setting_red_flag_types",
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Red-flagging criteria: long responses and formatting errors",
+      "type": "setting"
+    },
+    {
+      "content": "Red-flagging (discarding long or malformatted LLM responses) reduces correlated errors across independent voting samples. Responses that are incorrectly formatted or overly long indicate the LLM has been conditioned into an anomalous state that also makes other parts of its reasoning incorrect. Discarding such responses prevents multiple correlated wrong votes from all being wrong for the same systematic reason.",
+      "content_hash": "7359e6d54415f41bbd592502aa7e5ddbffcdd35f1790491c3b6d70a034e7784e",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2511_09030::red_flag_reduces_correlation",
+      "label": "red_flag_reduces_correlation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "red_flag_enables_mad"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Red-flagging reduces correlated errors across votes",
+      "type": "claim"
+    },
+    {
+      "content": "Because MAD limits each agent to one step (bounded cost per call), the cost of discarding a flagged response and resampling is affordable. Red-flagging therefore becomes a practical mechanism under MAD that would be prohibitively expensive in a single large agent call covering all s steps.",
+      "content_hash": "b77c9dc0ab6745cb996010fa6b1ac47a7a95bb03e0a0869678980eaf5c407f86",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2511_09030::red_flag_enables_mad",
+      "label": "red_flag_enables_mad",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_one_step_per_agent"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MAD makes red-flag resampling affordable",
+      "type": "claim"
+    },
+    {
+      "content": "Experimental setup: MAKER is applied to the 20-disk Towers of Hanoi problem, which requires 2^20 - 1 = 1,048,575 steps (~1 million steps). Each agent receives the current disk configuration (state) and the previous move, and must output the next move and the resulting state. The overall strategy (a standard iterative algorithm for even numbers of disks) is provided in each agent's prompt. Agents are given gpt-4.1-mini at temperature 0.1 as the primary model for the full million-step run. The prompt format requires: move = [disk_id, from_peg, to_peg] and next_state = [[...], [...], [...]].",
+      "content_hash": "590ae240c3585d3a4ef9a875047711d9d7a184dde192f940fe8e571ba9c969c7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_09030::setting_experiment_setup",
+      "label": "setting_experiment_setup",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MAKER experimental setup: 20-disk Towers of Hanoi",
+      "type": "setting"
+    },
+    {
+      "content": "The empirical per-step error rate (1-p) of gpt-4.1-mini at temperature tau=0.1 on the 20-disk Towers of Hanoi task is approximately 0.00223 (0.223%), estimated from 10,000 random single-step samples. The mean number of output tokens per step is 538 tokens. This gives a k_min = 3 votes required and estimated total cost of $3.5K for the full million-step task at target reliability t=0.95.",
+      "content_hash": "e2c120f7549cd5b86733037c7270a337251ecdfa10d41516d325d24bad46849c",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2511_09030::error_rate_mini_low",
+      "label": "error_rate_mini_low",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 6b",
+        "prior": 0.92,
+        "prior_justification": "Based on 10,000 random single-step samples; statistical estimate with small error bars. High confidence in the reported 0.00223 error rate."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "gpt-4.1-mini (tau=0.1) per-step error rate and cost estimate",
+      "type": "claim"
+    },
+    {
+      "content": "The empirical per-step error rate (1-p) of gpt-4.1-nano on the 20-disk Towers of Hanoi task is approximately 0.3571 (35.71%). The estimated total cost at t=0.95 is $41.9K, with k_min=29 votes required — making it the most expensive proprietary model despite having the cheapest per-token cost ($0.484/MTok).",
+      "content_hash": "93a5362efec306a0ba46128564666feb24fb6b6471133cbc2e776c7fe520711a",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2511_09030::error_rate_nano",
+      "label": "error_rate_nano",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 6b",
+        "prior": 0.92,
+        "prior_justification": "Same 10K-sample measurement methodology as error_rate_mini_low; direct empirical measurement of gpt-4.1-nano's per-step error rate."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "gpt-4.1-nano high error rate makes it costliest despite cheap tokens",
+      "type": "claim"
+    },
+    {
+      "content": "The empirical per-step error rate (1-p) of the open-source gpt-oss-20B model on the 20-disk Towers of Hanoi task is approximately 0.0358 (3.58%), with k_min=6 votes and estimated total cost of $1.7K at t=0.95, making it the most cost-effective open-source choice.",
+      "content_hash": "66546aa72cfcccc4248974b9728fd954bdb73c84c501b01426ef6292147f164f",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2511_09030::error_rate_oss_20b",
+      "label": "error_rate_oss_20b",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 6b",
+        "prior": 0.92,
+        "prior_justification": "Same measurement methodology; direct empirical measurement for gpt-oss-20B."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "gpt-oss-20B: best open-source choice at $1.7K estimated cost",
+      "type": "claim"
+    },
+    {
+      "content": "The per-step error rates of LLMs on the Towers of Hanoi task do not notably decrease as the number of disks (i.e., as the log of the solution length) increases from 10 to 20 disks. This stability suggests the per-step error rate p is approximately independent of task length, an encouraging sign for scalability.",
+      "content_hash": "6238101b7d67870eaec1b9367ae14af89956caaab22349f75b9d43878c06fa81",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2511_09030::error_rate_stable",
+      "label": "error_rate_stable",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 6a",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "error_rate_stable"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Per-step error rates stable with increasing task length",
+      "type": "claim"
+    },
+    {
+      "content": "The cost-error-rate tradeoff across models shows that cheapest-per-token is not cheapest overall: gpt-4.1-nano ($0.484/MTok) has error rate 35.71% and costs $41.9K for the full task; gpt-4.1-mini ($1.6/MTok) has error rate 0.40% and costs $4.9K (temperature 1.0) or $3.5K (temperature 0.1); gpt-oss-20B ($0.2/MTok) has error rate 3.58% and costs $1.7K. Among proprietary models, gpt-4.1-mini at low temperature is optimal; gpt-oss-20B is the open-source leader.",
+      "content_hash": "a1b4be4e3c219a4e1450f799217c54472c903b8a5f253d0c3a6f32915386ea83",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2511_09030::model_cost_tradeoff",
+      "label": "model_cost_tradeoff",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 6b",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "error_rate_mini_low",
+              "error_rate_nano",
+              "error_rate_oss_20b"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Model cost-error tradeoff: gpt-4.1-mini optimal proprietary, gpt-oss-20B optimal OSS",
+      "type": "claim"
+    },
+    {
+      "content": "Given gpt-4.1-mini's per-step error rate of 0.00223 and 538 mean output tokens, Eq. 18 (E[cost] = Theta(c*s*ln(s))) yields an estimated total cost of $3.5K for the full 20-disk (1,048,575-step) task at target reliability t=0.95, with k_min=3 votes per step.",
+      "content_hash": "e324bd086a75ce1747ab895bd36837e211db38e6245412b83e5c13d4ffdfee91",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2511_09030::cost_estimate_mini",
+      "label": "cost_estimate_mini",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "error_rate_mini_low"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Cost estimate for gpt-4.1-mini from scaling law",
+      "type": "claim"
+    },
+    {
+      "content": "In two independent runs of gpt-4.1-mini (tau=0.1) on 10,000 random single-step samples, zero steps had errors in both runs. This empirical result demonstrates that errors are effectively decorrelated across independent samples of the same step, validating the i.i.d. assumption required for the voting error correction to work.",
+      "content_hash": "b0f3bcaa835748d84233dbd63ca63dad5829932780474579db042c84bb66756b",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2511_09030::errors_decorrelated",
+      "label": "errors_decorrelated",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Zero shared errors across two independent 10K-sample runs is compelling evidence. Slight uncertainty remains about rare pathological steps not captured by 10K samples."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Zero shared errors across two independent runs confirms error decorrelation",
+      "type": "claim"
+    },
+    {
+      "content": "MAKER, using gpt-4.1-mini (tau=0.1) with k_min=3 first-to-ahead-by-k voting and red-flagging, successfully solved the 20-disk Towers of Hanoi task (1,048,575 sequential steps) with zero errors. This is the first demonstration of an LLM-based system solving a task with over one million steps without any error.",
+      "content_hash": "fe74855bbe5b13863bd1bd2de814a10cf7a38740dd180f2ad41f4e144c5bee46",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2511_09030::maker_zero_errors",
+      "label": "maker_zero_errors",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 7",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "maker_zero_errors",
+              "pred_maker",
+              "pred_single_agent"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MAKER achieves zero-error solution to 1,048,575-step Towers of Hanoi",
+      "type": "claim"
+    },
+    {
+      "content": "MAKER (MAD + first-to-ahead-by-k voting + red-flagging) predicts zero errors on the 1,048,575-step 20-disk Towers of Hanoi task given p=0.99777 and k_min=3, since the theoretical p_full at these parameters is extremely close to 1.",
+      "content_hash": "3ef4d2ae59ec5cf21cecf4a335c9b9d2b5f3faf71a8c93b24378190ae05c4f0c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2511_09030::pred_maker",
+      "label": "pred_maker",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Follows from the mathematical scaling law (Eq. 13) with measured p=0.99777 and k=3. High confidence given the well-validated formula and measured error rate."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MAKER theoretical prediction: near-certain zero-error completion",
+      "type": "claim"
+    },
+    {
+      "content": "A single LLM agent (no decomposition, m = s = 1,048,575) predicts certain failure: the probability of zero errors is (1-0.00223)^1048575 which is astronomically small, effectively zero. No practically feasible model achieves zero errors without decomposition.",
+      "content_hash": "effda931a6f26d92298a326a92182450985d27f93880a071f81c16aa5163b169",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2511_09030::pred_single_agent",
+      "label": "pred_single_agent",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "Mathematical consequence of (1-0.00223)^1048575 ≈ 10^(-1014). Near-certain failure."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Single-agent prediction: certain failure on 1M-step task",
+      "type": "claim"
+    },
+    {
+      "content": "compare(MAKER (MAD + first-to-ahead-by-k voting + red-flagging) predicts zero errors on the 1,048,575-step 20-disk Towers of Hanoi task given p=0.99777 and k_min=3, since the theoretical p_full at these parameters is extremely close to 1., A single LLM agent (no decomposition, m = s = 1,048,575) predicts certain failure: the probability of zero errors is (1-0.00223)^1048575 which is astronomically small, effectively zero. No practically feasible model achieves zero errors without decomposition., MAKER, using gpt-4.1-mini (tau=0.1) with k_min=3 first-to-ahead-by-k voting and red-flagging, successfully solved the 20-disk Towers of Hanoi task (1,048,575 sequential steps) with zero errors. This is the first demonstration of an LLM-based system solving a task with over one million steps without any error.)",
+      "content_hash": "deb45806c5a8e425677192fa9dc90eedc888055df97f45b0b25850b4611f31ea",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2511_09030::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The number of undecided steps decreases exponentially with each voting round. In the 20-disk experiment: after round 1, 1,048,575 steps are undecided; after round 2, ~81,959; after round 3, ~18,461; after round 4, ~3,807; continuing to decrease until 0 undecided steps (zero errors). The vast majority of LLM calls and therefore cost is spent in the first k_min=3 rounds; subsequent rounds cost effectively nothing.",
+      "content_hash": "ad8c959a5be9f6797e94f492f2becef531b1f5f4f4fa9370d83e5b8fd9fbc9c9",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2511_09030::exponential_convergence",
+      "label": "exponential_convergence",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 8a",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "exponential_convergence",
+              "voting_pfull_high_mad"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Exponential convergence of voting to zero-error solution",
+      "type": "claim"
+    },
+    {
+      "content": "Red-flagging (discarding responses with max-token-cutoff violations) substantially reduces the number of collision steps — steps where both the first two votes are incorrect. With a high max-token cutoff (repairing parser), collision counts exceed the i.i.d. expectation of 1-2 by a large margin. Switching to the red-flagging parser (stricter token cutoff) reduces collision counts to near the i.i.d. baseline, confirming that red-flagging successfully decorrelates errors.",
+      "content_hash": "652c3049271ed0d4e370ec055313c8e0cc5dc5fcd8396ae2399a1a6ae91684e3",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2511_09030::red_flag_reduces_collisions",
+      "label": "red_flag_reduces_collisions",
+      "metadata": {
+        "figure": "artifacts/2511.09030.pdf, Figure 9b",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "red_flag_reduces_correlation"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Red-flagging empirically reduces correlated-error collisions",
+      "type": "claim"
+    },
+    {
+      "content": "gpt-4.1-mini's per-step error rate at 10 disks is approximately 0.0045, consistent with its error rate at 20 disks (0.00223), showing no significant increase in error rate as task size grows.",
+      "content_hash": "7ad2fa0663d9916c5b532021284b549072205f9db30b75159e5472bc6cd697cb",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2511_09030::obs_mini_stable",
+      "label": "obs_mini_stable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "error_rate_stable"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "gpt-4.1-mini error rate consistent across disk counts (10 vs 20 disks)",
+      "type": "claim"
+    },
+    {
+      "content": "o3-mini's per-step error rate at 10 disks is approximately 0.0018 and remains consistent at 14-20 disks, showing no significant trend with task length.",
+      "content_hash": "0e3d128f9d99fa42965b1957762f4f7e093d211ac8508a4178a41b32d55ccc6e",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2511_09030::obs_o3_stable",
+      "label": "obs_o3_stable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "error_rate_stable"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "o3-mini error rate consistent across disk counts",
+      "type": "claim"
+    },
+    {
+      "content": "Correlated errors — where particular input states cause the LLM to fail consistently across independent samples — are an open foundational problem. Even in the Towers of Hanoi experiments, a few steps showed substantially higher error rates than others for no apparent reason (e.g., step 10241 required 18 voting rounds). Simple resampling with temperature sufficed here, but real-world tasks may require more sophisticated decorrelation methods such as prompt paraphrasing or noise injection.",
+      "content_hash": "c8e3ca678fc8193c3bfeced81985b6371466e85a8561462caab104aa324e0b56",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2511_09030::correlated_errors_open",
+      "label": "correlated_errors_open",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "errors_decorrelated",
+              "red_flag_reduces_collisions"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "Correlated errors remain an open problem requiring sophisticated decorrelation",
+      "type": "claim"
+    },
+    {
+      "content": "MDAPs (using small, focused microagents instead of large unified models) may reduce AI safety risks: extreme decomposition limits the scope of each agent, reducing the chance that any single agent accumulates sufficient context to exhibit misaligned behavior, and may reduce the risk of unintended sentience emerging in constrained agents. This is an orthogonal risk-reduction path compared to capability control.",
+      "content_hash": "bf07caa5fdac5dae35d1217fff44b81e72ac5d5cafb223e1bfdee20fafc6f025",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2511_09030::mdap_reduces_risk",
+      "label": "mdap_reduces_risk",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "mad_reduces_context",
+              "mdap_orthogonal_direction"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "MDAPs may reduce AI safety and model welfare risks",
+      "type": "claim"
+    },
+    {
+      "content": "The MAKER framework's log-linear cost scaling (Theta(s*ln(s))) suggests it can scale far beyond one million steps in principle, and potentially to tasks at the level of organizational and societal complexity (billions of steps). The framework has been preliminarily extended to large-digit multiplication, showing promising results on a task notoriously difficult for transformer-based models.",
+      "content_hash": "1b2e09fb523694087204968ab1502f81d024a571d13ba5b7eb66daaafde3640d",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2511_09030::maker_scalable_beyond",
+      "label": "maker_scalable_beyond",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cost_scales_log_linearly",
+              "maker_zero_errors"
+            ]
+          }
+        }
+      },
+      "module": "s5_discussion",
+      "parameters": [],
+      "title": "MAKER scalable to organizational-scale tasks and beyond Towers of Hanoi",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_09030::llm_degrade_hanoi,github:2511_09030::llm_context_burden)",
+      "content_hash": "e2d23ed4b54018f0b335921c66f850d08d9d79072010ebab8ec5417ac7e44e10",
+      "exported": false,
+      "id": "github:2511_09030::__conjunction_result_b8921bb7",
+      "label": "__conjunction_result_b8921bb7",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_09030::llm_degrade_hanoi,github:2511_09030::llm_context_burden)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0eb180c63298d49c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::__conjunction_result_b8921bb7,github:2511_09030::single_agent_infeasible)",
+      "content_hash": "4c9da8674b84609bf28bf44af29ee0d65b721ccb168c54fdb59e5b24057169ca",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_6bbd75b1",
+      "label": "__implication_result_6bbd75b1",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::__conjunction_result_b8921bb7,github:2511_09030::single_agent_infeasible)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0eb180c63298d49c",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::mad_reduces_context)",
+      "content_hash": "c644ff30f5c14db9bed7bed6c4715819fd0ff699a1a2f248894fb5b857595e7f",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_f762937b",
+      "label": "__implication_result_f762937b",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::mad_reduces_context)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f183b4e2943a2448",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_reduces_context,github:2511_09030::mad_enables_error_correction)",
+      "content_hash": "2b67a9d78fea138bc119ed2c4be784ea8458d677c0903a1afa7b1f2b8d7e93d4",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_5221924a",
+      "label": "__implication_result_5221924a",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_reduces_context,github:2511_09030::mad_enables_error_correction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7153906752bc0c76",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::voting_pfull_high_mad)",
+      "content_hash": "51c335f81366983c0559778f00aac1824b639a43d4bf4b21c7267a90ae391cf8",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_fe57bb78",
+      "label": "__implication_result_fe57bb78",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::voting_pfull_high_mad)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a65ae363dcbf24cb",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::cost_scales_log_linearly)",
+      "content_hash": "b644d8b26dac60583a2e9a2681f4d04c1a71d90dee681b645a71209c0920d7e5",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_14797ed1",
+      "label": "__implication_result_14797ed1",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::cost_scales_log_linearly)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0b15f46d01e6111d",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_reduces_context,github:2511_09030::cost_exponential_with_m)",
+      "content_hash": "c0cd0c7779eb47d04f8769492d8af40801e1817f919d500a4bc7f4ac7ec223ee",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_e79686d7",
+      "label": "__implication_result_e79686d7",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_reduces_context,github:2511_09030::cost_exponential_with_m)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5a1a51001aab7109",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::alt_single_agent,github:2511_09030::single_agent_infeasible)",
+      "content_hash": "72ff91bc79552aaf960518ce3b2d08e35a1b643853b8e604c244ced061c40ec0",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_bf3bc129",
+      "label": "__implication_result_bf3bc129",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::alt_single_agent,github:2511_09030::single_agent_infeasible)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_63111489ae8c0d45",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::red_flag_enables_mad,github:2511_09030::red_flag_reduces_correlation)",
+      "content_hash": "b3cc6f24374f431bdb874e52c16be0b1a30211c74f2da3029b87c84ee3cb8e60",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_95b1f080",
+      "label": "__implication_result_95b1f080",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::red_flag_enables_mad,github:2511_09030::red_flag_reduces_correlation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_78c5a538557cfcc5",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::red_flag_enables_mad)",
+      "content_hash": "8cb062a11e26e62f82a1752854a50f9ef57aab17ea98b530e770c2fa73f240c0",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_3eac9239",
+      "label": "__implication_result_3eac9239",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::mad_one_step_per_agent,github:2511_09030::red_flag_enables_mad)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9a0a86e339803862",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_09030::error_rate_mini_low,github:2511_09030::error_rate_nano,github:2511_09030::error_rate_oss_20b)",
+      "content_hash": "8f4a9d7b7e397d81e0537a03f5da481fdaf77049d204f3f0f69761012a4b6d5e",
+      "exported": false,
+      "id": "github:2511_09030::__conjunction_result_fe377ec6",
+      "label": "__conjunction_result_fe377ec6",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_09030::error_rate_mini_low,github:2511_09030::error_rate_nano,github:2511_09030::error_rate_oss_20b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_acc8b85a004d6257",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::__conjunction_result_fe377ec6,github:2511_09030::model_cost_tradeoff)",
+      "content_hash": "4977e0ec47814b9538789c64236b5e43b6bd0b8a8d9b4ae8fa6b595a43249789",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_cef156d2",
+      "label": "__implication_result_cef156d2",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::__conjunction_result_fe377ec6,github:2511_09030::model_cost_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_acc8b85a004d6257",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::error_rate_mini_low,github:2511_09030::cost_estimate_mini)",
+      "content_hash": "9e575c2f8777fb6c4889626687c7ea7bbfec34469320e7b94cacb27203e6965d",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_2ec1fb3f",
+      "label": "__implication_result_2ec1fb3f",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::error_rate_mini_low,github:2511_09030::cost_estimate_mini)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_305d54bec8e71768",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::pred_maker,github:2511_09030::maker_zero_errors)",
+      "content_hash": "c3c3f247e0e5012c2545ecbb31a26051fdea979b372004a29b60df60fa8f2eb3",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_62f22426",
+      "label": "__implication_result_62f22426",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::pred_maker,github:2511_09030::maker_zero_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b1ec4e8c98274acb",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::pred_single_agent,github:2511_09030::maker_zero_errors)",
+      "content_hash": "8e4cad0a7dce62a832d53157b5e7039ea572ba963bac005e3f3633491ede8ddb",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_2b629d56",
+      "label": "__implication_result_2b629d56",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::pred_single_agent,github:2511_09030::maker_zero_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_756cccd3df05c858",
+        "owning_strategy_type": "support",
+        "prior": 0.05,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2511_09030::pred_maker,github:2511_09030::maker_zero_errors)",
+      "content_hash": "23719050a06ceef5fabaffb9fa3eada56bb3020b8083c9e42eb52a0c3e2744e5",
+      "exported": false,
+      "id": "github:2511_09030::__equivalence_result_4f119670",
+      "label": "__equivalence_result_4f119670",
+      "metadata": {
+        "canonical_name": "matches(github:2511_09030::pred_maker,github:2511_09030::maker_zero_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_594ad4fc75d4948a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2511_09030::pred_single_agent,github:2511_09030::maker_zero_errors)",
+      "content_hash": "cdfe2469e2abbba15ad86111acbdcf7da7972e8eb7ed071adc8f0c1b6661e954",
+      "exported": false,
+      "id": "github:2511_09030::__equivalence_result_844e0edb",
+      "label": "__equivalence_result_844e0edb",
+      "metadata": {
+        "canonical_name": "matches(github:2511_09030::pred_single_agent,github:2511_09030::maker_zero_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_594ad4fc75d4948a",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::voting_pfull_high_mad,github:2511_09030::exponential_convergence)",
+      "content_hash": "84b42334c55adff0f4436e6cf3ce71483c5c85f8b5cfe65c07b843e1de35a43e",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_5b748bc5",
+      "label": "__implication_result_5b748bc5",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::voting_pfull_high_mad,github:2511_09030::exponential_convergence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0f84b36e66f2b314",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::red_flag_reduces_correlation,github:2511_09030::red_flag_reduces_collisions)",
+      "content_hash": "2e990812c0bb6ec3237ee2829375523147094940b3dde0be60a71173b1ac6f41",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_2da70bee",
+      "label": "__implication_result_2da70bee",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::red_flag_reduces_correlation,github:2511_09030::red_flag_reduces_collisions)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1ffd2375c0753a6d",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::error_rate_stable,github:2511_09030::obs_mini_stable)",
+      "content_hash": "2be17f484adf78927f426cf54d2d3a0fb8a8ab9c46254d310378a4f3b1a1e99c",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_c2e523fb",
+      "label": "__implication_result_c2e523fb",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::error_rate_stable,github:2511_09030::obs_mini_stable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c17fcce444223c02",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::error_rate_stable,github:2511_09030::obs_o3_stable)",
+      "content_hash": "c3edcbb986f73448cf4e35a9d21701e9160a319baf400493ebcbb19761b65c53",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_fc7833a0",
+      "label": "__implication_result_fc7833a0",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::error_rate_stable,github:2511_09030::obs_o3_stable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4886a59b9cd18f06",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_09030::red_flag_reduces_collisions,github:2511_09030::errors_decorrelated)",
+      "content_hash": "45027657a839dd62deaeb7aeb9b6375c39af13b99a6a6d55f586674856b7ac2f",
+      "exported": false,
+      "id": "github:2511_09030::__conjunction_result_978f5c88",
+      "label": "__conjunction_result_978f5c88",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_09030::red_flag_reduces_collisions,github:2511_09030::errors_decorrelated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_14cc09fb6fe79e7e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::__conjunction_result_978f5c88,github:2511_09030::correlated_errors_open)",
+      "content_hash": "dfd12ddb4d91e2c45be8d649ac0ec69653fb50a1dbff8380502adb5cf158c66a",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_935a2136",
+      "label": "__implication_result_935a2136",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::__conjunction_result_978f5c88,github:2511_09030::correlated_errors_open)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14cc09fb6fe79e7e",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_09030::mdap_orthogonal_direction,github:2511_09030::mad_reduces_context)",
+      "content_hash": "73cfa59385d9c82c43ab3a9f8ba18e41bba345537ba59e626d3b5319f5d3b9bf",
+      "exported": false,
+      "id": "github:2511_09030::__conjunction_result_ce76f3c8",
+      "label": "__conjunction_result_ce76f3c8",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_09030::mdap_orthogonal_direction,github:2511_09030::mad_reduces_context)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8bfccad64864c485",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::__conjunction_result_ce76f3c8,github:2511_09030::mdap_reduces_risk)",
+      "content_hash": "6c1fbe90939a75b090f443800431e00b87ddd8926bb8a0738df1d6c357d16f80",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_0da4576b",
+      "label": "__implication_result_0da4576b",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::__conjunction_result_ce76f3c8,github:2511_09030::mdap_reduces_risk)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8bfccad64864c485",
+        "owning_strategy_type": "support",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2511_09030::cost_scales_log_linearly,github:2511_09030::maker_zero_errors)",
+      "content_hash": "fa6086fe27424f347c41c698cc4c8146bd73041c2a7b5a1c90e42e9152301640",
+      "exported": false,
+      "id": "github:2511_09030::__conjunction_result_fc4a7bd0",
+      "label": "__conjunction_result_fc4a7bd0",
+      "metadata": {
+        "canonical_name": "all_true(github:2511_09030::cost_scales_log_linearly,github:2511_09030::maker_zero_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2663c71f3307bc6a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2511_09030::__conjunction_result_fc4a7bd0,github:2511_09030::maker_scalable_beyond)",
+      "content_hash": "8e603362cd4b2983980eb6edfaf1fbfea128e66236a961fc615c16cec9460256",
+      "exported": false,
+      "id": "github:2511_09030::__implication_result_0c27e3a2",
+      "label": "__implication_result_0c27e3a2",
+      "metadata": {
+        "canonical_name": "implies(github:2511_09030::__conjunction_result_fc4a7bd0,github:2511_09030::maker_scalable_beyond)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2663c71f3307bc6a",
+        "owning_strategy_type": "support",
+        "prior": 0.72,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_framework",
+    "s4_experiments",
+    "s5_discussion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: LLM Long-Horizon Execution Challenge",
+    "s3_framework": "Section 3: The MAKER Framework — Maximal Agentic Decomposition, Voting, and Red-Flagging",
+    "s4_experiments": "Section 4: Experimental Validation on Towers of Hanoi",
+    "s5_discussion": "Section 5: Discussion and Future Work"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2511_09030",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2511_09030::single_agent_infeasible",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__conjunction_result_b8921bb7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_09030::llm_degrade_hanoi",
+              "github:2511_09030::llm_context_burden"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__implication_result_6bbd75b1",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__conjunction_result_b8921bb7",
+              "github:2511_09030::single_agent_infeasible"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "@llm_degrade_hanoi shows that empirically LLMs fail at long-horizon tasks, and @llm_context_burden explains the mechanism: growing context degrades reliability. Together these establish that the single-agent paradigm cannot scale to million-step tasks without a fundamentally different approach."
+      },
+      "premises": [
+        "github:2511_09030::llm_degrade_hanoi",
+        "github:2511_09030::llm_context_burden"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0eb180c63298d49c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_llm_error_rate"
+      ],
+      "conclusion": "github:2511_09030::mad_reduces_context",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_f762937b",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_one_step_per_agent",
+              "github:2511_09030::mad_reduces_context"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Because each agent (@mad_one_step_per_agent) handles exactly one step and receives only the current state plus strategy — not the full history of prior actions — its context is structurally bounded to a constant amount per step. This directly addresses the context-growth problem identified in the motivation."
+      },
+      "premises": [
+        "github:2511_09030::mad_one_step_per_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f183b4e2943a2448",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::mad_enables_error_correction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_5221924a",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_reduces_context",
+              "github:2511_09030::mad_enables_error_correction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Because each agent's output (@mad_reduces_context) is limited to a single step's action and next state, the cost of resampling a step is bounded by the cost of one LLM call. This enables applying voting across multiple independent samples at a fixed, bounded cost per step — a capability that does not exist when all s steps are bundled into a single agent call."
+      },
+      "premises": [
+        "github:2511_09030::mad_reduces_context"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7153906752bc0c76",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_voting_formula",
+        "github:2511_09030::setting_voting_algorithm",
+        "github:2511_09030::setting_mad_definition"
+      ],
+      "conclusion": "github:2511_09030::voting_pfull_high_mad",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_fe57bb78",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_one_step_per_agent",
+              "github:2511_09030::voting_pfull_high_mad"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Plugging m=1 (the MAD condition from @mad_one_step_per_agent) into the p_full formula gives p_full = (1 + ((1-p)/p)^k)^(-s). As k increases, ((1-p)/p)^k shrinks toward 0 for any p > 0.5 (since (1-p)/p < 1), making p_full approach 1. This is a mathematical consequence of the gambler's ruin hitting probability formula applied to the voting structure."
+      },
+      "premises": [
+        "github:2511_09030::mad_one_step_per_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a65ae363dcbf24cb",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_voting_formula",
+        "github:2511_09030::setting_voting_algorithm",
+        "github:2511_09030::setting_mad_definition"
+      ],
+      "conclusion": "github:2511_09030::cost_scales_log_linearly",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_14797ed1",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_one_step_per_agent",
+              "github:2511_09030::cost_scales_log_linearly"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "With m=1 (MAD, from @mad_one_step_per_agent), the scaling law formula gives p_sub = 1/(1 + ((1-p)/p)^k). Inverting for k_min at target success probability t yields k_min = Theta(ln(s)) (Appendix B of [@Meyerson2025]). Gambler's ruin hitting time (Eq. 16) then yields total cost Theta(c * s * k_min) = Theta(c * s * ln(s)). The ln(s) factor can be parallelized, reducing wall-clock time to Theta(ln(s))."
+      },
+      "premises": [
+        "github:2511_09030::mad_one_step_per_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0b15f46d01e6111d",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_voting_formula",
+        "github:2511_09030::setting_mad_definition"
+      ],
+      "conclusion": "github:2511_09030::cost_exponential_with_m",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_e79686d7",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_reduces_context",
+              "github:2511_09030::cost_exponential_with_m"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "From the scaling law (Eq. 15): the cost per vote is c_vote = c*m / p^(m-1). The expected cost per subtask (Eq. 16) multiplied by s/m subtasks yields total cost Theta(p^(-m) * c * s * ln(s)) (Eq. 17). @mad_reduces_context established that MAD (m=1) is the baseline; any m > 1 introduces the p^(-m) exponential factor, which grows without bound as m increases for any p < 1. This makes non-maximal decomposition infeasible for large tasks."
+      },
+      "premises": [
+        "github:2511_09030::mad_reduces_context"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5a1a51001aab7109",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_voting_formula"
+      ],
+      "conclusion": "github:2511_09030::single_agent_infeasible",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_bf3bc129",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::alt_single_agent",
+              "github:2511_09030::single_agent_infeasible"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "@alt_single_agent establishes that the expected cost of the single-agent approach grows as p^(-s) — exponential in the number of steps s. For s=1,000,000 and any p < 1 (i.e., any non-perfect LLM), this is astronomically large, making the approach infeasible. This confirms the theoretical argument that motivated MAKER."
+      },
+      "premises": [
+        "github:2511_09030::alt_single_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_63111489ae8c0d45",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_red_flag_types",
+        "github:2511_09030::setting_mad_definition"
+      ],
+      "conclusion": "github:2511_09030::red_flag_reduces_correlation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_95b1f080",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::red_flag_enables_mad",
+              "github:2511_09030::red_flag_reduces_correlation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "@red_flag_enables_mad establishes that resampling is affordable under MAD. Given that overly long or malformatted responses signal a pathological LLM state (per the red-flagging criteria) where reasoning is likely compromised, discarding such responses removes samples that are both wrong AND correlated with each other. This directly reduces the collision rate (multiple votes wrong for the same reason), preserving the i.i.d. assumption required for voting to provide reliable error correction."
+      },
+      "premises": [
+        "github:2511_09030::red_flag_enables_mad"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_78c5a538557cfcc5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_red_flag_types"
+      ],
+      "conclusion": "github:2511_09030::red_flag_enables_mad",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_3eac9239",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::mad_one_step_per_agent",
+              "github:2511_09030::red_flag_enables_mad"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "@mad_one_step_per_agent ensures each agent call costs a fixed, bounded amount. When a response is flagged and discarded, the cost of a replacement call is also bounded. This makes the resampling loop in red-flagging affordable."
+      },
+      "premises": [
+        "github:2511_09030::mad_one_step_per_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9a0a86e339803862",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::model_cost_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__conjunction_result_fe377ec6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_09030::error_rate_mini_low",
+              "github:2511_09030::error_rate_nano",
+              "github:2511_09030::error_rate_oss_20b"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__implication_result_cef156d2",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__conjunction_result_fe377ec6",
+              "github:2511_09030::model_cost_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@error_rate_mini_low gives gpt-4.1-mini's 0.223% error rate and $3.5K cost. @error_rate_nano gives gpt-4.1-nano's 35.71% error rate and $41.9K cost. @error_rate_oss_20b gives gpt-oss-20B's 3.58% error rate and $1.7K cost. Comparing these three data points shows that per-token cost alone is a poor predictor of total task cost — error rate determines k_min, which dominates."
+      },
+      "premises": [
+        "github:2511_09030::error_rate_mini_low",
+        "github:2511_09030::error_rate_nano",
+        "github:2511_09030::error_rate_oss_20b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_acc8b85a004d6257",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_voting_formula",
+        "github:2511_09030::setting_experiment_setup"
+      ],
+      "conclusion": "github:2511_09030::cost_estimate_mini",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_2ec1fb3f",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::error_rate_mini_low",
+              "github:2511_09030::cost_estimate_mini"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Plugging the empirical values from @error_rate_mini_low (p=0.99777, mean tokens=538, per-token cost) into the scaling law formula E[cost] = Theta(c*s*ln(s)) yields the $3.5K cost estimate with k_min=3. This is a deterministic arithmetic calculation given the empirical inputs."
+      },
+      "premises": [
+        "github:2511_09030::error_rate_mini_low"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_305d54bec8e71768",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2511_09030::maker_zero_errors",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_62f22426",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::pred_maker",
+              "github:2511_09030::maker_zero_errors"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "@pred_maker states that the theoretical prediction of MAKER is near-certain zero-error completion given the empirical per-step error rate and k_min=3. The observation @maker_zero_errors confirms this prediction exactly."
+      },
+      "premises": [
+        "github:2511_09030::pred_maker"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b1ec4e8c98274acb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::maker_zero_errors",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_2b629d56",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::pred_single_agent",
+              "github:2511_09030::maker_zero_errors"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.05,
+        "reason": "@pred_single_agent predicts that without decomposition, zero errors on 1M steps is essentially impossible — the single-agent alternative cannot explain the observed zero-error outcome."
+      },
+      "premises": [
+        "github:2511_09030::pred_single_agent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_756cccd3df05c858",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__equivalence_result_4f119670",
+            "operator": "equivalence",
+            "variables": [
+              "github:2511_09030::pred_maker",
+              "github:2511_09030::maker_zero_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__equivalence_result_844e0edb",
+            "operator": "equivalence",
+            "variables": [
+              "github:2511_09030::pred_single_agent",
+              "github:2511_09030::maker_zero_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__equivalence_result_844e0edb",
+              "github:2511_09030::__equivalence_result_4f119670"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "MAKER predicts near-unity success probability for the observation; the single-agent alternative predicts near-zero probability. The match is decisive."
+      },
+      "premises": [
+        "github:2511_09030::pred_maker",
+        "github:2511_09030::pred_single_agent",
+        "github:2511_09030::maker_zero_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_594ad4fc75d4948a",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2511_09030::_anon_000",
+      "metadata": {
+        "reason": "Both frameworks attempt to explain the zero-error million-step result"
+      },
+      "premises": [
+        "github:2511_09030::pred_maker",
+        "github:2511_09030::pred_single_agent",
+        "github:2511_09030::maker_zero_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef8fcdeba69b04a0",
+      "sub_strategies": [
+        "lcs_b1ec4e8c98274acb",
+        "lcs_756cccd3df05c858",
+        "lcs_594ad4fc75d4948a"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2511_09030::exponential_convergence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_5b748bc5",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::voting_pfull_high_mad",
+              "github:2511_09030::exponential_convergence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@voting_pfull_high_mad establishes theoretically that the voting mechanism converges with exponentially decaying probability of remaining undecided steps. The empirical observation in @exponential_convergence matches this theoretical prediction: after the first k=3 rounds there is a sharp exponential decrease in undecided steps, and the pathological case (one step requiring 18 rounds) was handled by the decorrelation mechanism."
+      },
+      "premises": [
+        "github:2511_09030::voting_pfull_high_mad"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0f84b36e66f2b314",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2511_09030::setting_red_flag_types"
+      ],
+      "conclusion": "github:2511_09030::red_flag_reduces_collisions",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_2da70bee",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::red_flag_reduces_correlation",
+              "github:2511_09030::red_flag_reduces_collisions"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The theoretical mechanism in @red_flag_reduces_correlation predicts that discarding pathological (long/malformatted) responses removes correlated errors. The empirical result in Figure 9b confirms the prediction: collision counts (steps where both the first two votes are incorrect) drop to the i.i.d. baseline (~1-2 collisions) when red-flagging is applied, compared to much higher counts with the repairing parser. This validates the decorrelation mechanism."
+      },
+      "premises": [
+        "github:2511_09030::red_flag_reduces_correlation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1ffd2375c0753a6d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::obs_mini_stable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_c2e523fb",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::error_rate_stable",
+              "github:2511_09030::obs_mini_stable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The law @error_rate_stable predicts that per-step error rates are approximately constant regardless of disk count. gpt-4.1-mini's rates at 10 and 20 disks (0.0045 and 0.00223) are consistent with this prediction."
+      },
+      "premises": [
+        "github:2511_09030::error_rate_stable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c17fcce444223c02",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::obs_o3_stable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__implication_result_fc7833a0",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::error_rate_stable",
+              "github:2511_09030::obs_o3_stable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The law @error_rate_stable predicts stable error rates across disk counts. o3-mini's rate of ~0.0018 is consistent from 10 to 20 disks."
+      },
+      "premises": [
+        "github:2511_09030::error_rate_stable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4886a59b9cd18f06",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::error_rate_stable",
+      "metadata": {
+        "reason": "Two independent models (gpt-4.1-mini and o3-mini) both show stable per-step error rates across the range of 10 to 20 disks. This convergent evidence from independent model types supports the general law @error_rate_stable."
+      },
+      "premises": [
+        "github:2511_09030::obs_mini_stable",
+        "github:2511_09030::obs_o3_stable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3477db5f59716acb",
+      "sub_strategies": [
+        "lcs_c17fcce444223c02",
+        "lcs_4886a59b9cd18f06"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2511_09030::correlated_errors_open",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__conjunction_result_978f5c88",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_09030::red_flag_reduces_collisions",
+              "github:2511_09030::errors_decorrelated"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__implication_result_935a2136",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__conjunction_result_978f5c88",
+              "github:2511_09030::correlated_errors_open"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@red_flag_reduces_collisions shows that red-flagging reduces but does not eliminate correlated errors, and @errors_decorrelated shows that temperature-based resampling decorrelates most errors in this domain. However, the pathological step requiring 18 rounds suggests that some input states create persistent correlation that simple resampling cannot fully address — motivating future work on prompt-level decorrelation."
+      },
+      "premises": [
+        "github:2511_09030::red_flag_reduces_collisions",
+        "github:2511_09030::errors_decorrelated"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14cc09fb6fe79e7e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::mdap_reduces_risk",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__conjunction_result_ce76f3c8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_09030::mdap_orthogonal_direction",
+              "github:2511_09030::mad_reduces_context"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__implication_result_0da4576b",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__conjunction_result_ce76f3c8",
+              "github:2511_09030::mdap_reduces_risk"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "@mdap_orthogonal_direction establishes that MDAPs use smaller, less capable models. @mad_reduces_context shows that each agent operates with minimal context. Together, these structural properties limit the scope of any individual agent's reasoning and reduce the surface area for misaligned or unintended emergent behavior — a qualitative safety argument supported by alignment research."
+      },
+      "premises": [
+        "github:2511_09030::mdap_orthogonal_direction",
+        "github:2511_09030::mad_reduces_context"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8bfccad64864c485",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2511_09030::maker_scalable_beyond",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2511_09030::__conjunction_result_fc4a7bd0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2511_09030::cost_scales_log_linearly",
+              "github:2511_09030::maker_zero_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2511_09030::__implication_result_0c27e3a2",
+            "operator": "implication",
+            "variables": [
+              "github:2511_09030::__conjunction_result_fc4a7bd0",
+              "github:2511_09030::maker_scalable_beyond"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.72,
+        "reason": "@cost_scales_log_linearly provides the theoretical bound that cost grows only as O(s*ln(s)), and @maker_zero_errors demonstrates empirical success at 1M steps. Extrapolating the theory suggests feasibility at larger scales. The multiplication result provides additional evidence of domain generality, though formal validation at scale beyond Towers of Hanoi is future work."
+      },
+      "premises": [
+        "github:2511_09030::cost_scales_log_linearly",
+        "github:2511_09030::maker_zero_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2663c71f3307bc6a",
+      "type": "support"
+    }
+  ]
+}
