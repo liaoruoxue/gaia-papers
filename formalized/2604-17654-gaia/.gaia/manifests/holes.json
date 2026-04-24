@@ -1,0 +1,139 @@
+{
+  "holes": [
+    {
+      "content": "Scalable set construction: For a fixed prompt $x$, sample $N$ i.i.d. generations $y_1,\\ldots,y_N \\sim \\pi_\\theta(\\cdot|x)$ with $N > n$. Construct $K$ sets of size $n$ from these $N$ generations without replacement:\n\n$$G_j = \\{y_{(j_1)},\\ldots,y_{(j_n)}\\}, \\quad j_1 < \\cdots < j_n, \\{j_1,\\ldots,j_n\\} \\subseteq \\{1,\\ldots,N\\}$$\n\nEither enumerate all $\\binom{N}{n}$ sets (reduces gradient variance) or sample $K$ sets uniformly without replacement (when evaluating $f$ is expensive) [@OrneHamid2026].",
+      "content_hash": "9cf0aca97bdcc1472788adfad52e9c7316230964f854daf04d09709b086818ca",
+      "interface_hash": "sha256:08e534edc732eb308029aec49dbd65b0f7bf974e6302a033caf9280a42d2caf7",
+      "label": "combinatorial_set_construction",
+      "qid": "github:2604_17654::combinatorial_set_construction",
+      "required_by": [
+        "github:2604_17654::proposition_unbiasedness",
+        "github:2604_17654::recipe_scalable"
+      ]
+    },
+    {
+      "content": "Diversity function: An LM-judge (language model judge) clusters all $N$ generations $y_1,\\ldots,y_N$ for prompt $x$ according to semantic similarity of reasoning strategies. Let $\\mathcal{C}(y_i) \\in \\{1,\\ldots,N\\}$ be the cluster assignment of generation $y_i$. The diversity of a set $(y_1,\\ldots,y_n)$ is the fraction of distinct clusters:\n\n$$d(x, y_{1:n}) = \\frac{|\\{\\mathcal{C}(y_1),\\ldots,\\mathcal{C}(y_n)\\}|}{n} \\in [0,1]$$\n\nA special cluster index 100 (out-of-bounds) is reserved for degenerate generations (gibberish, random guesses, code without mathematical reasoning). Cluster-100 assignments are excluded from diversity numerator. A set receives diversity score 0 if all generations fall in the same cluster [@OrneHamid2026].",
+      "content_hash": "293d1515ba3e71116ab2e1daf2e641220b4520778c9972da92b2261f4ed3a7c3",
+      "interface_hash": "sha256:490267f275942845034789349a56fece66c397805d2ebbd32157b890061bda67",
+      "label": "diversity_function_def",
+      "qid": "github:2604_17654::diversity_function_def",
+      "required_by": [
+        "github:2604_17654::lm_judge_design",
+        "github:2604_17654::poly_epo_algorithm"
+      ]
+    },
+    {
+      "content": "Marginal set advantage of a single generation $y$: Let $\\mathcal{G}(y)$ be the collection of all constructed sets containing $y$. The marginal set advantage is:\n\n$$\\widehat{A^\\sharp_{\\text{marg}}}(x,y;f) = \\sum_{G \\in \\mathcal{G}(y)} A^\\sharp(x,G;f)$$\n\nIntuitively, this is the sum of advantages of all sets that contain generation $y$. It provides an advantage at the level of a single generation, enabling use of standard RL update rules [@OrneHamid2026].",
+      "content_hash": "1bcb7d60f024d628bfbc50f1c374c4b3a6652d4b8a36f9cfee2baa8217cad4ce",
+      "interface_hash": "sha256:d3c149e556c77b7660868fb9e028edf1f5ef8c657300a47ea2a07b753ffc664d",
+      "label": "marginal_set_advantage",
+      "qid": "github:2604_17654::marginal_set_advantage",
+      "required_by": [
+        "github:2604_17654::poly_epo_optimism",
+        "github:2604_17654::proposition_unbiasedness",
+        "github:2604_17654::recipe_scalable"
+      ]
+    },
+    {
+      "content": "Score-function (REINFORCE) policy gradient identity: For any differentiable objective $\\mathbb{E}_{y \\sim \\pi_\\theta}[f(y)]$, the gradient is $\\mathbb{E}_y[\\nabla_\\theta \\log \\pi_\\theta(y) \\cdot f(y)]$. This allows Monte Carlo estimation via sampled trajectories [@SB18].",
+      "content_hash": "f9deb2a246fd4169b2c6aab04b4db05d2ed2798efd986e7aa8699d5c9110d217",
+      "interface_hash": "sha256:b8994e8f3e7a72e2bf9874473d89b37ca769c3f67c0844f1b545e0976455c83a",
+      "label": "policy_gradient_identity",
+      "qid": "github:2604_17654::policy_gradient_identity",
+      "required_by": [
+        "github:2604_17654::proposition_unbiasedness"
+      ]
+    },
+    {
+      "content": "Polychromic objective (adapted from [@HOX26] to the LM reasoning setting): Given a prompt $x$ and a set of $n$ generations $y_1,\\ldots,y_n$, the polychromic objective is:\n\n$$f_{\\text{poly}}(x, y_1,\\ldots,y_n) = \\frac{1}{n}\\sum_{i=1}^n r(x,y_i) \\cdot d(x, y_1,\\ldots,y_n)$$\n\nwhere $r(x,y_i)$ is the task reward for generation $y_i$, and $d(x,y_{1:n})$ is a diversity function. The objective is the product of average reward (exploitation) and diversity (exploration), so the set must optimize both simultaneously and cannot ignore one for the other [@OrneHamid2026].",
+      "content_hash": "cdb6309c6fe29ff13cc1c422a5cb159cda5f4433809f80a1c652a29aae63b008",
+      "interface_hash": "sha256:94621208ff4e4b0cb156c49a3911b26bdd3e400d1c9f07da536960e69638a106",
+      "label": "polychromic_objective_def",
+      "qid": "github:2604_17654::polychromic_objective_def",
+      "required_by": [
+        "github:2604_17654::pass_at_k_result",
+        "github:2604_17654::poly_epo_algorithm",
+        "github:2604_17654::poly_epo_optimism",
+        "github:2604_17654::poly_epo_synergy",
+        "github:2604_17654::polychromic_advantage_decomposition",
+        "github:2604_17654::training_diversity_result"
+      ]
+    },
+    {
+      "content": "Prior work addresses exploration via reward shaping — augmenting the canonical task reward $r(x,y)$ with a weighted exploration bonus $\\lambda d(x,y)$, solving $\\max_\\theta \\mathbb{E}_{y \\sim \\pi_\\theta(\\cdot|x)}[r(x,y) + \\lambda d(x,y)]$. This formulation treats exploitation and exploration as separate objectives: a generation can receive high learning signal by being reward-maximizing OR by being exploratory, without regard to achieving these goals synergistically. The method depends on careful tuning or adaptive scheduling of $\\lambda$ [@OrneHamid2026].",
+      "content_hash": "5ea03b21fc4a110d0a8b55e6926c33c579b0bd873a108e5c8ea4ca52133f12f9",
+      "interface_hash": "sha256:d4fdef584726268134f7969b3a274122cd535736fd05e17662beaecbf0a58a87",
+      "label": "reward_shaping_limitation",
+      "qid": "github:2604_17654::reward_shaping_limitation",
+      "required_by": [
+        "github:2604_17654::set_rl_scalable"
+      ]
+    },
+    {
+      "content": "Reinforcement learning (RL) fine-tuning of language models (LMs) rapidly collapses the diversity of model generations onto a narrow set of high-reward behaviors, even though pretrained base models exhibit high initial diversity [@YCL25; @CZC25].",
+      "content_hash": "6f7add35a06979cc75f7d3bcc053ea76564c27efec7496b736e99a81b3a2867d",
+      "interface_hash": "sha256:8f2ed0b2ca4fc5d3eed86ddbc94858b0455a5ad19167985cd240b09cb5a08684",
+      "label": "rl_diversity_collapse",
+      "qid": "github:2604_17654::rl_diversity_collapse",
+      "required_by": [
+        "github:2604_17654::pass_at_k_grpo_degradation",
+        "github:2604_17654::set_rl_scalable"
+      ]
+    },
+    {
+      "content": "Set advantage function: Given set-level baseline $\\hat{f}(x) = \\frac{1}{K}\\sum_{j=1}^K f(x,G_j)$ (average score over all constructed sets), the set advantage of set $G_j$ is:\n\n$$A^\\sharp(x, G_j; f) = f(x, G_j) - \\hat{f}(x)$$\n\n[@OrneHamid2026]",
+      "content_hash": "94b9555079558992cbf95594e9f3d0ea98819da51fbd071a5fdae364159f3b70",
+      "interface_hash": "sha256:dcd132d2606e45e347fa552a74e361340ead5edc12e9b8d060a7370cbcecc524",
+      "label": "set_advantage_definition",
+      "qid": "github:2604_17654::set_advantage_definition",
+      "required_by": [
+        "github:2604_17654::proposition_unbiasedness"
+      ]
+    },
+    {
+      "content": "Set reinforcement learning (set RL) [@HOX26] is a framework that generalizes standard RL by assigning reward to **sets** of sampled generations rather than each independently. In the single-turn LM setting: draw $n$ i.i.d. generations $y_{1:n} = (y_1,\\ldots,y_n) \\stackrel{\\text{i.i.d.}}{\\sim} \\pi_\\theta(\\cdot|x)$, and let $f(x, y_{1:n})$ be a symmetric set-level objective. The set RL goal is:\n\n$$\\max_\\theta \\mathbb{E}_{x \\sim \\mathcal{D}} \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta(\\cdot|x)}[f(x,y_{1:n})]$$\n\nThe key constraint is that $\\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})]$ **cannot** be written as $\\mathbb{E}_y[g(x,y)]$ for any policy-independent $g$, distinguishing set RL from standard RL [@HOX26; @OrneHamid2026].",
+      "content_hash": "c1b6312943fd5b584970ce6e9e3b84b63a7596a531b11050e5285108d36dcc2f",
+      "interface_hash": "sha256:7d53f6579af25901eb5582aec136b0dd6e4d3812469f653c702eb44aa0ade05a",
+      "label": "set_rl_definition",
+      "qid": "github:2604_17654::set_rl_definition",
+      "required_by": [
+        "github:2604_17654::set_rl_irreducibility",
+        "github:2604_17654::set_rl_logit_shift"
+      ]
+    },
+    {
+      "content": "Set RL policy gradient (derived via score-function identity applied to the joint density $\\prod_{i=1}^n \\pi_\\theta(y_i|x)$):\n\n$$\\nabla_\\theta \\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})] = \\mathbb{E}_{y_{1:n}}\\!\\left[(f(x,y_{1:n}) - \\hat{f}(x)) \\sum_{i=1}^n \\nabla_\\theta \\log \\pi_\\theta(y_i|x)\\right]$$\n\nwhere $\\hat{f}(x)$ is a **set-level baseline** that must be independent of $y_{1:n}$ or any strict subset thereof (leave-one-out estimators are inadmissible baselines). All generations in the set share the same scalar learning signal $f(x,y_{1:n}) - \\hat{f}(x)$ [@OrneHamid2026].",
+      "content_hash": "a49bd5f6fcd6cca0309aa79f933b2d04cf8190e1d34ca81e4bab064328aa8cc3",
+      "interface_hash": "sha256:690222e4cfaf0549e799a36ad9992ee3cd6a47dfc3982ce40f1e17132e38e358",
+      "label": "set_rl_gradient",
+      "qid": "github:2604_17654::set_rl_gradient",
+      "required_by": [
+        "github:2604_17654::set_rl_practical_challenge"
+      ]
+    },
+    {
+      "content": "Standard RL algorithms for language model post-training, such as PPO (Proximal Policy Optimization) [@SWD17] and GRPO (Group Relative Policy Optimization) [@SWZ24], do not explicitly incentivize the optimistic exploration required to master diverse reasoning paths [@OrneHamid2026].",
+      "content_hash": "c38c92394cb56a6edcb89166fa8cb82aba94c649cd5c5bc2f1fcb69e855234e5",
+      "interface_hash": "sha256:f009299c95632d1b1f5a76da5ceef33136fbd1cb3286c3e8a1f325e090055fb4",
+      "label": "standard_rl_limitation",
+      "qid": "github:2604_17654::standard_rl_limitation",
+      "required_by": [
+        "github:2604_17654::set_rl_scalable"
+      ]
+    },
+    {
+      "content": "Logit shift in standard RL [@CZC25]: After one gradient update with learning rate $\\alpha$ on a softmax policy $\\pi_\\theta$, the shift in log-probability of generation $y$ is:\n\n$$\\log \\pi_\\theta^{k+1}(y|x) - \\log \\pi_\\theta^k(y|x) = \\alpha \\pi_\\theta^k(y|x) A(x,y;\\pi_\\theta^k)$$\n\nwhere $A(x,y;\\pi_\\theta^k)$ is the advantage under the current policy.",
+      "content_hash": "f422949216e4a4368f0c2ff50a4ef957d8e60e989ddce3d83e7035702a8443dc",
+      "interface_hash": "sha256:d68de2eebfc02e2ee29f159c41781e93688c04012d927601c3f96ba1c520e1ab",
+      "label": "standard_rl_logit_shift",
+      "qid": "github:2604_17654::standard_rl_logit_shift",
+      "required_by": [
+        "github:2604_17654::marginal_advantage_interpretation"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:102e32b73045b9853d40c1a08ae647b534a79b776bd2496fab1c462986aa4fa7",
+  "manifest_schema_version": 1,
+  "package": "2604-17654",
+  "version": "0.1.0"
+}

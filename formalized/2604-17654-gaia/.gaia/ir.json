@@ -1,0 +1,2338 @@
+{
+  "ir_hash": "sha256:102e32b73045b9853d40c1a08ae647b534a79b776bd2496fab1c462986aa4fa7",
+  "knowledges": [
+    {
+      "content": "Reinforcement learning (RL) fine-tuning of language models (LMs) rapidly collapses the diversity of model generations onto a narrow set of high-reward behaviors, even though pretrained base models exhibit high initial diversity [@YCL25; @CZC25].",
+      "content_hash": "6f7add35a06979cc75f7d3bcc053ea76564c27efec7496b736e99a81b3a2867d",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17654::rl_diversity_collapse",
+      "label": "rl_diversity_collapse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CZC25",
+              "YCL25"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Well-documented empirical phenomenon with multiple confirming papers (YCL+25, CZC+25). The observation that RL fine-tuning collapses generation diversity has strong empirical support across different base models and tasks."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RL diversity collapse",
+      "type": "claim"
+    },
+    {
+      "content": "Exploration serves three roles in learning from experience: (1) it is necessary to discover successful strategies for complex problems (e.g., finding a valid proof technique); (2) it enables generalization by building a diverse repertoire of strategies (e.g., multiple chess openings); (3) it is essential for scaling test-time compute methods such as majority voting, aggregation, and search, whose effectiveness depends on diversity in model generations [@OrneHamid2026].",
+      "content_hash": "cfd2bc1e4f99789b2c4b05ca6da705aa4820e3768849d77235e2925827146848",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17654::exploration_roles",
+      "label": "exploration_roles",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Three roles of exploration",
+      "type": "setting"
+    },
+    {
+      "content": "Standard RL algorithms for language model post-training, such as PPO (Proximal Policy Optimization) [@SWD17] and GRPO (Group Relative Policy Optimization) [@SWZ24], do not explicitly incentivize the optimistic exploration required to master diverse reasoning paths [@OrneHamid2026].",
+      "content_hash": "c38c92394cb56a6edcb89166fa8cb82aba94c649cd5c5bc2f1fcb69e855234e5",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_17654::standard_rl_limitation",
+      "label": "standard_rl_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026",
+              "SWD17",
+              "SWZ24"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Follows directly from the design of PPO and GRPO: neither algorithm contains an explicit diversity or exploration term in its objective. The claim is essentially definitional — these algorithms optimize per-generation advantage without set-level coupling."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Standard RL exploration limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Prior work addresses exploration via reward shaping — augmenting the canonical task reward $r(x,y)$ with a weighted exploration bonus $\\lambda d(x,y)$, solving $\\max_\\theta \\mathbb{E}_{y \\sim \\pi_\\theta(\\cdot|x)}[r(x,y) + \\lambda d(x,y)]$. This formulation treats exploitation and exploration as separate objectives: a generation can receive high learning signal by being reward-maximizing OR by being exploratory, without regard to achieving these goals synergistically. The method depends on careful tuning or adaptive scheduling of $\\lambda$ [@OrneHamid2026].",
+      "content_hash": "5ea03b21fc4a110d0a8b55e6926c33c579b0bd873a108e5c8ea4ca52133f12f9",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::reward_shaping_limitation",
+      "label": "reward_shaping_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Well-known limitation of additive reward shaping: the lambda weighting creates a linear tradeoff rather than synergy, and requires tuning. Supported by the theoretical analysis in Section 5.2 of the paper showing the threshold p/lambda becomes unsatisfiable."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reward shaping limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Desideratum 1 — Optimism under uncertainty: An effective algorithm should assign a positive learning signal to trajectories that attempt novel reasoning strategies even when those strategies have not yet yielded high reward. This ensures the policy continues to explore promising strategies and broaden its capabilities during training (e.g., a dynamic programming approach should be reinforced even if early implementations fail unit tests) [@OrneHamid2026].",
+      "content_hash": "e770d48b72541998f3e85fe75cab709ffb2c629ebf19aaecebfe648fe370ea87",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::desideratum_optimism",
+      "label": "desideratum_optimism",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Desideratum 1: Optimism",
+      "type": "setting"
+    },
+    {
+      "content": "Desideratum 2 — Exploration-exploitation synergy: The learning signal for each generation should depend on whether that generation helps the model jointly achieve high task performance and explore diverse strategies, enabling the model to learn through optimization to balance these goals [@OrneHamid2026].",
+      "content_hash": "3b8795ae82cf10135ca6124f2df5665e37c418273d2a37c7d766099ec607c19e",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_17654::desideratum_synergy",
+      "label": "desideratum_synergy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Desideratum 2: Synergy",
+      "type": "setting"
+    },
+    {
+      "content": "Desideratum 3 — Scalability: The algorithm's sample complexity and computational complexity should not be a significant overhead for large-scale LM post-training [@OrneHamid2026].",
+      "content_hash": "086cec32af9777819ba3953e5d7323b86a8a3d16d80f9d5be1dc46df6e143325",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_17654::desideratum_scalability",
+      "label": "desideratum_scalability",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Desideratum 3: Scalability",
+      "type": "setting"
+    },
+    {
+      "content": "How can we post-train language models to explicitly encourage optimistic exploration and promote synergy between exploration and exploitation, while remaining scalable?",
+      "content_hash": "5e9eea27d4412b19d3c5dfae880a0456bd4b0a2e958c9a7a2562276c18c0579a",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_17654::rq_exploration",
+      "label": "rq_exploration",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question",
+      "type": "question"
+    },
+    {
+      "content": "Set reinforcement learning (set RL) [@HOX26] provides a principled and scalable approach to balance exploration and exploitation in LM post-training. While the original set RL framework [@HOX26] uses a learned critic and vine sampling that is computationally heavy, this paper shows how to instantiate it scalably for LM post-training by adapting standard RL algorithms through a modification to the advantage computation [@OrneHamid2026].",
+      "content_hash": "44b736f6c6d00639f4b0c0cd01004d90e09636133dcbde57fa0f6bf42a33d884",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_scalable",
+      "label": "set_rl_scalable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "HOX26",
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "reward_shaping_limitation",
+              "rl_diversity_collapse",
+              "standard_rl_limitation"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Set RL as scalable solution",
+      "type": "claim"
+    },
+    {
+      "content": "Polychromic Exploratory Policy Optimization (Poly-EPO) is a set-RL algorithm that: (1) improves generalization by achieving higher pass@$k$ coverage (gains of up to 20% on mathematical reasoning test sets compared to GRPO); (2) preserves greater diversity in model generations as measured by reasoning-strategy clusters; (3) scales more effectively with test-time compute under majority voting [@OrneHamid2026].",
+      "content_hash": "37020ecac9e8d992a091a0cad7fd0830be149d7257dd250fcf4009c8fb506b63",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_17654::poly_epo_claim",
+      "label": "poly_epo_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Poly-EPO core claim",
+      "type": "claim"
+    },
+    {
+      "content": "Standard reinforcement learning (RL) for language models (RLVR setting): Let $x \\sim \\mathcal{D}$ be a prompt drawn from training distribution $\\mathcal{D}$, and let $y \\sim \\pi_\\theta(\\cdot | x)$ be a sampled generation from the parameterized policy. The standard RL objective is:\n\n$$\\max_\\theta \\mathbb{E}_{x \\sim \\mathcal{D}} \\mathbb{E}_{y \\sim \\pi_\\theta(\\cdot|x)}[r(x,y)]$$\n\nwhere $r(x,y)$ is the task reward. The policy gradient with advantage $A(x,y)$ is:\n\n$$\\nabla_\\theta \\mathbb{E}[r(x,y)] = \\mathbb{E}[\\nabla_\\theta \\log \\pi_\\theta(y|x) A(x,y)]$$\n\n[@SB18; @OrneHamid2026]",
+      "content_hash": "f363289d4b49e15aca6d6973e1730d9f6a334a55c776c6dd8a8536051636cd0f",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17654::standard_rl_objective",
+      "label": "standard_rl_objective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026",
+              "SB18"
+            ]
+          }
+        }
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Standard RL objective (RLVR)",
+      "type": "claim"
+    },
+    {
+      "content": "Score-function (REINFORCE) policy gradient identity: For any differentiable objective $\\mathbb{E}_{y \\sim \\pi_\\theta}[f(y)]$, the gradient is $\\mathbb{E}_y[\\nabla_\\theta \\log \\pi_\\theta(y) \\cdot f(y)]$. This allows Monte Carlo estimation via sampled trajectories [@SB18].",
+      "content_hash": "f9deb2a246fd4169b2c6aab04b4db05d2ed2798efd986e7aa8699d5c9110d217",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17654::policy_gradient_identity",
+      "label": "policy_gradient_identity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "SB18"
+            ]
+          }
+        },
+        "prior": 0.99,
+        "prior_justification": "The REINFORCE/score-function identity is a foundational result in stochastic optimization with decades of theoretical backing. Essentially a mathematical identity."
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Score-function identity",
+      "type": "claim"
+    },
+    {
+      "content": "Set reinforcement learning (set RL) [@HOX26] is a framework that generalizes standard RL by assigning reward to **sets** of sampled generations rather than each independently. In the single-turn LM setting: draw $n$ i.i.d. generations $y_{1:n} = (y_1,\\ldots,y_n) \\stackrel{\\text{i.i.d.}}{\\sim} \\pi_\\theta(\\cdot|x)$, and let $f(x, y_{1:n})$ be a symmetric set-level objective. The set RL goal is:\n\n$$\\max_\\theta \\mathbb{E}_{x \\sim \\mathcal{D}} \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta(\\cdot|x)}[f(x,y_{1:n})]$$\n\nThe key constraint is that $\\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})]$ **cannot** be written as $\\mathbb{E}_y[g(x,y)]$ for any policy-independent $g$, distinguishing set RL from standard RL [@HOX26; @OrneHamid2026].",
+      "content_hash": "c1b6312943fd5b584970ce6e9e3b84b63a7596a531b11050e5285108d36dcc2f",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_definition",
+      "label": "set_rl_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "HOX26",
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Mathematical definition from Hamid et al. [HOX+26]. The definition is formally precise and the irreducibility condition is carefully stated. High prior as it is a definitional claim about the set RL framework."
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Set RL definition",
+      "type": "claim"
+    },
+    {
+      "content": "The set RL objective is irreducible to standard RL: although one can always define $g_\\theta(x,y) = \\mathbb{E}_{y_{2:n}}[f(x,y,y_{2:n})]$, the resulting induced reward $g_\\theta$ depends on the policy $\\theta$ itself and is not an externally specified policy-independent reward function. This distinguishes set RL from multi-sample frameworks that use leave-one-out estimators to collapse the shared learning signal to an individualized one [@OrneHamid2026].",
+      "content_hash": "c996da12e3705d4e80b66d70b6260e36e954dcfd5e61aa78fad9b8670ce9fb43",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_irreducibility",
+      "label": "set_rl_irreducibility",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "set_rl_definition"
+            ]
+          }
+        }
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Set RL irreducibility",
+      "type": "claim"
+    },
+    {
+      "content": "Set RL policy gradient (derived via score-function identity applied to the joint density $\\prod_{i=1}^n \\pi_\\theta(y_i|x)$):\n\n$$\\nabla_\\theta \\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})] = \\mathbb{E}_{y_{1:n}}\\!\\left[(f(x,y_{1:n}) - \\hat{f}(x)) \\sum_{i=1}^n \\nabla_\\theta \\log \\pi_\\theta(y_i|x)\\right]$$\n\nwhere $\\hat{f}(x)$ is a **set-level baseline** that must be independent of $y_{1:n}$ or any strict subset thereof (leave-one-out estimators are inadmissible baselines). All generations in the set share the same scalar learning signal $f(x,y_{1:n}) - \\hat{f}(x)$ [@OrneHamid2026].",
+      "content_hash": "a49bd5f6fcd6cca0309aa79f933b2d04cf8190e1d34ca81e4bab064328aa8cc3",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_gradient",
+      "label": "set_rl_gradient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "The set RL policy gradient follows from applying the score-function identity to the joint density. Standard result in policy gradient theory. The constraint on admissible baselines follows from the requirement that the baseline be independent of the sampled set."
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Set RL policy gradient",
+      "type": "claim"
+    },
+    {
+      "content": "The main practical challenge of the set RL gradient estimator is statistical and computational: a naive empirical estimator requires repeatedly sampling full sets of size $n$ for each prompt, which is expensive in sample complexity. A more efficient estimator is needed that retains the set-RL learning signal while being practical for large-scale LM training [@OrneHamid2026].",
+      "content_hash": "cc45fa2afc286f07d546191cd47987eb88a0097d36a6266eb5105fcafbdca489",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_practical_challenge",
+      "label": "set_rl_practical_challenge",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "set_rl_gradient"
+            ]
+          }
+        }
+      },
+      "module": "s2_preliminaries",
+      "parameters": [],
+      "title": "Set RL computational challenge",
+      "type": "claim"
+    },
+    {
+      "content": "Scalable set construction: For a fixed prompt $x$, sample $N$ i.i.d. generations $y_1,\\ldots,y_N \\sim \\pi_\\theta(\\cdot|x)$ with $N > n$. Construct $K$ sets of size $n$ from these $N$ generations without replacement:\n\n$$G_j = \\{y_{(j_1)},\\ldots,y_{(j_n)}\\}, \\quad j_1 < \\cdots < j_n, \\{j_1,\\ldots,j_n\\} \\subseteq \\{1,\\ldots,N\\}$$\n\nEither enumerate all $\\binom{N}{n}$ sets (reduces gradient variance) or sample $K$ sets uniformly without replacement (when evaluating $f$ is expensive) [@OrneHamid2026].",
+      "content_hash": "9cf0aca97bdcc1472788adfad52e9c7316230964f854daf04d09709b086818ca",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17654::combinatorial_set_construction",
+      "label": "combinatorial_set_construction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The combinatorial construction of subsets from i.i.d. samples is a well-defined procedure. The claim accurately describes the algorithm's set construction step."
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Combinatorial set construction",
+      "type": "claim"
+    },
+    {
+      "content": "Set advantage function: Given set-level baseline $\\hat{f}(x) = \\frac{1}{K}\\sum_{j=1}^K f(x,G_j)$ (average score over all constructed sets), the set advantage of set $G_j$ is:\n\n$$A^\\sharp(x, G_j; f) = f(x, G_j) - \\hat{f}(x)$$\n\n[@OrneHamid2026]",
+      "content_hash": "94b9555079558992cbf95594e9f3d0ea98819da51fbd071a5fdae364159f3b70",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17654::set_advantage_definition",
+      "label": "set_advantage_definition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Definition of the set advantage as deviation from mean baseline — a direct instantiation of the standard RL advantage concept applied at the set level."
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Set advantage",
+      "type": "claim"
+    },
+    {
+      "content": "Marginal set advantage of a single generation $y$: Let $\\mathcal{G}(y)$ be the collection of all constructed sets containing $y$. The marginal set advantage is:\n\n$$\\widehat{A^\\sharp_{\\text{marg}}}(x,y;f) = \\sum_{G \\in \\mathcal{G}(y)} A^\\sharp(x,G;f)$$\n\nIntuitively, this is the sum of advantages of all sets that contain generation $y$. It provides an advantage at the level of a single generation, enabling use of standard RL update rules [@OrneHamid2026].",
+      "content_hash": "1bcb7d60f024d628bfbc50f1c374c4b3a6652d4b8a36f9cfee2baa8217cad4ce",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_17654::marginal_set_advantage",
+      "label": "marginal_set_advantage",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "The marginal set advantage is defined as the sum of set advantages over all sets containing a given generation. This is a design choice whose correctness is established by Proposition 3.1 (unbiasedness). Moderate-high prior since it is a novel construct."
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Marginal set advantage",
+      "type": "claim"
+    },
+    {
+      "content": "Final set RL gradient estimator using marginal set advantage:\n\n$$\\widehat{\\nabla_\\theta} \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta}[f(x,y_{1:n})] = \\widehat{\\mathbb{E}}_{x \\sim \\mathcal{D},\\, y_1,\\ldots,y_N \\sim \\pi_\\theta(\\cdot|x)}\\!\\left[\\sum_{i=1}^N \\nabla_\\theta \\log \\pi_\\theta(y_i|x) \\cdot \\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)\\right]$$\n\nThis estimator is unbiased (up to a constant scaling factor $M > 0$) for both the enumerate-all-sets and uniform-sample-$K$-sets variants [@OrneHamid2026].",
+      "content_hash": "7c30ac923bfbc5b5342867dc66f64147f568249061df0c172b834f8c06a98481",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::gradient_estimator",
+      "label": "gradient_estimator",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Set RL gradient estimator",
+      "type": "claim"
+    },
+    {
+      "content": "Proposition 3.1 (Unbiasedness): Fix a prompt $x$ and let $y_1,\\ldots,y_N \\stackrel{\\text{i.i.d.}}{\\sim} \\pi_\\theta(\\cdot|x)$. Then:\n\n$$\\mathbb{E}\\!\\left[\\sum_{i=1}^N \\nabla_\\theta \\log \\pi_\\theta(y_i|x) \\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)\\right] = M \\nabla_\\theta \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta}[f(x,y_{1:n})]$$\n\nwhere $M \\in \\mathbb{R}_{>0}$ is a constant scaling factor depending on the number of sets. The proof uses the U-statistic structure of the estimator, with the scaling factor $M = \\binom{N}{n} - \\binom{N-1}{n-1} > 0$ for the enumerate-all-sets case (by Pascal's rule, since $N > n$) [@OrneHamid2026].",
+      "content_hash": "e86660579cc28fbb6d61a445aeae067ff19ab0bbc7dd107a48a4c09ade37cce4",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::proposition_unbiasedness",
+      "label": "proposition_unbiasedness",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "combinatorial_set_construction",
+              "marginal_set_advantage",
+              "policy_gradient_identity",
+              "set_rl_gradient"
+            ]
+          }
+        }
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Unbiasedness of marginal set advantage estimator",
+      "type": "claim"
+    },
+    {
+      "content": "The scalable set RL recipe resolves the computational challenge of naive set RL: by computing the marginal set advantage, any standard RL algorithm (e.g., PPO [@SWD17], GRPO [@SWZ24]) can be adapted for set RL by simply replacing the standard per-generation advantage $A(x,y_i)$ with the marginal set advantage $\\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)$. The sample complexity matches standard RL (same $N$ generations per prompt) [@OrneHamid2026].",
+      "content_hash": "c174185f6dc4ea9c1b32a5ba2c21d7b17ac9bbeac53096dfa29f49acd11af0ad",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_17654::recipe_scalable",
+      "label": "recipe_scalable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026",
+              "SWD17",
+              "SWZ24"
+            ],
+            "referenced_claims": [
+              "combinatorial_set_construction",
+              "marginal_set_advantage",
+              "proposition_unbiasedness",
+              "set_rl_practical_challenge"
+            ]
+          }
+        }
+      },
+      "module": "s3_set_rl_recipe",
+      "parameters": [],
+      "title": "Recipe scalability",
+      "type": "claim"
+    },
+    {
+      "content": "Polychromic objective (adapted from [@HOX26] to the LM reasoning setting): Given a prompt $x$ and a set of $n$ generations $y_1,\\ldots,y_n$, the polychromic objective is:\n\n$$f_{\\text{poly}}(x, y_1,\\ldots,y_n) = \\frac{1}{n}\\sum_{i=1}^n r(x,y_i) \\cdot d(x, y_1,\\ldots,y_n)$$\n\nwhere $r(x,y_i)$ is the task reward for generation $y_i$, and $d(x,y_{1:n})$ is a diversity function. The objective is the product of average reward (exploitation) and diversity (exploration), so the set must optimize both simultaneously and cannot ignore one for the other [@OrneHamid2026].",
+      "content_hash": "cdb6309c6fe29ff13cc1c422a5cb159cda5f4433809f80a1c652a29aae63b008",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17654::polychromic_objective_def",
+      "label": "polychromic_objective_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "HOX26",
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The polychromic objective (product of average reward and diversity) is adapted from Hamid et al. [HOX+26]. The definition is formally clear and the multiplicative structure for enforcing joint optimization of both goals is mathematically sound."
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "Polychromic objective",
+      "type": "claim"
+    },
+    {
+      "content": "Diversity function: An LM-judge (language model judge) clusters all $N$ generations $y_1,\\ldots,y_N$ for prompt $x$ according to semantic similarity of reasoning strategies. Let $\\mathcal{C}(y_i) \\in \\{1,\\ldots,N\\}$ be the cluster assignment of generation $y_i$. The diversity of a set $(y_1,\\ldots,y_n)$ is the fraction of distinct clusters:\n\n$$d(x, y_{1:n}) = \\frac{|\\{\\mathcal{C}(y_1),\\ldots,\\mathcal{C}(y_n)\\}|}{n} \\in [0,1]$$\n\nA special cluster index 100 (out-of-bounds) is reserved for degenerate generations (gibberish, random guesses, code without mathematical reasoning). Cluster-100 assignments are excluded from diversity numerator. A set receives diversity score 0 if all generations fall in the same cluster [@OrneHamid2026].",
+      "content_hash": "293d1515ba3e71116ab2e1daf2e641220b4520778c9972da92b2261f4ed3a7c3",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17654::diversity_function_def",
+      "label": "diversity_function_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "The cluster-based diversity function using an LM-judge is a design choice. While the mathematical formulation is clear, the effectiveness depends on judge quality. Slightly lower prior due to potential judge noise in cluster assignments."
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "LM-judge diversity function",
+      "type": "claim"
+    },
+    {
+      "content": "The LM-judge-based diversity measurement is: (1) computationally efficient — clustering is substantially easier than solving the original task, exploiting the generator-verifier gap; (2) broadly applicable — LM-judges are already integrated into modern post-training pipelines including proof generation and non-verifiable tasks; (3) strategy-centric — the judge is steered via in-context learning to cluster on macro-strategy (overall conceptual framework) and micro-strategy (specific techniques at key intermediate steps), not on superficial features like tone or phrasing [@OrneHamid2026].",
+      "content_hash": "9ef75f1ff3ee7197740274647bfad2960a0c97568996e591c2ee339c91b119ab",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_17654::lm_judge_design",
+      "label": "lm_judge_design",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "diversity_function_def"
+            ]
+          }
+        }
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "LM-judge design rationale",
+      "type": "claim"
+    },
+    {
+      "content": "Poly-EPO algorithm: Instantiate the general set RL recipe (Algorithm 1) with the polychromic objective. For each prompt $x$, sample $N = 8$ generations; construct $K = 70$ sets of size $n = 4$ using uniform sampling without replacement; cluster all $N$ generations using the LM-judge (Qwen-3-4B-Instruct); compute polychromic score for each set as: $f_{\\text{poly}}(x, G_l) = \\bar{r}_l \\cdot \\frac{|U_l|}{n} \\cdot \\mathbb{I}(|U_l| > 1)$ where $\\bar{r}_l$ is mean reward and $U_l$ is the set of distinct clusters. The marginal set advantage replaces the standard advantage in the GRPO update. Each generation within a response receives the same advantage (token-level), and response lengths are normalized using $T_i = T_{\\max}$ (max response length), following Dr.GRPO [@LCL25] [@OrneHamid2026].",
+      "content_hash": "5aec24180eab04aad93273512e6b57ca89d972db7d6f976a6fc9de7d35f8a20e",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::poly_epo_algorithm",
+      "label": "poly_epo_algorithm",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LCL25",
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "diversity_function_def",
+              "marginal_set_advantage",
+              "polychromic_objective_def",
+              "recipe_scalable"
+            ]
+          }
+        }
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "Poly-EPO algorithm",
+      "type": "claim"
+    },
+    {
+      "content": "Under the polychromic objective in set RL, an unsuccessful generation ($r(x,y) = 0$) can still receive a positive marginal set advantage if it is highly exploratory: because the set objective shares credit among all generations in a set, an incorrect but diverse generation benefits from the presence of correct generations in the same set. This implements optimistic exploration: novel strategies receive positive learning signal even before they become individually successful [@OrneHamid2026].",
+      "content_hash": "9cff12947c5d7255b5c717e26010916b2d4563dcc804c995aef8adda1df70b7e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::poly_epo_optimism",
+      "label": "poly_epo_optimism",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "marginal_set_advantage",
+              "poly_epo_optimism",
+              "polychromic_advantage_decomposition",
+              "polychromic_objective_def"
+            ]
+          }
+        }
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "Poly-EPO optimistic exploration",
+      "type": "claim"
+    },
+    {
+      "content": "Under reward-shaped standard RL (objective $\\mathbb{E}_y[r(x,y) + \\lambda d(x,y)]$), an incorrect generation ($r(x,y)=0$) with high diversity receives positive advantage only if $d(x,y) \\geq \\frac{p}{\\lambda} + \\mathbb{E}_Y[d(x,Y)]$, where $p$ is the model's accuracy. As accuracy improves ($p$ increases), this threshold becomes harder to satisfy — e.g., with $\\lambda=0.5$ and $p > 0.5$, the bound is impossible to satisfy. In contrast, Poly-EPO's incentive for exploration does not vanish as accuracy improves, since set credit sharing persists regardless of $p$ [@OrneHamid2026].",
+      "content_hash": "decea9c08311183339252c0410c476179b62b1a6df4cdeb6535fdc0ea73778db",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_17654::poly_epo_synergy",
+      "label": "poly_epo_synergy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "poly_epo_optimism",
+              "poly_epo_synergy",
+              "polychromic_advantage_decomposition"
+            ]
+          }
+        }
+      },
+      "module": "s4_poly_epo",
+      "parameters": [],
+      "title": "Poly-EPO vs reward shaping",
+      "type": "claim"
+    },
+    {
+      "content": "Logit shift in standard RL [@CZC25]: After one gradient update with learning rate $\\alpha$ on a softmax policy $\\pi_\\theta$, the shift in log-probability of generation $y$ is:\n\n$$\\log \\pi_\\theta^{k+1}(y|x) - \\log \\pi_\\theta^k(y|x) = \\alpha \\pi_\\theta^k(y|x) A(x,y;\\pi_\\theta^k)$$\n\nwhere $A(x,y;\\pi_\\theta^k)$ is the advantage under the current policy.",
+      "content_hash": "f422949216e4a4368f0c2ff50a4ef957d8e60e989ddce3d83e7035702a8443dc",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_17654::standard_rl_logit_shift",
+      "label": "standard_rl_logit_shift",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "CZC25"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Result from Cui et al. [CZC+25] on logit shifts for softmax policies after one gradient step. Established analytical result that the paper cites and builds upon."
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Standard RL logit shift",
+      "type": "claim"
+    },
+    {
+      "content": "Lemma 5.1 — Logit shift in set RL: In set reinforcement learning, assuming $f$ is symmetric and learning rate $\\alpha$, the shift in log-probability of a fixed generation $y$ after one gradient update from $\\pi_\\theta^k$ to $\\pi_\\theta^{k+1}$ is:\n\n$$\\log \\pi_\\theta^{k+1}(y|x) - \\log \\pi_\\theta^k(y|x) = \\alpha \\pi_\\theta^k(y|x) \\left[\\mathbb{E}_{y_{2:n} \\sim \\pi_\\theta^k}[f(x,y,y_{2:n})] - \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta^k}[f(x,y_{1:n})]\\right]$$\n\nThe proof follows from [@HOX26]: when a set is homogeneous, the scaffold value $\\Lambda_f(y^{\\oplus n};\\pi_\\theta^k,x)$ equals $\\pi_\\theta^k(y|x)$ times the marginal set advantage of $y$ [@OrneHamid2026].",
+      "content_hash": "cdc6f99c76eccbe22d633086cca84b0dffb8d5dfaae23eabdadc2af5f5681fe2",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_17654::set_rl_logit_shift",
+      "label": "set_rl_logit_shift",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "HOX26",
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "proposition_unbiasedness",
+              "set_rl_definition"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Set RL logit shift (Lemma 5.1)",
+      "type": "claim"
+    },
+    {
+      "content": "Comparing the standard RL logit shift (Eq. 12) with the set RL logit shift (Lemma 5.1, Eq. 13), the marginal set advantage of generation $y$ can be defined as:\n\n$$A^\\sharp_{\\text{marg}}(x,y;f,\\pi_\\theta^k) = \\mathbb{E}_{y_{2:n} \\sim \\pi_\\theta^k}[f(x,y,y_{2:n})] - \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta^k}[f(x,y_{1:n})]$$\n\nThis shows that the logit shift under set RL is equivalent to that under standard RL when the standard advantage $A(x,y)$ is replaced by the marginal set advantage. Therefore, any standard RL algorithm can be used to optimize set RL objectives by this substitution [@OrneHamid2026].",
+      "content_hash": "658bff943586b80a39a645acb3af5a3411a42d3d9f42a6dc12f6b6f0568435e7",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_17654::marginal_advantage_interpretation",
+      "label": "marginal_advantage_interpretation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "set_rl_logit_shift",
+              "standard_rl_logit_shift"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Marginal set advantage enables standard RL for set RL",
+      "type": "claim"
+    },
+    {
+      "content": "Example analysis using pass@$n$ objective $f_{\\text{pass@}n}(x,y_{1:n}) = \\max_{i} r(x,y_i)$: In set RL with pass@$n$, the marginal set advantage of an incorrect generation ($r(x,y)=0$) is $A^\\sharp_{\\text{marg}}(x,y_{\\text{incorrect}}) = (1-p)^n - (1-p)^{n-1} \\leq 0$, where $p$ is the probability of sampling a correct generation. The marginal set advantage of a correct generation is $(1-p)^n \\geq 0$. Thus under pass@$n$, incorrect generations always receive non-positive advantage — no optimistic exploration occurs [@OrneHamid2026].",
+      "content_hash": "a2dd2a4857d2756e9662b0cce7817dda0217c6fcf4969ba08b3d9c1fa51b02ae",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::pass_at_n_analysis",
+      "label": "pass_at_n_analysis",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Pass@n analysis: no optimistic exploration",
+      "type": "claim"
+    },
+    {
+      "content": "Decomposition of the polychromic marginal set advantage (Eq. 15): For fixed generation $y$ with $\\pi_\\theta(y|x) > 0$:\n\n$$A^\\sharp_{\\text{marg}}(x,y;f_{\\text{poly}},\\theta)$$\n\n$$= \\underbrace{\\left(\\frac{1}{n}r(x,y) + \\frac{n-1}{n}\\mathbb{E}_Y[r(x,Y)]\\right) \\mathbb{E}_{Y_{2:n}}[d(x,y,Y_{2:n})] - \\mathbb{E}_Y[r(x,Y)]\\mathbb{E}_{Y_{1:n}}[d(x,Y_{1:n})]}_{\\text{Term 1: Mean reward} \\times \\text{Mean diversity of sets containing }y}$$\n\n$$+ \\underbrace{\\text{Cov}_{Y_{2:n}}\\!\\left(\\frac{1}{n}r(x,y) + \\frac{1}{n}\\sum_{i=2}^n r(x,Y_i),\\; d(x,y,Y_{2:n})\\right) - \\text{Cov}_{Y_{1:n}}(r(x,Y_1), d(x,Y_{1:n}))}_{\\text{Term 2: Exploration-exploitation synergy in sets containing }y}$$\n\nTerm 1: A generation $y$ with low reward but high diversity can still receive positive signal if other generators provide both reward and diversity. Term 2: Favors generations that help sets simultaneously achieve high reward and high diversity (covariance between reward and diversity is higher in sets containing $y$) [@OrneHamid2026].",
+      "content_hash": "1f888c23fceed38084cdd3f90c88999b1b0a02b909c73424f60f9b035caa0638",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::polychromic_advantage_decomposition",
+      "label": "polychromic_advantage_decomposition",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "marginal_advantage_interpretation",
+              "polychromic_objective_def"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Polychromic marginal advantage decomposition",
+      "type": "claim"
+    },
+    {
+      "content": "Mathematical reasoning experiment setup:\n\n| Parameter | Value |\n|-----------|-------|\n| Base model | Qwen-3-4B-Base |\n| Training dataset | POLARIS-53k [@AXL25] |\n| Prompts per batch | 128 |\n| Rollouts per prompt ($N$) | 8 |\n| Set size ($n$) | 4 |\n| Number of sets ($K$) | 70 |\n| Training epochs | 2 |\n| Training steps | 850 |\n| Learning rate | $1 \\times 10^{-6}$ |\n| KL coefficient | 0.0 |\n| Clip ratios | $\\epsilon_{\\text{low}} = 0.20$, $\\epsilon_{\\text{high}} = 0.28$ |\n| Max response length | 4096 tokens |\n| Device | $4 \\times$ NVIDIA H200 |\n| LM-judge | Qwen-3-4B-Instruct |\n\nEvaluation benchmarks: BeyondAIME, AIME 2026, AIME 2025, HMMT November 2025, HMMT February 2025, Minerva [@OrneHamid2026].",
+      "content_hash": "0e5e936e9395943e40ffabf1de40c604b8fb556a13284619c630367b35a24591",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_17654::math_setup",
+      "label": "math_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "AXL25",
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Math reasoning experimental setup",
+      "type": "setting"
+    },
+    {
+      "content": "GRPO baseline: Standard GRPO [@SWZ24] with advantage $\\hat{A}_{i,t} = r(x,y_i) - \\text{mean}(\\{r(x,y_1),\\ldots,r(x,y_N)\\})$, without standard deviation normalization (consistent with Dr.GRPO [@LCL25]). Uses same base model and training data as Poly-EPO [@OrneHamid2026].",
+      "content_hash": "b63c0e501cbce79b533edd657d720fba1b47dc215fec8148ee7693bd49fe8eb7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_17654::grpo_baseline_def",
+      "label": "grpo_baseline_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LCL25",
+              "OrneHamid2026",
+              "SWZ24"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "GRPO baseline definition",
+      "type": "setting"
+    },
+    {
+      "content": "GRPO+DIV baseline (reward-shaped exploration): Standard RL with diversity bonus using the same LM-judge clustering as Poly-EPO. Diversity bonus for generation $y$ given rollouts $y_{1:N}$ is:\n\n$$d(x,y|y_{1:N}) = \\frac{N/|\\text{Cluster}(y)| - 1}{N-1}$$\n\nwhere $\\text{Cluster}(y)$ is the set of generations in the same cluster as $y$. Advantage: $\\hat{A}_{i,t} = r(x,y_i) + \\lambda d(x,y_i) - \\text{mean}(\\{r+\\lambda d\\})$. Optimized with GRPO. This is NOT a set RL objective [@OrneHamid2026].",
+      "content_hash": "b305fb7f83e0ea720332842a932be6db07c491b4b2a62825dfa446264efadb71",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_17654::grpo_div_baseline_def",
+      "label": "grpo_div_baseline_def",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "GRPO+DIV baseline definition",
+      "type": "setting"
+    },
+    {
+      "content": "Pass@$k$ results on mathematical reasoning test sets (Poly-EPO vs GRPO vs GRPO+DIV, base model Qwen-3-4B-Base, Figure 1):\n\n- Poly-EPO pass@$k$ improves more strongly as $k$ increases across all 6 benchmarks (BeyondAIME, AIME 2026, AIME 2025, HMMT Nov 2025, HMMT Feb 2025, Minerva), indicating higher effective diversity.\n- GRPO and GRPO+DIV exhibit substantial pass@$k$ degradation: the pretrained base model (Qwen-3-4B-Base) begins to outperform them as early as $k = 32$.\n- Poly-EPO achieves pass@$k$ coverage gains of up to 20% on mathematical reasoning test sets compared to GRPO [@OrneHamid2026].",
+      "content_hash": "d98768a441493f1c5efc11679f47ba42b33a295975167a4821b6ed138c07934c",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_17654::pass_at_k_result",
+      "label": "pass_at_k_result",
+      "metadata": {
+        "caption": "Figure 1: Pass@k evaluations on test sets",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "poly_epo_algorithm",
+              "polychromic_objective_def"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Pass@k improvements",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO and GRPO+DIV pass@$k$ degrade to below the pretrained base model (Qwen-3-4B-Base) performance at $k = 32$ on mathematical reasoning benchmarks. This demonstrates that standard RL fine-tuning collapses generation diversity sufficiently that the untrained base model provides better coverage when many samples are drawn [@OrneHamid2026].",
+      "content_hash": "ce09cf5d7873af081fda04e50eb835f1ea91726b519fb34435aec498a4e1222a",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_17654::pass_at_k_grpo_degradation",
+      "label": "pass_at_k_grpo_degradation",
+      "metadata": {
+        "caption": "Figure 1: Pass@k evaluations on test sets",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "rl_diversity_collapse"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "GRPO pass@k degradation below base model",
+      "type": "claim"
+    },
+    {
+      "content": "Training dynamics on POLARIS-53k — strategy diversity (Figure 2, left): Average number of unique reasoning-strategy clusters among correct generations per prompt (assigned by Qwen-3-4b-Instruct):\n\n- GRPO: number of clusters declines after ~200 training steps, indicating contraction.\n- GRPO+DIV: metric remains approximately flat, suggesting limited expansion.\n- Poly-EPO: steadily increases unique clusters to substantially higher levels than either baseline throughout 850 training steps [@OrneHamid2026].",
+      "content_hash": "bc4f021c1844e7518c2f78c1210beab54a05551e574ce59875962ce0f74852ef",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_17654::training_diversity_result",
+      "label": "training_diversity_result",
+      "metadata": {
+        "caption": "Figure 2: Training dynamics on POLARIS-53k",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "poly_epo_algorithm",
+              "polychromic_objective_def"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Training diversity dynamics",
+      "type": "claim"
+    },
+    {
+      "content": "Training dynamics on POLARIS-53k — problem coverage (Figure 2, right): Fraction of training prompts for which the model generates at least one correct rollout:\n\n- Both Poly-EPO and GRPO+DIV outperform GRPO for much of training.\n- Methods that explicitly encourage exploration achieve higher coverage.\n- This shows exploration not only preserves strategic diversity but also improves the probability of uncovering successful solutions during training [@OrneHamid2026].",
+      "content_hash": "b4c39b02312b1b103f44f3fc6aee0e6f523d4a605fcbed1cefb5fee1b1ad09b6",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_17654::training_coverage_result",
+      "label": "training_coverage_result",
+      "metadata": {
+        "caption": "Figure 2: Training dynamics on POLARIS-53k",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Training coverage dynamics",
+      "type": "claim"
+    },
+    {
+      "content": "Branching analysis (Figure 3): Generation diversity characterized by branching structure of sampled rollouts organized by shared token prefixes.\n\n- Poly-EPO models branch substantially earlier in the generation process than GRPO-trained models, across AIME 2026, BeyondAIME, and Minerva benchmarks.\n- GRPO models eventually reach a similar number of branches at later token positions, but generations remain coupled (share the same prefix) much longer before diverging.\n- Early branching corresponds to committing to distinct reasoning strategies earlier, indicating broader strategic exploration at test time [@OrneHamid2026].",
+      "content_hash": "a79526653d57043cb5a0dc129a3cf375c91d893c2483c924db23415973e6fcd9",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_17654::branching_result",
+      "label": "branching_result",
+      "metadata": {
+        "caption": "Figure 3: Poly-EPO promotes broader branching",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Branching structure analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Majority voting evaluation (Figure 4): All methods initialized from Qwen-3-4B-Base.\n\n- Poly-EPO majority vote share (fraction of $k$ votes assigned to winning answer) is consistently lower than GRPO and GRPO+DIV across all benchmarks, indicating greater response diversity at inference.\n- Despite higher entropy over final answers, Poly-EPO attains equal or stronger majority-vote accuracy as $k$ increases, often yielding the largest gains from additional samples (scales more effectively with test-time compute).\n- This suggests the diversity induced by Poly-EPO reflects useful diversity in reasoning trajectories, not merely random variation [@OrneHamid2026].",
+      "content_hash": "28ff76c5ea25d1f5681cbb49115908f38e4f5c9776911d19d79b2b9d0fec1146",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_17654::majority_vote_result",
+      "label": "majority_vote_result",
+      "metadata": {
+        "caption": "Figure 4: Majority@k evaluations on Test Sets",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "pass_at_k_result",
+              "training_diversity_result"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Majority voting results",
+      "type": "claim"
+    },
+    {
+      "content": "Synthetic domain experiment setup:\n\n| Parameter | Value |\n|-----------|-------|\n| Base model | Qwen-3-1.7B-Base |\n| LM-judge | Gemini-2.0-Flash |\n| Tasks | Multi-digit multiplication, Polynomial solving |\n\nTask definitions:\n- **Polynomial solving**: Given a polynomial relation, output $(x,y) \\in \\mathbb{R}^2$ satisfying it (e.g., $y = x^2 + 3x + 7$, valid solution $(1, 11)$). Diversity is defined over distinct final answers.\n- **Multi-digit multiplication**: Compute product of two integers via decomposition (e.g., $343 \\times 67 = (340+3)(70-3)$). Diversity by clustering strategies (factorization vs partial products by place values) [@OrneHamid2026].",
+      "content_hash": "328de2e354bcdf240f0eaa40b369e216f92d24da8295da376a10e5d5e6649d31",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_17654::synthetic_setup",
+      "label": "synthetic_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Synthetic domain setup",
+      "type": "setting"
+    },
+    {
+      "content": "Synthetic domain training dynamics (Figure 5): Number of distinct clusters among correct and incorrect responses per prompt (averaged over batch), for Qwen-3-1.7B-Base:\n\n- GRPO quickly collapses to a single successful strategy on both tasks.\n- Poly-EPO continues to explore and discovers more than **5x** as many distinct successful strategies as GRPO on both multi-digit multiplication and polynomial solving.\n- Poly-EPO preserves higher diversity over incorrect generations as well, indicating broader strategy coverage during exploration [@OrneHamid2026].",
+      "content_hash": "7b9495ab73fafbf19b29e3685d7987e4ed482776182dc3eadf7a4c74d1c7d670",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_17654::synthetic_diversity_result",
+      "label": "synthetic_diversity_result",
+      "metadata": {
+        "caption": "Figure 5: Training dynamics on synthetic domains",
+        "figure": "artifacts/2604.17654.pdf",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "OrneHamid2026"
+            ],
+            "referenced_claims": [
+              "poly_epo_algorithm",
+              "synthetic_setup"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Synthetic domain diversity results",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::rl_diversity_collapse,github:2604_17654::standard_rl_limitation,github:2604_17654::reward_shaping_limitation)",
+      "content_hash": "2342cbe36eb6a5b3bd0136fd1d7142f17dbf5ab7b18c505a69f04948117f9677",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_5dbcff5f",
+      "label": "__conjunction_result_5dbcff5f",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::rl_diversity_collapse,github:2604_17654::standard_rl_limitation,github:2604_17654::reward_shaping_limitation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b285012bdbbf0b95",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_5dbcff5f,github:2604_17654::set_rl_scalable)",
+      "content_hash": "803249726987d4608aaf13bd38bc5088d0742655a3f98eabd3710519c09653f8",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_224ca20d",
+      "label": "__implication_result_224ca20d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_5dbcff5f,github:2604_17654::set_rl_scalable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b285012bdbbf0b95",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::set_rl_definition,github:2604_17654::set_rl_irreducibility)",
+      "content_hash": "73ab9923388c18169ce17aedb6fc82506a47d492bdaa0986d59ce924b6ab9192",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_a6c81b12",
+      "label": "__implication_result_a6c81b12",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::set_rl_definition,github:2604_17654::set_rl_irreducibility)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_109327d6c51397b1",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::set_rl_gradient,github:2604_17654::set_rl_practical_challenge)",
+      "content_hash": "cc38d23ca03529f045103fe730586e9ec861ce2a07f61cc5b37c502f12cdfc1b",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_2269462f",
+      "label": "__implication_result_2269462f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::set_rl_gradient,github:2604_17654::set_rl_practical_challenge)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6d7e1fc64d540d85",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::combinatorial_set_construction,github:2604_17654::set_advantage_definition,github:2604_17654::marginal_set_advantage,github:2604_17654::policy_gradient_identity)",
+      "content_hash": "0b4ffa049c709533811dc32d1ada771d6cb017e22ce84e6d5cc4cc01635add8a",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_8806375a",
+      "label": "__conjunction_result_8806375a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::combinatorial_set_construction,github:2604_17654::set_advantage_definition,github:2604_17654::marginal_set_advantage,github:2604_17654::policy_gradient_identity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2124b8bd84b05e02",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_8806375a,github:2604_17654::proposition_unbiasedness)",
+      "content_hash": "8a9ce1bdcc76da9d6527cec34f529b78d4823c3309333e2600a9f03b5a22d9be",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_741d66bb",
+      "label": "__implication_result_741d66bb",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_8806375a,github:2604_17654::proposition_unbiasedness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2124b8bd84b05e02",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::proposition_unbiasedness,github:2604_17654::combinatorial_set_construction,github:2604_17654::marginal_set_advantage)",
+      "content_hash": "9e2e1c43788676179938f52893dff5d4c2d77296f55cb837bcc01d036abfd0d8",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_a1f43980",
+      "label": "__conjunction_result_a1f43980",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::proposition_unbiasedness,github:2604_17654::combinatorial_set_construction,github:2604_17654::marginal_set_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_22ff5b843b0d5ec6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_a1f43980,github:2604_17654::recipe_scalable)",
+      "content_hash": "8a34eeae258c86c99b8d079e1619285ad44d43845f7069cb845353cb80763b27",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_6c00f15c",
+      "label": "__implication_result_6c00f15c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_a1f43980,github:2604_17654::recipe_scalable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_22ff5b843b0d5ec6",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::diversity_function_def,github:2604_17654::lm_judge_design)",
+      "content_hash": "a24636f0ea4483ff28690ff04f5136699f863fd28967fee9c9d76daaaf8b992f",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_f6171dde",
+      "label": "__implication_result_f6171dde",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::diversity_function_def,github:2604_17654::lm_judge_design)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6c69c2c0f9dedaab",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::recipe_scalable,github:2604_17654::polychromic_objective_def,github:2604_17654::diversity_function_def)",
+      "content_hash": "3d95195002c58259333995cbc7ea3fed8d9d183ec16e827d1e1cd1bf679e4070",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_38529f4c",
+      "label": "__conjunction_result_38529f4c",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::recipe_scalable,github:2604_17654::polychromic_objective_def,github:2604_17654::diversity_function_def)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_94f7132820338532",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_38529f4c,github:2604_17654::poly_epo_algorithm)",
+      "content_hash": "a4870ca07c030101f50240baf780481c29a6086f8947c64ac294ebda90f631ae",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_fdcb7b4e",
+      "label": "__implication_result_fdcb7b4e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_38529f4c,github:2604_17654::poly_epo_algorithm)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_94f7132820338532",
+        "owning_strategy_type": "deduction",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::marginal_set_advantage)",
+      "content_hash": "8b035e52ca1f170247d36694df54a3d595b24c4beefb541c5710db756b9b7c4c",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_605bf3e0",
+      "label": "__conjunction_result_605bf3e0",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::marginal_set_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0d574658504325f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_605bf3e0,github:2604_17654::poly_epo_optimism)",
+      "content_hash": "3aa5a2ec26f4797f15f8812620df620c453006793fcb7b8fff7f53dabc280ea6",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_47c10eb8",
+      "label": "__implication_result_47c10eb8",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_605bf3e0,github:2604_17654::poly_epo_optimism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0d574658504325f",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::poly_epo_optimism)",
+      "content_hash": "3971ba156bb0a178bab38c188d0efecc11bf1395808f4a1dade663cc304430d6",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_68495cca",
+      "label": "__conjunction_result_68495cca",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::poly_epo_optimism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9fbf51dc220c464a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_68495cca,github:2604_17654::poly_epo_synergy)",
+      "content_hash": "0a81bb796d967ca8879ec470ffc1cd1d70a9c33f6ebb7aa8e7767e065b48b77f",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_27743a00",
+      "label": "__implication_result_27743a00",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_68495cca,github:2604_17654::poly_epo_synergy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9fbf51dc220c464a",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::set_rl_definition,github:2604_17654::proposition_unbiasedness)",
+      "content_hash": "0f0dc5d7d2212306c5a1924bc4fee1da4bd8fee084f25704694d956500ec1fd3",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_f056f198",
+      "label": "__conjunction_result_f056f198",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::set_rl_definition,github:2604_17654::proposition_unbiasedness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2c4dd38aa9a2ea08",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_f056f198,github:2604_17654::set_rl_logit_shift)",
+      "content_hash": "ff2f535776950ebaa16cc386455a95eba48bae14728a41acfde3aadf705696d0",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_32425c0c",
+      "label": "__implication_result_32425c0c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_f056f198,github:2604_17654::set_rl_logit_shift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2c4dd38aa9a2ea08",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::standard_rl_logit_shift,github:2604_17654::set_rl_logit_shift)",
+      "content_hash": "663f2295d6a565d60389a67a60807d62c725fa2b06c5b3b7d8090feeb4ca8123",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_be47e9cb",
+      "label": "__conjunction_result_be47e9cb",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::standard_rl_logit_shift,github:2604_17654::set_rl_logit_shift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ee0016aec7fa51e7",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_be47e9cb,github:2604_17654::marginal_advantage_interpretation)",
+      "content_hash": "357325afc28813d532ae84a420452c5e2d27f087614b926e1fe52f0d389e9f10",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_c6bf9254",
+      "label": "__implication_result_c6bf9254",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_be47e9cb,github:2604_17654::marginal_advantage_interpretation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ee0016aec7fa51e7",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::marginal_advantage_interpretation)",
+      "content_hash": "f68984d8a4cd1b5d26454b587eeaf037845fb4dbc50d6449bbd3da1f947764a8",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_dca73564",
+      "label": "__conjunction_result_dca73564",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::polychromic_objective_def,github:2604_17654::marginal_advantage_interpretation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7edaf065bceff7c2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_dca73564,github:2604_17654::polychromic_advantage_decomposition)",
+      "content_hash": "90dcfdf863a2c61a68eed695cf834af935b6b57f2702c4af8f8f9ca69f78c08e",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_d3af4b77",
+      "label": "__implication_result_d3af4b77",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_dca73564,github:2604_17654::polychromic_advantage_decomposition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7edaf065bceff7c2",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::polychromic_advantage_decomposition,github:2604_17654::poly_epo_optimism)",
+      "content_hash": "286aa35e08e8ec06f752ce3b4e738b9b9ded02ae89486457cc87d44153a7c10e",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_77d87b8e",
+      "label": "__implication_result_77d87b8e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::polychromic_advantage_decomposition,github:2604_17654::poly_epo_optimism)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_06a167f83e112cf6",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::polychromic_advantage_decomposition,github:2604_17654::poly_epo_synergy)",
+      "content_hash": "7bc3070a01038fa5f90ce322dadd7d1651205f0452273f58a7afd74b00460f56",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_3d86e313",
+      "label": "__implication_result_3d86e313",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::polychromic_advantage_decomposition,github:2604_17654::poly_epo_synergy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fc08822702bad648",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::poly_epo_algorithm,github:2604_17654::polychromic_objective_def)",
+      "content_hash": "425d8a5878702897de16f07d83665e257c7980a7b9fc202015b45d93a832294b",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_d4902576",
+      "label": "__conjunction_result_d4902576",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::poly_epo_algorithm,github:2604_17654::polychromic_objective_def)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aa4ccb87bfdd3175",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_d4902576,github:2604_17654::pass_at_k_result)",
+      "content_hash": "5f73e243306c29354a34ca3de023ab62794a07d3b38c76aa2f6ec6b9f09ea20f",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_357b1e30",
+      "label": "__implication_result_357b1e30",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_d4902576,github:2604_17654::pass_at_k_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aa4ccb87bfdd3175",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::rl_diversity_collapse,github:2604_17654::pass_at_k_grpo_degradation)",
+      "content_hash": "2ea05c8c60204cebf67a223cde1141e3f2ab3716a883f7ce3fe1370fbc627073",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_e6b9ada4",
+      "label": "__implication_result_e6b9ada4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::rl_diversity_collapse,github:2604_17654::pass_at_k_grpo_degradation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_23ec98856871eb92",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::poly_epo_algorithm,github:2604_17654::polychromic_objective_def)",
+      "content_hash": "425d8a5878702897de16f07d83665e257c7980a7b9fc202015b45d93a832294b",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_7a9359e8",
+      "label": "__conjunction_result_7a9359e8",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::poly_epo_algorithm,github:2604_17654::polychromic_objective_def)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_77debee78caf871d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_7a9359e8,github:2604_17654::training_diversity_result)",
+      "content_hash": "1544fe1d154b5c9e8d29be99c5dacbc03c267ea4f4898fdce456c459515fde9a",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_52eefc5a",
+      "label": "__implication_result_52eefc5a",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_7a9359e8,github:2604_17654::training_diversity_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_77debee78caf871d",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_17654::pass_at_k_result,github:2604_17654::training_diversity_result)",
+      "content_hash": "b947dbe0c98075cdeecbb9eaddbd88aa75600377b36ed076b3ced9a80776749a",
+      "exported": false,
+      "id": "github:2604_17654::__conjunction_result_35d06e59",
+      "label": "__conjunction_result_35d06e59",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_17654::pass_at_k_result,github:2604_17654::training_diversity_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0a9fba487b134103",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::__conjunction_result_35d06e59,github:2604_17654::majority_vote_result)",
+      "content_hash": "4236498b5c6c8bb042919612bdff2b2c0153a1ba2b4c5ea4b3a29b6592a1f6e8",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_a9584dc0",
+      "label": "__implication_result_a9584dc0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::__conjunction_result_35d06e59,github:2604_17654::majority_vote_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0a9fba487b134103",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_17654::poly_epo_algorithm,github:2604_17654::synthetic_diversity_result)",
+      "content_hash": "9795c46238bf56488afc9b2947d74e6fe43f3ca184a533efa9605a9de5bea539",
+      "exported": false,
+      "id": "github:2604_17654::__implication_result_be445388",
+      "label": "__implication_result_be445388",
+      "metadata": {
+        "canonical_name": "implies(github:2604_17654::poly_epo_algorithm,github:2604_17654::synthetic_diversity_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_13fd632d63430b28",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_preliminaries",
+    "s3_set_rl_recipe",
+    "s4_poly_epo",
+    "s5_analysis",
+    "s6_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Motivation for Polychromic Exploratory Policy Optimization (Poly-EPO).",
+    "s2_preliminaries": "Section 2: Preliminaries — Standard RL and Set RL Frameworks.",
+    "s3_set_rl_recipe": "Section 3: Optimizing Language Models with Set RL.",
+    "s4_poly_epo": "Section 4: Polychromic Exploratory Policy Optimization (Poly-EPO).",
+    "s5_analysis": "Section 5: Analysis — General Recipe and Exploration-Exploitation Synergy.",
+    "s6_experiments": "Section 6: Experiments — Mathematical Reasoning and Synthetic Domains."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_17654",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_17654::set_rl_scalable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_5dbcff5f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::rl_diversity_collapse",
+              "github:2604_17654::standard_rl_limitation",
+              "github:2604_17654::reward_shaping_limitation"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_224ca20d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_5dbcff5f",
+              "github:2604_17654::set_rl_scalable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because RL fine-tuning collapses diversity (@rl_diversity_collapse), standard algorithms lack explicit exploration incentives (@standard_rl_limitation), and reward shaping treats exploration and exploitation as separate objectives requiring careful $\\lambda$ tuning (@reward_shaping_limitation), a fundamentally different approach is needed. Set RL addresses all three issues simultaneously: it assigns rewards at the set level, coupling exploration and exploitation intrinsically, and the scalable recipe avoids vine sampling."
+      },
+      "premises": [
+        "github:2604_17654::rl_diversity_collapse",
+        "github:2604_17654::standard_rl_limitation",
+        "github:2604_17654::reward_shaping_limitation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b285012bdbbf0b95",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::set_rl_irreducibility",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_a6c81b12",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::set_rl_definition",
+              "github:2604_17654::set_rl_irreducibility"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "By @set_rl_definition, the defining constraint of set RL is that the expected set objective cannot be rewritten as an expectation over a policy-independent per-generation reward. While $g_\\theta(x,y) = \\mathbb{E}_{y_{2:n}}[f(x,y,y_{2:n})]$ satisfies $\\mathbb{E}_{y_{1:n}}[f] = \\mathbb{E}_y[g_\\theta(x,y)]$, the key point is that $g_\\theta$ depends on the policy — making it structurally different from standard RL where rewards are externally specified and policy-independent. This follows by definition."
+      },
+      "premises": [
+        "github:2604_17654::set_rl_definition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_109327d6c51397b1",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17654::set_rl_practical_challenge",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_2269462f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::set_rl_gradient",
+              "github:2604_17654::set_rl_practical_challenge"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The set RL gradient (@set_rl_gradient) requires evaluating the set objective $f$ on multiple complete sets of size $n$ per prompt to estimate both the set reward and the set-level baseline with low variance. The number of distinct sets of size $n$ from $N$ generations is $\\binom{N}{n}$, which grows combinatorially — making naive estimation computationally prohibitive at scale."
+      },
+      "premises": [
+        "github:2604_17654::set_rl_gradient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6d7e1fc64d540d85",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::proposition_unbiasedness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_8806375a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::combinatorial_set_construction",
+              "github:2604_17654::set_advantage_definition",
+              "github:2604_17654::marginal_set_advantage",
+              "github:2604_17654::policy_gradient_identity"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_741d66bb",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_8806375a",
+              "github:2604_17654::proposition_unbiasedness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The estimator's unbiasedness follows from U-statistic theory. Constructing sets combinatorially from $N$ i.i.d. samples (@combinatorial_set_construction) causes the estimator to be a U-statistic estimator of the set RL gradient (@set_rl_gradient). The marginal set advantage (@marginal_set_advantage) sums set advantages over all sets containing a generation. After algebraic expansion using the score-function identity (@policy_gradient_identity) and the symmetry of the set objective, the expectation telescopes to $M \\nabla_\\theta \\mathbb{E}_{y_{1:n}}[f]$ where $M = \\binom{N}{n} - \\binom{N-1}{n-1} > 0$ by Pascal's rule. The same argument applies to the uniform sampling case with a different but still positive scaling factor $M$."
+      },
+      "premises": [
+        "github:2604_17654::combinatorial_set_construction",
+        "github:2604_17654::set_advantage_definition",
+        "github:2604_17654::marginal_set_advantage",
+        "github:2604_17654::policy_gradient_identity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2124b8bd84b05e02",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::recipe_scalable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_a1f43980",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::proposition_unbiasedness",
+              "github:2604_17654::combinatorial_set_construction",
+              "github:2604_17654::marginal_set_advantage"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_6c00f15c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_a1f43980",
+              "github:2604_17654::recipe_scalable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The unbiasedness result (@proposition_unbiasedness) ensures correctness. The combinatorial construction (@combinatorial_set_construction) reuses the same $N$ i.i.d. samples already drawn for standard RL — no additional rollouts are needed. The marginal set advantage (@marginal_set_advantage) provides a per-generation scalar that plugs directly into existing RL algorithm infrastructure, satisfying the scalability desideratum. This directly resolves the practical challenge identified in @set_rl_practical_challenge."
+      },
+      "premises": [
+        "github:2604_17654::proposition_unbiasedness",
+        "github:2604_17654::combinatorial_set_construction",
+        "github:2604_17654::marginal_set_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_22ff5b843b0d5ec6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::lm_judge_design",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_f6171dde",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::diversity_function_def",
+              "github:2604_17654::lm_judge_design"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The cluster-based diversity measure (@diversity_function_def) inherits all three properties: computational efficiency comes from the generator-verifier gap (clustering is easier than solving); breadth across domains from LM-judges' instruction-following capability; strategy-centricity from the rubric that distinguishes macro- and micro-strategy while ignoring surface features. The few-shot examples in the judge prompt explicitly demonstrate invariance to arithmetic errors and tone."
+      },
+      "premises": [
+        "github:2604_17654::diversity_function_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6c69c2c0f9dedaab",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::poly_epo_algorithm",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_38529f4c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::recipe_scalable",
+              "github:2604_17654::polychromic_objective_def",
+              "github:2604_17654::diversity_function_def"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_fdcb7b4e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_38529f4c",
+              "github:2604_17654::poly_epo_algorithm"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Poly-EPO is a direct instantiation of the general set RL recipe (@recipe_scalable) with the polychromic objective (@polychromic_objective_def). The diversity function (@diversity_function_def) is evaluated via LM-judge clustering. The algorithm inherits the recipe's scalability: same $N$ generations as standard RL, marginal set advantage computed via Algorithm 2 and plugged into the GRPO update rule (@marginal_set_advantage). All design choices (cluster-100, $T_i = T_{\\max}$) follow directly from the definitions."
+      },
+      "premises": [
+        "github:2604_17654::recipe_scalable",
+        "github:2604_17654::polychromic_objective_def",
+        "github:2604_17654::diversity_function_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_94f7132820338532",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17654::poly_epo_optimism",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_605bf3e0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::polychromic_objective_def",
+              "github:2604_17654::marginal_set_advantage"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_47c10eb8",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_605bf3e0",
+              "github:2604_17654::poly_epo_optimism"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "In the polychromic objective (@polychromic_objective_def), the set score is a product of average reward and diversity. The marginal set advantage (@marginal_set_advantage) sums set advantages over sets containing a given generation. Even if a generation has $r(x,y) = 0$, the sets it belongs to can still have high polychromic scores (via other high-reward, diverse generators in those sets), giving the generation a positive marginal set advantage. This is the formal mechanism for optimistic exploration — encoded in Term 1 of the marginal advantage decomposition (Eq. 15 of the paper)."
+      },
+      "premises": [
+        "github:2604_17654::polychromic_objective_def",
+        "github:2604_17654::marginal_set_advantage"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0d574658504325f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::poly_epo_synergy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_68495cca",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::polychromic_objective_def",
+              "github:2604_17654::poly_epo_optimism"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_27743a00",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_68495cca",
+              "github:2604_17654::poly_epo_synergy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Under reward-shaped RL (separate $r + \\lambda d$ objective), the advantage for a generation is $r(x,y) - \\mathbb{E}_Y[r] + \\lambda(d(x,y) - \\mathbb{E}_Y[d])$. For $r(x,y)=0$, positivity requires $d(x,y) \\geq p/\\lambda + \\mathbb{E}_Y[d]$. As $p \\to 1$ (model improves), this bound grows unboundedly for fixed $\\lambda$. In contrast, Poly-EPO (@poly_epo_optimism) maintains positive learning signal for exploratory incorrect generations regardless of $p$ via set credit sharing. Furthermore, the covariance term (Term 2 of Eq. 15) in Poly-EPO — absent in $r(x,y) \\cdot d(x,y)$ pointwise objectives — explicitly rewards synergistic exploration-exploitation."
+      },
+      "premises": [
+        "github:2604_17654::polychromic_objective_def",
+        "github:2604_17654::poly_epo_optimism"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9fbf51dc220c464a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::set_rl_logit_shift",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_f056f198",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::set_rl_definition",
+              "github:2604_17654::proposition_unbiasedness"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_32425c0c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_f056f198",
+              "github:2604_17654::set_rl_logit_shift"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The set RL logit shift follows from [@HOX26]'s analysis of scaffold values in set RL. The scaffold value $\\Lambda_f(y^{\\oplus n};\\pi_\\theta^k,x)$ for a homogeneous set (all copies of $y$) equals $\\pi_\\theta^k(y|x) \\cdot A^\\sharp_{\\text{marg}}(x,y)$ under the symmetry of $f$ (@set_rl_definition) and the unbiasedness structure (@proposition_unbiasedness). Applying the score-function gradient yields Eq. 13."
+      },
+      "premises": [
+        "github:2604_17654::set_rl_definition",
+        "github:2604_17654::proposition_unbiasedness"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2c4dd38aa9a2ea08",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::marginal_advantage_interpretation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_be47e9cb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::standard_rl_logit_shift",
+              "github:2604_17654::set_rl_logit_shift"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_c6bf9254",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_be47e9cb",
+              "github:2604_17654::marginal_advantage_interpretation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "By comparing Eq. 12 (standard RL logit shift, @standard_rl_logit_shift) with Eq. 13 (set RL logit shift, @set_rl_logit_shift), the two expressions have identical structure: $\\alpha \\pi_\\theta^k(y|x) \\cdot [\\text{advantage term}]$. Setting $A(x,y) = A^\\sharp_{\\text{marg}}(x,y;f,\\pi_\\theta^k)$ makes the logit shifts equivalent. This is a deductive consequence of the two equations sharing the same functional form."
+      },
+      "premises": [
+        "github:2604_17654::standard_rl_logit_shift",
+        "github:2604_17654::set_rl_logit_shift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ee0016aec7fa51e7",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17654::polychromic_advantage_decomposition",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_dca73564",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::polychromic_objective_def",
+              "github:2604_17654::marginal_advantage_interpretation"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_d3af4b77",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_dca73564",
+              "github:2604_17654::polychromic_advantage_decomposition"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Substituting the polychromic objective $f_{\\text{poly}} = \\bar{r} \\cdot d$ (@polychromic_objective_def) into the marginal set advantage formula (@marginal_advantage_interpretation) and expanding the expectation algebraically yields the two-term decomposition via the covariance decomposition identity: $\\mathbb{E}[XY] = \\mathbb{E}[X]\\mathbb{E}[Y] + \\text{Cov}(X,Y)$. The derivation is a direct algebraic manipulation."
+      },
+      "premises": [
+        "github:2604_17654::polychromic_objective_def",
+        "github:2604_17654::marginal_advantage_interpretation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7edaf065bceff7c2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::poly_epo_optimism",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_77d87b8e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::polychromic_advantage_decomposition",
+              "github:2604_17654::poly_epo_optimism"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Term 1 of the polychromic advantage decomposition (@polychromic_advantage_decomposition) shows that generation $y$'s advantage depends on $\\frac{1}{n}r(x,y)$ (own reward, weight $1/n$) plus $\\frac{n-1}{n}\\mathbb{E}_Y[r]$ (other generators' reward) times expected diversity. For $r(x,y) = 0$ but high $\\mathbb{E}_Y[r]$ and high diversity, Term 1 can be positive. This directly implies @poly_epo_optimism by construction."
+      },
+      "premises": [
+        "github:2604_17654::polychromic_advantage_decomposition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_06a167f83e112cf6",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17654::poly_epo_synergy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_3d86e313",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::polychromic_advantage_decomposition",
+              "github:2604_17654::poly_epo_synergy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Term 2 of @polychromic_advantage_decomposition is the covariance between reward and diversity in sets containing $y$ minus the global covariance. This term is positive when presence of $y$ increases reward-diversity correlation — precisely when $y$ helps coordinate exploration and exploitation. This term is structurally absent from pointwise objectives like $r(x,y) \\cdot d(x,y)$ or $r + \\lambda d$, confirming @poly_epo_synergy."
+      },
+      "premises": [
+        "github:2604_17654::polychromic_advantage_decomposition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fc08822702bad648",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_17654::pass_at_k_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_d4902576",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::poly_epo_algorithm",
+              "github:2604_17654::polychromic_objective_def"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_357b1e30",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_d4902576",
+              "github:2604_17654::pass_at_k_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Poly-EPO (@poly_epo_algorithm) trains the model via the polychromic objective (@polychromic_objective_def) to produce sets with diverse reasoning strategies. This diversity is directly measured by pass@$k$: higher strategy diversity means a larger fraction of problems can be solved by at least one of $k$ samples. The improvement over GRPO confirms the polychromic objective successfully incentivizes diverse strategies beyond reward maximization alone."
+      },
+      "premises": [
+        "github:2604_17654::poly_epo_algorithm",
+        "github:2604_17654::polychromic_objective_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aa4ccb87bfdd3175",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::pass_at_k_grpo_degradation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_e6b9ada4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::rl_diversity_collapse",
+              "github:2604_17654::pass_at_k_grpo_degradation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The diversity collapse identified in the motivation (@rl_diversity_collapse) directly predicts that GRPO-trained models will have reduced pass@$k$ at large $k$ compared to the base model. When diversity collapses, all $k$ samples tend to produce the same reasoning paths, so coverage saturates quickly. The observation that GRPO falls below base model at $k=32$ is a direct empirical manifestation of diversity collapse."
+      },
+      "premises": [
+        "github:2604_17654::rl_diversity_collapse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23ec98856871eb92",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::training_diversity_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_7a9359e8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::poly_epo_algorithm",
+              "github:2604_17654::polychromic_objective_def"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_52eefc5a",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_7a9359e8",
+              "github:2604_17654::training_diversity_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Poly-EPO's polychromic objective (@poly_epo_algorithm, @polychromic_objective_def) directly rewards sets for containing diverse reasoning strategies. During training, this creates a persistent gradient signal toward broader strategy discovery. The steady increase in unique clusters (vs GRPO's collapse and GRPO+DIV's plateau) demonstrates that the polychromic set-level objective more effectively incentivizes strategy diversity than either no-exploration (GRPO) or single-generation diversity bonus (GRPO+DIV)."
+      },
+      "premises": [
+        "github:2604_17654::poly_epo_algorithm",
+        "github:2604_17654::polychromic_objective_def"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_77debee78caf871d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::majority_vote_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__conjunction_result_35d06e59",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_17654::pass_at_k_result",
+              "github:2604_17654::training_diversity_result"
+            ]
+          },
+          {
+            "conclusion": "github:2604_17654::__implication_result_a9584dc0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::__conjunction_result_35d06e59",
+              "github:2604_17654::majority_vote_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Higher pass@$k$ coverage (@pass_at_k_result) and greater training-time diversity (@training_diversity_result) together imply that Poly-EPO's generations contain useful diverse reasoning paths. Under majority voting, this useful diversity translates into improved accuracy as $k$ increases — each additional sample adds genuine information rather than repeating the same approach. The lower majority vote share confirms that probability mass is spread over more valid answer candidates, not merely producing noise."
+      },
+      "premises": [
+        "github:2604_17654::pass_at_k_result",
+        "github:2604_17654::training_diversity_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0a9fba487b134103",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_17654::synthetic_diversity_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_17654::__implication_result_be445388",
+            "operator": "implication",
+            "variables": [
+              "github:2604_17654::poly_epo_algorithm",
+              "github:2604_17654::synthetic_diversity_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "In synthetic domains with infinitely many valid strategies (@synthetic_setup), Poly-EPO's polychromic objective (@poly_epo_algorithm) directly rewards discovering new strategy clusters. GRPO's mode-collapse tendency produces a single high-reward strategy and stops exploring. The 5x+ diversity gain in correct strategy clusters directly validates the core claim that Poly-EPO discovers a broader repertoire of successful strategies, as intended by the polychromic design."
+      },
+      "premises": [
+        "github:2604_17654::poly_epo_algorithm"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_13fd632d63430b28",
+      "type": "support"
+    }
+  ]
+}

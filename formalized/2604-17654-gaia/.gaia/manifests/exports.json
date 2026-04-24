@@ -1,0 +1,288 @@
+{
+  "exports": [
+    {
+      "content": "Branching analysis (Figure 3): Generation diversity characterized by branching structure of sampled rollouts organized by shared token prefixes.\n\n- Poly-EPO models branch substantially earlier in the generation process than GRPO-trained models, across AIME 2026, BeyondAIME, and Minerva benchmarks.\n- GRPO models eventually reach a similar number of branches at later token positions, but generations remain coupled (share the same prefix) much longer before diverging.\n- Early branching corresponds to committing to distinct reasoning strategies earlier, indicating broader strategic exploration at test time [@OrneHamid2026].",
+      "content_hash": "a79526653d57043cb5a0dc129a3cf375c91d893c2483c924db23415973e6fcd9",
+      "label": "branching_result",
+      "qid": "github:2604_17654::branching_result",
+      "type": "claim"
+    },
+    {
+      "content": "Scalable set construction: For a fixed prompt $x$, sample $N$ i.i.d. generations $y_1,\\ldots,y_N \\sim \\pi_\\theta(\\cdot|x)$ with $N > n$. Construct $K$ sets of size $n$ from these $N$ generations without replacement:\n\n$$G_j = \\{y_{(j_1)},\\ldots,y_{(j_n)}\\}, \\quad j_1 < \\cdots < j_n, \\{j_1,\\ldots,j_n\\} \\subseteq \\{1,\\ldots,N\\}$$\n\nEither enumerate all $\\binom{N}{n}$ sets (reduces gradient variance) or sample $K$ sets uniformly without replacement (when evaluating $f$ is expensive) [@OrneHamid2026].",
+      "content_hash": "9cf0aca97bdcc1472788adfad52e9c7316230964f854daf04d09709b086818ca",
+      "label": "combinatorial_set_construction",
+      "qid": "github:2604_17654::combinatorial_set_construction",
+      "type": "claim"
+    },
+    {
+      "content": "Desideratum 1 — Optimism under uncertainty: An effective algorithm should assign a positive learning signal to trajectories that attempt novel reasoning strategies even when those strategies have not yet yielded high reward. This ensures the policy continues to explore promising strategies and broaden its capabilities during training (e.g., a dynamic programming approach should be reinforced even if early implementations fail unit tests) [@OrneHamid2026].",
+      "content_hash": "e770d48b72541998f3e85fe75cab709ffb2c629ebf19aaecebfe648fe370ea87",
+      "label": "desideratum_optimism",
+      "qid": "github:2604_17654::desideratum_optimism",
+      "type": "setting"
+    },
+    {
+      "content": "Desideratum 3 — Scalability: The algorithm's sample complexity and computational complexity should not be a significant overhead for large-scale LM post-training [@OrneHamid2026].",
+      "content_hash": "086cec32af9777819ba3953e5d7323b86a8a3d16d80f9d5be1dc46df6e143325",
+      "label": "desideratum_scalability",
+      "qid": "github:2604_17654::desideratum_scalability",
+      "type": "setting"
+    },
+    {
+      "content": "Desideratum 2 — Exploration-exploitation synergy: The learning signal for each generation should depend on whether that generation helps the model jointly achieve high task performance and explore diverse strategies, enabling the model to learn through optimization to balance these goals [@OrneHamid2026].",
+      "content_hash": "3b8795ae82cf10135ca6124f2df5665e37c418273d2a37c7d766099ec607c19e",
+      "label": "desideratum_synergy",
+      "qid": "github:2604_17654::desideratum_synergy",
+      "type": "setting"
+    },
+    {
+      "content": "Diversity function: An LM-judge (language model judge) clusters all $N$ generations $y_1,\\ldots,y_N$ for prompt $x$ according to semantic similarity of reasoning strategies. Let $\\mathcal{C}(y_i) \\in \\{1,\\ldots,N\\}$ be the cluster assignment of generation $y_i$. The diversity of a set $(y_1,\\ldots,y_n)$ is the fraction of distinct clusters:\n\n$$d(x, y_{1:n}) = \\frac{|\\{\\mathcal{C}(y_1),\\ldots,\\mathcal{C}(y_n)\\}|}{n} \\in [0,1]$$\n\nA special cluster index 100 (out-of-bounds) is reserved for degenerate generations (gibberish, random guesses, code without mathematical reasoning). Cluster-100 assignments are excluded from diversity numerator. A set receives diversity score 0 if all generations fall in the same cluster [@OrneHamid2026].",
+      "content_hash": "293d1515ba3e71116ab2e1daf2e641220b4520778c9972da92b2261f4ed3a7c3",
+      "label": "diversity_function_def",
+      "qid": "github:2604_17654::diversity_function_def",
+      "type": "claim"
+    },
+    {
+      "content": "Exploration serves three roles in learning from experience: (1) it is necessary to discover successful strategies for complex problems (e.g., finding a valid proof technique); (2) it enables generalization by building a diverse repertoire of strategies (e.g., multiple chess openings); (3) it is essential for scaling test-time compute methods such as majority voting, aggregation, and search, whose effectiveness depends on diversity in model generations [@OrneHamid2026].",
+      "content_hash": "cfd2bc1e4f99789b2c4b05ca6da705aa4820e3768849d77235e2925827146848",
+      "label": "exploration_roles",
+      "qid": "github:2604_17654::exploration_roles",
+      "type": "setting"
+    },
+    {
+      "content": "Final set RL gradient estimator using marginal set advantage:\n\n$$\\widehat{\\nabla_\\theta} \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta}[f(x,y_{1:n})] = \\widehat{\\mathbb{E}}_{x \\sim \\mathcal{D},\\, y_1,\\ldots,y_N \\sim \\pi_\\theta(\\cdot|x)}\\!\\left[\\sum_{i=1}^N \\nabla_\\theta \\log \\pi_\\theta(y_i|x) \\cdot \\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)\\right]$$\n\nThis estimator is unbiased (up to a constant scaling factor $M > 0$) for both the enumerate-all-sets and uniform-sample-$K$-sets variants [@OrneHamid2026].",
+      "content_hash": "7c30ac923bfbc5b5342867dc66f64147f568249061df0c172b834f8c06a98481",
+      "label": "gradient_estimator",
+      "qid": "github:2604_17654::gradient_estimator",
+      "type": "claim"
+    },
+    {
+      "content": "The LM-judge-based diversity measurement is: (1) computationally efficient — clustering is substantially easier than solving the original task, exploiting the generator-verifier gap; (2) broadly applicable — LM-judges are already integrated into modern post-training pipelines including proof generation and non-verifiable tasks; (3) strategy-centric — the judge is steered via in-context learning to cluster on macro-strategy (overall conceptual framework) and micro-strategy (specific techniques at key intermediate steps), not on superficial features like tone or phrasing [@OrneHamid2026].",
+      "content_hash": "9ef75f1ff3ee7197740274647bfad2960a0c97568996e591c2ee339c91b119ab",
+      "label": "lm_judge_design",
+      "qid": "github:2604_17654::lm_judge_design",
+      "type": "claim"
+    },
+    {
+      "content": "Majority voting evaluation (Figure 4): All methods initialized from Qwen-3-4B-Base.\n\n- Poly-EPO majority vote share (fraction of $k$ votes assigned to winning answer) is consistently lower than GRPO and GRPO+DIV across all benchmarks, indicating greater response diversity at inference.\n- Despite higher entropy over final answers, Poly-EPO attains equal or stronger majority-vote accuracy as $k$ increases, often yielding the largest gains from additional samples (scales more effectively with test-time compute).\n- This suggests the diversity induced by Poly-EPO reflects useful diversity in reasoning trajectories, not merely random variation [@OrneHamid2026].",
+      "content_hash": "28ff76c5ea25d1f5681cbb49115908f38e4f5c9776911d19d79b2b9d0fec1146",
+      "label": "majority_vote_result",
+      "qid": "github:2604_17654::majority_vote_result",
+      "type": "claim"
+    },
+    {
+      "content": "Comparing the standard RL logit shift (Eq. 12) with the set RL logit shift (Lemma 5.1, Eq. 13), the marginal set advantage of generation $y$ can be defined as:\n\n$$A^\\sharp_{\\text{marg}}(x,y;f,\\pi_\\theta^k) = \\mathbb{E}_{y_{2:n} \\sim \\pi_\\theta^k}[f(x,y,y_{2:n})] - \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta^k}[f(x,y_{1:n})]$$\n\nThis shows that the logit shift under set RL is equivalent to that under standard RL when the standard advantage $A(x,y)$ is replaced by the marginal set advantage. Therefore, any standard RL algorithm can be used to optimize set RL objectives by this substitution [@OrneHamid2026].",
+      "content_hash": "658bff943586b80a39a645acb3af5a3411a42d3d9f42a6dc12f6b6f0568435e7",
+      "label": "marginal_advantage_interpretation",
+      "qid": "github:2604_17654::marginal_advantage_interpretation",
+      "type": "claim"
+    },
+    {
+      "content": "Marginal set advantage of a single generation $y$: Let $\\mathcal{G}(y)$ be the collection of all constructed sets containing $y$. The marginal set advantage is:\n\n$$\\widehat{A^\\sharp_{\\text{marg}}}(x,y;f) = \\sum_{G \\in \\mathcal{G}(y)} A^\\sharp(x,G;f)$$\n\nIntuitively, this is the sum of advantages of all sets that contain generation $y$. It provides an advantage at the level of a single generation, enabling use of standard RL update rules [@OrneHamid2026].",
+      "content_hash": "1bcb7d60f024d628bfbc50f1c374c4b3a6652d4b8a36f9cfee2baa8217cad4ce",
+      "label": "marginal_set_advantage",
+      "qid": "github:2604_17654::marginal_set_advantage",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO and GRPO+DIV pass@$k$ degrade to below the pretrained base model (Qwen-3-4B-Base) performance at $k = 32$ on mathematical reasoning benchmarks. This demonstrates that standard RL fine-tuning collapses generation diversity sufficiently that the untrained base model provides better coverage when many samples are drawn [@OrneHamid2026].",
+      "content_hash": "ce09cf5d7873af081fda04e50eb835f1ea91726b519fb34435aec498a4e1222a",
+      "label": "pass_at_k_grpo_degradation",
+      "qid": "github:2604_17654::pass_at_k_grpo_degradation",
+      "type": "claim"
+    },
+    {
+      "content": "Pass@$k$ results on mathematical reasoning test sets (Poly-EPO vs GRPO vs GRPO+DIV, base model Qwen-3-4B-Base, Figure 1):\n\n- Poly-EPO pass@$k$ improves more strongly as $k$ increases across all 6 benchmarks (BeyondAIME, AIME 2026, AIME 2025, HMMT Nov 2025, HMMT Feb 2025, Minerva), indicating higher effective diversity.\n- GRPO and GRPO+DIV exhibit substantial pass@$k$ degradation: the pretrained base model (Qwen-3-4B-Base) begins to outperform them as early as $k = 32$.\n- Poly-EPO achieves pass@$k$ coverage gains of up to 20% on mathematical reasoning test sets compared to GRPO [@OrneHamid2026].",
+      "content_hash": "d98768a441493f1c5efc11679f47ba42b33a295975167a4821b6ed138c07934c",
+      "label": "pass_at_k_result",
+      "qid": "github:2604_17654::pass_at_k_result",
+      "type": "claim"
+    },
+    {
+      "content": "Example analysis using pass@$n$ objective $f_{\\text{pass@}n}(x,y_{1:n}) = \\max_{i} r(x,y_i)$: In set RL with pass@$n$, the marginal set advantage of an incorrect generation ($r(x,y)=0$) is $A^\\sharp_{\\text{marg}}(x,y_{\\text{incorrect}}) = (1-p)^n - (1-p)^{n-1} \\leq 0$, where $p$ is the probability of sampling a correct generation. The marginal set advantage of a correct generation is $(1-p)^n \\geq 0$. Thus under pass@$n$, incorrect generations always receive non-positive advantage — no optimistic exploration occurs [@OrneHamid2026].",
+      "content_hash": "a2dd2a4857d2756e9662b0cce7817dda0217c6fcf4969ba08b3d9c1fa51b02ae",
+      "label": "pass_at_n_analysis",
+      "qid": "github:2604_17654::pass_at_n_analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Score-function (REINFORCE) policy gradient identity: For any differentiable objective $\\mathbb{E}_{y \\sim \\pi_\\theta}[f(y)]$, the gradient is $\\mathbb{E}_y[\\nabla_\\theta \\log \\pi_\\theta(y) \\cdot f(y)]$. This allows Monte Carlo estimation via sampled trajectories [@SB18].",
+      "content_hash": "f9deb2a246fd4169b2c6aab04b4db05d2ed2798efd986e7aa8699d5c9110d217",
+      "label": "policy_gradient_identity",
+      "qid": "github:2604_17654::policy_gradient_identity",
+      "type": "claim"
+    },
+    {
+      "content": "Poly-EPO algorithm: Instantiate the general set RL recipe (Algorithm 1) with the polychromic objective. For each prompt $x$, sample $N = 8$ generations; construct $K = 70$ sets of size $n = 4$ using uniform sampling without replacement; cluster all $N$ generations using the LM-judge (Qwen-3-4B-Instruct); compute polychromic score for each set as: $f_{\\text{poly}}(x, G_l) = \\bar{r}_l \\cdot \\frac{|U_l|}{n} \\cdot \\mathbb{I}(|U_l| > 1)$ where $\\bar{r}_l$ is mean reward and $U_l$ is the set of distinct clusters. The marginal set advantage replaces the standard advantage in the GRPO update. Each generation within a response receives the same advantage (token-level), and response lengths are normalized using $T_i = T_{\\max}$ (max response length), following Dr.GRPO [@LCL25] [@OrneHamid2026].",
+      "content_hash": "5aec24180eab04aad93273512e6b57ca89d972db7d6f976a6fc9de7d35f8a20e",
+      "label": "poly_epo_algorithm",
+      "qid": "github:2604_17654::poly_epo_algorithm",
+      "type": "claim"
+    },
+    {
+      "content": "Polychromic Exploratory Policy Optimization (Poly-EPO) is a set-RL algorithm that: (1) improves generalization by achieving higher pass@$k$ coverage (gains of up to 20% on mathematical reasoning test sets compared to GRPO); (2) preserves greater diversity in model generations as measured by reasoning-strategy clusters; (3) scales more effectively with test-time compute under majority voting [@OrneHamid2026].",
+      "content_hash": "37020ecac9e8d992a091a0cad7fd0830be149d7257dd250fcf4009c8fb506b63",
+      "label": "poly_epo_claim",
+      "qid": "github:2604_17654::poly_epo_claim",
+      "type": "claim"
+    },
+    {
+      "content": "Under the polychromic objective in set RL, an unsuccessful generation ($r(x,y) = 0$) can still receive a positive marginal set advantage if it is highly exploratory: because the set objective shares credit among all generations in a set, an incorrect but diverse generation benefits from the presence of correct generations in the same set. This implements optimistic exploration: novel strategies receive positive learning signal even before they become individually successful [@OrneHamid2026].",
+      "content_hash": "9cff12947c5d7255b5c717e26010916b2d4563dcc804c995aef8adda1df70b7e",
+      "label": "poly_epo_optimism",
+      "qid": "github:2604_17654::poly_epo_optimism",
+      "type": "claim"
+    },
+    {
+      "content": "Under reward-shaped standard RL (objective $\\mathbb{E}_y[r(x,y) + \\lambda d(x,y)]$), an incorrect generation ($r(x,y)=0$) with high diversity receives positive advantage only if $d(x,y) \\geq \\frac{p}{\\lambda} + \\mathbb{E}_Y[d(x,Y)]$, where $p$ is the model's accuracy. As accuracy improves ($p$ increases), this threshold becomes harder to satisfy — e.g., with $\\lambda=0.5$ and $p > 0.5$, the bound is impossible to satisfy. In contrast, Poly-EPO's incentive for exploration does not vanish as accuracy improves, since set credit sharing persists regardless of $p$ [@OrneHamid2026].",
+      "content_hash": "decea9c08311183339252c0410c476179b62b1a6df4cdeb6535fdc0ea73778db",
+      "label": "poly_epo_synergy",
+      "qid": "github:2604_17654::poly_epo_synergy",
+      "type": "claim"
+    },
+    {
+      "content": "Decomposition of the polychromic marginal set advantage (Eq. 15): For fixed generation $y$ with $\\pi_\\theta(y|x) > 0$:\n\n$$A^\\sharp_{\\text{marg}}(x,y;f_{\\text{poly}},\\theta)$$\n\n$$= \\underbrace{\\left(\\frac{1}{n}r(x,y) + \\frac{n-1}{n}\\mathbb{E}_Y[r(x,Y)]\\right) \\mathbb{E}_{Y_{2:n}}[d(x,y,Y_{2:n})] - \\mathbb{E}_Y[r(x,Y)]\\mathbb{E}_{Y_{1:n}}[d(x,Y_{1:n})]}_{\\text{Term 1: Mean reward} \\times \\text{Mean diversity of sets containing }y}$$\n\n$$+ \\underbrace{\\text{Cov}_{Y_{2:n}}\\!\\left(\\frac{1}{n}r(x,y) + \\frac{1}{n}\\sum_{i=2}^n r(x,Y_i),\\; d(x,y,Y_{2:n})\\right) - \\text{Cov}_{Y_{1:n}}(r(x,Y_1), d(x,Y_{1:n}))}_{\\text{Term 2: Exploration-exploitation synergy in sets containing }y}$$\n\nTerm 1: A generation $y$ with low reward but high diversity can still receive positive signal if other generators provide both reward and diversity. Term 2: Favors generations that help sets simultaneously achieve high reward and high diversity (covariance between reward and diversity is higher in sets containing $y$) [@OrneHamid2026].",
+      "content_hash": "1f888c23fceed38084cdd3f90c88999b1b0a02b909c73424f60f9b035caa0638",
+      "label": "polychromic_advantage_decomposition",
+      "qid": "github:2604_17654::polychromic_advantage_decomposition",
+      "type": "claim"
+    },
+    {
+      "content": "Polychromic objective (adapted from [@HOX26] to the LM reasoning setting): Given a prompt $x$ and a set of $n$ generations $y_1,\\ldots,y_n$, the polychromic objective is:\n\n$$f_{\\text{poly}}(x, y_1,\\ldots,y_n) = \\frac{1}{n}\\sum_{i=1}^n r(x,y_i) \\cdot d(x, y_1,\\ldots,y_n)$$\n\nwhere $r(x,y_i)$ is the task reward for generation $y_i$, and $d(x,y_{1:n})$ is a diversity function. The objective is the product of average reward (exploitation) and diversity (exploration), so the set must optimize both simultaneously and cannot ignore one for the other [@OrneHamid2026].",
+      "content_hash": "cdb6309c6fe29ff13cc1c422a5cb159cda5f4433809f80a1c652a29aae63b008",
+      "label": "polychromic_objective_def",
+      "qid": "github:2604_17654::polychromic_objective_def",
+      "type": "claim"
+    },
+    {
+      "content": "Proposition 3.1 (Unbiasedness): Fix a prompt $x$ and let $y_1,\\ldots,y_N \\stackrel{\\text{i.i.d.}}{\\sim} \\pi_\\theta(\\cdot|x)$. Then:\n\n$$\\mathbb{E}\\!\\left[\\sum_{i=1}^N \\nabla_\\theta \\log \\pi_\\theta(y_i|x) \\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)\\right] = M \\nabla_\\theta \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta}[f(x,y_{1:n})]$$\n\nwhere $M \\in \\mathbb{R}_{>0}$ is a constant scaling factor depending on the number of sets. The proof uses the U-statistic structure of the estimator, with the scaling factor $M = \\binom{N}{n} - \\binom{N-1}{n-1} > 0$ for the enumerate-all-sets case (by Pascal's rule, since $N > n$) [@OrneHamid2026].",
+      "content_hash": "e86660579cc28fbb6d61a445aeae067ff19ab0bbc7dd107a48a4c09ade37cce4",
+      "label": "proposition_unbiasedness",
+      "qid": "github:2604_17654::proposition_unbiasedness",
+      "type": "claim"
+    },
+    {
+      "content": "The scalable set RL recipe resolves the computational challenge of naive set RL: by computing the marginal set advantage, any standard RL algorithm (e.g., PPO [@SWD17], GRPO [@SWZ24]) can be adapted for set RL by simply replacing the standard per-generation advantage $A(x,y_i)$ with the marginal set advantage $\\widehat{A^\\sharp_{\\text{marg}}}(x,y_i;f)$. The sample complexity matches standard RL (same $N$ generations per prompt) [@OrneHamid2026].",
+      "content_hash": "c174185f6dc4ea9c1b32a5ba2c21d7b17ac9bbeac53096dfa29f49acd11af0ad",
+      "label": "recipe_scalable",
+      "qid": "github:2604_17654::recipe_scalable",
+      "type": "claim"
+    },
+    {
+      "content": "Prior work addresses exploration via reward shaping — augmenting the canonical task reward $r(x,y)$ with a weighted exploration bonus $\\lambda d(x,y)$, solving $\\max_\\theta \\mathbb{E}_{y \\sim \\pi_\\theta(\\cdot|x)}[r(x,y) + \\lambda d(x,y)]$. This formulation treats exploitation and exploration as separate objectives: a generation can receive high learning signal by being reward-maximizing OR by being exploratory, without regard to achieving these goals synergistically. The method depends on careful tuning or adaptive scheduling of $\\lambda$ [@OrneHamid2026].",
+      "content_hash": "5ea03b21fc4a110d0a8b55e6926c33c579b0bd873a108e5c8ea4ca52133f12f9",
+      "label": "reward_shaping_limitation",
+      "qid": "github:2604_17654::reward_shaping_limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Reinforcement learning (RL) fine-tuning of language models (LMs) rapidly collapses the diversity of model generations onto a narrow set of high-reward behaviors, even though pretrained base models exhibit high initial diversity [@YCL25; @CZC25].",
+      "content_hash": "6f7add35a06979cc75f7d3bcc053ea76564c27efec7496b736e99a81b3a2867d",
+      "label": "rl_diversity_collapse",
+      "qid": "github:2604_17654::rl_diversity_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "How can we post-train language models to explicitly encourage optimistic exploration and promote synergy between exploration and exploitation, while remaining scalable?",
+      "content_hash": "5e9eea27d4412b19d3c5dfae880a0456bd4b0a2e958c9a7a2562276c18c0579a",
+      "label": "rq_exploration",
+      "qid": "github:2604_17654::rq_exploration",
+      "type": "question"
+    },
+    {
+      "content": "Set advantage function: Given set-level baseline $\\hat{f}(x) = \\frac{1}{K}\\sum_{j=1}^K f(x,G_j)$ (average score over all constructed sets), the set advantage of set $G_j$ is:\n\n$$A^\\sharp(x, G_j; f) = f(x, G_j) - \\hat{f}(x)$$\n\n[@OrneHamid2026]",
+      "content_hash": "94b9555079558992cbf95594e9f3d0ea98819da51fbd071a5fdae364159f3b70",
+      "label": "set_advantage_definition",
+      "qid": "github:2604_17654::set_advantage_definition",
+      "type": "claim"
+    },
+    {
+      "content": "Set reinforcement learning (set RL) [@HOX26] is a framework that generalizes standard RL by assigning reward to **sets** of sampled generations rather than each independently. In the single-turn LM setting: draw $n$ i.i.d. generations $y_{1:n} = (y_1,\\ldots,y_n) \\stackrel{\\text{i.i.d.}}{\\sim} \\pi_\\theta(\\cdot|x)$, and let $f(x, y_{1:n})$ be a symmetric set-level objective. The set RL goal is:\n\n$$\\max_\\theta \\mathbb{E}_{x \\sim \\mathcal{D}} \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta(\\cdot|x)}[f(x,y_{1:n})]$$\n\nThe key constraint is that $\\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})]$ **cannot** be written as $\\mathbb{E}_y[g(x,y)]$ for any policy-independent $g$, distinguishing set RL from standard RL [@HOX26; @OrneHamid2026].",
+      "content_hash": "c1b6312943fd5b584970ce6e9e3b84b63a7596a531b11050e5285108d36dcc2f",
+      "label": "set_rl_definition",
+      "qid": "github:2604_17654::set_rl_definition",
+      "type": "claim"
+    },
+    {
+      "content": "Set RL policy gradient (derived via score-function identity applied to the joint density $\\prod_{i=1}^n \\pi_\\theta(y_i|x)$):\n\n$$\\nabla_\\theta \\mathbb{E}_{y_{1:n}}[f(x,y_{1:n})] = \\mathbb{E}_{y_{1:n}}\\!\\left[(f(x,y_{1:n}) - \\hat{f}(x)) \\sum_{i=1}^n \\nabla_\\theta \\log \\pi_\\theta(y_i|x)\\right]$$\n\nwhere $\\hat{f}(x)$ is a **set-level baseline** that must be independent of $y_{1:n}$ or any strict subset thereof (leave-one-out estimators are inadmissible baselines). All generations in the set share the same scalar learning signal $f(x,y_{1:n}) - \\hat{f}(x)$ [@OrneHamid2026].",
+      "content_hash": "a49bd5f6fcd6cca0309aa79f933b2d04cf8190e1d34ca81e4bab064328aa8cc3",
+      "label": "set_rl_gradient",
+      "qid": "github:2604_17654::set_rl_gradient",
+      "type": "claim"
+    },
+    {
+      "content": "The set RL objective is irreducible to standard RL: although one can always define $g_\\theta(x,y) = \\mathbb{E}_{y_{2:n}}[f(x,y,y_{2:n})]$, the resulting induced reward $g_\\theta$ depends on the policy $\\theta$ itself and is not an externally specified policy-independent reward function. This distinguishes set RL from multi-sample frameworks that use leave-one-out estimators to collapse the shared learning signal to an individualized one [@OrneHamid2026].",
+      "content_hash": "c996da12e3705d4e80b66d70b6260e36e954dcfd5e61aa78fad9b8670ce9fb43",
+      "label": "set_rl_irreducibility",
+      "qid": "github:2604_17654::set_rl_irreducibility",
+      "type": "claim"
+    },
+    {
+      "content": "Lemma 5.1 — Logit shift in set RL: In set reinforcement learning, assuming $f$ is symmetric and learning rate $\\alpha$, the shift in log-probability of a fixed generation $y$ after one gradient update from $\\pi_\\theta^k$ to $\\pi_\\theta^{k+1}$ is:\n\n$$\\log \\pi_\\theta^{k+1}(y|x) - \\log \\pi_\\theta^k(y|x) = \\alpha \\pi_\\theta^k(y|x) \\left[\\mathbb{E}_{y_{2:n} \\sim \\pi_\\theta^k}[f(x,y,y_{2:n})] - \\mathbb{E}_{y_{1:n} \\sim \\pi_\\theta^k}[f(x,y_{1:n})]\\right]$$\n\nThe proof follows from [@HOX26]: when a set is homogeneous, the scaffold value $\\Lambda_f(y^{\\oplus n};\\pi_\\theta^k,x)$ equals $\\pi_\\theta^k(y|x)$ times the marginal set advantage of $y$ [@OrneHamid2026].",
+      "content_hash": "cdc6f99c76eccbe22d633086cca84b0dffb8d5dfaae23eabdadc2af5f5681fe2",
+      "label": "set_rl_logit_shift",
+      "qid": "github:2604_17654::set_rl_logit_shift",
+      "type": "claim"
+    },
+    {
+      "content": "The main practical challenge of the set RL gradient estimator is statistical and computational: a naive empirical estimator requires repeatedly sampling full sets of size $n$ for each prompt, which is expensive in sample complexity. A more efficient estimator is needed that retains the set-RL learning signal while being practical for large-scale LM training [@OrneHamid2026].",
+      "content_hash": "cc45fa2afc286f07d546191cd47987eb88a0097d36a6266eb5105fcafbdca489",
+      "label": "set_rl_practical_challenge",
+      "qid": "github:2604_17654::set_rl_practical_challenge",
+      "type": "claim"
+    },
+    {
+      "content": "Set reinforcement learning (set RL) [@HOX26] provides a principled and scalable approach to balance exploration and exploitation in LM post-training. While the original set RL framework [@HOX26] uses a learned critic and vine sampling that is computationally heavy, this paper shows how to instantiate it scalably for LM post-training by adapting standard RL algorithms through a modification to the advantage computation [@OrneHamid2026].",
+      "content_hash": "44b736f6c6d00639f4b0c0cd01004d90e09636133dcbde57fa0f6bf42a33d884",
+      "label": "set_rl_scalable",
+      "qid": "github:2604_17654::set_rl_scalable",
+      "type": "claim"
+    },
+    {
+      "content": "Standard RL algorithms for language model post-training, such as PPO (Proximal Policy Optimization) [@SWD17] and GRPO (Group Relative Policy Optimization) [@SWZ24], do not explicitly incentivize the optimistic exploration required to master diverse reasoning paths [@OrneHamid2026].",
+      "content_hash": "c38c92394cb56a6edcb89166fa8cb82aba94c649cd5c5bc2f1fcb69e855234e5",
+      "label": "standard_rl_limitation",
+      "qid": "github:2604_17654::standard_rl_limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Logit shift in standard RL [@CZC25]: After one gradient update with learning rate $\\alpha$ on a softmax policy $\\pi_\\theta$, the shift in log-probability of generation $y$ is:\n\n$$\\log \\pi_\\theta^{k+1}(y|x) - \\log \\pi_\\theta^k(y|x) = \\alpha \\pi_\\theta^k(y|x) A(x,y;\\pi_\\theta^k)$$\n\nwhere $A(x,y;\\pi_\\theta^k)$ is the advantage under the current policy.",
+      "content_hash": "f422949216e4a4368f0c2ff50a4ef957d8e60e989ddce3d83e7035702a8443dc",
+      "label": "standard_rl_logit_shift",
+      "qid": "github:2604_17654::standard_rl_logit_shift",
+      "type": "claim"
+    },
+    {
+      "content": "Standard reinforcement learning (RL) for language models (RLVR setting): Let $x \\sim \\mathcal{D}$ be a prompt drawn from training distribution $\\mathcal{D}$, and let $y \\sim \\pi_\\theta(\\cdot | x)$ be a sampled generation from the parameterized policy. The standard RL objective is:\n\n$$\\max_\\theta \\mathbb{E}_{x \\sim \\mathcal{D}} \\mathbb{E}_{y \\sim \\pi_\\theta(\\cdot|x)}[r(x,y)]$$\n\nwhere $r(x,y)$ is the task reward. The policy gradient with advantage $A(x,y)$ is:\n\n$$\\nabla_\\theta \\mathbb{E}[r(x,y)] = \\mathbb{E}[\\nabla_\\theta \\log \\pi_\\theta(y|x) A(x,y)]$$\n\n[@SB18; @OrneHamid2026]",
+      "content_hash": "f363289d4b49e15aca6d6973e1730d9f6a334a55c776c6dd8a8536051636cd0f",
+      "label": "standard_rl_objective",
+      "qid": "github:2604_17654::standard_rl_objective",
+      "type": "claim"
+    },
+    {
+      "content": "Synthetic domain training dynamics (Figure 5): Number of distinct clusters among correct and incorrect responses per prompt (averaged over batch), for Qwen-3-1.7B-Base:\n\n- GRPO quickly collapses to a single successful strategy on both tasks.\n- Poly-EPO continues to explore and discovers more than **5x** as many distinct successful strategies as GRPO on both multi-digit multiplication and polynomial solving.\n- Poly-EPO preserves higher diversity over incorrect generations as well, indicating broader strategy coverage during exploration [@OrneHamid2026].",
+      "content_hash": "7b9495ab73fafbf19b29e3685d7987e4ed482776182dc3eadf7a4c74d1c7d670",
+      "label": "synthetic_diversity_result",
+      "qid": "github:2604_17654::synthetic_diversity_result",
+      "type": "claim"
+    },
+    {
+      "content": "Training dynamics on POLARIS-53k — problem coverage (Figure 2, right): Fraction of training prompts for which the model generates at least one correct rollout:\n\n- Both Poly-EPO and GRPO+DIV outperform GRPO for much of training.\n- Methods that explicitly encourage exploration achieve higher coverage.\n- This shows exploration not only preserves strategic diversity but also improves the probability of uncovering successful solutions during training [@OrneHamid2026].",
+      "content_hash": "b4c39b02312b1b103f44f3fc6aee0e6f523d4a605fcbed1cefb5fee1b1ad09b6",
+      "label": "training_coverage_result",
+      "qid": "github:2604_17654::training_coverage_result",
+      "type": "claim"
+    },
+    {
+      "content": "Training dynamics on POLARIS-53k — strategy diversity (Figure 2, left): Average number of unique reasoning-strategy clusters among correct generations per prompt (assigned by Qwen-3-4b-Instruct):\n\n- GRPO: number of clusters declines after ~200 training steps, indicating contraction.\n- GRPO+DIV: metric remains approximately flat, suggesting limited expansion.\n- Poly-EPO: steadily increases unique clusters to substantially higher levels than either baseline throughout 850 training steps [@OrneHamid2026].",
+      "content_hash": "bc4f021c1844e7518c2f78c1210beab54a05551e574ce59875962ce0f74852ef",
+      "label": "training_diversity_result",
+      "qid": "github:2604_17654::training_diversity_result",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:102e32b73045b9853d40c1a08ae647b534a79b776bd2496fab1c462986aa4fa7",
+  "manifest_schema_version": 1,
+  "package": "2604-17654",
+  "version": "0.1.0"
+}
