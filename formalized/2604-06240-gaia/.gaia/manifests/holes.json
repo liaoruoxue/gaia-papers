@@ -1,0 +1,107 @@
+{
+  "holes": [
+    {
+      "content": "The UV's lower false positive rate is primarily due to using a stronger backbone LLM (GPT-5.2) rather than its architectural design choices.",
+      "content_hash": "058ee5343bd1852898ec1124ffd2bb2104aeec5541cf07ff47c3c7ba5df1bd3a",
+      "interface_hash": "sha256:542f4c7f722c9ba5ae0c94b983dee124dce482ebacc687b2acc56a2317a984f2",
+      "label": "alt_fpr_reduction_is_model",
+      "qid": "github:2604_06240::alt_fpr_reduction_is_model",
+      "required_by": [
+        "github:2604_06240::upgrading_backbone_insufficient"
+      ]
+    },
+    {
+      "content": "The auto-research agent's edits tended to be conservative and incremental — adjusting thresholds or tightening rubric language for individual failure cases — rather than making larger structural or conceptual changes. In contrast, the human expert derived general scoring rules (e.g., 'separate nitpicks from critical failures') from observing patterns across many trajectory failures, driving large step-function $\\kappa$ improvements.",
+      "content_hash": "4af550bb19ec7af9a7bff06b1470034f210b6ce4f757d6abe1067922b0e41546",
+      "interface_hash": "sha256:4096687672304f3f035f5e5c05fb37d0fcae3229eaa53535eba3614120dbf24d",
+      "label": "auto_research_conservative",
+      "qid": "github:2604_06240::auto_research_conservative",
+      "required_by": [
+        "github:2604_06240::auto_research_70pct"
+      ]
+    },
+    {
+      "content": "When initialized from the human expert's best verifier configuration (continuing-expert setting), the auto-research agent can still find improvements subject to the constraint of not increasing the false positive rate. Table 17 shows 4 of 11 iterations were committed (runs 2, 6, 10, 11), with the rubric score context injection (run 6) being the single most impactful change.",
+      "content_hash": "a4bb907322d1ec8f9902d60c2d4f95f1273912d6e0186aeaa99874ed24c8b814",
+      "interface_hash": "sha256:a590e77f3ecea1bc220d2b15652bfdd57168e109c1a6503f73f2b6e5f937fc6e",
+      "label": "auto_research_cont_expert_result",
+      "qid": "github:2604_06240::auto_research_cont_expert_result",
+      "required_by": [
+        "github:2604_06240::human_expert_complementary_to_auto"
+      ]
+    },
+    {
+      "content": "A CUA verifier must explicitly distinguish controllable from uncontrollable failures. Uncontrollable factors (not penalized in process): platform/infrastructure issues (CAPTCHA, login walls), entity non-existence (discontinued products, closed businesses), availability constraints (out of stock), and search result limitations. Controllable factors (penalized in process): intent mismatches (wrong product), reasoning errors, hallucinations, insufficient effort (single failed attempt), and execution errors (skipping required steps).",
+      "content_hash": "bc52e6c9b033ea8e9fce1535a865fc1b56e99c5d9061abb7ef08abfbb5398c90",
+      "interface_hash": "sha256:b32f367e53066f474e18a868a21f567eefec0e57db91d96071a8d4eb10a4b3b0",
+      "label": "controllable_vs_uncontrollable",
+      "qid": "github:2604_06240::controllable_vs_uncontrollable",
+      "required_by": [
+        "github:2604_06240::cascading_error_free_scoring",
+        "github:2604_06240::process_outcome_diverge_on_blockers",
+        "github:2604_06240::process_outcome_separation",
+        "github:2604_06240::upgrading_backbone_insufficient",
+        "github:2604_06240::uv_fpr_near_zero",
+        "github:2604_06240::uv_richer_output"
+      ]
+    },
+    {
+      "content": "Computer use agent (CUA) trajectories are long, visually rich, and ambiguous, making human annotation both challenging and expensive. Unlike text generation tasks where outputs can be compared directly, CUA success may be partially completed, achieved through unexpected paths, or fail subtly in a screenshot buried deep in a multi-step interaction.",
+      "content_hash": "dd90a83d2ddb4131ea774616b716b8279cd1404f53a7338a649deb29ff8c3f12",
+      "interface_hash": "sha256:7fcb4a4437e4bc8fffa97fcc6874d997289abb697323332c5f84755e57606859",
+      "label": "cua_trajectories_hard_to_verify",
+      "qid": "github:2604_06240::cua_trajectories_hard_to_verify",
+      "required_by": [
+        "github:2604_06240::four_principles_sufficient",
+        "github:2604_06240::verifier_errors_compound"
+      ]
+    },
+    {
+      "content": "Existing CUA trajectory verifiers (WebVoyager GPT-4o, WebJudge o4-mini) have false positive rates of 45% and 22% respectively on outcome labels, and Cohen's $\\kappa$ of 0.31 and 0.44 (internal dataset), far below the human inter-annotator agreement level.",
+      "content_hash": "536a4f3963fdebebebaf5a62d8fd84eabc732cc71b22070a9f0adbe679c46eb5",
+      "interface_hash": "sha256:fbe44302ea48ea74f3880bea2c507905055698240f6131710e7a8eabd3144e97",
+      "label": "existing_verifiers_inadequate",
+      "qid": "github:2604_06240::existing_verifiers_inadequate",
+      "required_by": [
+        "github:2604_06240::native_verifiers_overcount_success"
+      ]
+    },
+    {
+      "content": "Good rubric design is the single most impactful design decision for a CUA verifier: flawed rubrics produce errors that cascade through the pipeline and cannot be corrected downstream. Iterative development evidence shows that rubric design alone accounted for roughly half of the Cohen's $\\kappa$ gains over 32 expert experiments.",
+      "content_hash": "f80e7d696fdaea28765a130ebccdc8bc1f2b1d6ff6890b4c8cc9945bccdde0e7",
+      "interface_hash": "sha256:8d770d915cffd979f88f5c7c85caeb8db1221bb188d5faffd32f1624744353e8",
+      "label": "rubric_quality_critical",
+      "qid": "github:2604_06240::rubric_quality_critical",
+      "required_by": [
+        "github:2604_06240::conditional_criteria_design",
+        "github:2604_06240::separate_generation_scoring",
+        "github:2604_06240::upgrading_backbone_insufficient",
+        "github:2604_06240::uv_fpr_near_zero"
+      ]
+    },
+    {
+      "content": "Providing all screenshots in a single LLM context window forces the LLM to solve a needle-in-a-haystack problem that scales poorly with longer trajectories. WebVoyager includes all screenshots; WebJudge ranks the top 30-50. Restricting to only the last few screenshots risks missing task-relevant evidence from earlier in the trajectory.",
+      "content_hash": "7f60b1d0565c5331382c6bd721b1e1ddfd75185d2e8176db484c93207acd3b59",
+      "interface_hash": "sha256:ea50ffab71e6e985c6adaef7ee995e02c70e710043ce683fd05a7e0bc917f0b6",
+      "label": "screenshot_needle_in_haystack",
+      "qid": "github:2604_06240::screenshot_needle_in_haystack",
+      "required_by": [
+        "github:2604_06240::relevance_matrix_approach"
+      ]
+    },
+    {
+      "content": "A verifier that inspects only the final screenshot $s_T$ or a fixed subset $\\{s_{t_1}, \\ldots, s_{t_k}\\} \\subset \\tau$ is a strict approximation of the human oracle $V^*$ and systematically underperforms on trajectories where $T$ is large, because critical state changes occur at arbitrary timesteps. Reliable verification requires attending to all $T+1$ observations.",
+      "content_hash": "4f7d49f77902dc70d1cf7ce920fe3555e6fbc4f8e0176a2459b5fe0300d55999",
+      "interface_hash": "sha256:52b9f746a54b390a6c50c3215d1e234a3bc64d6b50b22045acfd5a6143f7ce19",
+      "label": "verifier_needs_all_screenshots",
+      "qid": "github:2604_06240::verifier_needs_all_screenshots",
+      "required_by": [
+        "github:2604_06240::relevance_matrix_approach"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:02c66227a395ed9eb9fee5ced11d320fcf424a2e781716909aede862e288a96a",
+  "manifest_schema_version": 1,
+  "package": "2604-06240",
+  "version": "0.1.0"
+}

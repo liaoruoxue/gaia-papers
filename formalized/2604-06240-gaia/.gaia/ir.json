@@ -1,0 +1,3461 @@
+{
+  "ir_hash": "sha256:02c66227a395ed9eb9fee5ced11d320fcf424a2e781716909aede862e288a96a",
+  "knowledges": [
+    {
+      "content": "A computer use agent (CUA) task is modeled as a tuple $(g, \\mathcal{E})$, where $g$ is a natural-language goal and $\\mathcal{E}$ is a computer environment with an observable graphical interface. An agent produces a trajectory $\\tau = (s_0, a_1, s_1, a_2, \\ldots, a_T, s_T)$ where $s_t$ is a screenshot and $a_t$ is an action (click, type, scroll). $T$ varies from a handful of steps to hundreds of steps.",
+      "content_hash": "312e5ed8244585ff64a0b2c22e3d65b1b3d4901161cc17340f5c8bad4708a7fd",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06240::cua_task_model",
+      "label": "cua_task_model",
+      "module": "motivation",
+      "parameters": [],
+      "title": "CUA task and trajectory definition",
+      "type": "setting"
+    },
+    {
+      "content": "A verifier is defined as a function $V : (g, \\tau) \\rightarrow \\mathcal{R}$ mapping a goal and trajectory to a structured scoring response. Verifier quality is defined as agreement with a human oracle $V^* : (g, \\tau) \\rightarrow \\mathcal{R}$, measured by precision, recall, and Cohen's $\\kappa$ over a labeled set of trajectories.",
+      "content_hash": "88da0905316f30c8b3368a44d359429bdfecaf6b73763701e649ba0f4455570e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06240::verifier_formal_def",
+      "label": "verifier_formal_def",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Formal definition of verifier and verifier quality",
+      "type": "setting"
+    },
+    {
+      "content": "Did the computer use agent actually succeed at the given task?",
+      "content_hash": "96ba5c3f2a5259fd1118098aedf2b8e1c2883a5d94df4a00b8bff13297154c6f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06240::q_did_agent_succeed",
+      "label": "q_did_agent_succeed",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Core verification question",
+      "type": "question"
+    },
+    {
+      "content": "Computer use agent (CUA) trajectories are long, visually rich, and ambiguous, making human annotation both challenging and expensive. Unlike text generation tasks where outputs can be compared directly, CUA success may be partially completed, achieved through unexpected paths, or fail subtly in a screenshot buried deep in a multi-step interaction.",
+      "content_hash": "dd90a83d2ddb4131ea774616b716b8279cd1404f53a7338a649deb29ff8c3f12",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06240::cua_trajectories_hard_to_verify",
+      "label": "cua_trajectories_hard_to_verify",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Definitionally true of CUA: trajectories span hundreds of screenshots over diverse web environments. Extensively documented in benchmark papers."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "CUA trajectories are difficult to verify",
+      "type": "claim"
+    },
+    {
+      "content": "Errors in a CUA verifier compound: a verifier that gets it wrong corrupts both evaluation benchmarks and training data (reinforcement learning signals). Without reliable verification, neither evaluation nor training signal can be trusted.",
+      "content_hash": "ef255abf85b3e0c8bc41445b9c8691c7efdf8453553dade88a7f4c6eb4639866",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_06240::verifier_errors_compound",
+      "label": "verifier_errors_compound",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cua_trajectories_hard_to_verify"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Verifier errors corrupt both evaluation and training",
+      "type": "claim"
+    },
+    {
+      "content": "Four design principles are sufficient to build a verifier (the Universal Verifier) that agrees with humans as often as humans agree with each other: (1) constructing rubrics with non-overlapping criteria, (2) separating process and outcome rewards, (3) distinguishing controllable vs. uncontrollable failures, (4) divide-and-conquer screenshot context management.",
+      "content_hash": "1a66f2012f486e275dc3c4134a12ce838d71b389b21979e4451fc7362f978001",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_06240::four_principles_sufficient",
+      "label": "four_principles_sufficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cua_trajectories_hard_to_verify",
+              "verifier_errors_compound"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Four design principles for best-in-class CUA verifier",
+      "type": "claim"
+    },
+    {
+      "content": "Existing CUA trajectory verifiers (WebVoyager GPT-4o, WebJudge o4-mini) have false positive rates of 45% and 22% respectively on outcome labels, and Cohen's $\\kappa$ of 0.31 and 0.44 (internal dataset), far below the human inter-annotator agreement level.",
+      "content_hash": "536a4f3963fdebebebaf5a62d8fd84eabc732cc71b22070a9f0adbe679c46eb5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_06240::existing_verifiers_inadequate",
+      "label": "existing_verifiers_inadequate",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2 with 3-run error bars. FPR >= 0.22 for all baselines.",
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Existing verifiers have high false positive rates",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier's performance advantage over WebVoyager and WebJudge stems from architectural design choices (rubric decomposition, two-pass scoring, structured outcome verification), not merely from using a stronger backbone LLM. Upgrading WebVoyager's GPT-4o and WebJudge's o4-mini to GPT-5.2 yields only modest Cohen's $\\kappa$ improvements (WebVoyager: 0.31 → 0.43 on Internal outcome) while dramatically increasing false negative rates (WebVoyager FNR: 0.24 → 0.44).",
+      "content_hash": "a02d18c9162373166b22c05bf7434397b0c9c13d1e0f80fb5092b514b9a01069",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_06240::gains_are_architectural",
+      "label": "gains_are_architectural",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "upgrading_backbone_insufficient"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "UV advantage is architectural, not model-driven",
+      "type": "claim"
+    },
+    {
+      "content": "An auto-research agent (Claude Code v2.1.87 with Claude Opus 4.6, 1M context) achieves approximately 70% of human expert verifier quality in approximately 5% of the time (one day vs. three weeks of expert iteration), but fails to independently discover the structural design decisions that drive the largest gains in Cohen's $\\kappa$.",
+      "content_hash": "1edeb95575f2c4f958ecc7bc42d56413f9a00744eaa47653362c7b370330cc40",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_06240::auto_research_70pct",
+      "label": "auto_research_70pct",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 1",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "auto_research_conservative"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Auto-research agent achieves 70% of expert quality in 5% of the time",
+      "type": "claim"
+    },
+    {
+      "content": "Human expertise and automated optimization play complementary roles in verifier design: human expertise is essential for discovering core design principles (large structural changes causing step-function $\\kappa$ improvements), while automated optimization excels at fine-grained tuning. When initialized from the human expert's best configuration, the auto-research agent surpasses the expert-designed peak.",
+      "content_hash": "35a88a639bc8c53a35567d070f20bf0d95c90775e8e9919af51a9dca00304ae3",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_06240::human_expert_complementary_to_auto",
+      "label": "human_expert_complementary_to_auto",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "auto_research_70pct",
+              "auto_research_cont_expert_result"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Human expertise and auto-research are complementary",
+      "type": "claim"
+    },
+    {
+      "content": "The process score is defined as $r_{\\text{proc}} = \\frac{\\sum_{i \\in \\mathcal{A}} \\text{earned\\_points}_i}{\\sum_{i \\in \\mathcal{A}} \\text{max\\_points}_i}$, where $\\mathcal{A}$ is the set of applicable rubric criteria (those whose conditions are met or that are unconditional). The process score is normalized to $[0, 1]$.",
+      "content_hash": "2e438493007f68cd4b07e7f128ee9de37e59855b56ba4e4ecdd75764bb12039a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06240::process_score_formula",
+      "label": "process_score_formula",
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Process score formula",
+      "type": "setting"
+    },
+    {
+      "content": "The relevance matrix $\\mathbf{R} \\in \\mathbb{R}^{(T+1) \\times N}$ is produced by scoring each of the $T+1$ screenshots against each of the $N$ rubric criteria. For each criterion $c_j$, the top-$k$ most relevant screenshots $S_j \\subseteq \\{s_0, \\ldots, s_T\\}$ with $|S_j| \\leq k$ are selected for further evidence analysis.",
+      "content_hash": "f7a9cd651c739890127a5c7d5bed5dce2b1dcc03566fa10458cb510f3371e976",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06240::relevance_matrix_def",
+      "label": "relevance_matrix_def",
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Screenshot relevance matrix definition",
+      "type": "setting"
+    },
+    {
+      "content": "Good rubric design is the single most impactful design decision for a CUA verifier: flawed rubrics produce errors that cascade through the pipeline and cannot be corrected downstream. Iterative development evidence shows that rubric design alone accounted for roughly half of the Cohen's $\\kappa$ gains over 32 expert experiments.",
+      "content_hash": "f80e7d696fdaea28765a130ebccdc8bc1f2b1d6ff6890b4c8cc9945bccdde0e7",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_06240::rubric_quality_critical",
+      "label": "rubric_quality_critical",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 1",
+        "prior": 0.88,
+        "prior_justification": "Supported by Figure 1 trajectory showing rubric upgrade as largest single jump, and Table 4 with 3 concrete examples. The 'roughly half' fraction is anecdotal."
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Rubric quality is the dominant factor in verifier quality",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-generated rubrics frequently introduce requirements never stated in the task (phantom criteria), inflating the denominator of the process score and over-penalizing agents that completed the actual task. For example, when asked to find a live music event on Eventbrite and songs on Spotify, the old rubric added criteria for ticket information, event links, and Spotify URLs — none of which the user requested. This turned a 5/6 SUCCESS into a 5/9 FAILURE.",
+      "content_hash": "ff476bf0d79f94ab7d51e1580afd7288422dfedc6e613b7da50bf6094e82e775",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06240::phantom_criteria_failure",
+      "label": "phantom_criteria_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rubric_quality_critical"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 4"
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Phantom criteria failure mode: unrequested requirements penalize correct agents",
+      "type": "claim"
+    },
+    {
+      "content": "When rubric criteria are not logically independent, a single upstream scoring error propagates into downstream criteria, multiplying the point penalty. For example, if 'identify the correct neighbourhood' is criterion 1 and 'search for hotels in that neighbourhood' is criterion 2, a mis-label on criterion 1 causes the agent to lose points on criterion 2 even if downstream actions were internally consistent.",
+      "content_hash": "eeaf839effc3e9cc6e962ea425af2795adba074f5e61f55c35c3996a5202db81",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_06240::cascading_criteria_failure",
+      "label": "cascading_criteria_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rubric_quality_critical"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Cascading criteria failure mode: dependent criteria multiply penalties",
+      "type": "claim"
+    },
+    {
+      "content": "Generating the rubric and scoring the trajectory in a single LLM call leads to confirmation bias: the model creates criteria tailored to the agent's behavior rather than the task requirements. Separating rubric generation (from the task alone, without seeing the trajectory) from scoring eliminates this coupling.",
+      "content_hash": "cd77087696d25f5ccbdb0ee7b8a808cfc880b757ad90118920a96cb42496787e",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_06240::separate_generation_scoring",
+      "label": "separate_generation_scoring",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rubric_quality_critical"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Rubric generation must be separated from scoring to avoid confirmation bias",
+      "type": "claim"
+    },
+    {
+      "content": "Some rubric criteria are conditional on the state of the world discovered during task execution (e.g., 'report window-seat cost if a direct flight exists'). Conditional criteria must be marked at rubric-generation time and excluded from both numerator and denominator of the process score when their condition is not met, ensuring agents are not penalized for outcomes they could not control.",
+      "content_hash": "fd38338189015df9b406631fc6466c153bf34195158af0d144a27c36a8a929b7",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_06240::conditional_criteria_design",
+      "label": "conditional_criteria_design",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "rubric_quality_critical"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 5"
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Conditional criteria prevent penalizing agents for uncontrollable outcomes",
+      "type": "claim"
+    },
+    {
+      "content": "Scoring each rubric criterion twice — once with only the agent's text action history (to check grounding) and once with full screenshot access (to verify visual state) — surfaces discrepancies that flag potential hallucinations. Screenshots take precedence over agent claims when they conflict.",
+      "content_hash": "1fc28571c3a0885815a3dcef618b6293e6ba5b19d687069c1453cd979e8a5400",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_06240::two_pass_hallucination_detection",
+      "label": "two_pass_hallucination_detection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_design_invariant"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Two-pass scoring detects hallucinations by comparing text-only and screenshot-grounded scores",
+      "type": "claim"
+    },
+    {
+      "content": "Process and outcome rewards must be reported as two independent signals per trajectory because the environment plays an outsized role in CUA task success. Conflating them leads to reward signals that are either too lenient (crediting agents for effort when the user gets nothing) or too harsh (penalizing agents for factors outside their control). The process score $r_{\\text{proc}} \\in [0,1]$ reflects execution quality; the outcome score $r_{\\text{out}} \\in \\{0,1\\}$ reflects whether the user's goal was achieved.",
+      "content_hash": "0623509d8bf6aab24e58c5be9b627573090dc52682560b4d0f57520f99d7a5d4",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_06240::process_outcome_separation",
+      "label": "process_outcome_separation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controllable_vs_uncontrollable",
+              "process_score_formula"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Process and outcome rewards must be separated to produce fair signals",
+      "type": "claim"
+    },
+    {
+      "content": "Process and outcome scores diverge specifically on environment blocker scenarios: when an agent is blocked by a login wall, CAPTCHA, out-of-stock item, or other uncontrollable factor, the process score awards full credit for best-effort execution while the outcome score marks failure because the user's real-world goal was not achieved. An agent can thus score 100% on process but 0% on outcome.",
+      "content_hash": "add05b58c18304b1b780966e5702813932c1d9dc932b8654d76575a00b2823bc",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_06240::process_outcome_diverge_on_blockers",
+      "label": "process_outcome_diverge_on_blockers",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controllable_vs_uncontrollable",
+              "process_outcome_separation"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Environment blockers cause process success with outcome failure",
+      "type": "claim"
+    },
+    {
+      "content": "The outcome label should focus on primary intent: if the primary intent is to book a table, the user is flexible on which platform is used unless otherwise stated. Users are forgiving of nitpicks (rounding \\$5.95 to \\$6) but not forgiving of unsolicited side effects (buying a warranty when only the product was requested) or hallucinations (fabricating information).",
+      "content_hash": "e48665c29655b0087d3b3cd6fba15f214e34ae0cfcfe1407ad82c781e822b6ad",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_06240::outcome_label_primary_intent",
+      "label": "outcome_label_primary_intent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "process_outcome_separation"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Outcome label focuses on primary intent and ignores nitpicks",
+      "type": "claim"
+    },
+    {
+      "content": "A CUA verifier must explicitly distinguish controllable from uncontrollable failures. Uncontrollable factors (not penalized in process): platform/infrastructure issues (CAPTCHA, login walls), entity non-existence (discontinued products, closed businesses), availability constraints (out of stock), and search result limitations. Controllable factors (penalized in process): intent mismatches (wrong product), reasoning errors, hallucinations, insufficient effort (single failed attempt), and execution errors (skipping required steps).",
+      "content_hash": "bc52e6c9b033ea8e9fce1535a865fc1b56e99c5d9061abb7ef08abfbb5398c90",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_06240::controllable_vs_uncontrollable",
+      "label": "controllable_vs_uncontrollable",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The taxonomy is internally consistent and covers the main cases. Its completeness is assumed — edge cases not covered may exist."
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Taxonomy of controllable vs. uncontrollable CUA failure factors",
+      "type": "claim"
+    },
+    {
+      "content": "A cascading-error-free scoring strategy ensures that a single early obstacle does not unfairly penalize all downstream steps. Each rubric criterion is graded based on whether the agent's actions were reasonable given the information it had at that step, not whether upstream criteria were scored correctly.",
+      "content_hash": "cdf80b663b68a0a3623b8873a85ebc86a1814ca8d1eea0a6806aae508b2af954",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2604_06240::cascading_error_free_scoring",
+      "label": "cascading_error_free_scoring",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controllable_vs_uncontrollable"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Cascading-error-free rubric prevents upstream errors from multiplying downstream penalties",
+      "type": "claim"
+    },
+    {
+      "content": "Providing all screenshots in a single LLM context window forces the LLM to solve a needle-in-a-haystack problem that scales poorly with longer trajectories. WebVoyager includes all screenshots; WebJudge ranks the top 30-50. Restricting to only the last few screenshots risks missing task-relevant evidence from earlier in the trajectory.",
+      "content_hash": "7f60b1d0565c5331382c6bd721b1e1ddfd75185d2e8176db484c93207acd3b59",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_06240::screenshot_needle_in_haystack",
+      "label": "screenshot_needle_in_haystack",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Well-established limitation in the CUA literature: LLM performance degrades with trajectory length when all screenshots are packed into one context."
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Naive screenshot context management scales poorly and misses evidence",
+      "type": "claim"
+    },
+    {
+      "content": "Scoring each screenshot against every rubric criterion to produce a relevance matrix $\\mathbf{R} \\in \\mathbb{R}^{(T+1) \\times N}$, then grouping the top-$k$ most relevant screenshots per criterion for further analysis, is more scalable to longer trajectories and more focused than passing all screenshots. Processing is parallelized: $M$ screenshots are scored against all $N$ criteria in $M$ parallel LLM calls.",
+      "content_hash": "1e443475e5fa65378897671168e4ba1b554254cbe14682e8c6452bf7bf20fe89",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2604_06240::relevance_matrix_approach",
+      "label": "relevance_matrix_approach",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 6",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "screenshot_needle_in_haystack",
+              "verifier_needs_all_screenshots"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Per-criterion screenshot relevance matrix enables scalable, focused evidence analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Unsolicited agent actions with material side effects (e.g., adding unrequested items to a cart, enrolling in unrequested services) cannot be anticipated at rubric generation time. They require a dedicated detection pass over the trajectory. Unsolicited side effects almost always result in outcome failure; they only partially penalize the process score, weighted by severity.",
+      "content_hash": "998dc8cc4426bb2845c0e0d4198656f02bff7d31ef872f778ae5c77099ced4f8",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2604_06240::unsolicited_side_effects",
+      "label": "unsolicited_side_effects",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 7",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "outcome_label_primary_intent"
+            ]
+          }
+        }
+      },
+      "module": "s3_principles",
+      "parameters": [],
+      "title": "Unsolicited side effects require a dedicated detection pass",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier (UV) operates in three phases: (1) rubric creation: generate $N$ disjoint, meaningful criteria $\\mathcal{C} = \\{c_1, \\ldots, c_N\\}$ from the goal $g$; (2) multimodal scoring: score each screenshot against every criterion (relevance matrix), select top-$k$ per criterion, extract evidence, resolve conditional criteria, perform reality check, rescore with screenshot evidence, detect side effects; (3) outcome judgment and error diagnosis. Steps 7-9 (rescoring, side-effect detection, outcome verification) can be run as multiple parallel instances with process score = median and outcome = majority vote.",
+      "content_hash": "9d23139061cbce936b2fd3962d8900c9b9525c11a4cbe1e54746013fec1b3a23",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06240::uv_algorithm_overview",
+      "label": "uv_algorithm_overview",
+      "module": "s4_system",
+      "parameters": [],
+      "title": "Universal Verifier three-phase architecture",
+      "type": "setting"
+    },
+    {
+      "content": "The Universal Verifier uses a hand-crafted error taxonomy with 7 categories and 24 subcodes: (1) Selection errors (missing intent, unauthorized substitution, wrong action type, wrong values/constraint violation); (2) Hallucination errors (output contradiction, action contradiction, output fabrication, action fabrication); (3) Execution and Strategy errors (computational mistakes, platform non-compliance, incomplete delivery, environment failure, incomplete task execution); (4) Critical Point errors (premature stop, violation); (5) Task Ambiguity; (6) Side-Effect errors; (7) Tool Interaction errors.",
+      "content_hash": "84bc763021c93df48d4fcbee21e22fcd2d273276aca4e5577297868b4760011d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06240::error_taxonomy_setting",
+      "label": "error_taxonomy_setting",
+      "metadata": {
+        "source_table": "artifacts/2604.06240.pdf, Table 10"
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "CUA failure error taxonomy: 7 categories, 24 subcodes",
+      "type": "setting"
+    },
+    {
+      "content": "Five categories for evaluating agent claims against screenshot evidence: (1) Contradiction: screenshots show X, agent claims not-X — Failure; (2) Fabrication: agent claims X with zero evidentiary basis — Failure; (3) Omission: agent did not view all needed screenshots and X is commonly known — Failure; (4) Supported inference from absence: screenshots show no evidence of X across all pages AND X is not commonly known — Success; (5) Visual confirmation without explicit statement: screenshots visually confirm the correct result — Success. Screenshots take precedence over agent claims.",
+      "content_hash": "39e0f2fe0af52f5e79f4a53f70210d3140455541dfd3a8c1565d69ab9a3fcd1e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06240::visual_evidence_taxonomy_setting",
+      "label": "visual_evidence_taxonomy_setting",
+      "metadata": {
+        "source_table": "artifacts/2604.06240.pdf, Table 7"
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "Visual evidence taxonomy: 5 categories for grounding agent claims",
+      "type": "setting"
+    },
+    {
+      "content": "LLM call count per UV pipeline step for a trajectory with $M$ screenshots, $N$ rubric criteria, $K$ max screenshots per criterion, $S$ unique screenshots selected: Step 1 (rubric generation): 3 calls; Step 2 (relevance scoring): $M$ calls, fully parallel; Step 4 (evidence analysis, batched): $S \\leq K \\times N$ calls, fully parallel; Steps 5-8: 1 call each. For a typical trajectory ($M=47$, $N=3$, $K=5$, $S=10$): 65 LLM calls total without majority voting.",
+      "content_hash": "799077e1c92712b3f8d53472c54d48b0eda1005137331dbff0f81f26ac49137b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06240::cost_structure_setting",
+      "label": "cost_structure_setting",
+      "metadata": {
+        "source_table": "artifacts/2604.06240.pdf, Table 8"
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "Universal Verifier LLM call cost breakdown",
+      "type": "setting"
+    },
+    {
+      "content": "The key design invariant of the Universal Verifier is that no relevant screenshot evidence can go undetected in the pipeline. This is specifically designed to not miss any hallucinations — which can be subtle (e.g., an agent reporting '+6.2% CIDEr score' when the paper shows '+2.8% CIDEr', a discrepancy that humans are likely to miss).",
+      "content_hash": "90f4054297fbf50ef4d5eeb78fefe1e9c4be4014f5fef4e83caba5cc50612e78",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_06240::uv_design_invariant",
+      "label": "uv_design_invariant",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 5",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "relevance_matrix_approach",
+              "two_pass_hallucination_detection"
+            ]
+          }
+        }
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "UV design invariant: no relevant screenshot evidence goes undetected",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier incorporates all four design principles from Section 3: per-task success criteria rubric generation (Principle 1), separate process and outcome scores (Principle 2), controllable/uncontrollable distinction via rubric criteria fields (Principle 3), and per-criterion relevance matrix screenshot selection (Principle 4).",
+      "content_hash": "bb026cdbf4cdb2563b26123305963d7dca07b7f1c8bafd4b080948c505cc8750",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_06240::uv_incorporates_all_principles",
+      "label": "uv_incorporates_all_principles",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controllable_vs_uncontrollable",
+              "process_outcome_separation",
+              "relevance_matrix_approach",
+              "rubric_quality_critical"
+            ]
+          }
+        }
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "UV integrates all four design principles",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier outputs a richer response $r = (r_{\\text{proc}}, r_{\\text{out}}, d)$ than binary verifiers: a process score $r_{\\text{proc}} \\in [0,1]$ (normalized rubric score), an outcome score $r_{\\text{out}} \\in \\{0,1\\}$ (binary success/failure), and a diagnostic report $d$ that classifies and localizes each failure within the trajectory using the 7-category error taxonomy.",
+      "content_hash": "cd22612ef48398b2a25506b15b044148a0f0304e5e87813f997b9afd766a065f",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_06240::uv_richer_output",
+      "label": "uv_richer_output",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "controllable_vs_uncontrollable",
+              "process_outcome_separation"
+            ]
+          }
+        }
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "UV produces structured output: process score, outcome label, and diagnostic report",
+      "type": "claim"
+    },
+    {
+      "content": "A verifier that inspects only the final screenshot $s_T$ or a fixed subset $\\{s_{t_1}, \\ldots, s_{t_k}\\} \\subset \\tau$ is a strict approximation of the human oracle $V^*$ and systematically underperforms on trajectories where $T$ is large, because critical state changes occur at arbitrary timesteps. Reliable verification requires attending to all $T+1$ observations.",
+      "content_hash": "4f7d49f77902dc70d1cf7ce920fe3555e6fbc4f8e0176a2459b5fe0300d55999",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_06240::verifier_needs_all_screenshots",
+      "label": "verifier_needs_all_screenshots",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Logically necessary: a verifier attending only to a subset cannot detect failures that manifest only in screenshots outside that subset."
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "Reliable verification requires attending to all screenshots in a trajectory",
+      "type": "claim"
+    },
+    {
+      "content": "The relevance matrix for typical CUA trajectories exhibits a 'staircase' shape: later screenshots are most relevant to later rubric criteria, reflecting that most trajectories are relatively linear (progress through sub-goals in order). The UV exploits this by using recency as a tie-breaking rule for equal relevance scores.",
+      "content_hash": "6740fe66d86be97804bc0af385d4bf866ec5aa9e4035877deb8a944b0a13c8c3",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_06240::screenshot_staircase_pattern",
+      "label": "screenshot_staircase_pattern",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 6",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "relevance_matrix_approach"
+            ]
+          }
+        }
+      },
+      "module": "s4_system",
+      "parameters": [],
+      "title": "Relevance matrix shows staircase pattern reflecting linear trajectory structure",
+      "type": "claim"
+    },
+    {
+      "content": "Internal dataset: 140 CUA trajectories sampled from WebTailBench using Fara-7B (Awadallah et al., 2025a). In-house expert annotators labeled each trajectory for both process success and outcome success following the design principles in Section 3. Used for all ablation studies and auto-research experiments.",
+      "content_hash": "8355e6b0c564b42a451c1bf92cdf5f64d2009a230cf7271178855fa327fe38c5",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06240::internal_dataset_setting",
+      "label": "internal_dataset_setting",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Internal dataset: 140 expert-annotated WebTailBench trajectories",
+      "type": "setting"
+    },
+    {
+      "content": "Browserbase dataset: 106 CUA trajectories sampled from Fara-7B on Online-Mind2Web (OM2W), labeled by external annotators from Browserbase with $2\\times$ annotator overlap per trajectory. Annotators first calibrated on 10 practice trajectories. Annotation used a two-stage protocol: UV-blind stage (independent judgment without UV) and UV-informed stage (judgment after seeing UV's verdict and scores). Outcome labels: majority vote of binary judgments. Process labels: median of continuous rubric scores, binarized at $\\geq 0.8$ threshold.",
+      "content_hash": "cc7ed3a1939e985d216aa4245f9dd66fbc68d5f95eaf40151a4d7a88eafcdbb7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06240::browserbase_dataset_setting",
+      "label": "browserbase_dataset_setting",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Browserbase dataset: 106 trajectories with two-stage annotation",
+      "type": "setting"
+    },
+    {
+      "content": "Auto-research study setup: The Universal Verifier (~3,000 lines of code, ~2,000 lines of prompts) was used as the target for automated reproduction. Two settings: (1) From-blank: all ~2,000 prompt lines replaced with // TODO placeholders, only code scaffold remains; agent given high-level design principles but no prior prompts. A compliance agent audits each iteration to prevent memorizing test examples. Optimization rule: maximize Cohen's $\\kappa$ without increasing false positive rate (FPR). (2) Continuing expert work: agent starts from human expert's best prompts, same objective. System used Claude Code v2.1.87 with Claude Opus 4.6 (1M context).",
+      "content_hash": "370907ff55d04c888404f6de2c0dc848fdb2bce5cd019f3efd66215210be3d57",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06240::auto_research_setup",
+      "label": "auto_research_setup",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Auto-research study: two settings for automated verifier design",
+      "type": "setting"
+    },
+    {
+      "content": "CUAVerifierBench is the first benchmark designed specifically to measure verifier quality for both process and outcome rewards for computer use agents, enabling the community to compare verifier alignment with human judgment in a standardized way. No existing benchmarks provide both process and outcome labels for CUA trajectories.",
+      "content_hash": "6b4c81a90734be9bb3ca71c23bfa3e94a61f297d871e713e24e3bc787bfd5f2b",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_06240::cuaverifierbench_novel",
+      "label": "cuaverifierbench_novel",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "iterative_development_requires_benchmark"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "CUAVerifierBench: first benchmark measuring both process and outcome verifier quality",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier is treated as an annotator like any other human: inter-annotator agreement metrics (Cohen's $\\kappa$, precision, recall, FPR, FNR) are computed between the UV's labels and human labels on CUAVerifierBench trajectories.",
+      "content_hash": "c18fc6ee52e3a98fbc5d47fb0c45582b4de47e167e58689771d27e7d45d33de7",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_06240::uv_as_annotator",
+      "label": "uv_as_annotator",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_matches_human_interannotator"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Universal Verifier is evaluated as an annotator against human labels",
+      "type": "claim"
+    },
+    {
+      "content": "Building a high-quality verifier is not a one-shot problem but an iterative development process, and this process is only possible when grounded in a reliable evaluation procedure. CUAVerifierBench serves this role: each candidate verifier design is scored against human judgments using Cohen's $\\kappa$, providing a clear and immediate signal for what works and what does not.",
+      "content_hash": "c51c93f24599f17a746b6edf7f4a6924e8c61c44f48e2c18bec31a314effa5dc",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_06240::iterative_development_requires_benchmark",
+      "label": "iterative_development_requires_benchmark",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "verifier_errors_compound"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Iterative verifier development requires a reliable evaluation benchmark",
+      "type": "claim"
+    },
+    {
+      "content": "On the internal dataset ($n=140$), the Universal Verifier (GPT-5.2) achieves Cohen's $\\kappa = 0.64$ on outcome labels, compared to $\\kappa = 0.44$ for WebJudge (o4-mini) and $\\kappa = 0.31$ for WebVoyager (GPT-4o). The UV achieves FPR = 0.01 and FNR = 0.32.",
+      "content_hash": "fd48f221d75c4d11eaa662272be19337ed79605fd9e00192faff599dab41dcd7",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_06240::uv_outcome_kappa_internal",
+      "label": "uv_outcome_kappa_internal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_matches_human_interannotator"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV outcome Cohen's kappa = 0.64 on internal dataset vs. 0.44/0.31 for baselines",
+      "type": "claim"
+    },
+    {
+      "content": "On the Browserbase OM2W dataset ($n=106$), the Universal Verifier (GPT-5.2) achieves Cohen's $\\kappa = 0.58$ on outcome labels, compared to $\\kappa = 0.31$ for WebJudge (o4-mini) and $\\kappa = 0.13$ for WebVoyager (GPT-4o). The UV achieves FPR = 0.08 on outcome labels.",
+      "content_hash": "87e732970ce87c631e78bdfc69b4e6fda9658934eac2d0cf89371e80971018ec",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_06240::uv_outcome_kappa_browserbase",
+      "label": "uv_outcome_kappa_browserbase",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_matches_human_interannotator"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV outcome Cohen's kappa = 0.58 on Browserbase vs. 0.31/0.13 for baselines",
+      "type": "claim"
+    },
+    {
+      "content": "On the internal dataset ($n=140$), the Universal Verifier achieves Cohen's $\\kappa = 0.59$ on process labels, FPR = 0.04, and FNR = 0.24.",
+      "content_hash": "30749e14d2b4ffaf8b09700d86fac45dfe6aad3f020a6ca26686d7f1ea9819b1",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06240::uv_process_kappa_internal",
+      "label": "uv_process_kappa_internal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_incorporates_all_principles"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV process Cohen's kappa = 0.59 on internal dataset",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier achieves a false positive rate near zero on outcome labels: FPR = 0.01 on the internal dataset and FPR = 0.08 on the Browserbase dataset, meaning it almost never credits a trajectory with success when a human annotator would mark it as failure. This compares to FPR $\\geq 0.45$ for WebVoyager and FPR $\\geq 0.22$ for WebJudge.",
+      "content_hash": "2fefd12065cbb47a94b4086fd9365eb26fab9b5c1dbb1c1c1cb49c300d4f3463",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_06240::uv_fpr_near_zero",
+      "label": "uv_fpr_near_zero",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_incorporates_all_principles"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV reduces false positive rate to near zero (0.01-0.08 vs. 0.45+/0.22+ for baselines)",
+      "type": "claim"
+    },
+    {
+      "content": "The UV's lower false positive rate is primarily due to using a stronger backbone LLM (GPT-5.2) rather than its architectural design choices.",
+      "content_hash": "058ee5343bd1852898ec1124ffd2bb2104aeec5541cf07ff47c3c7ba5df1bd3a",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_06240::alt_fpr_reduction_is_model",
+      "label": "alt_fpr_reduction_is_model",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "Plausible a priori — GPT-5.2 is a much stronger model — but Table 2 shows backbone upgrade alone causes sharp FNR increase with only modest kappa gain, strongly arguing against this as the primary explanation."
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Alternative: UV advantage is from stronger LLM, not architecture",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier's outcome $\\kappa$ with human labels (0.58 on Browserbase) slightly exceeds the inter-annotator outcome $\\kappa$ range (0.53–0.57), and the UV's process $\\kappa$ (0.43) falls within the inter-annotator process $\\kappa$ range (0.36–0.45), indicating that the UV agrees with humans about as well as humans agree with each other on both dimensions.",
+      "content_hash": "d01755cff5b02664a71d2bb3aa23be2d8333829f1a4acae7fb66355c6ceaa8d7",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_06240::uv_matches_human_interannotator",
+      "label": "uv_matches_human_interannotator",
+      "metadata": {
+        "source_table": "artifacts/2604.06240.pdf, Table 14"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV agrees with humans as well as humans agree with each other",
+      "type": "claim"
+    },
+    {
+      "content": "Upgrading WebVoyager from GPT-4o to GPT-5.2 reduces outcome FPR from 0.45 to 0.10 on the internal dataset, but simultaneously increases outcome FNR from 0.24 to 0.44, and improves Cohen's $\\kappa$ only modestly (0.31 → 0.43). WebJudge with GPT-5.2 also shows similarly modest $\\kappa$ improvement. These results confirm that the UV's advantage comes from its architectural design, not from using GPT-5.2.",
+      "content_hash": "b8524452c06a8e8ab701a201ef906678040e704ebaf1eddda5caf5110b16c51c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_06240::upgrading_backbone_insufficient",
+      "label": "upgrading_backbone_insufficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_fpr_reduction_is_model",
+              "upgrading_backbone_insufficient",
+              "uv_incorporates_all_principles"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2 (Table 15 with error bars): WebVoyager GPT-5.2 achieves kappa = 0.43 vs UV's 0.64 on the internal dataset outcome labels, with FNR rising from 0.24 to 0.44. Consistent result on Browserbase.",
+        "source_table": "artifacts/2604.06240.pdf, Table 2"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Upgrading baseline backbone to GPT-5.2 yields only modest kappa improvement with higher FNR",
+      "type": "claim"
+    },
+    {
+      "content": "When Browserbase annotators are shown the Universal Verifier's verdict and reasoning (UV-informed stage), outcome Cohen's $\\kappa$ rises from 0.39 to 0.63, and outcome FNR drops from 0.62 to 0.35, while FPR remains near zero (0.04). For process labels, FNR drops sharply from 0.32 to 0.09. Only 16.6% of annotator outcome judgments flipped, of which 31 of 34 flips moved from success to failure — agreeing with UV-identified failures the annotators had initially missed.",
+      "content_hash": "1a67f4cb4d7d60c7d236682039c1ad880f026e1b13038caf8a788f3bb699efde",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_06240::uv_reasoning_improves_human_labels",
+      "label": "uv_reasoning_improves_human_labels",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_design_invariant"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 13"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV reasoning improves human annotation: kappa rises 0.39→0.63 and FNR drops 0.62→0.35",
+      "type": "claim"
+    },
+    {
+      "content": "The Pearson correlation between UV rubric scores and human annotator rubric scores on the Browserbase OM2W dataset (215 annotator-task pairs, $\\sim$2 annotators per task) is $r = 0.61$ ($p < 10^{-22}$) and Spearman $\\rho = 0.58$ ($p < 10^{-20}$), confirming strong monotonic agreement between the two continuous scores.",
+      "content_hash": "1ff273ca5f1c9c5b3e6a08ee8130f1cac7b2af73f4974f60913497b77f9d5e68",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_06240::rubric_score_correlation",
+      "label": "rubric_score_correlation",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 11",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "uv_incorporates_all_principles"
+            ]
+          }
+        }
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "UV and human rubric scores correlate at r=0.61 (Pearson), rho=0.58 (Spearman)",
+      "type": "claim"
+    },
+    {
+      "content": "Process evaluation is inherently more subjective than outcome evaluation: inter-annotator agreement on outcome labels ($\\kappa = 0.57$) is substantially higher than on process labels ($\\kappa = 0.45$ binary, $\\kappa = 0.36$ via rubric score binarized at 0.8). The continuous process scores correlate at Pearson $r = 0.62$ with mean absolute difference 0.21, indicating that annotators often assign directionally similar scores but differ enough near the 0.8 threshold to flip the binary label.",
+      "content_hash": "2c6d4bb8bcd24aed8d6d8e2556f8fc9c66a297aa77fd03c241bb0e05d98e7d2c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_06240::process_more_subjective_than_outcome",
+      "label": "process_more_subjective_than_outcome",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "process_outcome_separation"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 14"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Process evaluation is more subjective than outcome evaluation",
+      "type": "claim"
+    },
+    {
+      "content": "Native verifiers shipped with CUA benchmarks (WebVoyager, Online-Mind2Web, WebTailBench) substantially disagree with the Universal Verifier: false positive rates relative to UV outcome labels are consistently above 20%, with WebVoyager (GPT-4o) having the highest FPR (0.60 for Fara-7B, 0.72 for GPT-5) and lowest Cohen's $\\kappa$. For example, on WebVoyager with Fara-7B: native verifier success rate = 74.6%, UV Process = 49.0%, UV Outcome = 37.9%.",
+      "content_hash": "b820336328679d2dcc11f5ef6d6c6185f6ad06105d310f8dcf17f9f82df3b3c9",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_06240::native_verifiers_overcount_success",
+      "label": "native_verifiers_overcount_success",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "existing_verifiers_inadequate"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 3"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Native benchmark verifiers over-count success by 20%+ vs. Universal Verifier",
+      "type": "claim"
+    },
+    {
+      "content": "On a sample of 30 high-quality trajectories from AgentRewardBench that terminated within the step budget and were labeled as successful by AgentRewardBench human annotators, an expert annotator judged 8/30 to be false positives according to Universal Verifier outcome guidelines (FPR $\\approx 0.27$).",
+      "content_hash": "b932978318a0bbc96f4fc2d408768823dc0193bf8e4757174db1d6fe57a0e106",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_06240::agentrewardbench_fpr",
+      "label": "agentrewardbench_fpr",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "existing_verifiers_inadequate"
+            ]
+          }
+        }
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "AgentRewardBench has ~27% false positive rate by UV outcome guidelines",
+      "type": "claim"
+    },
+    {
+      "content": "The from-blank auto-research agent (starting with all ~2,000 prompt lines replaced by // TODO placeholders) reached approximately 70% of human expert verifier quality (Cohen's $\\kappa \\approx 0.55$ vs. human expert's $\\kappa \\approx 0.7$ at experiment 32) in roughly one day of iteration (~64 experiments) compared to three weeks of human expert work.",
+      "content_hash": "4a9005aff1b8011474c04dc04ded3e4246279d9e59bcca7afcf50a5f2545d952",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_06240::auto_research_from_blank_result",
+      "label": "auto_research_from_blank_result",
+      "metadata": {
+        "figure": "artifacts/2604.06240.pdf, Figure 1",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "auto_research_conservative"
+            ]
+          }
+        }
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "From-blank auto-research achieves kappa ~0.55 in 1 day vs. human expert kappa ~0.7 in 3 weeks",
+      "type": "claim"
+    },
+    {
+      "content": "The auto-research agent's edits tended to be conservative and incremental — adjusting thresholds or tightening rubric language for individual failure cases — rather than making larger structural or conceptual changes. In contrast, the human expert derived general scoring rules (e.g., 'separate nitpicks from critical failures') from observing patterns across many trajectory failures, driving large step-function $\\kappa$ improvements.",
+      "content_hash": "4af550bb19ec7af9a7bff06b1470034f210b6ce4f757d6abe1067922b0e41546",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_06240::auto_research_conservative",
+      "label": "auto_research_conservative",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Qualitative analysis by paper authors of auto-research agent commit logs. Consistent with the plateau behavior observed in Figure 1 (no step-function jumps)."
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Auto-research makes conservative incremental edits vs. human expert's structural leaps",
+      "type": "claim"
+    },
+    {
+      "content": "When initialized from the human expert's best verifier configuration (continuing-expert setting), the auto-research agent can still find improvements subject to the constraint of not increasing the false positive rate. Table 17 shows 4 of 11 iterations were committed (runs 2, 6, 10, 11), with the rubric score context injection (run 6) being the single most impactful change.",
+      "content_hash": "a4bb907322d1ec8f9902d60c2d4f95f1273912d6e0186aeaa99874ed24c8b814",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_06240::auto_research_cont_expert_result",
+      "label": "auto_research_cont_expert_result",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly observed in Table 17: 4 of 11 continue-expert iterations were committed (improved kappa without increasing FPR). Runs 2, 6, 10, 11 all committed.",
+        "source_table": "artifacts/2604.06240.pdf, Table 17"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Auto-research initialized from expert best can still improve the verifier",
+      "type": "claim"
+    },
+    {
+      "content": "LLM non-determinism in rubric generation causes large stochastic variance: across identical prompts, outcome $\\kappa$ ranged from 0.64 to 0.71 in different runs. This necessitates multiple runs to distinguish signal from noise when evaluating prompt changes.",
+      "content_hash": "8fccba7707015f5ccd0149860340729471b9ea31cf1f01681598efcb33009adc",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2604_06240::auto_research_stochastic_variance",
+      "label": "auto_research_stochastic_variance",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "separate_generation_scoring"
+            ]
+          }
+        }
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "LLM non-determinism causes kappa variance of 0.64-0.71 for identical prompts",
+      "type": "claim"
+    },
+    {
+      "content": "In end-to-end LLM ablations (each model generates and scores its own rubric), GPT-5.2 achieves the lowest false positive rate (FPR = 0.03/0.00 for process/outcome) while GPT-5 achieves the best balanced agreement (Cohen's $\\kappa = 0.63/0.72$ for process/outcome, highest accuracy 0.84/0.86). GPT-5.1 achieves the highest F1 on outcome (0.86) with $\\kappa = 0.68$.",
+      "content_hash": "efd982b780bfb028a4899d9a7e9062257f4d2909de6d1676217cea7fe7ff71f5",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2604_06240::gpt52_lowest_fpr",
+      "label": "gpt52_lowest_fpr",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "gains_are_architectural"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 11"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "GPT-5.2 has lowest FPR; GPT-5 has best balanced kappa in end-to-end ablation",
+      "type": "claim"
+    },
+    {
+      "content": "When rubrics are fixed (generated by GPT-5.2) and only the scoring model varies, GPT-5.2 remains the most conservative scorer (FPR = 0.03/0.00) while GPT-5.1 achieves the highest overall Cohen's $\\kappa$ on outcome (0.74) with F1 = 0.89. This confirms GPT-5.2's conservatism is an intrinsic property of the scorer, not an artifact of self-generated rubrics.",
+      "content_hash": "a2c689df9cde75c5f0ef53f50b9a9be99a599448df5683c3d90950bef2c9f286",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2604_06240::fixed_rubric_ablation",
+      "label": "fixed_rubric_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "gains_are_architectural"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.06240.pdf, Table 12"
+      },
+      "module": "s6_results",
+      "parameters": [],
+      "title": "Fixed-rubric ablation: GPT-5.1 achieves highest outcome kappa (0.74) while GPT-5.2 most conservative",
+      "type": "claim"
+    },
+    {
+      "content": "compare(The Universal Verifier incorporates all four design principles from Section 3: per-task success criteria rubric generation (Principle 1), separate process and outcome scores (Principle 2), controllable/uncontrollable distinction via rubric criteria fields (Principle 3), and per-criterion relevance matrix screenshot selection (Principle 4)., The UV's lower false positive rate is primarily due to using a stronger backbone LLM (GPT-5.2) rather than its architectural design choices., Upgrading WebVoyager from GPT-4o to GPT-5.2 reduces outcome FPR from 0.45 to 0.10 on the internal dataset, but simultaneously increases outcome FNR from 0.24 to 0.44, and improves Cohen's $\\kappa$ only modestly (0.31 → 0.43). WebJudge with GPT-5.2 also shows similarly modest $\\kappa$ improvement. These results confirm that the UV's advantage comes from its architectural design, not from using GPT-5.2.)",
+      "content_hash": "c41ba7a5479482f030e8659570821090581cb7e41914a40c9075ad1ac43e48bb",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06240::_anon_000",
+      "metadata": {
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "strategies",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06240::not_both_architectural_and_model",
+      "label": "not_both_architectural_and_model",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.9
+      },
+      "module": "strategies",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::cua_trajectories_hard_to_verify,github:2604_06240::verifier_errors_compound)",
+      "content_hash": "33858804f738435e8170fab4c5be7f532262e5d183b679739304c0b793f00d6c",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_c67681bf",
+      "label": "__implication_result_c67681bf",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::cua_trajectories_hard_to_verify,github:2604_06240::verifier_errors_compound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c0090365c06b7a77",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::cua_trajectories_hard_to_verify,github:2604_06240::verifier_errors_compound)",
+      "content_hash": "0073e632d8340abdeb0f5171b189193b1463bb89da0fee989cb7a07c76d21813",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_f2a20bd7",
+      "label": "__conjunction_result_f2a20bd7",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::cua_trajectories_hard_to_verify,github:2604_06240::verifier_errors_compound)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7ddd7a92f7bde2eb",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_f2a20bd7,github:2604_06240::four_principles_sufficient)",
+      "content_hash": "26e9203170cec70e58cf89de1c8719ab9c9bf44451ad2d9dfe80fd9005da8a5a",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_c8af0874",
+      "label": "__implication_result_c8af0874",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_f2a20bd7,github:2604_06240::four_principles_sufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7ddd7a92f7bde2eb",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::phantom_criteria_failure)",
+      "content_hash": "4ea593d2d1ea74011799bd590bba0b2914679e1f35c8945791365c00551f60b7",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_750a6fec",
+      "label": "__implication_result_750a6fec",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::phantom_criteria_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3f7b38525aea482e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::cascading_criteria_failure)",
+      "content_hash": "174f513a12e8e6847dc9c5345718c7ab6cfc4ea1e187b6766e1d8eee42d9af8e",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_121f0729",
+      "label": "__implication_result_121f0729",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::cascading_criteria_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fc03b1fd3f45c2b7",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::separate_generation_scoring)",
+      "content_hash": "29d9a047a22123d62450aaeca605eab9e7530b113ae3cab90461d46c1d5b081d",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_9d1ad0f4",
+      "label": "__implication_result_9d1ad0f4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::separate_generation_scoring)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9db26d2b20cc03fb",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::conditional_criteria_design)",
+      "content_hash": "98b5f632cf692e9bbde49a5ba1d6730db8fb7beda36ea16cd96eec600f8f0e71",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_9905e931",
+      "label": "__implication_result_9905e931",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::rubric_quality_critical,github:2604_06240::conditional_criteria_design)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_954459ec4129e077",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_design_invariant,github:2604_06240::two_pass_hallucination_detection)",
+      "content_hash": "7dfab313a6ce66e402653283982075574a6f9e0c15f54377f3bdbc3bc68f0fb9",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_e2dc231b",
+      "label": "__implication_result_e2dc231b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_design_invariant,github:2604_06240::two_pass_hallucination_detection)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8bef75498033dee6",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::process_outcome_separation)",
+      "content_hash": "7537840b417435ab918385700f4841f2750cbd479c8670cbdb469f17fb291d11",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_48628004",
+      "label": "__implication_result_48628004",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::process_outcome_separation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_959b9023abe7e8c6",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::process_outcome_separation,github:2604_06240::controllable_vs_uncontrollable)",
+      "content_hash": "d9614f27b2aab9f8be0ba9ed47ea79de8c72851a2d8d9f71e2d61cbed60f63d5",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_c0e74eb6",
+      "label": "__conjunction_result_c0e74eb6",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::process_outcome_separation,github:2604_06240::controllable_vs_uncontrollable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_104382bbc97f1404",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_c0e74eb6,github:2604_06240::process_outcome_diverge_on_blockers)",
+      "content_hash": "002929f0fb73c0b74de88eb21efad3a728b9bbd96e93320e055675ce0027d6bc",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_58e295cd",
+      "label": "__implication_result_58e295cd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_c0e74eb6,github:2604_06240::process_outcome_diverge_on_blockers)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_104382bbc97f1404",
+        "owning_strategy_type": "deduction",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::process_outcome_separation,github:2604_06240::outcome_label_primary_intent)",
+      "content_hash": "54ab479f74611b4be8f7c055bf8aeaeed2beb54323293d8b3a7d839594944e39",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_ebbcfb76",
+      "label": "__implication_result_ebbcfb76",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::process_outcome_separation,github:2604_06240::outcome_label_primary_intent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5e25193e52fe1e04",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::cascading_error_free_scoring)",
+      "content_hash": "a50e149f99bc181f8ff83f46589197580f4fb66819dd8470e40853e426dd7ddf",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_5c36231b",
+      "label": "__implication_result_5c36231b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::cascading_error_free_scoring)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_17560d847f539b9b",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::screenshot_needle_in_haystack,github:2604_06240::verifier_needs_all_screenshots)",
+      "content_hash": "764bf4f184107edd81566c8bf8f4b370bbaca53daa99c31f834e38e1799296ef",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_9219aa54",
+      "label": "__conjunction_result_9219aa54",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::screenshot_needle_in_haystack,github:2604_06240::verifier_needs_all_screenshots)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5c3ab24392485c2c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_9219aa54,github:2604_06240::relevance_matrix_approach)",
+      "content_hash": "94752807f99848c9836a33f8f8f42be77e175282cee1b7ef9c30efb3319fd25b",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_e99b7c5f",
+      "label": "__implication_result_e99b7c5f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_9219aa54,github:2604_06240::relevance_matrix_approach)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5c3ab24392485c2c",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::rubric_quality_critical,github:2604_06240::process_outcome_separation)",
+      "content_hash": "c7ce2093f12ebbf7ed077d4939715c758f1ebf49c155b6a256755f67b0d962ef",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_baba4735",
+      "label": "__conjunction_result_baba4735",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::rubric_quality_critical,github:2604_06240::process_outcome_separation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e4a9ef5fa3e6239a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_baba4735,github:2604_06240::uv_incorporates_all_principles)",
+      "content_hash": "9421e14452bb79a90db96602811ac8c5576ffba6ddd31dff137ccff9cb0ae4c3",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_dbcfa655",
+      "label": "__implication_result_dbcfa655",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_baba4735,github:2604_06240::uv_incorporates_all_principles)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e4a9ef5fa3e6239a",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::relevance_matrix_approach)",
+      "content_hash": "eeeedf02ec7c860a3753c395118f07d2c1de6dc6f9e10f7c37cdf81ff3918bc6",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_4a257f05",
+      "label": "__conjunction_result_4a257f05",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::controllable_vs_uncontrollable,github:2604_06240::relevance_matrix_approach)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_073e10e86d7186cc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_4a257f05,github:2604_06240::uv_incorporates_all_principles)",
+      "content_hash": "1ca5ca4fa70a6a7cc723f223aec7c7ba6cf5332756f84f33a66f95d2a44e5607",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_a608f065",
+      "label": "__implication_result_a608f065",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_4a257f05,github:2604_06240::uv_incorporates_all_principles)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_073e10e86d7186cc",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::process_outcome_separation,github:2604_06240::controllable_vs_uncontrollable)",
+      "content_hash": "d9614f27b2aab9f8be0ba9ed47ea79de8c72851a2d8d9f71e2d61cbed60f63d5",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_1cabe70a",
+      "label": "__conjunction_result_1cabe70a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::process_outcome_separation,github:2604_06240::controllable_vs_uncontrollable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d2ba81ad9543eb57",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_1cabe70a,github:2604_06240::uv_richer_output)",
+      "content_hash": "3dd9cb88c2a41d52fdaec1932faf25e7be4f9a0729b3dc02df7ac7c30548ad08",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_247229f4",
+      "label": "__implication_result_247229f4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_1cabe70a,github:2604_06240::uv_richer_output)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d2ba81ad9543eb57",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::two_pass_hallucination_detection,github:2604_06240::relevance_matrix_approach)",
+      "content_hash": "f71274a2ffb79e32edf1cfc5f9403724ab9fc5b26a08e268028640a117c68470",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_e7f55e07",
+      "label": "__conjunction_result_e7f55e07",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::two_pass_hallucination_detection,github:2604_06240::relevance_matrix_approach)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7a6bfa0776b8767f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_e7f55e07,github:2604_06240::uv_design_invariant)",
+      "content_hash": "0e1c242d3a1c1ff66f1c699119e49128c6537462f1198faf58c1e7d95a987258",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_aadcc7f2",
+      "label": "__implication_result_aadcc7f2",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_e7f55e07,github:2604_06240::uv_design_invariant)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7a6bfa0776b8767f",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::verifier_errors_compound,github:2604_06240::iterative_development_requires_benchmark)",
+      "content_hash": "dac8d8938f6fd2fd32162f0fdd1c93e1e2a44a68c36f5599cc53adc82782c0be",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_9a00b0fd",
+      "label": "__implication_result_9a00b0fd",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::verifier_errors_compound,github:2604_06240::iterative_development_requires_benchmark)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dd4dcd05e5d5439d",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::upgrading_backbone_insufficient)",
+      "content_hash": "e2bf8758c8b2877be10a3623660f1aa8456cbdede717559f06d5a5fd6cb8cf00",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_aeca210b",
+      "label": "__implication_result_aeca210b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::upgrading_backbone_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cb82c139eadf8311",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::alt_fpr_reduction_is_model,github:2604_06240::upgrading_backbone_insufficient)",
+      "content_hash": "fb6f4df1063808cd022b2a50d03303ba85e193fbcec56506eb2434642f09f02b",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_ec7dcc3d",
+      "label": "__implication_result_ec7dcc3d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::alt_fpr_reduction_is_model,github:2604_06240::upgrading_backbone_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_31df9d1c8e05ed28",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::upgrading_backbone_insufficient)",
+      "content_hash": "ed2f51eddc620e9981deebc7c46f7701370540e830d2f5b96cbdc332ca1c9e9a",
+      "exported": false,
+      "id": "github:2604_06240::__equivalence_result_3ddf32b0",
+      "label": "__equivalence_result_3ddf32b0",
+      "metadata": {
+        "canonical_name": "matches(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::upgrading_backbone_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_1a4cc0b9a63541e9",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2604_06240::alt_fpr_reduction_is_model,github:2604_06240::upgrading_backbone_insufficient)",
+      "content_hash": "feb3572233b71a53472d20add5909e71c3a09b7a01d6b23e1ed2bf4b932c65b4",
+      "exported": false,
+      "id": "github:2604_06240::__equivalence_result_f4658d35",
+      "label": "__equivalence_result_f4658d35",
+      "metadata": {
+        "canonical_name": "matches(github:2604_06240::alt_fpr_reduction_is_model,github:2604_06240::upgrading_backbone_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_1a4cc0b9a63541e9",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_outcome_kappa_internal)",
+      "content_hash": "94f0717806c404668d4ee05c2f486b48d5859928999b2f48cc7bd17cf634e75e",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_acd72870",
+      "label": "__implication_result_acd72870",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_outcome_kappa_internal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_46c961e0fa8f6d02",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_outcome_kappa_browserbase)",
+      "content_hash": "68928000f983ed3b336eeabed843fc696e5e664962e8d1f80bdc1ea52464643f",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_5ae241f1",
+      "label": "__implication_result_5ae241f1",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_outcome_kappa_browserbase)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f660c2f409da65d4",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::auto_research_conservative,github:2604_06240::auto_research_70pct)",
+      "content_hash": "e9db137ab666a31a879b489e4cab477a503e035b02e84b53d89af8062b17a558",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_5829f425",
+      "label": "__implication_result_5829f425",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::auto_research_conservative,github:2604_06240::auto_research_70pct)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7935040efb39acbf",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06240::auto_research_70pct,github:2604_06240::auto_research_cont_expert_result)",
+      "content_hash": "33d936a74260093bca10c789a11ecbb681d354cd71433bc89d956d732ded1abc",
+      "exported": false,
+      "id": "github:2604_06240::__conjunction_result_9fa7a9aa",
+      "label": "__conjunction_result_9fa7a9aa",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06240::auto_research_70pct,github:2604_06240::auto_research_cont_expert_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cd273b73235a111b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::__conjunction_result_9fa7a9aa,github:2604_06240::human_expert_complementary_to_auto)",
+      "content_hash": "0038e9583e87dd8b55206bb2324d7d53a61be53e6d288a5a8eea52b22e5c969f",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_3e144f47",
+      "label": "__implication_result_3e144f47",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::__conjunction_result_9fa7a9aa,github:2604_06240::human_expert_complementary_to_auto)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cd273b73235a111b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::upgrading_backbone_insufficient,github:2604_06240::gains_are_architectural)",
+      "content_hash": "8f8d93be0b37b6448e08af67686e0eb208cd51d77ccdcb8011f26e8e6a1ea118",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_0e6cd574",
+      "label": "__implication_result_0e6cd574",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::upgrading_backbone_insufficient,github:2604_06240::gains_are_architectural)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_022a58786800b090",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_design_invariant,github:2604_06240::uv_reasoning_improves_human_labels)",
+      "content_hash": "2377064dfc01aeaa9f7103dc574731e8c4a03928f084a220de609e873dfeb443",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_f1450b30",
+      "label": "__implication_result_f1450b30",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_design_invariant,github:2604_06240::uv_reasoning_improves_human_labels)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b890d5a5ee08339a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::process_outcome_separation,github:2604_06240::process_more_subjective_than_outcome)",
+      "content_hash": "05bb9e216add59f12684451498e10b4c6a0aba3d344db1d583c7a5b95c4e1a38",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_3f27bb24",
+      "label": "__implication_result_3f27bb24",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::process_outcome_separation,github:2604_06240::process_more_subjective_than_outcome)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b970f04c64141191",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::existing_verifiers_inadequate,github:2604_06240::native_verifiers_overcount_success)",
+      "content_hash": "16026d9dc2f4869b4528d7b2b709e505421313286c6ad8597d84760d3168e30f",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_20c432f9",
+      "label": "__implication_result_20c432f9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::existing_verifiers_inadequate,github:2604_06240::native_verifiers_overcount_success)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_27d6c0bf913bfb21",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::outcome_label_primary_intent,github:2604_06240::unsolicited_side_effects)",
+      "content_hash": "be8a40e552f6813a0c8613da105c98339009151a780c6972522d63378b4a81d3",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_fec4c496",
+      "label": "__implication_result_fec4c496",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::outcome_label_primary_intent,github:2604_06240::unsolicited_side_effects)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5e3a3a8a13a6c008",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::relevance_matrix_approach,github:2604_06240::screenshot_staircase_pattern)",
+      "content_hash": "a609f7655b656b13af1d87663b3e4c6ac571792cd806fd634a93a7b3371d25f3",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_52f0c961",
+      "label": "__implication_result_52f0c961",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::relevance_matrix_approach,github:2604_06240::screenshot_staircase_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_51a70f8dbd171595",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::uv_fpr_near_zero)",
+      "content_hash": "712272d28641fb1dda751c4586853d037a71a71b99d53d524fc26da760e1bcf0",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_6483021e",
+      "label": "__implication_result_6483021e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::uv_fpr_near_zero)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8831ac782857108a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::uv_process_kappa_internal)",
+      "content_hash": "d324153ed8a8949d79be76812b6c2cfa23caa527e2e88be094c11f8437b4c47a",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_6c2687c3",
+      "label": "__implication_result_6c2687c3",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::uv_process_kappa_internal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_65a2099f83ed3e2a",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::iterative_development_requires_benchmark,github:2604_06240::cuaverifierbench_novel)",
+      "content_hash": "540656f3cb3fad73d0b81b1a0c4693991f377fa8825687fea6a3b9f11e07eda7",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_457a686b",
+      "label": "__implication_result_457a686b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::iterative_development_requires_benchmark,github:2604_06240::cuaverifierbench_novel)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b03dccc3244f25d1",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::auto_research_conservative,github:2604_06240::auto_research_from_blank_result)",
+      "content_hash": "7056b62aec85b16344fe82edd53d8d710497958251d60ab08eb00c3687001ab2",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_c05ff624",
+      "label": "__implication_result_c05ff624",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::auto_research_conservative,github:2604_06240::auto_research_from_blank_result)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a430654b61504def",
+        "owning_strategy_type": "support",
+        "prior": 0.83,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::existing_verifiers_inadequate,github:2604_06240::agentrewardbench_fpr)",
+      "content_hash": "70334cdbef3e3459b6628ed1cf1d1fc317ff3013180b0350b6d527337f7544e1",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_907ee886",
+      "label": "__implication_result_907ee886",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::existing_verifiers_inadequate,github:2604_06240::agentrewardbench_fpr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1387283e4a5d9018",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::rubric_score_correlation)",
+      "content_hash": "369cec9a7ac68ae9903457f4ac30f392a1605b7adc31706704e5a2903b9b0018",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_80d9eb93",
+      "label": "__implication_result_80d9eb93",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_incorporates_all_principles,github:2604_06240::rubric_score_correlation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3b3b6fc595815514",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::separate_generation_scoring,github:2604_06240::auto_research_stochastic_variance)",
+      "content_hash": "5c011f40560a5e6267d38099c9908866b19fe6e14176acad0ee3847504e1df0f",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_da822028",
+      "label": "__implication_result_da822028",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::separate_generation_scoring,github:2604_06240::auto_research_stochastic_variance)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dc75ceff17daaa77",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::gains_are_architectural,github:2604_06240::gpt52_lowest_fpr)",
+      "content_hash": "d5f05ba0445eacee8f142a7119e580dae55de0816658b6ce1bf11dae6fc787ef",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_0a16a979",
+      "label": "__implication_result_0a16a979",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::gains_are_architectural,github:2604_06240::gpt52_lowest_fpr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1e9049c00915d170",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::gains_are_architectural,github:2604_06240::fixed_rubric_ablation)",
+      "content_hash": "8a3228d61156e912e0aec6f2567eac8c4a638e31e338f797de1ae7951ced7a42",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_e31a7cea",
+      "label": "__implication_result_e31a7cea",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::gains_are_architectural,github:2604_06240::fixed_rubric_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9480761a007a6a4d",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_as_annotator)",
+      "content_hash": "04b98f3c39345a1e8b4a4aa7fa613a2bf0f46e1409bdb86780e4a240b262927d",
+      "exported": false,
+      "id": "github:2604_06240::__implication_result_a9ae3baf",
+      "label": "__implication_result_a9ae3baf",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06240::uv_matches_human_interannotator,github:2604_06240::uv_as_annotator)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dab0fffba1cd3079",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_principles",
+    "s4_system",
+    "s5_experiments",
+    "s6_results",
+    "strategies"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation — CUA Verifier Design",
+    "s3_principles": "Section 3 — What is True of Good Verifiers: Four Design Principles",
+    "s4_system": "Section 4 — Universal Verifier System",
+    "s5_experiments": "Section 5 — Experimental Setup and Datasets",
+    "s6_results": "Section 6 — Experimental Results",
+    "strategies": "Pass 2 — Reasoning strategies connecting all claims"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_06240::not_both_architectural_and_model",
+      "metadata": {
+        "reason": "These two claims are mutually exclusive as complete explanations of the UV's advantage: if the advantage is primarily architectural (not model-driven), then the model-driven alternative is refuted, and vice versa."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_95fd73ddaf4e7eed",
+      "scope": "local",
+      "variables": [
+        "github:2604_06240::gains_are_architectural",
+        "github:2604_06240::alt_fpr_reduction_is_model"
+      ]
+    }
+  ],
+  "package_name": "2604_06240",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_06240::verifier_errors_compound",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_c67681bf",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::cua_trajectories_hard_to_verify",
+              "github:2604_06240::verifier_errors_compound"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because @cua_trajectories_hard_to_verify — trajectories are long, visually rich, and ambiguous — verification errors are easy to make and hard to detect. When errors propagate into benchmark scores and RL training signals, both evaluation quality and training quality are compromised."
+      },
+      "premises": [
+        "github:2604_06240::cua_trajectories_hard_to_verify"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c0090365c06b7a77",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::four_principles_sufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_f2a20bd7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::cua_trajectories_hard_to_verify",
+              "github:2604_06240::verifier_errors_compound"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_c8af0874",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_f2a20bd7",
+              "github:2604_06240::four_principles_sufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The four principles directly address the sources of verification difficulty identified in @cua_trajectories_hard_to_verify and @verifier_errors_compound: (1) non-overlapping rubric criteria reduce annotation noise from ambiguity; (2) process/outcome separation captures the environment's role; (3) controllable/uncontrollable distinction prevents unfair penalization; (4) divide-and-conquer screenshot management attends to all evidence without context window overload. The claim is validated empirically in Section 6."
+      },
+      "premises": [
+        "github:2604_06240::cua_trajectories_hard_to_verify",
+        "github:2604_06240::verifier_errors_compound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7ddd7a92f7bde2eb",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::phantom_criteria_failure",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_750a6fec",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::rubric_quality_critical",
+              "github:2604_06240::phantom_criteria_failure"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Since rubric quality is critical (@rubric_quality_critical) and LLM-generated rubrics are the root of the pipeline, LLMs tend to hallucinate requirements beyond the actual task (phantom criteria). The evidence in Table 4 shows concrete examples: a task asking to find a Spotify song received phantom criteria for Spotify URLs and event links, turning a SUCCESS into FAILURE."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3f7b38525aea482e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::cascading_criteria_failure",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_121f0729",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::rubric_quality_critical",
+              "github:2604_06240::cascading_criteria_failure"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because @rubric_quality_critical — rubric errors cascade downstream — when criteria are logically dependent, a single upstream scoring error propagates to all downstream criteria that depend on it, multiplying the penalty. Figure 4 shows a concrete case: a computational error in identifying the longest last name propagated, though in that case the UV's cascading-error-free design prevented it from affecting the last criterion."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fc03b1fd3f45c2b7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::separate_generation_scoring",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_9d1ad0f4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::rubric_quality_critical",
+              "github:2604_06240::separate_generation_scoring"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Empirical evidence during iterative development (@rubric_quality_critical) showed that combined generation+scoring led the LLM to create criteria tailored to what it saw the agent do, not what the task required. Separating generation (task only, no trajectory) from scoring eliminates this confirmation bias. This was identified as contributing roughly half of the Cohen's kappa gains."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9db26d2b20cc03fb",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_06240::process_score_formula"
+      ],
+      "conclusion": "github:2604_06240::conditional_criteria_design",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_9905e931",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::rubric_quality_critical",
+              "github:2604_06240::conditional_criteria_design"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Good rubric design (@rubric_quality_critical) requires that criteria reflect only achievable sub-goals. The process score formula sums only over applicable criteria $\\mathcal{A}$; conditional criteria implement this by being excluded from $\\mathcal{A}$ when their condition is not met (e.g., no direct flight exists). Table 5 shows a concrete example: the window-seat cost criterion is excluded when no direct flights are available."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_954459ec4129e077",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::two_pass_hallucination_detection",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_e2dc231b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_design_invariant",
+              "github:2604_06240::two_pass_hallucination_detection"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The UV design invariant (@uv_design_invariant) requires no relevant screenshot evidence to go undetected. Two-pass scoring (text-action-only first, then screenshot-grounded) operationalizes this by flagging discrepancies where the agent's claimed actions are not supported by visual evidence — surfacing hallucinations that a single-pass scorer would miss (Figure 5: '+6.2% CIDEr' vs '+2.8% CIDEr' in actual screenshot)."
+      },
+      "premises": [
+        "github:2604_06240::uv_design_invariant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8bef75498033dee6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_06240::process_score_formula"
+      ],
+      "conclusion": "github:2604_06240::process_outcome_separation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_48628004",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::controllable_vs_uncontrollable",
+              "github:2604_06240::process_outcome_separation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because the environment controls certain outcomes that the agent cannot (@controllable_vs_uncontrollable), conflating 'did the agent execute well' with 'did the user's goal succeed' yields unfair signals. Process score evaluates the agent's controllable actions; outcome evaluates the final state regardless of cause. The process formula (defined in @process_score_formula) supports this by operating only on applicable criteria."
+      },
+      "premises": [
+        "github:2604_06240::controllable_vs_uncontrollable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_959b9023abe7e8c6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::process_outcome_diverge_on_blockers",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_c0e74eb6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::process_outcome_separation",
+              "github:2604_06240::controllable_vs_uncontrollable"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_58e295cd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_c0e74eb6",
+              "github:2604_06240::process_outcome_diverge_on_blockers"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Given that @process_outcome_separation decouples execution quality from goal achievement, and that @controllable_vs_uncontrollable classifies environment blockers as uncontrollable factors not penalized in process: it necessarily follows that an agent blocked by an environment factor receives full process credit (correct behavior given circumstances) but outcome failure (goal not met). This is a direct logical consequence of the separation."
+      },
+      "premises": [
+        "github:2604_06240::process_outcome_separation",
+        "github:2604_06240::controllable_vs_uncontrollable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_104382bbc97f1404",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_06240::outcome_label_primary_intent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_ebbcfb76",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::process_outcome_separation",
+              "github:2604_06240::outcome_label_primary_intent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Since outcome focuses on whether the user's goal was achieved (@process_outcome_separation), and users have primary intent vs. flexible secondary preferences, the outcome label should focus on primary intent. This is grounded in the design choice that users are forgiving of minor format variations but not unsolicited actions or fabrications."
+      },
+      "premises": [
+        "github:2604_06240::process_outcome_separation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5e25193e52fe1e04",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::cascading_error_free_scoring",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_5c36231b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::controllable_vs_uncontrollable",
+              "github:2604_06240::cascading_error_free_scoring"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Given the taxonomy in @controllable_vs_uncontrollable (agents should only be penalized for controllable factors), a cascading-error-free rubric is the direct implementation: each criterion is evaluated based on what the agent could control at that step, not what upstream criteria concluded. This follows necessarily from the controllable/uncontrollable distinction."
+      },
+      "premises": [
+        "github:2604_06240::controllable_vs_uncontrollable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_17560d847f539b9b",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2604_06240::relevance_matrix_def"
+      ],
+      "conclusion": "github:2604_06240::relevance_matrix_approach",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_9219aa54",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::screenshot_needle_in_haystack",
+              "github:2604_06240::verifier_needs_all_screenshots"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_e99b7c5f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_9219aa54",
+              "github:2604_06240::relevance_matrix_approach"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Given that naive approaches fail (@screenshot_needle_in_haystack: overload or missing evidence) and that reliable verification requires all screenshots (@verifier_needs_all_screenshots), the per-criterion relevance matrix approach solves both problems: it attends to all $T+1$ screenshots (computing $\\mathbf{R} \\in \\mathbb{R}^{(T+1) \\times N}$) while focusing the analysis context on the most relevant screenshots per criterion, making it scalable and complete."
+      },
+      "premises": [
+        "github:2604_06240::screenshot_needle_in_haystack",
+        "github:2604_06240::verifier_needs_all_screenshots"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5c3ab24392485c2c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_06240::uv_algorithm_overview"
+      ],
+      "conclusion": "github:2604_06240::uv_incorporates_all_principles",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_baba4735",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::rubric_quality_critical",
+              "github:2604_06240::process_outcome_separation"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_dbcfa655",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_baba4735",
+              "github:2604_06240::uv_incorporates_all_principles"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The UV implements non-overlapping rubric criteria (@rubric_quality_critical) via separate generation+scoring stages, and implements process/outcome separation (@process_outcome_separation) via distinct scoring passes (Steps 6-7 of Algorithm 1)."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical",
+        "github:2604_06240::process_outcome_separation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e4a9ef5fa3e6239a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_06240::uv_algorithm_overview"
+      ],
+      "conclusion": "github:2604_06240::uv_incorporates_all_principles",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_4a257f05",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::controllable_vs_uncontrollable",
+              "github:2604_06240::relevance_matrix_approach"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_a608f065",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_4a257f05",
+              "github:2604_06240::uv_incorporates_all_principles"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The UV further implements controllable vs. uncontrollable distinction (@controllable_vs_uncontrollable) via rubric criteria description fields, and implements the per-criterion relevance matrix approach (@relevance_matrix_approach) via Steps 2-4 of Algorithm 1."
+      },
+      "premises": [
+        "github:2604_06240::controllable_vs_uncontrollable",
+        "github:2604_06240::relevance_matrix_approach"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_073e10e86d7186cc",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_06240::uv_algorithm_overview"
+      ],
+      "conclusion": "github:2604_06240::uv_incorporates_all_principles",
+      "metadata": {
+        "reason": "The Universal Verifier (Algorithm 1) directly implements all four design principles: rubric quality (@rubric_quality_critical), process/outcome separation (@process_outcome_separation), controllable/uncontrollable distinction (@controllable_vs_uncontrollable), and relevance matrix context management (@relevance_matrix_approach). Each principle maps directly to one or more algorithm steps."
+      },
+      "premises": [
+        "github:2604_06240::rubric_quality_critical",
+        "github:2604_06240::process_outcome_separation",
+        "github:2604_06240::controllable_vs_uncontrollable",
+        "github:2604_06240::relevance_matrix_approach"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d085bdefced78a31",
+      "sub_strategies": [
+        "lcs_e4a9ef5fa3e6239a",
+        "lcs_073e10e86d7186cc"
+      ],
+      "type": "infer"
+    },
+    {
+      "background": [
+        "github:2604_06240::uv_algorithm_overview"
+      ],
+      "conclusion": "github:2604_06240::uv_richer_output",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_1cabe70a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::process_outcome_separation",
+              "github:2604_06240::controllable_vs_uncontrollable"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_247229f4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_1cabe70a",
+              "github:2604_06240::uv_richer_output"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Given @process_outcome_separation (two independent signals) and @controllable_vs_uncontrollable (failure categorization), the UV output is necessarily richer than binary: it must produce both $r_{\\text{proc}}$ and $r_{\\text{out}}$, plus the diagnostic report $d$ from the error taxonomy. These follow directly from the design principles."
+      },
+      "premises": [
+        "github:2604_06240::process_outcome_separation",
+        "github:2604_06240::controllable_vs_uncontrollable"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d2ba81ad9543eb57",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_design_invariant",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_e7f55e07",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::two_pass_hallucination_detection",
+              "github:2604_06240::relevance_matrix_approach"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_aadcc7f2",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_e7f55e07",
+              "github:2604_06240::uv_design_invariant"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The design invariant of detecting all relevant screenshot evidence is operationalized by two mechanisms: @two_pass_hallucination_detection flags discrepancies between text-only and screenshot-grounded scoring, and @relevance_matrix_approach ensures every screenshot is scored against every criterion before filtering. Together these guarantee no hallucination-revealing evidence is missed, as demonstrated by the Figure 5 example (+2.8% vs +6.2% CIDEr)."
+      },
+      "premises": [
+        "github:2604_06240::two_pass_hallucination_detection",
+        "github:2604_06240::relevance_matrix_approach"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7a6bfa0776b8767f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::iterative_development_requires_benchmark",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_9a00b0fd",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::verifier_errors_compound",
+              "github:2604_06240::iterative_development_requires_benchmark"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Because @verifier_errors_compound — verifier errors corrupt evaluation and training — an iterative verifier development process requires a reliable evaluation benchmark to know if proposed changes improve or harm agreement. Without CUAVerifierBench, verifier changes cannot be measured, and the iterative loop breaks down."
+      },
+      "premises": [
+        "github:2604_06240::verifier_errors_compound"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dd4dcd05e5d5439d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::upgrading_backbone_insufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_aeca210b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_incorporates_all_principles",
+              "github:2604_06240::upgrading_backbone_insufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The architectural design (@uv_incorporates_all_principles) predicts that replacing the UV's architecture with baseline pipelines (WebVoyager/WebJudge) will fail to replicate the UV's gains even with the same backbone LLM: the pipeline differences (rubric generation, two-pass scoring, per-criterion screenshot selection) are responsible for the low FPR and high kappa. Therefore upgrading baselines to GPT-5.2 should still underperform."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cb82c139eadf8311",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::upgrading_backbone_insufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_ec7dcc3d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::alt_fpr_reduction_is_model",
+              "github:2604_06240::upgrading_backbone_insufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "If the UV's advantage were purely due to GPT-5.2 (@alt_fpr_reduction_is_model), upgrading WebVoyager/WebJudge to GPT-5.2 should close most of the gap. This alternative predicts that backbone upgrades should yield substantial kappa improvement to near UV levels — which would make @upgrading_backbone_insufficient false."
+      },
+      "premises": [
+        "github:2604_06240::alt_fpr_reduction_is_model"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_31df9d1c8e05ed28",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__equivalence_result_3ddf32b0",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_06240::uv_incorporates_all_principles",
+              "github:2604_06240::upgrading_backbone_insufficient"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__equivalence_result_f4658d35",
+            "operator": "equivalence",
+            "variables": [
+              "github:2604_06240::alt_fpr_reduction_is_model",
+              "github:2604_06240::upgrading_backbone_insufficient"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__equivalence_result_f4658d35",
+              "github:2604_06240::__equivalence_result_3ddf32b0"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Upgrading WebVoyager to GPT-5.2 reduces outcome FPR from 0.45 to 0.10 but simultaneously increases FNR from 0.24 to 0.44, and kappa only improves from 0.31 to 0.43 — well below UV's 0.64. This confirms the architectural explanation: the baseline pipeline's missing components (rubric generation, two-pass scoring) cannot be compensated by a stronger model alone."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles",
+        "github:2604_06240::alt_fpr_reduction_is_model",
+        "github:2604_06240::upgrading_backbone_insufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1a4cc0b9a63541e9",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2604_06240::_anon_000",
+      "metadata": {
+        "reason": "Both hypotheses (architectural design vs. stronger LLM) attempt to explain why baseline verifiers with GPT-5.2 still underperform the UV. The direct backbone upgrade experiment directly tests the model-only alternative."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles",
+        "github:2604_06240::alt_fpr_reduction_is_model",
+        "github:2604_06240::upgrading_backbone_insufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_12218718ed7702a8",
+      "sub_strategies": [
+        "lcs_cb82c139eadf8311",
+        "lcs_31df9d1c8e05ed28",
+        "lcs_1a4cc0b9a63541e9"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_outcome_kappa_internal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_acd72870",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_matches_human_interannotator",
+              "github:2604_06240::uv_outcome_kappa_internal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The law @uv_matches_human_interannotator — that the UV agrees with humans as well as humans agree with each other — predicts that on any well-annotated dataset, the UV's kappa will fall within the human inter-annotator range. On the internal dataset ($n=140$), this predicts $\\kappa \\approx 0.6$, confirmed at $\\kappa = 0.64$."
+      },
+      "premises": [
+        "github:2604_06240::uv_matches_human_interannotator"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_46c961e0fa8f6d02",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_outcome_kappa_browserbase",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_5ae241f1",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_matches_human_interannotator",
+              "github:2604_06240::uv_outcome_kappa_browserbase"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The same law @uv_matches_human_interannotator predicts that the UV's kappa will match inter-annotator ranges on the independent Browserbase OM2W dataset ($n=106$, different annotator population, different benchmark). The inter-annotator range is 0.53-0.57; UV achieves 0.58, confirming the law."
+      },
+      "premises": [
+        "github:2604_06240::uv_matches_human_interannotator"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f660c2f409da65d4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_matches_human_interannotator",
+      "metadata": {
+        "reason": "Both the internal dataset and the independent Browserbase OM2W dataset provide independent confirmations that the UV's kappa falls within human inter-annotator ranges. The two datasets have different annotator populations and different benchmark sources, making them genuinely independent observations."
+      },
+      "premises": [
+        "github:2604_06240::uv_outcome_kappa_internal",
+        "github:2604_06240::uv_outcome_kappa_browserbase"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b966e1d7fafa514c",
+      "sub_strategies": [
+        "lcs_46c961e0fa8f6d02",
+        "lcs_f660c2f409da65d4"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_06240::auto_research_70pct",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_5829f425",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::auto_research_conservative",
+              "github:2604_06240::auto_research_70pct"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The auto-research agent's conservative, incremental editing behavior (@auto_research_conservative) — adjusting thresholds rather than making structural changes — explains why it plateaus at ~70% of expert quality. The human expert's step-function improvements required holistic insight into failure patterns across many trajectories, not individual case adjustments."
+      },
+      "premises": [
+        "github:2604_06240::auto_research_conservative"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7935040efb39acbf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::human_expert_complementary_to_auto",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__conjunction_result_9fa7a9aa",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06240::auto_research_70pct",
+              "github:2604_06240::auto_research_cont_expert_result"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06240::__implication_result_3e144f47",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::__conjunction_result_9fa7a9aa",
+              "github:2604_06240::human_expert_complementary_to_auto"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "From @auto_research_70pct: auto-research achieves 70% of expert quality — showing AI can replicate most of the work. From @auto_research_cont_expert_result: initialized from the human expert's best, auto-research can still find improvements beyond the expert's peak. Together these establish the complementarity: humans discover core principles, AI fine-tunes beyond the human frontier."
+      },
+      "premises": [
+        "github:2604_06240::auto_research_70pct",
+        "github:2604_06240::auto_research_cont_expert_result"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cd273b73235a111b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::gains_are_architectural",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_0e6cd574",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::upgrading_backbone_insufficient",
+              "github:2604_06240::gains_are_architectural"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The backbone upgrade experiment (@upgrading_backbone_insufficient) directly tests whether the model or the architecture accounts for the gains. Since upgrading to GPT-5.2 yields only modest kappa improvement while sharply increasing FNR, it follows with near-certainty that the gains are architectural. This is a deduction from the experimental result."
+      },
+      "premises": [
+        "github:2604_06240::upgrading_backbone_insufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_022a58786800b090",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_reasoning_improves_human_labels",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_f1450b30",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_design_invariant",
+              "github:2604_06240::uv_reasoning_improves_human_labels"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The UV's design invariant (@uv_design_invariant) — catching all relevant evidence including subtle hallucinations — predicts that human annotators will update their judgments when shown the UV's reasoning, primarily from success to failure. The empirical result (31 of 34 flips from success→failure) confirms the UV consistently identifies failures humans miss."
+      },
+      "premises": [
+        "github:2604_06240::uv_design_invariant"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b890d5a5ee08339a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::process_more_subjective_than_outcome",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_3f27bb24",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::process_outcome_separation",
+              "github:2604_06240::process_more_subjective_than_outcome"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given @process_outcome_separation: process evaluation requires judging whether each execution step was reasonable given circumstances, a more nuanced judgment than the binary outcome question 'did the user's goal get met?'. This inherent subjectivity of step-level assessment predicts lower inter-annotator agreement for process ($\\kappa = 0.36-0.45$) than outcome ($\\kappa = 0.53-0.57$)."
+      },
+      "premises": [
+        "github:2604_06240::process_outcome_separation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b970f04c64141191",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::native_verifiers_overcount_success",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_20c432f9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::existing_verifiers_inadequate",
+              "github:2604_06240::native_verifiers_overcount_success"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Native benchmark verifiers are the same systems identified as inadequate in @existing_verifiers_inadequate — they lack the UV's architectural safeguards (rubric generation, two-pass scoring, per-criterion screenshot selection). Without these protections, they over-count success by 20%+ relative to the more reliable UV labels, as shown in Table 3."
+      },
+      "premises": [
+        "github:2604_06240::existing_verifiers_inadequate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_27d6c0bf913bfb21",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::unsolicited_side_effects",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_fec4c496",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::outcome_label_primary_intent",
+              "github:2604_06240::unsolicited_side_effects"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Since @outcome_label_primary_intent specifies that users are not forgiving of unsolicited side effects, the verifier must have a mechanism to detect them. Because rubrics are generated from the task description alone (without the trajectory), they cannot anticipate all ways a task can go wrong. A dedicated detection pass over the trajectory is therefore necessary."
+      },
+      "premises": [
+        "github:2604_06240::outcome_label_primary_intent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5e3a3a8a13a6c008",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::screenshot_staircase_pattern",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_52f0c961",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::relevance_matrix_approach",
+              "github:2604_06240::screenshot_staircase_pattern"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The relevance matrix approach (@relevance_matrix_approach) assigns scores to every (screenshot, criterion) pair. For linear trajectories (most CUA tasks), later screenshots naturally score higher relevance for later criteria because the agent progressively completes sub-goals in order, producing the staircase pattern."
+      },
+      "premises": [
+        "github:2604_06240::relevance_matrix_approach"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_51a70f8dbd171595",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_fpr_near_zero",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_6483021e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_incorporates_all_principles",
+              "github:2604_06240::uv_fpr_near_zero"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The UV's architecture (@uv_incorporates_all_principles) directly predicts near-zero FPR: the two-pass hallucination detection (catching visual discrepancies), per-criterion screenshot selection (not missing evidence), and cascading-error-free rubric (not penalizing correct behavior) together eliminate false positives. Empirically: FPR = 0.01 internal, 0.08 Browserbase."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8831ac782857108a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_process_kappa_internal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_6c2687c3",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_incorporates_all_principles",
+              "github:2604_06240::uv_process_kappa_internal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The same UV architecture (@uv_incorporates_all_principles) that achieves high outcome kappa also achieves high process kappa ($\\kappa = 0.59$) on the internal dataset, because the rubric-based process scoring benefits from the same non-overlapping criteria design, two-pass scoring, and per-criterion screenshot selection."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_65a2099f83ed3e2a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::cuaverifierbench_novel",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_457a686b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::iterative_development_requires_benchmark",
+              "github:2604_06240::cuaverifierbench_novel"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Since iterative verifier development requires a benchmark (@iterative_development_requires_benchmark), and no existing benchmark provides both process and outcome labels for CUA trajectories, CUAVerifierBench fills this gap. Its novelty (first dual-label CUA verifier benchmark) is a direct consequence of the previously unaddressed need."
+      },
+      "premises": [
+        "github:2604_06240::iterative_development_requires_benchmark"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b03dccc3244f25d1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::auto_research_from_blank_result",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_c05ff624",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::auto_research_conservative",
+              "github:2604_06240::auto_research_from_blank_result"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The conservative and incremental editing behavior documented in @auto_research_conservative explains the quantitative result: the from-blank agent achieves $\\kappa \\approx 0.55$ (approximately 70% of expert's $\\kappa \\approx 0.7$) because it makes gradual adjustments rather than the structural leaps that drove the expert's largest gains."
+      },
+      "premises": [
+        "github:2604_06240::auto_research_conservative"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a430654b61504def",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::agentrewardbench_fpr",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_907ee886",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::existing_verifiers_inadequate",
+              "github:2604_06240::agentrewardbench_fpr"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "The pattern of existing verifiers over-counting success (@existing_verifiers_inadequate) extends to AgentRewardBench's human annotations: when expert annotators apply the UV's outcome guidelines to 30 sampled successful trajectories, 8/30 ($\\approx 27\\%$) are found to be false positives — consistent with the broader pattern of inadequate verification standards in the field."
+      },
+      "premises": [
+        "github:2604_06240::existing_verifiers_inadequate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1387283e4a5d9018",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::rubric_score_correlation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_80d9eb93",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_incorporates_all_principles",
+              "github:2604_06240::rubric_score_correlation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The UV's structured rubric-based scoring (@uv_incorporates_all_principles) should produce continuous rubric scores that correlate with human annotators' continuous rubric scores on the same criteria, since both are evaluating the same agent behavior against the same rubric. The Pearson $r = 0.61$ and Spearman $\\rho = 0.58$ confirm this."
+      },
+      "premises": [
+        "github:2604_06240::uv_incorporates_all_principles"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3b3b6fc595815514",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::auto_research_stochastic_variance",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_da822028",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::separate_generation_scoring",
+              "github:2604_06240::auto_research_stochastic_variance"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "The separation of rubric generation from scoring (@separate_generation_scoring) means that non-deterministic LLM rubric generation introduces variance: different rubrics for the same task can lead to different final kappa values. Since rubric generation is inherently stochastic, repeat runs with identical prompts will produce kappa values that vary in the range 0.64-0.71."
+      },
+      "premises": [
+        "github:2604_06240::separate_generation_scoring"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dc75ceff17daaa77",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::gpt52_lowest_fpr",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_0a16a979",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::gains_are_architectural",
+              "github:2604_06240::gpt52_lowest_fpr"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "If the UV's advantage is architectural (@gains_are_architectural), then model-level differences (GPT-5.2 vs others) should show up primarily in conservatism (FPR) rather than overall agreement (kappa), since the architecture is the dominant factor. GPT-5.2's lowest FPR (0.03/0.00) while not having the highest kappa confirms this: it is the most conservative scorer."
+      },
+      "premises": [
+        "github:2604_06240::gains_are_architectural"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1e9049c00915d170",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::fixed_rubric_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_e31a7cea",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::gains_are_architectural",
+              "github:2604_06240::fixed_rubric_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Since the UV's advantage is architectural (@gains_are_architectural), the scoring model's contribution should be identifiable when the rubric is held fixed (removing that architectural variable). The fixed-rubric ablation isolates the scorer effect: GPT-5.1 achieves highest outcome kappa (0.74) while GPT-5.2 remains most conservative, consistent with architecture dominating over scorer choice."
+      },
+      "premises": [
+        "github:2604_06240::gains_are_architectural"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9480761a007a6a4d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06240::uv_as_annotator",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06240::__implication_result_a9ae3baf",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06240::uv_matches_human_interannotator",
+              "github:2604_06240::uv_as_annotator"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Since the UV agrees with humans as well as humans agree with each other (@uv_matches_human_interannotator), it is valid to treat the UV as an annotator equivalent to a human and compute inter-annotator agreement metrics between the UV and other annotators."
+      },
+      "premises": [
+        "github:2604_06240::uv_matches_human_interannotator"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dab0fffba1cd3079",
+      "type": "support"
+    }
+  ]
+}

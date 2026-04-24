@@ -1,0 +1,183 @@
+{
+  "exports": [
+    {
+      "content": "An auto-research agent (Claude Code v2.1.87 with Claude Opus 4.6, 1M context) achieves approximately 70% of human expert verifier quality in approximately 5% of the time (one day vs. three weeks of expert iteration), but fails to independently discover the structural design decisions that drive the largest gains in Cohen's $\\kappa$.",
+      "content_hash": "1edeb95575f2c4f958ecc7bc42d56413f9a00744eaa47653362c7b370330cc40",
+      "label": "auto_research_70pct",
+      "qid": "github:2604_06240::auto_research_70pct",
+      "type": "claim"
+    },
+    {
+      "content": "A cascading-error-free scoring strategy ensures that a single early obstacle does not unfairly penalize all downstream steps. Each rubric criterion is graded based on whether the agent's actions were reasonable given the information it had at that step, not whether upstream criteria were scored correctly.",
+      "content_hash": "cdf80b663b68a0a3623b8873a85ebc86a1814ca8d1eea0a6806aae508b2af954",
+      "label": "cascading_error_free_scoring",
+      "qid": "github:2604_06240::cascading_error_free_scoring",
+      "type": "claim"
+    },
+    {
+      "content": "Some rubric criteria are conditional on the state of the world discovered during task execution (e.g., 'report window-seat cost if a direct flight exists'). Conditional criteria must be marked at rubric-generation time and excluded from both numerator and denominator of the process score when their condition is not met, ensuring agents are not penalized for outcomes they could not control.",
+      "content_hash": "fd38338189015df9b406631fc6466c153bf34195158af0d144a27c36a8a929b7",
+      "label": "conditional_criteria_design",
+      "qid": "github:2604_06240::conditional_criteria_design",
+      "type": "claim"
+    },
+    {
+      "content": "A CUA verifier must explicitly distinguish controllable from uncontrollable failures. Uncontrollable factors (not penalized in process): platform/infrastructure issues (CAPTCHA, login walls), entity non-existence (discontinued products, closed businesses), availability constraints (out of stock), and search result limitations. Controllable factors (penalized in process): intent mismatches (wrong product), reasoning errors, hallucinations, insufficient effort (single failed attempt), and execution errors (skipping required steps).",
+      "content_hash": "bc52e6c9b033ea8e9fce1535a865fc1b56e99c5d9061abb7ef08abfbb5398c90",
+      "label": "controllable_vs_uncontrollable",
+      "qid": "github:2604_06240::controllable_vs_uncontrollable",
+      "type": "claim"
+    },
+    {
+      "content": "CUAVerifierBench is the first benchmark designed specifically to measure verifier quality for both process and outcome rewards for computer use agents, enabling the community to compare verifier alignment with human judgment in a standardized way. No existing benchmarks provide both process and outcome labels for CUA trajectories.",
+      "content_hash": "6b4c81a90734be9bb3ca71c23bfa3e94a61f297d871e713e24e3bc787bfd5f2b",
+      "label": "cuaverifierbench_novel",
+      "qid": "github:2604_06240::cuaverifierbench_novel",
+      "type": "claim"
+    },
+    {
+      "content": "Four design principles are sufficient to build a verifier (the Universal Verifier) that agrees with humans as often as humans agree with each other: (1) constructing rubrics with non-overlapping criteria, (2) separating process and outcome rewards, (3) distinguishing controllable vs. uncontrollable failures, (4) divide-and-conquer screenshot context management.",
+      "content_hash": "1a66f2012f486e275dc3c4134a12ce838d71b389b21979e4451fc7362f978001",
+      "label": "four_principles_sufficient",
+      "qid": "github:2604_06240::four_principles_sufficient",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier's performance advantage over WebVoyager and WebJudge stems from architectural design choices (rubric decomposition, two-pass scoring, structured outcome verification), not merely from using a stronger backbone LLM. Upgrading WebVoyager's GPT-4o and WebJudge's o4-mini to GPT-5.2 yields only modest Cohen's $\\kappa$ improvements (WebVoyager: 0.31 → 0.43 on Internal outcome) while dramatically increasing false negative rates (WebVoyager FNR: 0.24 → 0.44).",
+      "content_hash": "a02d18c9162373166b22c05bf7434397b0c9c13d1e0f80fb5092b514b9a01069",
+      "label": "gains_are_architectural",
+      "qid": "github:2604_06240::gains_are_architectural",
+      "type": "claim"
+    },
+    {
+      "content": "Human expertise and automated optimization play complementary roles in verifier design: human expertise is essential for discovering core design principles (large structural changes causing step-function $\\kappa$ improvements), while automated optimization excels at fine-grained tuning. When initialized from the human expert's best configuration, the auto-research agent surpasses the expert-designed peak.",
+      "content_hash": "35a88a639bc8c53a35567d070f20bf0d95c90775e8e9919af51a9dca00304ae3",
+      "label": "human_expert_complementary_to_auto",
+      "qid": "github:2604_06240::human_expert_complementary_to_auto",
+      "type": "claim"
+    },
+    {
+      "content": "Native verifiers shipped with CUA benchmarks (WebVoyager, Online-Mind2Web, WebTailBench) substantially disagree with the Universal Verifier: false positive rates relative to UV outcome labels are consistently above 20%, with WebVoyager (GPT-4o) having the highest FPR (0.60 for Fara-7B, 0.72 for GPT-5) and lowest Cohen's $\\kappa$. For example, on WebVoyager with Fara-7B: native verifier success rate = 74.6%, UV Process = 49.0%, UV Outcome = 37.9%.",
+      "content_hash": "b820336328679d2dcc11f5ef6d6c6185f6ad06105d310f8dcf17f9f82df3b3c9",
+      "label": "native_verifiers_overcount_success",
+      "qid": "github:2604_06240::native_verifiers_overcount_success",
+      "type": "claim"
+    },
+    {
+      "content": "The outcome label should focus on primary intent: if the primary intent is to book a table, the user is flexible on which platform is used unless otherwise stated. Users are forgiving of nitpicks (rounding \\$5.95 to \\$6) but not forgiving of unsolicited side effects (buying a warranty when only the product was requested) or hallucinations (fabricating information).",
+      "content_hash": "e48665c29655b0087d3b3cd6fba15f214e34ae0cfcfe1407ad82c781e822b6ad",
+      "label": "outcome_label_primary_intent",
+      "qid": "github:2604_06240::outcome_label_primary_intent",
+      "type": "claim"
+    },
+    {
+      "content": "Process and outcome scores diverge specifically on environment blocker scenarios: when an agent is blocked by a login wall, CAPTCHA, out-of-stock item, or other uncontrollable factor, the process score awards full credit for best-effort execution while the outcome score marks failure because the user's real-world goal was not achieved. An agent can thus score 100% on process but 0% on outcome.",
+      "content_hash": "add05b58c18304b1b780966e5702813932c1d9dc932b8654d76575a00b2823bc",
+      "label": "process_outcome_diverge_on_blockers",
+      "qid": "github:2604_06240::process_outcome_diverge_on_blockers",
+      "type": "claim"
+    },
+    {
+      "content": "Process and outcome rewards must be reported as two independent signals per trajectory because the environment plays an outsized role in CUA task success. Conflating them leads to reward signals that are either too lenient (crediting agents for effort when the user gets nothing) or too harsh (penalizing agents for factors outside their control). The process score $r_{\\text{proc}} \\in [0,1]$ reflects execution quality; the outcome score $r_{\\text{out}} \\in \\{0,1\\}$ reflects whether the user's goal was achieved.",
+      "content_hash": "0623509d8bf6aab24e58c5be9b627573090dc52682560b4d0f57520f99d7a5d4",
+      "label": "process_outcome_separation",
+      "qid": "github:2604_06240::process_outcome_separation",
+      "type": "claim"
+    },
+    {
+      "content": "Scoring each screenshot against every rubric criterion to produce a relevance matrix $\\mathbf{R} \\in \\mathbb{R}^{(T+1) \\times N}$, then grouping the top-$k$ most relevant screenshots per criterion for further analysis, is more scalable to longer trajectories and more focused than passing all screenshots. Processing is parallelized: $M$ screenshots are scored against all $N$ criteria in $M$ parallel LLM calls.",
+      "content_hash": "1e443475e5fa65378897671168e4ba1b554254cbe14682e8c6452bf7bf20fe89",
+      "label": "relevance_matrix_approach",
+      "qid": "github:2604_06240::relevance_matrix_approach",
+      "type": "claim"
+    },
+    {
+      "content": "Good rubric design is the single most impactful design decision for a CUA verifier: flawed rubrics produce errors that cascade through the pipeline and cannot be corrected downstream. Iterative development evidence shows that rubric design alone accounted for roughly half of the Cohen's $\\kappa$ gains over 32 expert experiments.",
+      "content_hash": "f80e7d696fdaea28765a130ebccdc8bc1f2b1d6ff6890b4c8cc9945bccdde0e7",
+      "label": "rubric_quality_critical",
+      "qid": "github:2604_06240::rubric_quality_critical",
+      "type": "claim"
+    },
+    {
+      "content": "Generating the rubric and scoring the trajectory in a single LLM call leads to confirmation bias: the model creates criteria tailored to the agent's behavior rather than the task requirements. Separating rubric generation (from the task alone, without seeing the trajectory) from scoring eliminates this coupling.",
+      "content_hash": "cd77087696d25f5ccbdb0ee7b8a808cfc880b757ad90118920a96cb42496787e",
+      "label": "separate_generation_scoring",
+      "qid": "github:2604_06240::separate_generation_scoring",
+      "type": "claim"
+    },
+    {
+      "content": "Scoring each rubric criterion twice — once with only the agent's text action history (to check grounding) and once with full screenshot access (to verify visual state) — surfaces discrepancies that flag potential hallucinations. Screenshots take precedence over agent claims when they conflict.",
+      "content_hash": "1fc28571c3a0885815a3dcef618b6293e6ba5b19d687069c1453cd979e8a5400",
+      "label": "two_pass_hallucination_detection",
+      "qid": "github:2604_06240::two_pass_hallucination_detection",
+      "type": "claim"
+    },
+    {
+      "content": "Upgrading WebVoyager from GPT-4o to GPT-5.2 reduces outcome FPR from 0.45 to 0.10 on the internal dataset, but simultaneously increases outcome FNR from 0.24 to 0.44, and improves Cohen's $\\kappa$ only modestly (0.31 → 0.43). WebJudge with GPT-5.2 also shows similarly modest $\\kappa$ improvement. These results confirm that the UV's advantage comes from its architectural design, not from using GPT-5.2.",
+      "content_hash": "b8524452c06a8e8ab701a201ef906678040e704ebaf1eddda5caf5110b16c51c",
+      "label": "upgrading_backbone_insufficient",
+      "qid": "github:2604_06240::upgrading_backbone_insufficient",
+      "type": "claim"
+    },
+    {
+      "content": "The key design invariant of the Universal Verifier is that no relevant screenshot evidence can go undetected in the pipeline. This is specifically designed to not miss any hallucinations — which can be subtle (e.g., an agent reporting '+6.2% CIDEr score' when the paper shows '+2.8% CIDEr', a discrepancy that humans are likely to miss).",
+      "content_hash": "90f4054297fbf50ef4d5eeb78fefe1e9c4be4014f5fef4e83caba5cc50612e78",
+      "label": "uv_design_invariant",
+      "qid": "github:2604_06240::uv_design_invariant",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier achieves a false positive rate near zero on outcome labels: FPR = 0.01 on the internal dataset and FPR = 0.08 on the Browserbase dataset, meaning it almost never credits a trajectory with success when a human annotator would mark it as failure. This compares to FPR $\\geq 0.45$ for WebVoyager and FPR $\\geq 0.22$ for WebJudge.",
+      "content_hash": "2fefd12065cbb47a94b4086fd9365eb26fab9b5c1dbb1c1c1cb49c300d4f3463",
+      "label": "uv_fpr_near_zero",
+      "qid": "github:2604_06240::uv_fpr_near_zero",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier's outcome $\\kappa$ with human labels (0.58 on Browserbase) slightly exceeds the inter-annotator outcome $\\kappa$ range (0.53–0.57), and the UV's process $\\kappa$ (0.43) falls within the inter-annotator process $\\kappa$ range (0.36–0.45), indicating that the UV agrees with humans about as well as humans agree with each other on both dimensions.",
+      "content_hash": "d01755cff5b02664a71d2bb3aa23be2d8333829f1a4acae7fb66355c6ceaa8d7",
+      "label": "uv_matches_human_interannotator",
+      "qid": "github:2604_06240::uv_matches_human_interannotator",
+      "type": "claim"
+    },
+    {
+      "content": "On the Browserbase OM2W dataset ($n=106$), the Universal Verifier (GPT-5.2) achieves Cohen's $\\kappa = 0.58$ on outcome labels, compared to $\\kappa = 0.31$ for WebJudge (o4-mini) and $\\kappa = 0.13$ for WebVoyager (GPT-4o). The UV achieves FPR = 0.08 on outcome labels.",
+      "content_hash": "87e732970ce87c631e78bdfc69b4e6fda9658934eac2d0cf89371e80971018ec",
+      "label": "uv_outcome_kappa_browserbase",
+      "qid": "github:2604_06240::uv_outcome_kappa_browserbase",
+      "type": "claim"
+    },
+    {
+      "content": "On the internal dataset ($n=140$), the Universal Verifier (GPT-5.2) achieves Cohen's $\\kappa = 0.64$ on outcome labels, compared to $\\kappa = 0.44$ for WebJudge (o4-mini) and $\\kappa = 0.31$ for WebVoyager (GPT-4o). The UV achieves FPR = 0.01 and FNR = 0.32.",
+      "content_hash": "fd48f221d75c4d11eaa662272be19337ed79605fd9e00192faff599dab41dcd7",
+      "label": "uv_outcome_kappa_internal",
+      "qid": "github:2604_06240::uv_outcome_kappa_internal",
+      "type": "claim"
+    },
+    {
+      "content": "The Universal Verifier outputs a richer response $r = (r_{\\text{proc}}, r_{\\text{out}}, d)$ than binary verifiers: a process score $r_{\\text{proc}} \\in [0,1]$ (normalized rubric score), an outcome score $r_{\\text{out}} \\in \\{0,1\\}$ (binary success/failure), and a diagnostic report $d$ that classifies and localizes each failure within the trajectory using the 7-category error taxonomy.",
+      "content_hash": "cd22612ef48398b2a25506b15b044148a0f0304e5e87813f997b9afd766a065f",
+      "label": "uv_richer_output",
+      "qid": "github:2604_06240::uv_richer_output",
+      "type": "claim"
+    },
+    {
+      "content": "Errors in a CUA verifier compound: a verifier that gets it wrong corrupts both evaluation benchmarks and training data (reinforcement learning signals). Without reliable verification, neither evaluation nor training signal can be trusted.",
+      "content_hash": "ef255abf85b3e0c8bc41445b9c8691c7efdf8453553dade88a7f4c6eb4639866",
+      "label": "verifier_errors_compound",
+      "qid": "github:2604_06240::verifier_errors_compound",
+      "type": "claim"
+    },
+    {
+      "content": "A verifier that inspects only the final screenshot $s_T$ or a fixed subset $\\{s_{t_1}, \\ldots, s_{t_k}\\} \\subset \\tau$ is a strict approximation of the human oracle $V^*$ and systematically underperforms on trajectories where $T$ is large, because critical state changes occur at arbitrary timesteps. Reliable verification requires attending to all $T+1$ observations.",
+      "content_hash": "4f7d49f77902dc70d1cf7ce920fe3555e6fbc4f8e0176a2459b5fe0300d55999",
+      "label": "verifier_needs_all_screenshots",
+      "qid": "github:2604_06240::verifier_needs_all_screenshots",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:02c66227a395ed9eb9fee5ced11d320fcf424a2e781716909aede862e288a96a",
+  "manifest_schema_version": 1,
+  "package": "2604-06240",
+  "version": "0.1.0"
+}
