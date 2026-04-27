@@ -1,0 +1,2014 @@
+{
+  "ir_hash": "sha256:a0ebd789800c18336b789ee74f16421fda36259f805c230d8a126188e102071b",
+  "knowledges": [
+    {
+      "content": "Test-Time Scaling (TTS) for LLM reasoning includes parallel methods (e.g., Best-of-N) and sequential refinement, both of which depend on a reward model (verifier) to discern solution quality and guide search.",
+      "content_hash": "d5e6d47331dcf3618015a0b7ab373c7ac0ba3deb23d596ec24d02577e69d657c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_16004::tts_setting",
+      "label": "tts_setting",
+      "module": "motivation",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Recent milestones on the International Mathematical Olympiad by OpenAI and Google highlight the rapid ascent of reasoning models such as Gemini-3 and DeepSeekMath-V2.",
+      "content_hash": "ef7d84797d73acc80356253e5de04df1bc06c88246f0e9a22deeb452bf10af96",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::reasoning_milestones_setting",
+      "label": "reasoning_milestones_setting",
+      "module": "motivation",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "The efficacy of Test-Time Scaling for LLM reasoning is fundamentally dependent on the reward model (verifier) used to score and select candidate solutions.",
+      "content_hash": "70b8d70a7579e029296a6ded605548b14530d9f692be4aeaddcf14e22fd530a4",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_16004::verifier_role_claim",
+      "label": "verifier_role_claim",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Verifier centrality to TTS is asserted by multiple cited works (Gui 2024; Kang 2025) and is the foundational premise of the entire TTS literature."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Outcome-level RMs (ORMs) and process-level RMs (PRMs) only emit scalar values and therefore lack interpretability when used as verifiers.",
+      "content_hash": "3c4217fbfe09bfd7d9f58033af5d8a87e76c1fec043010f71db7d1bc9f4fc157",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_16004::orm_prm_limitation_claim",
+      "label": "orm_prm_limitation_claim",
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Generative Reward Models (GenRMs) trained with next-token prediction typically employ single-turn reasoning to assess candidate solutions.",
+      "content_hash": "e4c70feac96fa2798a66930022c146db9e26a4ef00e230fc63575ffb6276da13",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_16004::genrm_single_turn_claim",
+      "label": "genrm_single_turn_claim",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Single-turn assessment is a definitional / observational property of the GenRM paradigm as the authors and the cited works describe it."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Single-turn GenRMs suffer from error propagation: because LLMs are mostly trained on correct or near-correct solutions, they struggle to issue a correct verdict when conditioned on a flawed solution and are easily misled by superficially plausible but incorrect answers.",
+      "content_hash": "c6eb06fd164350cc5374393d84ac412d4118796c034fb699252a0ba336d5604d",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_16004::error_propagation_claim",
+      "label": "error_propagation_claim",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Supported by Zhang et al. 2025b and illustrated by the paper's Figure 1 case study; an established failure mode of single-turn LLM verifiers."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Single-turn GenRMs lack external grounding: without integration with symbolic solvers or external tools, they hallucinate on computation-intensive or knowledge-heavy tasks and exhibit unstable performance.",
+      "content_hash": "545cd8e8eca53571400d7e525a6f6d26d2ccf4ed4383afdf99948a36eb617ec7",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_16004::external_grounding_gap_claim",
+      "label": "external_grounding_gap_claim",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Well-attested phenomenon for tool-free LLM verifiers (Dong 2025a/b; Feng 2025); consistent with the broader hallucination literature."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Existing GenRMs are unreliable in complex domains because they suffer from error propagation and lack external grounding.",
+      "content_hash": "e1b01e0ce8598ac8c5b083c049f8db5091c31fe99460981d9fead48aa7182681",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_16004::genrm_unreliable_claim",
+      "label": "genrm_unreliable_claim",
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Reliable verification calls for an agentic reward modeling paradigm that uses multi-turn reasoning integrated with external tools.",
+      "content_hash": "62274241739e39dca4286211bd4676286922d0dc79809e24bbf2bedbda417a2f",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_16004::paradigm_shift_claim",
+      "label": "paradigm_shift_claim",
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Reward Models (RMs) play a pivotal role in aligning large language models with human preferences. Outcome-level RMs assign scalar rewards to complete responses; PRMs supervise intermediate steps; GenRMs reformulate reward modeling as next-token prediction.",
+      "content_hash": "d09cdec7d216216c8ce3a4e60c769bac6352bee74a5bcbb9690b35680325a499",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_16004::rm_alignment_setting",
+      "label": "rm_alignment_setting",
+      "module": "s2_related",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Existing tool-augmented and LLM-as-Judge reward models either fail to tightly integrate tool execution into the reasoning process or do not provide point-wise feedback required for test-time scaling.",
+      "content_hash": "a102f0d28de0d8d4b8b0d1bc71c2dfede44f484504487afe3f725f2d72c0188e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::prior_tool_augmented_rm_claim",
+      "label": "prior_tool_augmented_rm_claim",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Author's own characterization of the prior tool-augmented RM literature, with citations (Li 2024; Xu 2025; Peng 2025); plausible but partly polemical."
+      },
+      "module": "s2_related",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Reformulating verification as a bidirectional, multi-turn, tool-augmented process is novel relative to prior reward-model and TTS literature.",
+      "content_hash": "a7269137d5b92f74f043fb8d48547dd641f2e80f9d423afc5955e50c7dd94916",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_16004::bidirectional_novelty_claim",
+      "label": "bidirectional_novelty_claim",
+      "module": "s2_related",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Parallel Scaling (Best-of-N): for input x, the actor samples k candidate solutions {y(j)}; the verifier scores each candidate via the True-token logit of its verifying rationale and selects the highest-confidence one.",
+      "content_hash": "ae6b26d31adc1d0dd4d76a4095dd5ec970355af5d281bafe4fcfd111c83e95f0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_16004::bon_setting",
+      "label": "bon_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Sequential Scaling: given query x and an initial solution y0, the verifier produces a critique f0; the actor then refines its solution iteratively, y_t ~ pi_theta(x, y0, f0, ..., y_{t-1}, f_{t-1}).",
+      "content_hash": "1ad5a5069607d655d85d985f91feb2e00dcca816233ab1ff7ad4c0f2918131a7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::sequential_setting",
+      "label": "sequential_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Forward agent: starting from problem premises, sequentially traces the solution path via a Plan-Validate-Verdict pipeline, validating that each step v_{i-1} is a sufficient condition for v_i. Empowered to invoke a Python interpreter and to interleave Thought-Action-Observation rounds.",
+      "content_hash": "6af2658719e4b62b197749cc3a82a008ed8a06df472a00029f966516405c8a7d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_16004::forward_agent_setting",
+      "label": "forward_agent_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Backward agent: reasons in reverse from the final answer back to the problem statement via the same Plan-Validate-Verdict pipeline, checking that all required problem constraints are fulfilled (necessity check).",
+      "content_hash": "d8cdaef0fd6128b8b4a740019c7225291e5178ff67dbcaa24da3151bc6d3333a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_16004::backward_agent_setting",
+      "label": "backward_agent_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "AgentV-RL training recipe: synthetic data engine that role-plays forward and backward agents to generate verification trajectories with quality control, followed by a two-stage schema of rejection-sampling SFT and Group Relative Policy Optimization (GRPO) reinforcement learning. The verifier is trained on 15K SFT and 50K RL samples starting from Qwen3-4B.",
+      "content_hash": "7c288ea7d0e9b2d594b304d6d709701eca8815d749f646ef84f3f126070d7373",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_16004::agentv_setting",
+      "label": "agentv_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "GRPO objective uses a clipped importance ratio with a KL-to-reference penalty and filters zero-variance reward groups; binary outcome reward r=1 if predicted verdict matches ground truth, else -1; compiler execution observations are excluded from the loss to mitigate environment memorization.",
+      "content_hash": "dde0126b553b7d4b984f5d61e80eefb1aa891da984af4be0129bbc935e44d366",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_16004::grpo_setting",
+      "label": "grpo_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "The forward agent performs sufficiency checking by validating that each preceding step is a sufficient condition for the subsequent derivation.",
+      "content_hash": "8cc2ca1df475e3a5dbcd643f3dd5bf850c256b95f30fada6d591f224b0c98d42",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_16004::forward_sufficiency_claim",
+      "label": "forward_sufficiency_claim",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Definitional description of the forward agent, supported by the explicit Plan-Validate-Verdict template in Section 3.2 and the Figure 3 case study."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The backward agent performs necessity checking by validating that the solution is grounded in the original problem constraints.",
+      "content_hash": "d5a5fb09748febb63c3c8507918ced136e6467ce74ae69fe7c2804a66203ddfe",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_16004::backward_necessity_claim",
+      "label": "backward_necessity_claim",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Definitional description of the backward agent under the same Plan-Validate-Verdict template; aggregated with the forward agent in Appendix C.3."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Coordinating a forward (sufficiency) agent and a backward (necessity) agent yields a bidirectional, tool-augmented review that is more comprehensive than single-turn or unidirectional verification.",
+      "content_hash": "f1abf1e6c06056e16c3c200a2c45961fa86bfd18cae69753963260ae58de68c3",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_16004::bidirectional_design_claim",
+      "label": "bidirectional_design_claim",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Both agents can iteratively decompose complex solutions into verifiable sub-steps and invoke external tools (e.g., a Python interpreter) for numerical calculation.",
+      "content_hash": "35d295f460bf7a775d5d957314d48c6cf7584581fe2af9ebf534ea4f1e31b468",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_16004::tool_augmented_capability_claim",
+      "label": "tool_augmented_capability_claim",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Tool integration is implemented and described in Appendix B.2.3; agents demonstrably invoke a Python interpreter in the documented trajectories."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The capability of the multi-agent forward+backward system can be distilled into a single LLM via the AgentV-RL recipe (synthetic-data SFT followed by GRPO RL).",
+      "content_hash": "ebdf67e1ebf18efa6ae214db9025130109a2b1b7a80f5a5e71370cf297287d9c",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_16004::multi_agent_distillable_claim",
+      "label": "multi_agent_distillable_claim",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Equation 8: J_GRPO(psi) = E[(1/G) sum_i (1/|H_i|) sum_t min(r_{i,t}*A_{i,t}, clip(r_{i,t}, 1-eps_low, 1+eps_high)*A_{i,t})] - beta * D_KL(pi_psi || pi_ref), with r_{i,t} the importance-sampling ratio; zero-variance reward groups are filtered.",
+      "content_hash": "ae51bef3eae30a97b1600df337e8ec4db3f3cae327603077d297e1a4bc3b6576",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_16004::grpo_objective_setting",
+      "label": "grpo_objective_setting",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Filtering zero-variance reward groups and using clipped importance ratios with a KL penalty yields a stable GRPO update for verifier training.",
+      "content_hash": "c9251bbfc77c9b9eae57d4e1e480f7cafc50abe9a824dec2f22105c0e5e496f2",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2604_16004::grpo_stability_claim",
+      "label": "grpo_stability_claim",
+      "module": "s3_method",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Best-of-N evaluation on MATH500, GSM8K, Gaokao2023, and AIME24 with N in {32, 64, 128}, comparing against text reasoning LLMs, ORMs (e.g., INF-ORM-Llama3.1-70B, Skywork-V2-Llama-8B), and PRMs (e.g., Qwen2.5-Math-PRM-7B, Math-Shepherd, Skywork-PRM).",
+      "content_hash": "416331de04b00f9f6951b571b0953eee236122c71ffb8627bd6c4d2f57278a83",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_16004::bon_benchmarks_setting",
+      "label": "bon_benchmarks_setting",
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Iterative refinement evaluation across three turns on the same benchmarks, reporting Acc, Delta-up (correction rate), and Delta-down (degradation rate) per turn against verifier baselines including DS-Distill-14B and Qwen3-4B-Think.",
+      "content_hash": "d7dba2decc27a8936350fe352f26af110c6047fc332c13f1a503f701359bd2ac",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::iter_refine_setting",
+      "label": "iter_refine_setting",
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "On Table 1, Agentic-Verifier-Qwen3-4B achieves the best BoN accuracy in the Ours category across MATH500 (up to 79.0% at N=128), GSM8K (93.3%), Gaokao2023 (57.4%), and AIME24 (53.3%), surpassing the previous best ORM Skywork-V2-Llama-8B on MATH500 by 25.2 percentage points.",
+      "content_hash": "6bc7d52b90b5e3ba43710384730ee4ea1b596ed5404e3fc2251c905f5ff6a724",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_16004::table1_observation",
+      "label": "table1_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct numerical read-off from Table 1 (BoN performance); near-self-certifying given the published table."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "On Table 2, Agentic-Verifier-Qwen3-4B yields the highest accuracy and the largest Delta-up (e.g., 41.6% on MATH500, 40.3% on Gaokao2023 in turn 1) with low Delta-down, and remains stable across turns 2 and 3 while baselines such as DS-Distill-14B exhibit larger degradations.",
+      "content_hash": "4873088ac304f2717e3e7a2b530c4ec209f844866b825f038cbfefd5065ddc7d",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_16004::table2_observation",
+      "label": "table2_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct numerical read-off from Table 2 (iterative refinement); high confidence in the reported numbers."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Agentic Verifier achieves state-of-the-art Best-of-N performance across MATH500, GSM8K, Gaokao2023, and AIME24, with the 4B variant outperforming the prior best ORM (Skywork-V2-Llama-8B) on MATH500 by 25.2 percentage points.",
+      "content_hash": "f162d4af7614a091e040e961b939510fb5a3e296e98fa76639effaff8b4c47fb",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_16004::bon_sota_claim",
+      "label": "bon_sota_claim",
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Agentic Verifier's BoN accuracy continues to improve as N grows from 32 to 128, particularly on challenging benchmarks like AIME24 (reaching 53.3% at N=128 with the 4B variant), unlike many baselines whose accuracy plateaus or declines.",
+      "content_hash": "bbc19ad1a34facaad43e8625a30c7675fb74b70a08612e89d42e47a3e577d193",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_16004::bon_scales_with_n_claim",
+      "label": "bon_scales_with_n_claim",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table1_observation"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Agentic Verifier provides high-quality critiques that drive faster convergence in iterative refinement: high Delta-up with low Delta-down in early turns and stable or only slightly declining accuracy in later turns, avoiding the degradation seen with competing verifiers.",
+      "content_hash": "2d817de706867c6aa62266b8744acee26e014b1638d1d64ab40474e397c52b38",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_16004::iter_refine_helpful_claim",
+      "label": "iter_refine_helpful_claim",
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Outcome-level reward models (in particular Skywork-V2-Llama-8B and INF-ORM-Llama3.1-70B) match or exceed Agentic-Verifier-Qwen3-4B on the four BoN benchmarks.",
+      "content_hash": "fe6575516fab3e367d896761de202a1cda9eb443dcc8fa78199d2b0d4d0fc1e6",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_16004::orm_dominance_null_claim",
+      "label": "orm_dominance_null_claim",
+      "metadata": {
+        "prior": 0.2,
+        "prior_justification": "Null hypothesis the paper sets out to refute: Table 1 directly contradicts ORM dominance over Agentic-Verifier-Qwen3-4B. Low prior; the contradiction edge to bon_sota_claim further suppresses it under BP."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_16004::orm_null_contradiction",
+      "label": "orm_null_contradiction",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Ablation study (Figure 4) compares (a) forward-agent-only, (b) backward-agent-only, and (c) the full Agentic Verifier under both BoN sampling and verifier-revision.",
+      "content_hash": "ea048f65475acbf06fab0e01b17879820f8015455c316eb4893cbef98c0b8ae7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_16004::ablation_setting",
+      "label": "ablation_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "In Figure 4, both the forward-only and backward-only variants are competitive, but the full Agentic Verifier (forward + backward) achieves the best accuracy on MATH500 and Gaokao2023 across N in {32, 64, 128} and across refinement rounds.",
+      "content_hash": "e9aa72ab1f43f13493657b2e3a19523e4259d6446615dace5c447c8490b5bcfa",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::ablation_observation",
+      "label": "ablation_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off from Figure 4 ablation: forward/backward variants competitive and full design strictly best on the plotted benchmarks."
+      },
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The forward and backward agents are synergistic: combining them yields strictly better verification performance than either single-direction variant.",
+      "content_hash": "f9073ed9ee1e3cbd4acfb33bd1808f5d439f4a57fe086943d8545174de118241",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_16004::bidirectional_synergy_claim",
+      "label": "bidirectional_synergy_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Tool ablations in Appendix C.5: a no-tool variant of Agentic Verifier already outperforms the base model; adding the Python tool further improves performance, with tool usage moderate and stable in practice.",
+      "content_hash": "180ac01074c4cfe62261f11f04bdb3db0c26b0b3bd0a2c97c27c85d64d626fd2",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_16004::tool_ablation_setting",
+      "label": "tool_ablation_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Both the agentic structure and tool integration contribute additively to verifier performance, with the agentic structure providing the larger share of the gain.",
+      "content_hash": "d56ebab1491e0a27d110870012cda2d90a8a42b96b812a58319a8ffd3bb3299b",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_16004::tool_contributes_claim",
+      "label": "tool_contributes_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Figure 5 controllable study compares Train-free, SFT, and SFT+RL variants on BoN. Train-free already beats the base model by up to 2.6 points on Gaokao2023; SFT adds further gains; SFT+RL achieves the strongest results.",
+      "content_hash": "ff2b0016301120c70769e843da8691f4b7e67257dde400d3d59d9bdf6293199b",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_16004::training_ablation_setting",
+      "label": "training_ablation_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Each stage of the AgentV-RL recipe contributes a measurable improvement: Train-free > Base, SFT > Train-free, SFT+RL > SFT.",
+      "content_hash": "171808714fbfc5602e476c7d186ecaac83fba26d9b55220c08f2b5ef4e168d5b",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_16004::training_recipe_claim",
+      "label": "training_recipe_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Figure 6: sampling multiple verification trajectories per candidate (1, 4, 8) monotonically improves Best-of-32 accuracy on MATH500 and Gaokao2023.",
+      "content_hash": "2d3c0837bcc14f5273d602fd9b537d610f1d6f9f87af988a209e65b949d96580",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_16004::inference_scaling_setting",
+      "label": "inference_scaling_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Table 3: scaling Agentic Verifier from Qwen3-0.6B to 1.7B to 4B yields monotone accuracy gains (e.g., +5.2 points on Gaokao2023 from 0.6B to 1.7B, with further gains at 4B) on MATH500 and Gaokao2023 across N in {32, 64, 128}.",
+      "content_hash": "c8775bd767b8719acfece062fc4cd1ea88c46d19bb566e39f5196190e19d48d3",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_16004::model_size_setting",
+      "label": "model_size_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Best-of-32 accuracy on MATH500 and Gaokao2023 increases as more verification trajectories are sampled (1 -> 4 -> 8).",
+      "content_hash": "7ee74c2b4f659f101bbc13453747b336eb370921f4611e47bd47cb8a8358cec0",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_16004::inference_scaling_obs",
+      "label": "inference_scaling_obs",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "BoN accuracy on MATH500 and Gaokao2023 increases monotonically as the verifier scales from 0.6B to 1.7B to 4B parameters.",
+      "content_hash": "7f9af346e484dce21f47626ce20096a1cd4c7f354cc12d1791ce0d85fdd3a1e2",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_16004::model_size_obs",
+      "label": "model_size_obs",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The Agentic Verifier framework scales positively along both axes available to it: inference-time compute (sampled trajectories) and model size (Qwen3 family).",
+      "content_hash": "8ba78756d04b2212e7b8af21752b49835aadd22b330b9231d90a62e6972cf21d",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_16004::scaling_law_claim",
+      "label": "scaling_law_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Table 4: Agentic-Verifier-Qwen3-4B achieves 70.86 on LiveCodeBench and 66.00 on HotpotQA, outperforming Qwen3-4B (57.14 / 40.00), Qwen2.5-7B-Instruct, DS-Distill-14B, and Mistral-Small-24B-Instruct.",
+      "content_hash": "74ad842d5a711a4fc7ea9344649d3c6326bdd8be28b1eede496e06541672c121",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_16004::generalization_setting",
+      "label": "generalization_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Agentic-Verifier-Qwen3-4B beats all listed baselines on both LiveCodeBench (competitive code) and HotpotQA (multi-hop QA) in Table 4.",
+      "content_hash": "c9af236ca01746b65c13987a7b5b7e72f6b40dc28ac0af2ebdcb4ec47bf089cf",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2604_16004::generalization_observation",
+      "label": "generalization_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off from Table 4: Agentic-Verifier-Qwen3-4B leads on both LiveCodeBench and HotpotQA against all listed baselines."
+      },
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The bidirectional, tool-augmented agentic-verification paradigm generalizes beyond math to competitive code and multi-hop QA reasoning.",
+      "content_hash": "956bda5d72963acf0fcc490bb7b3776381ccdc6fe0725c067e3189a48ad8eafc",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_16004::generalization_claim",
+      "label": "generalization_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Table 5 latency analysis on a single A100 GPU (vLLM, batch=128) reports Base = 119.0s (2560 tokens, 1 round), Forward = 159.1s (4114 tokens, 5.7 rounds), Backward = 164.3s (4235 tokens, 5.6 rounds), Agentic-Verifier = 323.4s (8349 tokens, 11.3 rounds, 1.6 tool calls).",
+      "content_hash": "09d348b5a3df3c4b628aaca171331c594efc0a755a3a023cd7102e5464cf30ae",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2604_16004::latency_setting",
+      "label": "latency_setting",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Agentic Verifier consumes ~3.3x more tokens, ~11x more rounds, and ~2.7x more wall clock time than the base verifier; forward-only and backward-only variants sit between the two extremes.",
+      "content_hash": "31060b966dc1b1049b5508fdc60f64914c45cb2cf02c41146b3b341f6f1ee5d3",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2604_16004::latency_observation",
+      "label": "latency_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off from Table 5; numbers are reported with explicit hardware and software configuration (A100 + vLLM, batch=128)."
+      },
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The accuracy gains of Agentic Verifier come at a substantial computational cost (tokens, rounds, latency); forward-only and backward-only variants offer scalable trade-offs for resource-constrained deployment.",
+      "content_hash": "3c7ed43b0a542749a05622251b721d0cddc54eae1ce151a0bcb1c3a4abab84ab",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2604_16004::cost_accuracy_tradeoff_claim",
+      "label": "cost_accuracy_tradeoff_claim",
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The reported Table 5 numbers are accurate descriptions of the measured cost.",
+      "content_hash": "05e31baf30941e0f18255630c27c739ac2c053ef29136684f4579526766fd5a7",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2604_16004::latency_axiom",
+      "label": "latency_axiom",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Author-reported measurements taken as accurate; this serves as the substituted premise in the textbook-style deduction over Table 5."
+      },
+      "module": "s4_analysis",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Agentic Verifier is a promising paradigm for agentic reward modeling, delivering substantial improvements over SOTA ORMs and PRMs in both parallel and sequential TTS.",
+      "content_hash": "32573c25c2e464bfb9100d17d712bf80a3edc5dfb930511df58b8c686abed56e",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_16004::agentic_verifier_promising_claim",
+      "label": "agentic_verifier_promising_claim",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The paper acknowledges three limitations: (1) reliance on synthetic tool-augmented data may not represent real-world reasoning variety, (2) the multi-turn process increases computational cost, and (3) performance is tied to the coverage and reliability of available external tools.",
+      "content_hash": "f629762743704f85e9a08f7166feaa694ecaa200c773e26c2bae51a133bf3ae6",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_16004::limitations_setting",
+      "label": "limitations_setting",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "Reliance on synthetic verification trajectories may limit generalization to real-world reasoning problems whose distribution is not covered by the synthetic engine.",
+      "content_hash": "194156e82466c216142c96ed481617f94c4639f6a5d6e590d390a8f3bbfa277f",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_16004::synthetic_data_limit_claim",
+      "label": "synthetic_data_limit_claim",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The multi-turn deliberative process increases compute cost and presents challenges for real-time or resource-limited deployment.",
+      "content_hash": "99b7e65719ba99219460c60fdffad818e7eb6775c2f5b0ef1d42b22432aa4555",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_16004::cost_limit_claim",
+      "label": "cost_limit_claim",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Performance depends on the coverage and reliability of external tools, which can bottleneck certain tasks.",
+      "content_hash": "a3de6bd6e6a3d45812ed15dfb084f16cfa36249540623875a2e1cde5ed95fd69",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_16004::tool_dependency_limit_claim",
+      "label": "tool_dependency_limit_claim",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The authors note in the abstract that code is available at GitHub, supporting reproducibility of the AgentV-RL recipe.",
+      "content_hash": "ba4ae66eea2777722b5e0e12cec1090b114315bd7e0a57f8e7d4f0635e137e95",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_16004::code_release_setting",
+      "label": "code_release_setting",
+      "module": "s5_conclusion",
+      "parameters": [],
+      "type": "setting"
+    },
+    {
+      "content": "all_true(github:2604_16004::error_propagation_claim,github:2604_16004::external_grounding_gap_claim,github:2604_16004::genrm_single_turn_claim)",
+      "content_hash": "4e893421d689b7591645b39eea6e5d7858e490cb7b0f1131ab8f07b9bbb4f7f9",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_0448c663",
+      "label": "__conjunction_result_0448c663",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::error_propagation_claim,github:2604_16004::external_grounding_gap_claim,github:2604_16004::genrm_single_turn_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_892607c740da79b4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_0448c663,github:2604_16004::genrm_unreliable_claim)",
+      "content_hash": "1a383b48f5463564aa9e67fba7ca61d1fe0cbbd1b8a144175bc9c29c8d2298a6",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_5f0a5f81",
+      "label": "__implication_result_5f0a5f81",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_0448c663,github:2604_16004::genrm_unreliable_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_892607c740da79b4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::genrm_unreliable_claim,github:2604_16004::verifier_role_claim)",
+      "content_hash": "70bfe44fd54c565383d15a637a9d3cf8f85af8f7f62167ccdc353a308db94089",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_4e313ffe",
+      "label": "__conjunction_result_4e313ffe",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::genrm_unreliable_claim,github:2604_16004::verifier_role_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_72eda23b353a5c26",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_4e313ffe,github:2604_16004::paradigm_shift_claim)",
+      "content_hash": "e0ee977c353c3812f7c1f9f56e4923440248567561906011cec8e6e11fe0ee40",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_17e2940d",
+      "label": "__implication_result_17e2940d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_4e313ffe,github:2604_16004::paradigm_shift_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_72eda23b353a5c26",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::prior_tool_augmented_rm_claim,github:2604_16004::genrm_single_turn_claim,github:2604_16004::paradigm_shift_claim)",
+      "content_hash": "39c45104c44022183c40273a3dc49b9ff1e1697b76bb54e810399f7811f73c49",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_961705c2",
+      "label": "__conjunction_result_961705c2",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::prior_tool_augmented_rm_claim,github:2604_16004::genrm_single_turn_claim,github:2604_16004::paradigm_shift_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_02fd8b53938cb303",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_961705c2,github:2604_16004::bidirectional_novelty_claim)",
+      "content_hash": "2f1b147e862af07ae502ff5d272cb9dc737145370eea11fd1dd2350b9c4c5465",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_15d1b1e0",
+      "label": "__implication_result_15d1b1e0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_961705c2,github:2604_16004::bidirectional_novelty_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_02fd8b53938cb303",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::forward_sufficiency_claim,github:2604_16004::backward_necessity_claim,github:2604_16004::paradigm_shift_claim)",
+      "content_hash": "b1a3bccb30d61a875cf8623c6462b3f2efca07ba629602847a7ed3b69d995fcb",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_f0f475c0",
+      "label": "__conjunction_result_f0f475c0",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::forward_sufficiency_claim,github:2604_16004::backward_necessity_claim,github:2604_16004::paradigm_shift_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_421e7a34b3467738",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_f0f475c0,github:2604_16004::bidirectional_design_claim)",
+      "content_hash": "7ecdc0b45ba3ff67a950637fe11a8e3af1ac4033eecff5cf28e10317ccffcbb0",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_b053f215",
+      "label": "__implication_result_b053f215",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_f0f475c0,github:2604_16004::bidirectional_design_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_421e7a34b3467738",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::bidirectional_design_claim,github:2604_16004::tool_augmented_capability_claim)",
+      "content_hash": "c85c6090d30986584c97f1a007a2d6ae88ca55ff54b2ca7b8c176e0d7795bb03",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_54c1dd47",
+      "label": "__conjunction_result_54c1dd47",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::bidirectional_design_claim,github:2604_16004::tool_augmented_capability_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0de1195f7332d798",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_54c1dd47,github:2604_16004::multi_agent_distillable_claim)",
+      "content_hash": "3824a6616dd9b9b8f4bde8147d90f7ddd215bef4b15363852ce9a391d50d07ba",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_0ee9959c",
+      "label": "__implication_result_0ee9959c",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_54c1dd47,github:2604_16004::multi_agent_distillable_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0de1195f7332d798",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::multi_agent_distillable_claim,github:2604_16004::grpo_stability_claim)",
+      "content_hash": "48b4cc4dbca8199a882a913220a603c7ef4fe9cb2be56a0a92bbb6c12311d6eb",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_b96d5be0",
+      "label": "__implication_result_b96d5be0",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::multi_agent_distillable_claim,github:2604_16004::grpo_stability_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5caa9a877f3cfa87",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::table1_observation,github:2604_16004::bidirectional_design_claim,github:2604_16004::multi_agent_distillable_claim,github:2604_16004::tool_augmented_capability_claim)",
+      "content_hash": "c3ae7f3121a04413603a4cb74aa71daa711164e278811ec269ff1d3a1d5c27bf",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_717499bf",
+      "label": "__conjunction_result_717499bf",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::table1_observation,github:2604_16004::bidirectional_design_claim,github:2604_16004::multi_agent_distillable_claim,github:2604_16004::tool_augmented_capability_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_35c635b00caa5a7c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_717499bf,github:2604_16004::bon_sota_claim)",
+      "content_hash": "24e822a40a50f4a8dd00226abd95eb245fade1464f2f6cd3af1ab1e120304d98",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_0f5ddb37",
+      "label": "__implication_result_0f5ddb37",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_717499bf,github:2604_16004::bon_sota_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_35c635b00caa5a7c",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::table1_observation,github:2604_16004::bon_scales_with_n_claim)",
+      "content_hash": "cccb4eb67c64924ea5a46b74fd6a2d3c27e854e1fb982aa678b752dc03c8c8f5",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_cb48ac50",
+      "label": "__implication_result_cb48ac50",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::table1_observation,github:2604_16004::bon_scales_with_n_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fef5244d9f6a4ece",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::table2_observation,github:2604_16004::bidirectional_design_claim,github:2604_16004::tool_augmented_capability_claim)",
+      "content_hash": "2e7c1bde1611a7009890d90ac9c4ee19adb953111dd05c5c2ced42f36b51738c",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_798a5bf5",
+      "label": "__conjunction_result_798a5bf5",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::table2_observation,github:2604_16004::bidirectional_design_claim,github:2604_16004::tool_augmented_capability_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_663b87d03dd951dc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_798a5bf5,github:2604_16004::iter_refine_helpful_claim)",
+      "content_hash": "9da64e96a21add3d698cb67f1b3ed3dcef30c464e92ecbf25acb6ead2fede881",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_b697296e",
+      "label": "__implication_result_b697296e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_798a5bf5,github:2604_16004::iter_refine_helpful_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_663b87d03dd951dc",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::ablation_observation,github:2604_16004::bidirectional_design_claim)",
+      "content_hash": "0d1e02742af6c645b52b48d6ac0ed5a44e6a036e6f9f3059acfd8f56bca38a3e",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_a7e8244b",
+      "label": "__conjunction_result_a7e8244b",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::ablation_observation,github:2604_16004::bidirectional_design_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1af9aff6c7542b72",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_a7e8244b,github:2604_16004::bidirectional_synergy_claim)",
+      "content_hash": "b95f211f62a4109c2849cf76b6b83bd2ce71e1b9eeed34337cf809515e82e110",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_7a9833f9",
+      "label": "__implication_result_7a9833f9",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_a7e8244b,github:2604_16004::bidirectional_synergy_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1af9aff6c7542b72",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::tool_augmented_capability_claim,github:2604_16004::tool_contributes_claim)",
+      "content_hash": "fbc3fa2e2223cff95ba755bd6fe95db1e4069534c97c17c33cf4ace4d85c4a35",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_e577ff36",
+      "label": "__implication_result_e577ff36",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::tool_augmented_capability_claim,github:2604_16004::tool_contributes_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_96ea011bfcc68ef5",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::multi_agent_distillable_claim,github:2604_16004::training_recipe_claim)",
+      "content_hash": "647ac7c61b26e58e39581578c7907af18a282614570c839411c4bf854f935057",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_08ff1ac5",
+      "label": "__implication_result_08ff1ac5",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::multi_agent_distillable_claim,github:2604_16004::training_recipe_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fa04e18109733dc2",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::scaling_law_claim,github:2604_16004::inference_scaling_obs)",
+      "content_hash": "3b75f922307d613706176dcffc914068b3168d58a9c9ee87bffa7507c40e6172",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_12db5cbb",
+      "label": "__implication_result_12db5cbb",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::scaling_law_claim,github:2604_16004::inference_scaling_obs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1d741556676b5be9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::scaling_law_claim,github:2604_16004::model_size_obs)",
+      "content_hash": "efa51a6214e17bdd41e54c25d1e6dc2f488022b84bdb260bf25238c5c0ffc797",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_e932eb5b",
+      "label": "__implication_result_e932eb5b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::scaling_law_claim,github:2604_16004::model_size_obs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_32ae263677d24962",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::generalization_observation,github:2604_16004::bidirectional_design_claim)",
+      "content_hash": "d1a026a279a768b91e567b9ee7b184bc37aadddf8851b4b3568dab5d47d799f2",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_e9ef80ac",
+      "label": "__conjunction_result_e9ef80ac",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::generalization_observation,github:2604_16004::bidirectional_design_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fbeac04db6ce24c5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_e9ef80ac,github:2604_16004::generalization_claim)",
+      "content_hash": "978123c7e8ee0d5f6584e49fe9e8a132defdc62cfd57d4cf23e6e253f09effb3",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_3026aa01",
+      "label": "__implication_result_3026aa01",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_e9ef80ac,github:2604_16004::generalization_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fbeac04db6ce24c5",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::latency_observation,github:2604_16004::latency_axiom)",
+      "content_hash": "a5c149ebe03f872fd3e515af018cfb47f701fee8db82124afdc79a69cd278fc6",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_fe88a232",
+      "label": "__conjunction_result_fe88a232",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::latency_observation,github:2604_16004::latency_axiom)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_04edbf174f399438",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_fe88a232,github:2604_16004::cost_accuracy_tradeoff_claim)",
+      "content_hash": "10c58c1eab41893e64fdf179802b267b5a3bc831fd12a67c226e5f6fbff950b9",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_7627ae2e",
+      "label": "__implication_result_7627ae2e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_fe88a232,github:2604_16004::cost_accuracy_tradeoff_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_04edbf174f399438",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_16004::bon_sota_claim,github:2604_16004::iter_refine_helpful_claim,github:2604_16004::bidirectional_synergy_claim,github:2604_16004::scaling_law_claim,github:2604_16004::generalization_claim)",
+      "content_hash": "4a510059cd9e7e38d06016438e9cc8651bcba8f4fb6fcf7157887fef1d8a0441",
+      "exported": false,
+      "id": "github:2604_16004::__conjunction_result_78c40b25",
+      "label": "__conjunction_result_78c40b25",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_16004::bon_sota_claim,github:2604_16004::iter_refine_helpful_claim,github:2604_16004::bidirectional_synergy_claim,github:2604_16004::scaling_law_claim,github:2604_16004::generalization_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cd11b3bb07b72eaf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::__conjunction_result_78c40b25,github:2604_16004::agentic_verifier_promising_claim)",
+      "content_hash": "ad5a8e5bca2a1eec7aeb9ec4cf32a7da309418c781f32bd0c4f92019f0515af4",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_a28b270a",
+      "label": "__implication_result_a28b270a",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::__conjunction_result_78c40b25,github:2604_16004::agentic_verifier_promising_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cd11b3bb07b72eaf",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_16004::cost_accuracy_tradeoff_claim,github:2604_16004::cost_limit_claim)",
+      "content_hash": "e7a1e8e154bdd63c128a0a2257bc7077ab067ee7e3fc1808c80c9121b2f91fcb",
+      "exported": false,
+      "id": "github:2604_16004::__implication_result_28087e76",
+      "label": "__implication_result_28087e76",
+      "metadata": {
+        "canonical_name": "implies(github:2604_16004::cost_accuracy_tradeoff_claim,github:2604_16004::cost_limit_claim)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_467cc06023f9b9f1",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_related",
+    "s3_method",
+    "s4_experiments",
+    "s4_analysis",
+    "s5_conclusion"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: Limitations of existing reward models for test-time scaling.",
+    "s2_related": "Section 2: Related Work on reward models and test-time scaling.",
+    "s3_method": "Section 3: Method - Agentic Verifier framework and AgentV-RL training recipe.",
+    "s4_analysis": "Section 4.3: Ablations, scaling, generalization, and latency analysis.",
+    "s4_experiments": "Section 4.2: Main experimental results - parallel and sequential test-time scaling.",
+    "s5_conclusion": "Section 5-6: Conclusion and acknowledged limitations."
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2604_16004::orm_null_contradiction",
+      "metadata": {
+        "reason": "Table 1 shows Agentic-Verifier-Qwen3-4B's headline numbers strictly above the best ORM on every benchmark; the two claims cannot both hold."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_b977ee5268315a76",
+      "scope": "local",
+      "variables": [
+        "github:2604_16004::bon_sota_claim",
+        "github:2604_16004::orm_dominance_null_claim"
+      ]
+    }
+  ],
+  "package_name": "2604_16004",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_16004::genrm_unreliable_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_0448c663",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::error_propagation_claim",
+              "github:2604_16004::external_grounding_gap_claim",
+              "github:2604_16004::genrm_single_turn_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_5f0a5f81",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_0448c663",
+              "github:2604_16004::genrm_unreliable_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Error propagation plus the absence of external grounding within a single-turn reasoning pipeline jointly undermine GenRM reliability."
+      },
+      "premises": [
+        "github:2604_16004::error_propagation_claim",
+        "github:2604_16004::external_grounding_gap_claim",
+        "github:2604_16004::genrm_single_turn_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_892607c740da79b4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::paradigm_shift_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_4e313ffe",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::genrm_unreliable_claim",
+              "github:2604_16004::verifier_role_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_17e2940d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_4e313ffe",
+              "github:2604_16004::paradigm_shift_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If verifiers are critical to TTS but current GenRMs are unreliable, the natural remedy is multi-turn, tool-augmented agentic verification."
+      },
+      "premises": [
+        "github:2604_16004::genrm_unreliable_claim",
+        "github:2604_16004::verifier_role_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_72eda23b353a5c26",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::rm_alignment_setting"
+      ],
+      "conclusion": "github:2604_16004::bidirectional_novelty_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_961705c2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::prior_tool_augmented_rm_claim",
+              "github:2604_16004::genrm_single_turn_claim",
+              "github:2604_16004::paradigm_shift_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_15d1b1e0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_961705c2",
+              "github:2604_16004::bidirectional_novelty_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Prior work either lacks tight tool integration or lacks point-wise feedback; no prior reward model casts verification as bidirectional + multi-turn + tool-augmented."
+      },
+      "premises": [
+        "github:2604_16004::prior_tool_augmented_rm_claim",
+        "github:2604_16004::genrm_single_turn_claim",
+        "github:2604_16004::paradigm_shift_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_02fd8b53938cb303",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::bidirectional_design_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_f0f475c0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::forward_sufficiency_claim",
+              "github:2604_16004::backward_necessity_claim",
+              "github:2604_16004::paradigm_shift_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_b053f215",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_f0f475c0",
+              "github:2604_16004::bidirectional_design_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Sufficiency + necessity together cover both directions of logical entailment, instantiating the agentic paradigm."
+      },
+      "premises": [
+        "github:2604_16004::forward_sufficiency_claim",
+        "github:2604_16004::backward_necessity_claim",
+        "github:2604_16004::paradigm_shift_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_421e7a34b3467738",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::multi_agent_distillable_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_54c1dd47",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::bidirectional_design_claim",
+              "github:2604_16004::tool_augmented_capability_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_0ee9959c",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_54c1dd47",
+              "github:2604_16004::multi_agent_distillable_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "A single LLM trained on synthetic forward/backward trajectories with tool use can reproduce the multi-agent behavior pattern."
+      },
+      "premises": [
+        "github:2604_16004::bidirectional_design_claim",
+        "github:2604_16004::tool_augmented_capability_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0de1195f7332d798",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::grpo_objective_setting"
+      ],
+      "conclusion": "github:2604_16004::grpo_stability_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_b96d5be0",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::multi_agent_distillable_claim",
+              "github:2604_16004::grpo_stability_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Standard PPO/GRPO theory: clipping bounds the policy update; zero-variance filtering removes degenerate gradients; KL anchors the policy to a reference. Substituting these into the objective yields a stable update by construction."
+      },
+      "premises": [
+        "github:2604_16004::multi_agent_distillable_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5caa9a877f3cfa87",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2604_16004::bon_benchmarks_setting"
+      ],
+      "conclusion": "github:2604_16004::bon_sota_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_717499bf",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::table1_observation",
+              "github:2604_16004::bidirectional_design_claim",
+              "github:2604_16004::multi_agent_distillable_claim",
+              "github:2604_16004::tool_augmented_capability_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_0f5ddb37",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_717499bf",
+              "github:2604_16004::bon_sota_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The Table 1 ranking, taken with the bidirectional + tool-augmented design argument, attributes the SOTA gap to the proposed method."
+      },
+      "premises": [
+        "github:2604_16004::table1_observation",
+        "github:2604_16004::bidirectional_design_claim",
+        "github:2604_16004::multi_agent_distillable_claim",
+        "github:2604_16004::tool_augmented_capability_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_35c635b00caa5a7c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::bon_benchmarks_setting"
+      ],
+      "conclusion": "github:2604_16004::bon_scales_with_n_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_cb48ac50",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::table1_observation",
+              "github:2604_16004::bon_scales_with_n_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Reading the @table1_observation rows for N in {32, 64, 128} shows monotone or near-monotone gains for the 4B variant, especially on AIME24 (40.0 -> 50.0 -> 53.3)."
+      },
+      "premises": [
+        "github:2604_16004::table1_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fef5244d9f6a4ece",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::iter_refine_setting"
+      ],
+      "conclusion": "github:2604_16004::iter_refine_helpful_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_798a5bf5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::table2_observation",
+              "github:2604_16004::bidirectional_design_claim",
+              "github:2604_16004::tool_augmented_capability_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_b697296e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_798a5bf5",
+              "github:2604_16004::iter_refine_helpful_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Table 2's high Delta-up / low Delta-down for Agentic-Verifier-Qwen3-4B and its stable performance across turns evidence the helpfulness claim; the multi-turn tool-augmented design explains the robustness against degradation."
+      },
+      "premises": [
+        "github:2604_16004::table2_observation",
+        "github:2604_16004::bidirectional_design_claim",
+        "github:2604_16004::tool_augmented_capability_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_663b87d03dd951dc",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::ablation_setting"
+      ],
+      "conclusion": "github:2604_16004::bidirectional_synergy_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_a7e8244b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::ablation_observation",
+              "github:2604_16004::bidirectional_design_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_7a9833f9",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_a7e8244b",
+              "github:2604_16004::bidirectional_synergy_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Figure 4 directly demonstrates that the union outperforms each component."
+      },
+      "premises": [
+        "github:2604_16004::ablation_observation",
+        "github:2604_16004::bidirectional_design_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1af9aff6c7542b72",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::tool_ablation_setting"
+      ],
+      "conclusion": "github:2604_16004::tool_contributes_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_e577ff36",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::tool_augmented_capability_claim",
+              "github:2604_16004::tool_contributes_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "No-tool agentic variant beats the base model (agentic gain); enabling tools adds further improvement (tool gain)."
+      },
+      "premises": [
+        "github:2604_16004::tool_augmented_capability_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_96ea011bfcc68ef5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::training_ablation_setting"
+      ],
+      "conclusion": "github:2604_16004::training_recipe_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_08ff1ac5",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::multi_agent_distillable_claim",
+              "github:2604_16004::training_recipe_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Figure 5 quantifies stepwise gains across Train-free / SFT / SFT+RL settings."
+      },
+      "premises": [
+        "github:2604_16004::multi_agent_distillable_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fa04e18109733dc2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::inference_scaling_obs",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_12db5cbb",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::scaling_law_claim",
+              "github:2604_16004::inference_scaling_obs"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If the scaling law holds, sampling more verification trajectories should help."
+      },
+      "premises": [
+        "github:2604_16004::scaling_law_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1d741556676b5be9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::model_size_obs",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_e932eb5b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::scaling_law_claim",
+              "github:2604_16004::model_size_obs"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If the scaling law holds, larger backbone models should help."
+      },
+      "premises": [
+        "github:2604_16004::scaling_law_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_32ae263677d24962",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_16004::scaling_law_claim",
+      "metadata": {
+        "reason": "Two independent scaling axes (inference compute and model size) both confirm the law."
+      },
+      "premises": [
+        "github:2604_16004::inference_scaling_obs",
+        "github:2604_16004::model_size_obs"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1b98e7e337ca69ed",
+      "sub_strategies": [
+        "lcs_1d741556676b5be9",
+        "lcs_32ae263677d24962"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2604_16004::generalization_setting"
+      ],
+      "conclusion": "github:2604_16004::generalization_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_e9ef80ac",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::generalization_observation",
+              "github:2604_16004::bidirectional_design_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_3026aa01",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_e9ef80ac",
+              "github:2604_16004::generalization_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Two out-of-domain benchmarks show consistent gains, attributed to the same bidirectional + tool design."
+      },
+      "premises": [
+        "github:2604_16004::generalization_observation",
+        "github:2604_16004::bidirectional_design_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fbeac04db6ce24c5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::latency_setting"
+      ],
+      "conclusion": "github:2604_16004::cost_accuracy_tradeoff_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_fe88a232",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::latency_observation",
+              "github:2604_16004::latency_axiom"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_7627ae2e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_fe88a232",
+              "github:2604_16004::cost_accuracy_tradeoff_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Substituting the Table 5 measurements directly establishes the cost differences and the existence of intermediate variants as scalable trade-offs."
+      },
+      "premises": [
+        "github:2604_16004::latency_observation",
+        "github:2604_16004::latency_axiom"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_04edbf174f399438",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_16004::agentic_verifier_promising_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__conjunction_result_78c40b25",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_16004::bon_sota_claim",
+              "github:2604_16004::iter_refine_helpful_claim",
+              "github:2604_16004::bidirectional_synergy_claim",
+              "github:2604_16004::scaling_law_claim",
+              "github:2604_16004::generalization_claim"
+            ]
+          },
+          {
+            "conclusion": "github:2604_16004::__implication_result_a28b270a",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::__conjunction_result_78c40b25",
+              "github:2604_16004::agentic_verifier_promising_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Five converging lines of evidence (BoN SOTA, iterative-refinement gains, ablation synergy, scaling, and out-of-domain generalization) all point to the same conclusion."
+      },
+      "premises": [
+        "github:2604_16004::bon_sota_claim",
+        "github:2604_16004::iter_refine_helpful_claim",
+        "github:2604_16004::bidirectional_synergy_claim",
+        "github:2604_16004::scaling_law_claim",
+        "github:2604_16004::generalization_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cd11b3bb07b72eaf",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_16004::limitations_setting"
+      ],
+      "conclusion": "github:2604_16004::cost_limit_claim",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_16004::__implication_result_28087e76",
+            "operator": "implication",
+            "variables": [
+              "github:2604_16004::cost_accuracy_tradeoff_claim",
+              "github:2604_16004::cost_limit_claim"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Table 5's measured ~2.7x latency overhead directly evidences the cost concern."
+      },
+      "premises": [
+        "github:2604_16004::cost_accuracy_tradeoff_claim"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_467cc06023f9b9f1",
+      "type": "support"
+    }
+  ]
+}
