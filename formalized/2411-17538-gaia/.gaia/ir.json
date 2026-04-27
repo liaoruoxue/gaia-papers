@@ -1,0 +1,2770 @@
+{
+  "ir_hash": "sha256:15fe0163dfb16a1dc89719cf03814732a60db62b638434d43a4341dc22f40bac",
+  "knowledges": [
+    {
+      "content": "Isotropy in language models (LMs) refers to the uniform distribution of vector representations in the embedding space. An embedding space with high isotropy spreads vectors evenly across the space; low isotropy (anisotropy) means vectors are unevenly concentrated.",
+      "content_hash": "059afd2d138fe8ce0e69a8498242a2aae4d8cd58136f8775fadb0f1c9fab41f3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2411_17538::isotropy_definition",
+      "label": "isotropy_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Definition of isotropy",
+      "type": "setting"
+    },
+    {
+      "content": "Semantic code search is the task of retrieving relevant code snippets given a natural language query. Performance is measured by ranking the true code snippet for a given comment among the candidate set.",
+      "content_hash": "b0f1cb16ca73dbcb0061d4209f00dfb9f962bb3579267a88139fffb3477d8ad1",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2411_17538::semantic_code_search_definition",
+      "label": "semantic_code_search_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Definition of semantic code search task",
+      "type": "setting"
+    },
+    {
+      "content": "Contrastive fine-tuning is a training approach that pulls semantically similar code/comment representations closer in embedding space and pushes dissimilar ones apart, typically using a loss such as InfoNCE.",
+      "content_hash": "89eb834bf4cb89c2b915f473564aae55b2156dc3da6cbb79fd7a4b2581011a01",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2411_17538::contrastive_finetuning_definition",
+      "label": "contrastive_finetuning_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Definition of contrastive fine-tuning",
+      "type": "setting"
+    },
+    {
+      "content": "Higher isotropy in an embedding space enhances efficient use of the embedding capacity and increases robustness to perturbations [@Cai2021]. By spreading vectors more uniformly, semantic distinctions between different inputs are preserved more reliably.",
+      "content_hash": "5e88fcab68f207b882cdf71b8b29574ce131199bfd8fae1f0ddc50d041666af7",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2411_17538::isotropy_benefits",
+      "label": "isotropy_benefits",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Cai2021"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Isotropy improves embedding space utilization and robustness",
+      "type": "claim"
+    },
+    {
+      "content": "Anisotropic embedding spaces hinder model performance on semantic tasks because the small angular distances between vectors make it difficult to distinguish different meanings [@Attieh2023]. The effect is especially severe in tasks demanding precise representational alignment, such as cross-lingual transfer [@Ji2023].",
+      "content_hash": "17f9788535aac99da57df60d639b40dc00e2260ca08125a725b9ecfda4fbea35",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2411_17538::anisotropy_harms_semantics",
+      "label": "anisotropy_harms_semantics",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Attieh2023",
+              "Ji2023"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Anisotropy degrades performance on semantic inference tasks",
+      "type": "claim"
+    },
+    {
+      "content": "In semantic code search, high anisotropy in the encoder's embedding space causes semantically different code snippets to be encoded into vectors that are too close to one another, leading to suboptimal retrieval performance [@Husain2019]. The dominance of programming language keywords and symbols intensifies the problem because these syntactic tokens can dominate the sequence representation and obscure semantic content [@Eghbali2022].",
+      "content_hash": "9b0f59caa7f518997a66eef86cd2c19110c2dc710d94c576b1a021863d33ddc6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2411_17538::code_search_anisotropy_problem",
+      "label": "code_search_anisotropy_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Eghbali2022",
+              "Husain2019"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Anisotropy specifically harms semantic code search retrieval",
+      "type": "claim"
+    },
+    {
+      "content": "Although contrastive fine-tuning improves semantic code search by rearranging the embedding space, it only marginally mitigates anisotropy: the underlying low angular distance between encoded representations is not fully addressed by the contrastive objective [@Rajaee2021].",
+      "content_hash": "41234b61ae45196e9d10741f749a00c7f2d3e827b1d89418124602f6ff40c8c9",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2411_17538::contrastive_finetuning_limited",
+      "label": "contrastive_finetuning_limited",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Rajaee2021"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contrastive fine-tuning does not fully fix anisotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-phase Component Analysis (ZCA) whitening has been shown to be a particularly fitting post-processing method for decorrelating hidden features and increasing the isotropy of embeddings [@Su2021; @Bell1996].",
+      "content_hash": "b456f9b3bb30035200fe288f89438e5575fc3000c968abc3e2fc4d82abc848b6",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2411_17538::zca_whitening_known_isotropy",
+      "label": "zca_whitening_known_isotropy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bell1996",
+              "Kessy2018",
+              "Su2021"
+            ],
+            "referenced_claims": [
+              "whitening_rotational_freedom",
+              "whitening_setup",
+              "zca_correlation_property",
+              "zca_definition"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Standard ZCA whitening is known to increase embedding isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Lightweight post-processing techniques that boost embedding isotropy (such as ZCA whitening) have been studied for natural-language embeddings but remain unexplored for the semantic code search setting, where queries are natural language and candidates are code [@Husain2019].",
+      "content_hash": "7d04adc15982e2de392b7368f9a816a8e5f04560f43d6aefc40e1a5294f9e97e",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2411_17538::research_gap",
+      "label": "research_gap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Husain2019"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research gap: post-processing for code search isotropy is unexplored",
+      "type": "claim"
+    },
+    {
+      "content": "The paper analyzes the isotropy of the embedding spaces in three popular code language models (CodeBERT, CodeT5+, Code Llama) with respect to their semantic code search performance, treating code and comment representations independently.",
+      "content_hash": "c7db4ba1aba6773cc8ceabcfe982172f029d1a0e98b7a833128aca8f9b550719",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2411_17538::contribution_isotropy_analysis",
+      "label": "contribution_isotropy_analysis",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 1: isotropy analysis of three code LMs",
+      "type": "claim"
+    },
+    {
+      "content": "The paper introduces an eigenvalue regularizer $\\epsilon$ added to the ZCA whitening matrix, which they call Soft-ZCA, providing direct control over the degree of whitening (and hence the resulting isotropy level) applied to the embeddings.",
+      "content_hash": "9e98cac0deaa71ff753e08f64df0ec6f81691c8249f32e5c6cb708dff899a122",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2411_17538::contribution_softzca_method",
+      "label": "contribution_softzca_method",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 2: Soft-ZCA whitening with eigenvalue regularizer",
+      "type": "claim"
+    },
+    {
+      "content": "The paper experimentally demonstrates on six popular programming languages plus one low-resource language (R) that post-processing embeddings with Soft-ZCA whitening improves Mean Reciprocal Rank (MRR) for both pre-trained and contrastively fine-tuned code language models.",
+      "content_hash": "25dc29757e7274d6e6c522f7626e21b77c9357e81aac9e139a883e639bc69d8f",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2411_17538::contribution_experimental_validation",
+      "label": "contribution_experimental_validation",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 3: experimental validation on 6+1 programming languages",
+      "type": "claim"
+    },
+    {
+      "content": "Given a set of embeddings $Z \\in \\mathbb{R}^{N \\times d}$ (N samples, d features), a whitening transformation produces $H = W Z^{\\top}$, where $W \\in \\mathbb{R}^{d \\times d}$ is the whitening matrix and $H \\in \\mathbb{R}^{N \\times d}$ is the whitened embedding. The transformation is required to satisfy $W \\Sigma W^{\\top} = I$, where $\\Sigma$ is the covariance matrix of $Z$ and $I$ is the identity matrix.",
+      "content_hash": "cd486b99644144589c21a7ada238a718996a4db6aa08e6e9bbc4ad9958f194c9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2411_17538::whitening_setup",
+      "label": "whitening_setup",
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "Whitening transformation setup",
+      "type": "setting"
+    },
+    {
+      "content": "Because the only condition imposed on $W$ is $W \\Sigma W^{\\top} = I$, there are infinitely many valid whitening matrices (related to one another by an arbitrary orthogonal rotation). Common choices include Principal Component Analysis (PCA), Zero-phase Component Analysis (ZCA), and Cholesky-decomposition-based whitening, each with different tradeoffs [@Kessy2018].",
+      "content_hash": "9ac9e0aac22ec43e8df79a13605a65e85af258383f4af847b5498744db638178",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2411_17538::whitening_rotational_freedom",
+      "label": "whitening_rotational_freedom",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kessy2018"
+            ]
+          }
+        }
+      },
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "Rotational freedom of whitening transformations",
+      "type": "setting"
+    },
+    {
+      "content": "The ZCA whitening matrix is defined as $W_{ZCA} = \\Sigma^{-1/2}$. Using singular value decomposition this can be rewritten as $W_{ZCA} = U \\Lambda^{-1/2} U^{\\top}$, where $U$ is the orthogonal matrix of eigenvectors of $\\Sigma$ and $\\Lambda$ is the diagonal matrix of $\\Sigma$'s eigenvalues.",
+      "content_hash": "8410e8db4c773fe817d1e3c9f09dd0a6f4bad9b962b4cb9ad5618c4ab84fd330",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2411_17538::zca_definition",
+      "label": "zca_definition",
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "ZCA whitening matrix definition",
+      "type": "setting"
+    },
+    {
+      "content": "Soft-ZCA whitening adds an eigenvalue regularizer $\\epsilon \\geq 0$ to the eigenvalues before inverse square root, modifying the whitening matrix to $W_{ZCA} = U (\\Lambda + \\epsilon I)^{-1/2} U^{\\top}$, where $I$ is the identity matrix. Setting $\\epsilon = 0$ recovers standard ZCA whitening.",
+      "content_hash": "c4a0395c763f9d354a7c399a3c87c640aaf4c76d15e706c83de32178b9f3710c",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2411_17538::soft_zca_definition",
+      "label": "soft_zca_definition",
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "Soft-ZCA whitening matrix definition (with eigenvalue regularizer)",
+      "type": "setting"
+    },
+    {
+      "content": "Among whitening transformations satisfying $W \\Sigma W^{\\top} = I$, ZCA whitening (i.e. $W_{ZCA} = \\Sigma^{-1/2}$) maintains the highest correlation between the whitened output $H$ and the original input $Z$ [@Kessy2018]. This property makes ZCA the most appropriate whitening transformation for embedding spaces, where preserving as much of the original semantic geometry as possible is desirable.",
+      "content_hash": "c2d8b153f87621d838942861f14fe0589f310884a5d06feea8f6a1ab7ebd05bd",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2411_17538::zca_correlation_property",
+      "label": "zca_correlation_property",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kessy2018"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Established theorem from Kessy, Lewin, Strimmer (2018, [@Kessy2018]) showing ZCA uniquely maximises correlation between whitened and original embeddings -- a peer-reviewed mathematical result."
+      },
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "ZCA preserves the most correlation with the original embeddings",
+      "type": "claim"
+    },
+    {
+      "content": "When any eigenvalue $\\lambda_i$ of $\\Sigma$ is close to 0, the corresponding factor $\\lambda_i^{-1/2}$ in standard ZCA whitening becomes exceedingly large. As a result, the whitening transformation amplifies noise and insignificant components in the data, which degrades the resulting embedding quality.",
+      "content_hash": "765e9bfa545814e576f4b968419dd6b5e53182932f1cffc0fa0ca5f7346b895a",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2411_17538::zca_amplifies_noise_at_small_eigenvalues",
+      "label": "zca_amplifies_noise_at_small_eigenvalues",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Direct algebraic consequence of the form $\\Sigma^{-1/2} = U \\Lambda^{-1/2} U^{\\top}$: as $\\lambda_i \\to 0$, $\\lambda_i^{-1/2} \\to \\infty$. Essentially deterministic."
+      },
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "Standard ZCA amplifies noise on small-eigenvalue directions",
+      "type": "claim"
+    },
+    {
+      "content": "By placing a positive lower bound $\\epsilon$ on the regularized eigenvalues $(\\lambda_i + \\epsilon)$, Soft-ZCA bounds the magnitude of $(\\lambda_i + \\epsilon)^{-1/2}$ from above, retaining more of the original signal and variance. As $\\epsilon$ increases, the strength of the whitening transformation decreases, giving direct control over the whitening intensity (and therefore the isotropy) of the resulting embeddings.",
+      "content_hash": "a8fe751465920b16dc23f817a0b158e54d1269329f42535783bc9d55b07993c7",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2411_17538::soft_zca_controls_whitening",
+      "label": "soft_zca_controls_whitening",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_standard_zca_helps_base_models",
+              "obs_standard_zca_hurts_ft_and_codet5",
+              "soft_zca_controls_whitening",
+              "soft_zca_definition",
+              "zca_amplifies_noise_at_small_eigenvalues"
+            ]
+          }
+        }
+      },
+      "module": "s2_whitening",
+      "parameters": [],
+      "title": "Soft-ZCA's eigenvalue regularizer controls the strength of whitening",
+      "type": "claim"
+    },
+    {
+      "content": "CodeSearchNet [@Husain2019] is a benchmark for studying the code-search capabilities of machine learning models. It contains code-comment pairs from six popular programming languages -- Python, Go, Java, JavaScript, Ruby, and PHP -- with a full corpus of approximately 2 million pairs.",
+      "content_hash": "2e4cfc830c27b53e43c33d09452de65116f0a75f34530faea36fd9370b4e42ee",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2411_17538::dataset_codesearchnet",
+      "label": "dataset_codesearchnet",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Husain2019"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "CodeSearchNet dataset",
+      "type": "setting"
+    },
+    {
+      "content": "StatCodeSearch [@Diera2023] is a low-resource code search test dataset comprising 1,070 code-comment pairs from social-science research code written in the R language. It is used here only as a held-out test set (no fine-tuning is performed on it).",
+      "content_hash": "264616335b993bebd611b42ebbbd42ab508a519e6df892b506b5437d86ad9e1b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2411_17538::dataset_statcodesearch",
+      "label": "dataset_statcodesearch",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Diera2023"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "StatCodeSearch (R) dataset",
+      "type": "setting"
+    },
+    {
+      "content": "CodeBERT [@Feng2020] is an encoder-only language model designed for programming-language understanding. It has 125M parameters, an embedding dimension of 768, supports 6 programming languages, and is not contrastively pre-trained.",
+      "content_hash": "722e0fa6c271340c96086c2e944cd3157b4be0f374fb72d61f3ca49b8405461e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2411_17538::model_codebert",
+      "label": "model_codebert",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Feng2020"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "CodeBERT model",
+      "type": "setting"
+    },
+    {
+      "content": "CodeT5+ [@Wang2023] is an encoder-decoder language model trained for both code understanding and generation. The variant used here has 110M parameters, an embedding dimension of 256, supports 9 programming languages, and is contrastively pre-trained.",
+      "content_hash": "d40fb5f572ebee2f0cb6fc43e99f6f2ea5210ef3d1f8222b4db8f7dc8ddccb75",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2411_17538::model_codet5plus",
+      "label": "model_codet5plus",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2023"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "CodeT5+ model",
+      "type": "setting"
+    },
+    {
+      "content": "Code Llama [@Roziere2023] is the code-specialized variant of Llama 2. The version used here has 7B parameters, an embedding dimension of 4,096, supports 7 programming languages, and is not contrastively pre-trained.",
+      "content_hash": "b101b7f3a89023d628f8b84a85d662bf54a0af20798b4823e16604a37e209f72",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2411_17538::model_codellama",
+      "label": "model_codellama",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Roziere2023"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "Code Llama (7B) model",
+      "type": "setting"
+    },
+    {
+      "content": "FT CodeBERT denotes CodeBERT contrastively fine-tuned on the code-comment pairs of each CodeSearchNet language individually using InfoNCE loss, learning rate 5e-5, batch size 32, for 5 epochs. No fine-tuning is performed on R (StatCodeSearch).",
+      "content_hash": "d8e161b6699805fb95814f277cd5977ceedd2f0a1d23c82f122f3e276ada6b3c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2411_17538::model_finetuned_codebert",
+      "label": "model_finetuned_codebert",
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "Fine-tuned CodeBERT (FT CodeBERT)",
+      "type": "setting"
+    },
+    {
+      "content": "Code and natural-language inputs are encoded independently, mirroring real-world search systems. Each input sequence is truncated to 256 tokens with no padding. Sequence representations are mean-pooled over the last hidden state for CodeBERT and Code Llama, and use the default down-projection pooling for CodeT5+.",
+      "content_hash": "1da93e7bb77979754b469578f517f4b6e95c7f10c10629d7af218fcf50907aad",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2411_17538::procedure_independent_encoding",
+      "label": "procedure_independent_encoding",
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "Encoding procedure",
+      "type": "setting"
+    },
+    {
+      "content": "Whitening matrices are computed independently for the code embeddings and the comment embeddings, using all embeddings in the test set of the dataset.",
+      "content_hash": "5d5c0e0b1c82ed5236a878c66c59f09ba6c161c8c3ec37f586bac63599237af2",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2411_17538::procedure_separate_whitening",
+      "label": "procedure_separate_whitening",
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "Separate whitening for code and comments",
+      "type": "setting"
+    },
+    {
+      "content": "IsoScore [@Rudman2022] measures the isotropy of an embedding space, bounded to $[0, 1]$, where 1 indicates perfect isotropy.",
+      "content_hash": "c926612cee5b9269f1887f5a57eaef8edc07fdd6f2df1a785e370a51e8fdb400",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2411_17538::metric_isoscore",
+      "label": "metric_isoscore",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Rudman2022"
+            ]
+          }
+        }
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "IsoScore metric definition",
+      "type": "setting"
+    },
+    {
+      "content": "Code-search performance is evaluated via Mean Reciprocal Rank (MRR) based on cosine distance between comment and code embeddings: for each comment in the test set, all codes are ranked, and the reciprocal of the true code's rank is averaged over the test set.",
+      "content_hash": "a6ca8bf87b61644bd3890c48ed08a8d6fc7321a5fa6a53af497bd09a27436cfb",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2411_17538::metric_mrr",
+      "label": "metric_mrr",
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "MRR metric definition",
+      "type": "setting"
+    },
+    {
+      "content": "Reported architectural details (Table 1):\n\n| Model      | Parameters | Embed. Dim. | Supported Lang. | Contrastive Pre-training |\n|------------|-----------:|------------:|----------------:|:------------------------:|\n| CodeBERT   | 125M       | 768         | 6               | no                       |\n| CodeT5+    | 110M       | 256         | 9               | yes                      |\n| Code Llama | 7B         | 4,096       | 7               | no                       |",
+      "content_hash": "8a0209a6701f6dda81288f014b0445c3943f3b89057446ef6d040bcbb713c20f",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2411_17538::table1_model_details",
+      "label": "table1_model_details",
+      "metadata": {
+        "source_table": "artifacts/2411.17538.pdf, Table 1"
+      },
+      "module": "s3_apparatus",
+      "parameters": [],
+      "title": "Architectural details of the three studied code LMs",
+      "type": "claim"
+    },
+    {
+      "content": "Reported MRR and IsoScores (Code / Comment) on the non-whitened embeddings (Table 2):\n\n| Lang       | CodeBERT MRR | CodeBERT Iso (C/Cm) | FT CodeBERT MRR | FT CodeBERT Iso | CodeT5+ MRR | CodeT5+ Iso | Code Llama MRR | Code Llama Iso |\n|------------|-------------:|---------------------|----------------:|------------------|------------:|-------------|---------------:|----------------|\n| Ruby       | 0.006        | 0.007 / 0.014       | 0.547           | 0.052 / 0.062    | 0.705       | 0.350 / 0.296 | 0.047        | 0.008 / 0.003 |\n| Javascript | 0.002        | 0.005 / 0.013       | 0.427           | 0.065 / 0.072    | 0.638       | 0.365 / 0.335 | 0.026        | 0.010 / 0.002 |\n| Go         | 0.002        | 0.006 / 0.010       | 0.619           | 0.050 / 0.036    | 0.757       | 0.234 / 0.196 | 0.031        | 0.006 / 0.003 |\n| Java       | 0.000        | 0.007 / 0.007       | 0.395           | 0.059 / 0.067    | 0.595       | 0.388 / 0.313 | 0.015        | 0.009 / 0.002 |\n| Python     | 0.001        | 0.006 / 0.021       | 0.500           | 0.067 / 0.071    | 0.721       | 0.394 / 0.356 | 0.017        | 0.007 / 0.005 |\n| PHP        | 0.000        | 0.006 / 0.007       | 0.248           | 0.072 / 0.048    | 0.537       | 0.400 / 0.262 | 0.009        | 0.009 / 0.001 |\n| R          | 0.011        | 0.005 / 0.004       | (no FT data)    | -                | 0.045       | 0.139 / 0.118 | 0.024        | 0.002 / 0.002 |",
+      "content_hash": "6bc4f56d4f254f4f897fcb6541de144913afbb9572261e172b45ffe2e87b9ea4",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2411_17538::table2_nonwhitened",
+      "label": "table2_nonwhitened",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Reproduces Table 2 of the paper verbatim. The numbers themselves are not in dispute; small uncertainty allowed for transcription.",
+        "source_table": "artifacts/2411.17538.pdf, Table 2"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Baseline non-whitened MRR and IsoScores (Table 2)",
+      "type": "claim"
+    },
+    {
+      "content": "Reported MRR improvement vs non-whitened embeddings ($\\Delta$MRR) and IsoScores (Code / Comment) after applying Soft-ZCA at the best epsilon for each (model, language) cell (Table 3):\n\n| Lang       | CodeBERT $\\Delta$MRR | CodeBERT Iso     | FT CodeBERT $\\Delta$MRR | FT CodeBERT Iso  | CodeT5+ $\\Delta$MRR | CodeT5+ Iso      | Code Llama $\\Delta$MRR | Code Llama Iso   |\n|------------|---------------------:|------------------|------------------------:|------------------|--------------------:|------------------|----------------------:|------------------|\n| Ruby       | +0.230               | 0.365 / 0.511    | +0.075                  | 0.998 / 0.998    | +0.007              | 0.377 / 0.340    | +0.476                | 0.224 / 0.298    |\n| Javascript | +0.142               | 0.348 / 0.551    | +0.049                  | 0.992 / 0.994    | +0.003              | 0.394 / 0.367    | +0.369                | 0.299 / 0.428    |\n| Go         | +0.250               | 0.673 / 0.863    | +0.042                  | 0.998 / 0.998    |  0.000              | 0.317 / 0.291    | +0.465                | 0.257 / 0.433    |\n| Java       | +0.148               | 0.736 / 0.889    | +0.064                  | 0.991 / 0.992    | +0.002              | 0.522 / 0.495    | +0.329                | 0.453 / 0.388    |\n| Python     | +0.156               | 0.381 / 0.555    | +0.062                  | 0.998 / 0.998    |  0.000              | 0.420 / 0.386    | +0.399                | 0.326 / 0.496    |\n| PHP        | +0.102               | 0.726 / 0.899    | +0.055                  | 0.998 / 0.998    | +0.002              | 0.423 / 0.327    | +0.227                | 0.275 / 0.450    |\n| R          | +0.077               | 0.462 / 0.352    | (no FT data)            | -                | +0.035              | 0.706 / 0.641    | +0.337                | 0.247 / 0.248    |",
+      "content_hash": "add73e1d747d42777c28e8d4c5c25e4c6c1ffb7cc145f593b294bf794c476d85",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2411_17538::table3_whitened_delta",
+      "label": "table3_whitened_delta",
+      "metadata": {
+        "source_table": "artifacts/2411.17538.pdf, Table 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "MRR improvement and IsoScores after Soft-ZCA at best epsilon (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "Without whitening, base CodeBERT exhibits very low semantic code search performance on CodeSearchNet (MRR ranging from 0.000 on Java/PHP to 0.011 on R) together with very low IsoScores (typically $\\leq 0.02$ on both code and comment embeddings).",
+      "content_hash": "ce18b40e754f88a5de3ff4c1c9f0c898a47d514e35193ce8125ef7c12c51a692",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2411_17538::obs_codebert_low_mrr_low_iso",
+      "label": "obs_codebert_low_mrr_low_iso",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off of CodeBERT row of Table 2: MRR 0.000-0.011 and IsoScores below 0.022 in every cell."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: base CodeBERT shows low MRR and low IsoScore",
+      "type": "claim"
+    },
+    {
+      "content": "Fine-tuned CodeBERT (FT CodeBERT) exhibits substantially higher MRR than base CodeBERT (e.g. 0.547 vs 0.006 on Ruby; 0.619 vs 0.002 on Go), but its IsoScores remain low (in the range 0.036-0.072), with an average IsoScore increase of only 0.073 over base CodeBERT.",
+      "content_hash": "b3a760af0bd3a2bb44d857559f695d93a4e5074956b45018a66ee1042cbbc12b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2411_17538::obs_ft_codebert_higher_mrr_low_iso",
+      "label": "obs_ft_codebert_higher_mrr_low_iso",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off of FT CodeBERT vs base CodeBERT in Table 2; the average IsoScore delta of 0.073 is also explicitly stated in the paper text."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: contrastive fine-tuning boosts MRR but barely increases isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Without whitening, CodeT5+ achieves the highest MRR (0.537-0.757 across the six CodeSearchNet languages, vs 0.248-0.619 for FT CodeBERT) and the highest IsoScores (0.196-0.400 on code and comments) of all four configurations -- surpassing even contrastively fine-tuned CodeBERT.",
+      "content_hash": "2c47d0991d0d43640869d88eaad567862844a95349a0430535cdfa4d7df13b4a",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2411_17538::obs_codet5plus_high_mrr_high_iso",
+      "label": "obs_codet5plus_high_mrr_high_iso",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off of CodeT5+ row of Table 2."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: CodeT5+ is best on MRR and isotropy among baselines",
+      "type": "claim"
+    },
+    {
+      "content": "Without whitening, Code Llama (7B) yields the lowest MRR among the non-CodeBERT baselines (MRR 0.009-0.047 across all languages), with very low IsoScores (mostly < 0.011).",
+      "content_hash": "930366de94ea9b2246cdf8b43a16aeb9251c42be676b285d16ddf447daf21657",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2411_17538::obs_codellama_low_mrr",
+      "label": "obs_codellama_low_mrr",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct read-off of Code Llama row of Table 2."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: Code Llama baseline MRR and IsoScore are low",
+      "type": "claim"
+    },
+    {
+      "content": "Applying standard ZCA whitening ($\\epsilon = 0$) greatly improves the MRR of the base (pre-trained only) CodeBERT and Code Llama models on the CodeSearchNet languages.",
+      "content_hash": "736e5269093048a29e9d01fe83530c66b6f9a751dc82c8e89e5f569afa0bc729",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2411_17538::obs_standard_zca_helps_base_models",
+      "label": "obs_standard_zca_helps_base_models",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Stated in the paper text. Not directly tabulated as a per-cell number (Table 3 reports best-epsilon results, not the epsilon=0 effect alone), so the prior is slightly lower than for fully tabulated quantities."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: standard ZCA improves base CodeBERT and Code Llama",
+      "type": "claim"
+    },
+    {
+      "content": "Applying standard ZCA whitening ($\\epsilon = 0$) decreases the MRR of fine-tuned CodeBERT and CodeT5+ on most CodeSearchNet datasets.",
+      "content_hash": "e99db488b8d10b04f8f7ff5f6a315979e97ae9deab97e57e64daec4157f78b37",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2411_17538::obs_standard_zca_hurts_ft_and_codet5",
+      "label": "obs_standard_zca_hurts_ft_and_codet5",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Stated in the paper text and partially reflected in Table 5 (combined-vs-separate ablation, both at epsilon=0). Same uncertainty as @obs_standard_zca_helps_base_models."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: standard ZCA hurts FT CodeBERT and CodeT5+",
+      "type": "claim"
+    },
+    {
+      "content": "For the base (pre-trained only) models (CodeBERT, CodeT5+, Code Llama), moderate whitening with $\\epsilon \\in \\{0.1, 0.01\\}$ yields the best MRR; the optimal IsoScore for these models lies between 0.2 and 0.8.",
+      "content_hash": "c4689bf46199d202a8ba5ea58242e3ff015ea4a338b7c0842632749d7eb0941f",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2411_17538::obs_optimal_epsilon_base",
+      "label": "obs_optimal_epsilon_base",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Stated explicitly in the paper text and visualised in Figure 1. Slightly less than direct table reads because the 'best epsilon' language uses a discrete grid scan.",
+        "source_figure": "artifacts/2411.17538.pdf, Fig. 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: best epsilon for base models is in {0.1, 0.01}",
+      "type": "claim"
+    },
+    {
+      "content": "Fine-tuned CodeBERT requires stronger whitening for optimal MRR: the best $\\epsilon = 0.0001$, producing IsoScores consistently above 0.99 across all six CodeSearchNet languages.",
+      "content_hash": "2550fe2f101e2932ae180591fc0fa6774d0c2ff01a6928db90a2aecf6e9d525f",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2411_17538::obs_optimal_epsilon_ft",
+      "label": "obs_optimal_epsilon_ft",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Stated explicitly in the paper text and consistent with Table 3 (FT CodeBERT IsoScores all >= 0.99).",
+        "source_figure": "artifacts/2411.17538.pdf, Fig. 1"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: fine-tuned CodeBERT prefers near-perfect isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Across nearly all (model, language) combinations in Table 3, $\\Delta$MRR is positive after applying Soft-ZCA at the best epsilon -- including on the held-out R dataset that was not used for fine-tuning. The only exceptions are CodeT5+ on Go and Python, where $\\Delta$MRR = 0.000.",
+      "content_hash": "b66ce7bb8e4301ada9af2b74eb1d767299aaa1cd2bfe1c0a6832433eda90c48d",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2411_17538::obs_softzca_positive_delta_mrr",
+      "label": "obs_softzca_positive_delta_mrr",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_softzca_improves_code_search",
+              "obs_softzca_positive_delta_mrr"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly read off Table 3: $\\Delta$MRR > 0 in every base-CodeBERT cell on every CodeSearchNet language (range +0.102 to +0.250). The observation is empirically anchored independently of any synthesis claim.",
+        "source_table": "artifacts/2411.17538.pdf, Table 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: Soft-ZCA improves MRR almost universally (Table 3)",
+      "type": "claim"
+    },
+    {
+      "content": "Code Llama shows the largest MRR gains from Soft-ZCA: $\\Delta$MRR up to +0.476 (Ruby), with IsoScores between 0.224 and 0.496 after whitening.",
+      "content_hash": "7c0170b62e636c594820d2e9757d7f40d0355b74f318681ba640a603ff0c6aac",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2411_17538::obs_codellama_largest_gain",
+      "label": "obs_codellama_largest_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_softzca_improves_code_search",
+              "obs_codellama_largest_gain",
+              "table1_model_details"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly read off Table 3: Code Llama $\\Delta$MRR ranges +0.227 (PHP) to +0.476 (Ruby), the largest gains in the table."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: Code Llama has the largest MRR gains from Soft-ZCA",
+      "type": "claim"
+    },
+    {
+      "content": "Fine-tuned CodeBERT exhibits more modest MRR gains from Soft-ZCA, ranging from $\\Delta$MRR = +0.042 (Go) to +0.075 (Ruby), even though IsoScores reach $> 0.99$ after whitening.",
+      "content_hash": "48b5667d066ff81aeefd63d9bf33560387017634d37ca494c259df8c3e334836",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2411_17538::obs_ft_codebert_modest_gain",
+      "label": "obs_ft_codebert_modest_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_softzca_improves_code_search",
+              "obs_ft_codebert_modest_gain"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly read off Table 3: FT CodeBERT $\\Delta$MRR ranges +0.042 (Go) to +0.075 (Ruby), with IsoScores >= 0.99 in every cell."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: FT CodeBERT only gains modest MRR despite near-perfect isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "On the held-out low-resource R dataset (StatCodeSearch), Soft-ZCA yields positive $\\Delta$MRR for all three model families: +0.077 (CodeBERT), +0.035 (CodeT5+), and +0.337 (Code Llama).",
+      "content_hash": "9731fa3c1383a2c58b1664e6f934b343bf6074f3ac22b74cbdacdba53a9e9c09",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2411_17538::obs_low_resource_r_helped",
+      "label": "obs_low_resource_r_helped",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_low_resource_r_helped"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly read off Table 3 (R row): $\\Delta$MRR = +0.077 / +0.035 / +0.337 for CodeBERT / CodeT5+ / Code Llama on the held-out R dataset."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: Soft-ZCA generalises to the held-out low-resource R dataset",
+      "type": "claim"
+    },
+    {
+      "content": "Similarly to standard natural-language LMs, all three studied code language models exhibit highly anisotropic embedding spaces: their raw IsoScores are typically far below 1 (e.g. 0.005-0.014 for CodeBERT, 0.234-0.400 for CodeT5+, 0.002-0.010 for Code Llama on CodeSearchNet, see @table2_nonwhitened).",
+      "content_hash": "230c7db0bd660a7100026ea90de7cbf63d1507205e2fc3404044d296fea9ba47",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2411_17538::finding_code_lms_anisotropic",
+      "label": "finding_code_lms_anisotropic",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "anisotropy_harms_semantics",
+              "contribution_isotropy_analysis",
+              "metric_isoscore",
+              "obs_codebert_low_mrr_low_iso",
+              "obs_codellama_low_mrr",
+              "obs_codet5plus_high_mrr_high_iso",
+              "table2_nonwhitened"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: code language models are highly anisotropic",
+      "type": "claim"
+    },
+    {
+      "content": "Contrastive fine-tuning does not strongly increase isotropy: on CodeBERT, fine-tuning improves the average IsoScore by only 0.073 while delivering large MRR gains, confirming that the MRR improvement from fine-tuning is largely orthogonal to the isotropy of the embedding space.",
+      "content_hash": "6ca0c090e130aef9d59e0580fcd920fedcfcf2c45faa6ad5c0dccb7acbc6fb00",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2411_17538::finding_finetuning_weak_on_isotropy",
+      "label": "finding_finetuning_weak_on_isotropy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "contrastive_finetuning_limited",
+              "obs_ft_codebert_higher_mrr_low_iso"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: contrastive fine-tuning has only minor effect on isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Models with higher IsoScores generally perform better on code search, but the relationship between MRR and IsoScore is not linear. Concretely: FT CodeBERT reaches IsoScore > 0.99 with only modest MRR gains (+0.04--+0.08), while base Code Llama reaches IsoScore in the range 0.22--0.50 with very large MRR gains (up to +0.476).",
+      "content_hash": "bfee30bd6e0d7ec3c195cce7b8c5edd923edeee250513d8ea4e9c4dc92c85b7f",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2411_17538::finding_iso_mrr_relationship_nonlinear",
+      "label": "finding_iso_mrr_relationship_nonlinear",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_codellama_largest_gain",
+              "obs_ft_codebert_modest_gain",
+              "table3_whitened_delta"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: MRR vs IsoScore relationship is positive but non-linear",
+      "type": "claim"
+    },
+    {
+      "content": "Code and comment embeddings have only marginally different IsoScores across all studied models (differences typically $< 0.1$ in Table 2). In practice they can be treated as similarly isotropic.",
+      "content_hash": "72e7e4aa3a5f2497c00a8abbc94cd707e3f16a13fa062c697fe6187780d2a908",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2411_17538::finding_code_vs_comment_iso_similar",
+      "label": "finding_code_vs_comment_iso_similar",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table2_nonwhitened"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: code and comment embeddings have similar isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Applying Soft-ZCA whitening with an appropriately chosen eigenvalue regularizer $\\epsilon$ improves both the isotropy and the code-search MRR of all four model configurations across all seven evaluated programming languages (with the only exceptions being CodeT5+ on Go and Python where $\\Delta$MRR = 0). The improvement is robust across model architectures (encoder-only, encoder-decoder, decoder-only) and extends to a held-out low-resource language not seen during training.",
+      "content_hash": "5205548b8ce24f46726e23c17805419fc2d2ffb530bd4f064f64fed928a5deca",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2411_17538::finding_softzca_improves_code_search",
+      "label": "finding_softzca_improves_code_search",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "contribution_experimental_validation",
+              "research_gap"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: Soft-ZCA reliably improves isotropy and MRR for code search",
+      "type": "claim"
+    },
+    {
+      "content": "The optimal level of isotropy depends on whether the model has been contrastively fine-tuned: pre-trained-only models perform best with IsoScores between 0.2 and 0.8 (achieved at moderate $\\epsilon \\in \\{0.1, 0.01\\}$), whereas fine-tuned CodeBERT performs best with near-perfect isotropy (IsoScore $> 0.99$, achieved at $\\epsilon = 0.0001$).",
+      "content_hash": "aaf2407adf50dab30f9d8f454f1f3595e5b5c790c2bd9d8f57b0c7294e8b741b",
+      "declaration_index": 19,
+      "exported": true,
+      "id": "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning",
+      "label": "finding_optimal_isotropy_depends_on_finetuning",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_optimal_epsilon_base",
+              "obs_optimal_epsilon_ft"
+            ]
+          }
+        }
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Finding: optimal isotropy level differs for base vs fine-tuned models",
+      "type": "claim"
+    },
+    {
+      "content": "If Soft-ZCA improves MRR by controlling isotropy then $\\Delta$MRR should track changes in IsoScore: each model family should show a positive $\\Delta$MRR whenever Soft-ZCA visibly increases its IsoScore. Comparing Tables 2 and 3, every model family that increases IsoScore (CodeBERT 0.005-0.014 -> 0.348-0.889; Code Llama 0.002-0.010 -> 0.224-0.496; FT CodeBERT 0.036-0.072 -> 0.991-0.998) also yields $\\Delta$MRR > 0.",
+      "content_hash": "49dbb011cc1b652cc936c1e40d41102e796c88dd2856bfe63045d64f0b6b8070",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2411_17538::pred_softzca_isotropy",
+      "label": "pred_softzca_isotropy",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Conditional prediction: if isotropy mediates the effect, MRR gains should track IsoScore gains. Tables 2 and 3 jointly confirm the cell-by-cell pattern."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Prediction: Soft-ZCA's MRR gain follows its isotropy gain",
+      "type": "claim"
+    },
+    {
+      "content": "If Soft-ZCA's MRR gains were a pure artefact of acting on high-dimensional embeddings (rather than of isotropy), then they should disappear -- or at least become much smaller -- on the model with the lowest embedding dimension (CodeT5+, dim=256), and be largest on the model with the highest dimension (Code Llama, dim=4,096). The reported pattern is consistent with this only weakly: Code Llama indeed shows the largest gains, but FT CodeBERT (dim=768) shows much smaller gains than base CodeBERT (also dim=768) after similar whitening, which the dimensionality story does not explain.",
+      "content_hash": "80fb3aa14ce594038854f34a02bf715fa8cb0935cbbfef17129eb0a460d38f57",
+      "declaration_index": 24,
+      "exported": false,
+      "id": "github:2411_17538::pred_softzca_dim_artifact",
+      "label": "pred_softzca_dim_artifact",
+      "metadata": {
+        "prior": 0.45,
+        "prior_justification": "Conditional prediction under the dimensionality-only alternative: gains should scale with embedding dimension. The data only weakly satisfy this (Code Llama wins, but the FT-vs-base CodeBERT gap is unexplained), so the prediction itself is only partially confirmed."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Prediction: dimensionality-only explanation of Soft-ZCA gains",
+      "type": "claim"
+    },
+    {
+      "content": "The observed pattern of $\\Delta$MRR across all four configurations and seven languages is: (i) consistently positive (Table 3), (ii) scales roughly with the magnitude of IsoScore increase produced by Soft-ZCA, and (iii) Code Llama (highest dim and most anisotropic baseline) shows the largest gains while FT CodeBERT (already geometrically reshaped by contrastive training) shows the smallest, even though both end up with similar post-whitening IsoScores in their respective optimal regimes.",
+      "content_hash": "48dfbb4ebc4a78a5176397feb1ddeaadafdf17533addd5b9a0c4b88e9d6333fa",
+      "declaration_index": 25,
+      "exported": false,
+      "id": "github:2411_17538::obs_softzca_pattern",
+      "label": "obs_softzca_pattern",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_dimensionality_artifact",
+              "code_search_anisotropy_problem",
+              "hypothesis_isotropy_mediates",
+              "obs_softzca_pattern",
+              "soft_zca_controls_whitening"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Joint summary of Tables 2 and 3, directly read from the paper's tables. Slight uncertainty allowed for the qualitative 'co-variation' wording (Tables only carry the quantitative anchor; the qualitative summary requires light interpretation).",
+        "source_table": "artifacts/2411.17538.pdf, Tables 2 and 3"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Observation: pattern of $\\Delta$MRR across configurations",
+      "type": "claim"
+    },
+    {
+      "content": "Soft-ZCA's MRR improvement is mediated by its control of embedding isotropy (i.e. by spreading vectors more uniformly so semantically different inputs become more distinguishable), not by an unrelated side effect such as dimensionality reduction.",
+      "content_hash": "aaa7b53bc0d822170b00451543b3849a92c0e225c8f4f2a08f82c0b3cb5814bc",
+      "declaration_index": 26,
+      "exported": false,
+      "id": "github:2411_17538::hypothesis_isotropy_mediates",
+      "label": "hypothesis_isotropy_mediates",
+      "metadata": {
+        "prior": 0.65,
+        "prior_justification": "The paper's central mechanistic claim. Given the strong cell-by-cell co-variation between $\\Delta$MRR and IsoScore gain, it is moderately well-supported by direct evidence; not set higher because no causal experiment isolates isotropy from covariance-conditioning effects."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Hypothesis: isotropy mediates Soft-ZCA's MRR improvement",
+      "type": "claim"
+    },
+    {
+      "content": "An alternative explanation is that Soft-ZCA's MRR improvement is mainly a side effect of its action on high-dimensional embeddings (numerical conditioning of the cosine metric on large covariance matrices), unrelated to the isotropy interpretation.",
+      "content_hash": "1d69ea17cf028a58c2e925a57fa880a5e9da90d42491f073601f8aa2ba562038",
+      "declaration_index": 27,
+      "exported": false,
+      "id": "github:2411_17538::alt_dimensionality_artifact",
+      "label": "alt_dimensionality_artifact",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "pi(Alt) reflects explanatory power for the *specific* observed pattern, not whether dimensionality matters in general. The alternative cannot account for the FT-vs-base CodeBERT gap (both dim=768) nor for the low-dim CodeT5+ R-language gain, so its explanatory power for @obs_softzca_pattern is low."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Alternative: Soft-ZCA's MRR gains are a dimensionality artefact",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If Soft-ZCA improves MRR by controlling isotropy then $\\Delta$MRR should track changes in IsoScore: each model family should show a positive $\\Delta$MRR whenever Soft-ZCA visibly increases its IsoScore. Comparing Tables 2 and 3, every model family that increases IsoScore (CodeBERT 0.005-0.014 -> 0.348-0.889; Code Llama 0.002-0.010 -> 0.224-0.496; FT CodeBERT 0.036-0.072 -> 0.991-0.998) also yields $\\Delta$MRR > 0., If Soft-ZCA's MRR gains were a pure artefact of acting on high-dimensional embeddings (rather than of isotropy), then they should disappear -- or at least become much smaller -- on the model with the lowest embedding dimension (CodeT5+, dim=256), and be largest on the model with the highest dimension (Code Llama, dim=4,096). The reported pattern is consistent with this only weakly: Code Llama indeed shows the largest gains, but FT CodeBERT (dim=768) shows much smaller gains than base CodeBERT (also dim=768) after similar whitening, which the dimensionality story does not explain., The observed pattern of $\\Delta$MRR across all four configurations and seven languages is: (i) consistently positive (Table 3), (ii) scales roughly with the magnitude of IsoScore increase produced by Soft-ZCA, and (iii) Code Llama (highest dim and most anisotropic baseline) shows the largest gains while FT CodeBERT (already geometrically reshaped by contrastive training) shows the smallest, even though both end up with similar post-whitening IsoScores in their respective optimal regimes.)",
+      "content_hash": "8fdffe014bee6a01eb5357f881a5a4633ef0b8013f1de5364584263f40065a7b",
+      "declaration_index": 28,
+      "exported": false,
+      "id": "github:2411_17538::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_dimensionality_artifact",
+              "hypothesis_isotropy_mediates",
+              "obs_softzca_pattern",
+              "pred_softzca_dim_artifact",
+              "pred_softzca_isotropy"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Naive expectation: standard ZCA whitening ($\\epsilon = 0$) improves MRR for every model configuration on every CodeSearchNet language. (This is the implicit baseline assumption challenged by the paper's introduction of Soft-ZCA.)",
+      "content_hash": "17ffeddc8c4a0cd9929d84a907f790787ea4ffc860d1885f1e3761205617bd7f",
+      "declaration_index": 30,
+      "exported": false,
+      "id": "github:2411_17538::naive_zca_helps_all",
+      "label": "naive_zca_helps_all",
+      "metadata": {
+        "prior": 0.1,
+        "prior_justification": "The naive expectation explicitly refuted by Table 5 / paper text: standard ZCA decreases MRR for FT CodeBERT and CodeT5+ on most datasets. Set very low because the contradiction operator with @obs_standard_zca_hurts_ft_and_codet5 reflects well-documented experimental refutation."
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "title": "Naive expectation: standard ZCA helps every model",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 31,
+      "exported": false,
+      "id": "github:2411_17538::contradiction_zca_naive_vs_observed",
+      "label": "contradiction_zca_naive_vs_observed",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.99
+      },
+      "module": "s4_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Embedding-space geometry (specifically the degree of isotropy) plays a crucial role in semantic code-search performance: consistently across model architectures and programming languages, the MRR improvement obtained by reshaping the embedding space via Soft-ZCA is non-trivial.",
+      "content_hash": "4f978846b19cd2568ac911263efb37df793fd65d73bba99c8504e6cf0cca48ce",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2411_17538::conclusion_geometry_matters",
+      "label": "conclusion_geometry_matters",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "code_search_anisotropy_problem",
+              "finding_iso_mrr_relationship_nonlinear",
+              "finding_softzca_improves_code_search",
+              "isotropy_benefits"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Conclusion: embedding-space geometry crucially affects code search",
+      "type": "claim"
+    },
+    {
+      "content": "Soft-ZCA whitening with an appropriately tuned eigenvalue regularizer $\\epsilon$ is a simple, lightweight post-processing technique that reliably improves the semantic code-search performance of code language models -- both pre-trained and contrastively fine-tuned -- across multiple programming languages, including held-out low-resource languages. It is therefore a practical solution for production code-search systems.",
+      "content_hash": "ed537416f9edd37091cde7bbbcd3fd94c7d91c1c38cf05a5c8120bd084485716",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2411_17538::conclusion_softzca_practical",
+      "label": "conclusion_softzca_practical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_optimal_isotropy_depends_on_finetuning",
+              "finding_softzca_improves_code_search",
+              "obs_low_resource_r_helped"
+            ]
+          }
+        }
+      },
+      "module": "s5_conclusion",
+      "parameters": [],
+      "title": "Conclusion: Soft-ZCA is a practical, robust post-processing tool",
+      "type": "claim"
+    },
+    {
+      "content": "MRR and IsoScores (Code / Comment) of non-whitened CodeT5+ embeddings for two output dimensions (with vs without the default down-projection from 768 to 256), Table 4:\n\n| Lang       | dim 256 MRR | dim 256 Iso (C/Cm) | dim 768 MRR | dim 768 Iso (C/Cm) |\n|------------|------------:|--------------------|------------:|--------------------|\n| Ruby       | 0.705       | 0.350 / 0.296      | 0.463       | 0.102 / 0.102      |\n| Javascript | 0.638       | 0.365 / 0.335      | 0.360       | 0.110 / 0.118      |\n| Go         | 0.757       | 0.234 / 0.196      | 0.413       | 0.042 / 0.044      |\n| Java       | 0.595       | 0.388 / 0.313      | 0.323       | 0.120 / 0.081      |\n| Python     | 0.721       | 0.394 / 0.356      | 0.387       | 0.122 / 0.139      |\n| PHP        | 0.537       | 0.400 / 0.262      | 0.266       | 0.107 / 0.065      |\n| R          | 0.045       | 0.139 / 0.118      | 0.026       | 0.026 / 0.012      |",
+      "content_hash": "8afdb04b9b9845d6834873e6e7a49c06319af190c02e59c23b7c812b0580d5a3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2411_17538::table4_codet5plus_dim",
+      "label": "table4_codet5plus_dim",
+      "metadata": {
+        "source_table": "artifacts/2411.17538.pdf, Table 4"
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Table 4: CodeT5+ MRR and IsoScores for embedding dim 256 vs 768",
+      "type": "claim"
+    },
+    {
+      "content": "Reducing the CodeT5+ output dimension from 768 (raw last hidden state) to 256 (with the default down-projection layer) nearly doubles both the MRR and the IsoScores on every language tested: e.g. Ruby MRR 0.463 -> 0.705 and IsoScore 0.102 -> 0.350; Go MRR 0.413 -> 0.757 and IsoScore 0.042 -> 0.234.",
+      "content_hash": "63cd29e12929df40f071a9dbddf4b04a04b10511d14d08d64544333f7c4d0c2c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2411_17538::obs_codet5plus_dim256_better",
+      "label": "obs_codet5plus_dim256_better",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_downprojection_layer_special",
+              "hypothesis_lower_dim_higher_iso",
+              "obs_codet5plus_dim256_better",
+              "table4_codet5plus_dim"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Directly read off Table 4 (CodeT5+ embedding-size ablation): dim=256 wins on both MRR and IsoScore in every language row."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Observation: dim=256 nearly doubles MRR and IsoScores vs dim=768",
+      "type": "claim"
+    },
+    {
+      "content": "In very high-dimensional spaces, data points spread sparsely, making uniform coverage (and thus isotropy) harder to achieve. Therefore lower-dimensional embedding spaces have higher isotropy, which translates into better downstream task performance.",
+      "content_hash": "c45780e57c90eca0a053bbdbda0acb1166955988e4e4f7e4696ae02d5c926ece",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2411_17538::hypothesis_lower_dim_higher_iso",
+      "label": "hypothesis_lower_dim_higher_iso",
+      "metadata": {
+        "prior": 0.7,
+        "prior_justification": "A plausible geometric argument (volume/sparsity of high-dimensional spaces) that is at least consistent with the Table 4 ablation. Not set higher because the ablation does not isolate dim from the trained down-projection layer."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Hypothesis: lower embedding dimension -> higher isotropy -> better MRR",
+      "type": "claim"
+    },
+    {
+      "content": "An alternative explanation is that the improvement is not due to lower dimensionality per se, but to the specific learned down-projection layer added by the default CodeT5+ embedding head. Under this account, the layer's parameters were trained to be discriminative for retrieval, and dimensionality is incidental.",
+      "content_hash": "01d4fbad65ac1fd2add6a48a9c8fd4348a94baaa0e0309b23e405b17aa78cd13",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2411_17538::alt_downprojection_layer_special",
+      "label": "alt_downprojection_layer_special",
+      "metadata": {
+        "prior": 0.45,
+        "prior_justification": "pi(Alt) for the trained-layer alternative: it is consistent with the MRR ranking but less consistent with the simultaneous IsoScore gain, so its explanatory power for @obs_codet5plus_dim256_better is moderate."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Alternative: the down-projection layer (not lower dim) drives the gain",
+      "type": "claim"
+    },
+    {
+      "content": "If lower dimensionality alone increases isotropy and hence MRR, then the dim=256 variant should both outperform the dim=768 variant on MRR and exhibit higher IsoScore on every language. Both predictions match Table 4 in every cell.",
+      "content_hash": "5eb78af2fc2f995d594f8fda82a2c596842e3ef91e50981e7435eeecefd5926c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2411_17538::pred_lower_dim_helps",
+      "label": "pred_lower_dim_helps",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Conditional prediction (dim=256 wins on every language) is directly verified by every row of Table 4."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Prediction (low-dim hypothesis): dim=256 wins on every language",
+      "type": "claim"
+    },
+    {
+      "content": "If the down-projection layer is the driver, then we would expect the MRR gain to be roughly constant across languages (because the same trained layer is applied). Table 4 shows MRR ratios from 1.5x (Ruby) to 2x (Go, PHP), which is a moderately large spread but not overwhelmingly inconsistent with the layer-driver story.",
+      "content_hash": "ba8c83d746552b1c4bf17bce423f04fd4147b4950ce61e6135c3d154539618af",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2411_17538::pred_layer_special",
+      "label": "pred_layer_special",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Conditional prediction (roughly constant MRR ratio) is only loosely confirmed by Table 4: ratios range 1.5x-2x."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Prediction (layer-driver alternative): roughly constant MRR ratio",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If lower dimensionality alone increases isotropy and hence MRR, then the dim=256 variant should both outperform the dim=768 variant on MRR and exhibit higher IsoScore on every language. Both predictions match Table 4 in every cell., If the down-projection layer is the driver, then we would expect the MRR gain to be roughly constant across languages (because the same trained layer is applied). Table 4 shows MRR ratios from 1.5x (Ruby) to 2x (Go, PHP), which is a moderately large spread but not overwhelmingly inconsistent with the layer-driver story., Reducing the CodeT5+ output dimension from 768 (raw last hidden state) to 256 (with the default down-projection layer) nearly doubles both the MRR and the IsoScores on every language tested: e.g. Ruby MRR 0.463 -> 0.705 and IsoScore 0.102 -> 0.350; Go MRR 0.413 -> 0.757 and IsoScore 0.042 -> 0.234.)",
+      "content_hash": "758dff3d4bc05264f2c3ecc17ce06d2127979b0be106194dd495819a3cd1a6e4",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2411_17538::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_downprojection_layer_special",
+              "hypothesis_lower_dim_higher_iso",
+              "pred_layer_special",
+              "pred_lower_dim_helps"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "MRR scores of CodeBERT embeddings under standard ZCA ($\\epsilon = 0$) with separate whitening vs combined (concatenated code + comment) whitening, Table 5:\n\n| Lang       | CodeBERT separate | CodeBERT combined | FT CodeBERT separate | FT CodeBERT combined |\n|------------|------------------:|------------------:|---------------------:|---------------------:|\n| Ruby       | 0.0959            | 0.1160            | 0.6225               | 0.6117               |\n| Javascript | 0.1113            | 0.0883            | 0.4750               | 0.4693               |\n| Go         | 0.0020            | 0.0037            | 0.5676               | 0.5557               |\n| Java       | 0.0008            | 0.0006            | 0.4553               | 0.4482               |\n| Python     | 0.0396            | 0.0239            | 0.5524               | 0.5455               |\n| PHP        | 0.0005            | 0.0005            | 0.2847               | 0.2784               |\n| R          | 0.0712            | 0.0414            | (no FT data)         | -                    |",
+      "content_hash": "2c5e767dda2b1adafddbc5c8208815527be047aeafaeb1ad1ade7d79779b1a94",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2411_17538::table5_separate_vs_combined",
+      "label": "table5_separate_vs_combined",
+      "metadata": {
+        "source_table": "artifacts/2411.17538.pdf, Table 5"
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Table 5: separate vs combined whitening (standard ZCA, CodeBERT)",
+      "type": "claim"
+    },
+    {
+      "content": "In the majority of (model, language) cells in Table 5, separate whitening yields slightly higher MRR than combined whitening. Specifically: in 4 of 7 cells for base CodeBERT (Javascript, Java, Python, R) separate is strictly better; in 6 of 6 cells for FT CodeBERT separate is strictly better; the few exceptions for base CodeBERT (Ruby +0.020, Go +0.0017) are small and confined to the lowest-MRR languages where signal is noisy.",
+      "content_hash": "72c1dff39d44e2b541acb08825b7962880cadab8037c054f4f2af382cb43c59c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2411_17538::obs_separate_mostly_better",
+      "label": "obs_separate_mostly_better",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Direct read-off of Table 5: 4/7 base CodeBERT cells and 6/6 FT CodeBERT cells favour separate whitening; exceptions are small and confined to low-MRR base-model cells."
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Observation: separate whitening MRR >= combined whitening MRR in most cells",
+      "type": "claim"
+    },
+    {
+      "content": "Separate computation of the whitening matrix for code and comment embeddings is not only practical (matching production-system structure) but also empirically superior to combined whitening: it yields slightly higher MRR scores in most evaluated (model, language) cells, including all six FT CodeBERT cells.",
+      "content_hash": "51f115ac8bac10b74345178bda4289447100c05cb5ba86643ec70a72c48c3085",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2411_17538::finding_separate_whitening_better",
+      "label": "finding_separate_whitening_better",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_separate_whitening_better",
+              "obs_separate_mostly_better",
+              "procedure_separate_whitening",
+              "table5_separate_vs_combined"
+            ]
+          }
+        }
+      },
+      "module": "s6_appendix",
+      "parameters": [],
+      "title": "Finding: separate whitening is empirically superior to combined whitening",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::zca_amplifies_noise_at_small_eigenvalues,github:2411_17538::soft_zca_controls_whitening)",
+      "content_hash": "caf1d6cb209e085d2c62532d5eaa7b346e16f285b0891399c16c9e573fec105d",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_0eba90e6",
+      "label": "__implication_result_0eba90e6",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::zca_amplifies_noise_at_small_eigenvalues,github:2411_17538::soft_zca_controls_whitening)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3a88a68bda338c3c",
+        "owning_strategy_type": "deduction",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::zca_correlation_property,github:2411_17538::zca_whitening_known_isotropy)",
+      "content_hash": "2cf0ec07fec71197c0cb0a8fea39bc6a06dd67be182027e2fdaa21c793407beb",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_86271e98",
+      "label": "__implication_result_86271e98",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::zca_correlation_property,github:2411_17538::zca_whitening_known_isotropy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_05b87d9c465c086a",
+        "owning_strategy_type": "deduction",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::obs_codebert_low_mrr_low_iso,github:2411_17538::obs_codet5plus_high_mrr_high_iso,github:2411_17538::obs_codellama_low_mrr)",
+      "content_hash": "6e380e8a48c409dc5826680bdcd663d99ef52e5f2861847aae1750cb864a1131",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_8df95646",
+      "label": "__conjunction_result_8df95646",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::obs_codebert_low_mrr_low_iso,github:2411_17538::obs_codet5plus_high_mrr_high_iso,github:2411_17538::obs_codellama_low_mrr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9e9332944f912a4f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_8df95646,github:2411_17538::finding_code_lms_anisotropic)",
+      "content_hash": "abed48f53f4fa20b17c40720e982d7a36ae8e4386736f5241767711d3e80998a",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_a8f9a2d7",
+      "label": "__implication_result_a8f9a2d7",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_8df95646,github:2411_17538::finding_code_lms_anisotropic)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9e9332944f912a4f",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::obs_ft_codebert_higher_mrr_low_iso,github:2411_17538::finding_finetuning_weak_on_isotropy)",
+      "content_hash": "d39d40b71d0fa6772d4f84873accf2e78d4bc3330621485afa89c5ad13006ce7",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_cf57fe02",
+      "label": "__implication_result_cf57fe02",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::obs_ft_codebert_higher_mrr_low_iso,github:2411_17538::finding_finetuning_weak_on_isotropy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_20ba47b0ba3a9902",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::table2_nonwhitened,github:2411_17538::finding_code_vs_comment_iso_similar)",
+      "content_hash": "b5fa2b15bf49e51aeedf7533b550fd220a4ecc0cbec5069927bbcb3c982c044f",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_cf22bbbc",
+      "label": "__implication_result_cf22bbbc",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::table2_nonwhitened,github:2411_17538::finding_code_vs_comment_iso_similar)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ec32e947ef582316",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::obs_ft_codebert_modest_gain,github:2411_17538::obs_codellama_largest_gain)",
+      "content_hash": "f726db965746dfcafa13653f756a8a3ec0dfa0b5a36587e1b4b8ebad360e835b",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_1aa90262",
+      "label": "__conjunction_result_1aa90262",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::obs_ft_codebert_modest_gain,github:2411_17538::obs_codellama_largest_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_21eec2d9fcb9a896",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_1aa90262,github:2411_17538::finding_iso_mrr_relationship_nonlinear)",
+      "content_hash": "b913607f42811447891e8e190d2bc3bac32319a62b0579177307c0bb4903227c",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_d2b78ce6",
+      "label": "__implication_result_d2b78ce6",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_1aa90262,github:2411_17538::finding_iso_mrr_relationship_nonlinear)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_21eec2d9fcb9a896",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_softzca_positive_delta_mrr)",
+      "content_hash": "c66179d8ff09d61fe911c98b1015aff7b0aa4f2660d045ca748a3c2c6ddbd312",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_ed3f685a",
+      "label": "__implication_result_ed3f685a",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_softzca_positive_delta_mrr)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ac247c0050a0c9fd",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_codellama_largest_gain)",
+      "content_hash": "f435404d7b2a79be6de9960cc0a66e2321da2a1f7c66465a8205c6dd58993046",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_2428389a",
+      "label": "__implication_result_2428389a",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_codellama_largest_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c6d40ce264406f24",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_ft_codebert_modest_gain)",
+      "content_hash": "e064828a596a41c9675a681cce817ba5f43f3e4311885882f7c47828dc783f7b",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_02b3adc3",
+      "label": "__implication_result_02b3adc3",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_ft_codebert_modest_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ece129991362360f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_low_resource_r_helped)",
+      "content_hash": "9d457b664f14542ded3a5ef79a5f941678162f817b6e4d6e81993f52839a3ef7",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_410213d1",
+      "label": "__implication_result_410213d1",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::obs_low_resource_r_helped)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8d7d342a3316b2f",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::obs_optimal_epsilon_base,github:2411_17538::obs_optimal_epsilon_ft)",
+      "content_hash": "f678f4c8d5a255dc27183378c6cdc0d633dcc53afb086042a04775c2e15d439b",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_040244ac",
+      "label": "__conjunction_result_040244ac",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::obs_optimal_epsilon_base,github:2411_17538::obs_optimal_epsilon_ft)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_27de05822db49f53",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_040244ac,github:2411_17538::finding_optimal_isotropy_depends_on_finetuning)",
+      "content_hash": "6f31037343390dcd5a901c25e8ce8b59175610d77249d5e1c34a5a1642fb24b0",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_7c5e4b87",
+      "label": "__implication_result_7c5e4b87",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_040244ac,github:2411_17538::finding_optimal_isotropy_depends_on_finetuning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_27de05822db49f53",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::obs_standard_zca_helps_base_models,github:2411_17538::obs_standard_zca_hurts_ft_and_codet5,github:2411_17538::zca_amplifies_noise_at_small_eigenvalues)",
+      "content_hash": "f45020ed7933feb2f98ee68d14c4341964e7012cb11b9b3a1760ac600261791b",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_77476f4f",
+      "label": "__conjunction_result_77476f4f",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::obs_standard_zca_helps_base_models,github:2411_17538::obs_standard_zca_hurts_ft_and_codet5,github:2411_17538::zca_amplifies_noise_at_small_eigenvalues)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_809155950199c1dc",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_77476f4f,github:2411_17538::soft_zca_controls_whitening)",
+      "content_hash": "0813a9b074d8d9b5e29f05e8877bceddd5a6f8a1818a2e1ab81522ef5543ee4e",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_8b6f096f",
+      "label": "__implication_result_8b6f096f",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_77476f4f,github:2411_17538::soft_zca_controls_whitening)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_809155950199c1dc",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::hypothesis_isotropy_mediates,github:2411_17538::obs_softzca_pattern)",
+      "content_hash": "f47306a4fe7b69a4eb4f32045a7e2ad483baf9622d421226fac0683a5b906242",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_b9fe0130",
+      "label": "__implication_result_b9fe0130",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::hypothesis_isotropy_mediates,github:2411_17538::obs_softzca_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b082cef1508350aa",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::alt_dimensionality_artifact,github:2411_17538::obs_softzca_pattern)",
+      "content_hash": "22f6159b8714679d2eab2f039140a4aef7d890951cefce0cb3cdac87b62bb815",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_e5eb8b37",
+      "label": "__implication_result_e5eb8b37",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::alt_dimensionality_artifact,github:2411_17538::obs_softzca_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_16faf2f55ad3f9df",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2411_17538::pred_softzca_isotropy,github:2411_17538::obs_softzca_pattern)",
+      "content_hash": "520167b9eaf52375444a6a42fa374ae8261961b9fd2f1aea8fb0e49c9026e685",
+      "exported": false,
+      "id": "github:2411_17538::__equivalence_result_3b33c7d2",
+      "label": "__equivalence_result_3b33c7d2",
+      "metadata": {
+        "canonical_name": "matches(github:2411_17538::pred_softzca_isotropy,github:2411_17538::obs_softzca_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_4c937b9a64e2a570",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2411_17538::pred_softzca_dim_artifact,github:2411_17538::obs_softzca_pattern)",
+      "content_hash": "46d0086386b301c0eb638a22f3ee0c5c0415eb8fcf9552a06f77e99f092a313e",
+      "exported": false,
+      "id": "github:2411_17538::__equivalence_result_baff5cdb",
+      "label": "__equivalence_result_baff5cdb",
+      "metadata": {
+        "canonical_name": "matches(github:2411_17538::pred_softzca_dim_artifact,github:2411_17538::obs_softzca_pattern)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_4c937b9a64e2a570",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::finding_iso_mrr_relationship_nonlinear)",
+      "content_hash": "d31f099bf812bc87046df8f916f0abae1b3f62ad7016317a9fb87713cf703249",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_29975018",
+      "label": "__conjunction_result_29975018",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::finding_iso_mrr_relationship_nonlinear)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_14873be072445a6a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_29975018,github:2411_17538::conclusion_geometry_matters)",
+      "content_hash": "8ecc833950e6518cc7ffd51fe99e4570e9373b7987364da81e98d6bb0725e355",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_32a1c27e",
+      "label": "__implication_result_32a1c27e",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_29975018,github:2411_17538::conclusion_geometry_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14873be072445a6a",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::finding_optimal_isotropy_depends_on_finetuning,github:2411_17538::obs_low_resource_r_helped)",
+      "content_hash": "4de1ba657840166466b1d7e125178b74e845798968b1ff058cbaea17b2a7b7ec",
+      "exported": false,
+      "id": "github:2411_17538::__conjunction_result_8f7fa6a1",
+      "label": "__conjunction_result_8f7fa6a1",
+      "metadata": {
+        "canonical_name": "all_true(github:2411_17538::finding_softzca_improves_code_search,github:2411_17538::finding_optimal_isotropy_depends_on_finetuning,github:2411_17538::obs_low_resource_r_helped)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bd06a9e54f4703d3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::__conjunction_result_8f7fa6a1,github:2411_17538::conclusion_softzca_practical)",
+      "content_hash": "b6d19648addd204fed335a17b74a8ac5a712640284a7ca366c36984260d5490b",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_32ec2d3e",
+      "label": "__implication_result_32ec2d3e",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::__conjunction_result_8f7fa6a1,github:2411_17538::conclusion_softzca_practical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bd06a9e54f4703d3",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::hypothesis_lower_dim_higher_iso,github:2411_17538::obs_codet5plus_dim256_better)",
+      "content_hash": "b042af568e3bf182ac04f7244b2e43cf8c9f13f4911d32252eddbef1d8826d89",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_2533fca0",
+      "label": "__implication_result_2533fca0",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::hypothesis_lower_dim_higher_iso,github:2411_17538::obs_codet5plus_dim256_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_90b8ea6c08e99306",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::alt_downprojection_layer_special,github:2411_17538::obs_codet5plus_dim256_better)",
+      "content_hash": "3a078ed1472c07144734e6daec610b785dbb75aa9f52bb492285ae69e95f4a74",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_de061435",
+      "label": "__implication_result_de061435",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::alt_downprojection_layer_special,github:2411_17538::obs_codet5plus_dim256_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1ce8d2764bb2ebea",
+        "owning_strategy_type": "support",
+        "prior": 0.55,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2411_17538::pred_lower_dim_helps,github:2411_17538::obs_codet5plus_dim256_better)",
+      "content_hash": "30696eed3e2a582625c682dd9095c600baaf3e4471c6d0f90be345dbf987359b",
+      "exported": false,
+      "id": "github:2411_17538::__equivalence_result_9dde6eed",
+      "label": "__equivalence_result_9dde6eed",
+      "metadata": {
+        "canonical_name": "matches(github:2411_17538::pred_lower_dim_helps,github:2411_17538::obs_codet5plus_dim256_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_12faeb7d012d0467",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2411_17538::pred_layer_special,github:2411_17538::obs_codet5plus_dim256_better)",
+      "content_hash": "cff1892304257b0fb9f4ceddf5c5b0c8139ff58d03b5d1a76294da0e57d93072",
+      "exported": false,
+      "id": "github:2411_17538::__equivalence_result_a6e9802d",
+      "label": "__equivalence_result_a6e9802d",
+      "metadata": {
+        "canonical_name": "matches(github:2411_17538::pred_layer_special,github:2411_17538::obs_codet5plus_dim256_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_12faeb7d012d0467",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2411_17538::obs_separate_mostly_better,github:2411_17538::finding_separate_whitening_better)",
+      "content_hash": "ad58c525848092cb344c4db67af1e374ef1ac8ca31c193faf777b64978aec22a",
+      "exported": false,
+      "id": "github:2411_17538::__implication_result_c3f08453",
+      "label": "__implication_result_c3f08453",
+      "metadata": {
+        "canonical_name": "implies(github:2411_17538::obs_separate_mostly_better,github:2411_17538::finding_separate_whitening_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fc59075fd1e4df60",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_whitening",
+    "s3_apparatus",
+    "s4_results",
+    "s5_conclusion",
+    "s6_appendix"
+  ],
+  "module_titles": {
+    "motivation": "Section 1: Introduction and Motivation.",
+    "s2_whitening": "Section 2: Whitening of the Embeddings.",
+    "s3_apparatus": "Section 3: Experimental Apparatus.",
+    "s4_results": "Section 4: Results.",
+    "s5_conclusion": "Section 5: Conclusion.",
+    "s6_appendix": "Section 6: Appendix."
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2411_17538::contradiction_zca_naive_vs_observed",
+      "metadata": {
+        "reason": "If standard ZCA helped every model on every dataset (@naive_zca_helps_all) then it would not decrease MRR for FT CodeBERT and CodeT5+ on most datasets (@obs_standard_zca_hurts_ft_and_codet5). The two claims cannot both be true; the experimental observation refutes the naive expectation, motivating the Soft-ZCA regularizer."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_b8fc57a6d3301f97",
+      "scope": "local",
+      "variables": [
+        "github:2411_17538::naive_zca_helps_all",
+        "github:2411_17538::obs_standard_zca_hurts_ft_and_codet5"
+      ]
+    }
+  ],
+  "package_name": "2411_17538",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2411_17538::soft_zca_definition",
+        "github:2411_17538::zca_definition"
+      ],
+      "conclusion": "github:2411_17538::soft_zca_controls_whitening",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_0eba90e6",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::zca_amplifies_noise_at_small_eigenvalues",
+              "github:2411_17538::soft_zca_controls_whitening"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "By @soft_zca_definition the regularizer enters as $(\\Lambda + \\epsilon I)^{-1/2}$. Whenever some eigenvalue $\\lambda_i \\to 0$, @zca_amplifies_noise_at_small_eigenvalues shows that the unregularized ZCA factor $\\lambda_i^{-1/2}$ blows up. Adding $\\epsilon > 0$ caps the factor at $(\\lambda_i + \\epsilon)^{-1/2} \\leq \\epsilon^{-1/2}$, which monotonically decreases the magnitude of the whitening operator as $\\epsilon$ grows. This gives a direct, monotone knob on the whitening strength."
+      },
+      "premises": [
+        "github:2411_17538::zca_amplifies_noise_at_small_eigenvalues"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3a88a68bda338c3c",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2411_17538::whitening_setup",
+        "github:2411_17538::whitening_rotational_freedom",
+        "github:2411_17538::zca_definition"
+      ],
+      "conclusion": "github:2411_17538::zca_whitening_known_isotropy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_86271e98",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::zca_correlation_property",
+              "github:2411_17538::zca_whitening_known_isotropy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Within the family of valid whitening transformations described in @whitening_setup and @whitening_rotational_freedom, the explicit ZCA matrix from @zca_definition is selected because it maximizes correlation with the original embeddings (@zca_correlation_property [@Kessy2018]). The paper inherits the prior literature's finding that this choice yields effective isotropy improvement on text embeddings [@Su2021]."
+      },
+      "premises": [
+        "github:2411_17538::zca_correlation_property"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_05b87d9c465c086a",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2411_17538::metric_isoscore",
+        "github:2411_17538::table2_nonwhitened",
+        "github:2411_17538::anisotropy_harms_semantics",
+        "github:2411_17538::contribution_isotropy_analysis"
+      ],
+      "conclusion": "github:2411_17538::finding_code_lms_anisotropic",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_8df95646",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::obs_codebert_low_mrr_low_iso",
+              "github:2411_17538::obs_codet5plus_high_mrr_high_iso",
+              "github:2411_17538::obs_codellama_low_mrr"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_a8f9a2d7",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_8df95646",
+              "github:2411_17538::finding_code_lms_anisotropic"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Across all three model families, the IsoScores reported in @table2_nonwhitened are far below 1: base CodeBERT and Code Llama show IsoScores below 0.02 in essentially all cells (@obs_codebert_low_mrr_low_iso, @obs_codellama_low_mrr), and even the relatively isotropic CodeT5+ peaks around 0.40 (@obs_codet5plus_high_mrr_high_iso) -- well below the 1.0 ceiling set by @metric_isoscore. This realises the analysis programme of @contribution_isotropy_analysis and is the precondition under which @anisotropy_harms_semantics applies to code search. The three independent model families agreeing on the qualitative conclusion 'embedding space is highly anisotropic' supports the general claim."
+      },
+      "premises": [
+        "github:2411_17538::obs_codebert_low_mrr_low_iso",
+        "github:2411_17538::obs_codet5plus_high_mrr_high_iso",
+        "github:2411_17538::obs_codellama_low_mrr"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9e9332944f912a4f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::metric_isoscore",
+        "github:2411_17538::table2_nonwhitened",
+        "github:2411_17538::contrastive_finetuning_limited"
+      ],
+      "conclusion": "github:2411_17538::finding_finetuning_weak_on_isotropy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_cf57fe02",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::obs_ft_codebert_higher_mrr_low_iso",
+              "github:2411_17538::finding_finetuning_weak_on_isotropy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@obs_ft_codebert_higher_mrr_low_iso reports that contrastive fine-tuning of CodeBERT raises MRR by orders of magnitude (e.g. 0.006 -> 0.547 on Ruby) yet only raises the average IsoScore by 0.073, leaving IsoScore in the 0.036-0.072 range. This is the direct experimental specialisation of the prior expectation in @contrastive_finetuning_limited and supports the conclusion that fine-tuning's MRR gain is largely orthogonal to isotropy."
+      },
+      "premises": [
+        "github:2411_17538::obs_ft_codebert_higher_mrr_low_iso"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_20ba47b0ba3a9902",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::metric_isoscore"
+      ],
+      "conclusion": "github:2411_17538::finding_code_vs_comment_iso_similar",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_cf22bbbc",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::table2_nonwhitened",
+              "github:2411_17538::finding_code_vs_comment_iso_similar"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "Inspecting the Code/Comment IsoScore pairs in @table2_nonwhitened across every (model, language) cell shows differences typically below 0.1 -- e.g. CodeBERT Python 0.006/0.021, CodeT5+ Java 0.388/0.313, Code Llama Javascript 0.010/0.002. The systematic near-equality is the direct empirical basis for the synthesis claim."
+      },
+      "premises": [
+        "github:2411_17538::table2_nonwhitened"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ec32e947ef582316",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::table3_whitened_delta",
+        "github:2411_17538::metric_isoscore",
+        "github:2411_17538::metric_mrr"
+      ],
+      "conclusion": "github:2411_17538::finding_iso_mrr_relationship_nonlinear",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_1aa90262",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::obs_ft_codebert_modest_gain",
+              "github:2411_17538::obs_codellama_largest_gain"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_d2b78ce6",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_1aa90262",
+              "github:2411_17538::finding_iso_mrr_relationship_nonlinear"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Two contrasting observations from @table3_whitened_delta drive the non-linearity claim: @obs_ft_codebert_modest_gain shows that pushing FT CodeBERT to IsoScore > 0.99 only yields +0.04-+0.08 MRR, while @obs_codellama_largest_gain shows that Code Llama reaches +0.476 MRR with IsoScores merely between 0.22 and 0.50. The same isotropy gain therefore produces very different MRR gains, ruling out a linear MRR(IsoScore) relationship."
+      },
+      "premises": [
+        "github:2411_17538::obs_ft_codebert_modest_gain",
+        "github:2411_17538::obs_codellama_largest_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_21eec2d9fcb9a896",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::model_codebert",
+        "github:2411_17538::dataset_codesearchnet"
+      ],
+      "conclusion": "github:2411_17538::obs_softzca_positive_delta_mrr",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_ed3f685a",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::obs_softzca_positive_delta_mrr"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If @finding_softzca_improves_code_search held universally, then in particular it predicts that base CodeBERT under Soft-ZCA on CodeSearchNet should show a positive $\\Delta$MRR. @obs_softzca_positive_delta_mrr reports +0.102 to +0.250 across all six languages, matching the prediction."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ac247c0050a0c9fd",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::model_codellama",
+        "github:2411_17538::dataset_codesearchnet",
+        "github:2411_17538::table1_model_details"
+      ],
+      "conclusion": "github:2411_17538::obs_codellama_largest_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_2428389a",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::obs_codellama_largest_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Specialising @finding_softzca_improves_code_search to Code Llama (architecture details in @table1_model_details) predicts a positive $\\Delta$MRR for that model. @obs_codellama_largest_gain reports the largest observed gains (+0.227 to +0.476), confirming the prediction in the strongest form."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c6d40ce264406f24",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::model_finetuned_codebert",
+        "github:2411_17538::dataset_codesearchnet"
+      ],
+      "conclusion": "github:2411_17538::obs_ft_codebert_modest_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_02b3adc3",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::obs_ft_codebert_modest_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Specialising @finding_softzca_improves_code_search to fine-tuned CodeBERT predicts a positive $\\Delta$MRR. @obs_ft_codebert_modest_gain reports +0.042 to +0.075 across all six languages -- the prediction holds, with the magnitude smaller but still positive."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ece129991362360f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::dataset_statcodesearch"
+      ],
+      "conclusion": "github:2411_17538::obs_low_resource_r_helped",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_410213d1",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::obs_low_resource_r_helped"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "If the law holds it should also predict gains on the held-out low-resource R dataset -- a stricter test, because no model was fine-tuned for R. @obs_low_resource_r_helped reports +0.077 / +0.035 / +0.337 across the three model families, all positive."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8d7d342a3316b2f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::finding_softzca_improves_code_search",
+      "metadata": {
+        "reason": "Base CodeBERT and Code Llama are different model architectures (encoder-only vs decoder-only) trained on different corpora; their $\\Delta$MRR results provide independent confirmations of the law."
+      },
+      "premises": [
+        "github:2411_17538::obs_softzca_positive_delta_mrr",
+        "github:2411_17538::obs_codellama_largest_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2321ddea501a1072",
+      "sub_strategies": [
+        "lcs_ac247c0050a0c9fd",
+        "lcs_c6d40ce264406f24"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2411_17538::finding_softzca_improves_code_search",
+      "metadata": {
+        "reason": "Adding fine-tuned CodeBERT covers a third regime -- a model whose embedding geometry has been deliberately reshaped by contrastive training. Its independent positive $\\Delta$MRR strengthens the induction."
+      },
+      "premises": [
+        "github:2411_17538::obs_softzca_positive_delta_mrr",
+        "github:2411_17538::obs_codellama_largest_gain",
+        "github:2411_17538::obs_ft_codebert_modest_gain"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6251138c89015d91",
+      "sub_strategies": [
+        "lcs_2321ddea501a1072",
+        "lcs_ece129991362360f"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2411_17538::research_gap",
+        "github:2411_17538::contribution_experimental_validation"
+      ],
+      "conclusion": "github:2411_17538::finding_softzca_improves_code_search",
+      "metadata": {
+        "reason": "The R-language StatCodeSearch dataset is held out from all training/fine-tuning. Confirmation here probes generalisation to an unseen language and domain (social-science research), making the induction substantially stronger than within-distribution agreement alone. This jointly closes the @research_gap and completes @contribution_experimental_validation."
+      },
+      "premises": [
+        "github:2411_17538::obs_softzca_positive_delta_mrr",
+        "github:2411_17538::obs_codellama_largest_gain",
+        "github:2411_17538::obs_ft_codebert_modest_gain",
+        "github:2411_17538::obs_low_resource_r_helped"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_112e0d9616d463cd",
+      "sub_strategies": [
+        "lcs_6251138c89015d91",
+        "lcs_b8d7d342a3316b2f"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2411_17538::soft_zca_controls_whitening",
+        "github:2411_17538::metric_isoscore"
+      ],
+      "conclusion": "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_040244ac",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::obs_optimal_epsilon_base",
+              "github:2411_17538::obs_optimal_epsilon_ft"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_7c5e4b87",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_040244ac",
+              "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@obs_optimal_epsilon_base reports that base models peak at $\\epsilon \\in \\{0.1, 0.01\\}$ giving IsoScores in $[0.2, 0.8]$, while @obs_optimal_epsilon_ft reports that FT CodeBERT peaks at $\\epsilon = 0.0001$ giving IsoScores $> 0.99$. The two regimes differ in optimal $\\epsilon$ by roughly two-to-three orders of magnitude and in resulting IsoScore by a factor of $\\sim 5$, directly substantiating the conditional law."
+      },
+      "premises": [
+        "github:2411_17538::obs_optimal_epsilon_base",
+        "github:2411_17538::obs_optimal_epsilon_ft"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_27de05822db49f53",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::metric_mrr"
+      ],
+      "conclusion": "github:2411_17538::soft_zca_controls_whitening",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_77476f4f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::obs_standard_zca_helps_base_models",
+              "github:2411_17538::obs_standard_zca_hurts_ft_and_codet5",
+              "github:2411_17538::zca_amplifies_noise_at_small_eigenvalues"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_8b6f096f",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_77476f4f",
+              "github:2411_17538::soft_zca_controls_whitening"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The empirical split between @obs_standard_zca_helps_base_models (base models gain) and @obs_standard_zca_hurts_ft_and_codet5 (FT CodeBERT and CodeT5+ lose) is the experimental analogue of @zca_amplifies_noise_at_small_eigenvalues: when the embedding space already has reasonably distributed eigenvalues (FT models, CodeT5+), zero-$\\epsilon$ whitening amplifies noise and hurts MRR. This is exactly the failure mode that Soft-ZCA's $\\epsilon$ knob is designed to repair (@soft_zca_controls_whitening), giving an experimental warrant for the controllability claim beyond the purely mathematical derivation in s2."
+      },
+      "premises": [
+        "github:2411_17538::obs_standard_zca_helps_base_models",
+        "github:2411_17538::obs_standard_zca_hurts_ft_and_codet5",
+        "github:2411_17538::zca_amplifies_noise_at_small_eigenvalues"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_809155950199c1dc",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::soft_zca_controls_whitening",
+        "github:2411_17538::code_search_anisotropy_problem"
+      ],
+      "conclusion": "github:2411_17538::obs_softzca_pattern",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_b9fe0130",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::hypothesis_isotropy_mediates",
+              "github:2411_17538::obs_softzca_pattern"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Under @hypothesis_isotropy_mediates, the controllable knob $\\epsilon$ from @soft_zca_controls_whitening should produce MRR gains that track IsoScore changes, and should be most beneficial where the baseline anisotropy is worst (@code_search_anisotropy_problem). @obs_softzca_pattern is exactly that: positive $\\Delta$MRR co-occurs with isotropy gain in every cell, and the largest gains occur on the most-anisotropic baseline (Code Llama)."
+      },
+      "premises": [
+        "github:2411_17538::hypothesis_isotropy_mediates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b082cef1508350aa",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::obs_softzca_pattern",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_e5eb8b37",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::alt_dimensionality_artifact",
+              "github:2411_17538::obs_softzca_pattern"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "Under @alt_dimensionality_artifact one would also expect Code Llama (4,096-dim) to gain the most, which it does. However the alternative does not naturally explain why FT CodeBERT (also 768-dim like base CodeBERT) gains far less than base CodeBERT, nor why CodeT5+ (256-dim) still gains on R."
+      },
+      "premises": [
+        "github:2411_17538::alt_dimensionality_artifact"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_16faf2f55ad3f9df",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__equivalence_result_3b33c7d2",
+            "operator": "equivalence",
+            "variables": [
+              "github:2411_17538::pred_softzca_isotropy",
+              "github:2411_17538::obs_softzca_pattern"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__equivalence_result_baff5cdb",
+            "operator": "equivalence",
+            "variables": [
+              "github:2411_17538::pred_softzca_dim_artifact",
+              "github:2411_17538::obs_softzca_pattern"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__equivalence_result_baff5cdb",
+              "github:2411_17538::__equivalence_result_3b33c7d2"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@pred_softzca_isotropy correctly predicts the cell-by-cell co-variation of $\\Delta$MRR with IsoScore changes (including the FT-vs-base CodeBERT contrast), whereas @pred_softzca_dim_artifact only captures the gross 'Code Llama wins' direction and is silent on the FT-vs-base contrast and on the small-dim CodeT5+ R-language gain."
+      },
+      "premises": [
+        "github:2411_17538::pred_softzca_isotropy",
+        "github:2411_17538::pred_softzca_dim_artifact",
+        "github:2411_17538::obs_softzca_pattern"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4c937b9a64e2a570",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2411_17538::contribution_softzca_method",
+        "github:2411_17538::contribution_experimental_validation"
+      ],
+      "conclusion": "github:2411_17538::_anon_000",
+      "metadata": {
+        "reason": "Two competing explanations for the experimental pattern in @obs_softzca_pattern are weighed: the isotropy-mediation hypothesis advanced by the paper (@hypothesis_isotropy_mediates) and the dimensionality-artefact alternative (@alt_dimensionality_artifact). The detailed cell-by-cell pattern in @comp_softzca favours the isotropy explanation."
+      },
+      "premises": [
+        "github:2411_17538::hypothesis_isotropy_mediates",
+        "github:2411_17538::alt_dimensionality_artifact",
+        "github:2411_17538::pred_softzca_isotropy",
+        "github:2411_17538::pred_softzca_dim_artifact",
+        "github:2411_17538::obs_softzca_pattern"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5e5e6ee17f5046ba",
+      "sub_strategies": [
+        "lcs_b082cef1508350aa",
+        "lcs_16faf2f55ad3f9df",
+        "lcs_4c937b9a64e2a570"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2411_17538::isotropy_benefits",
+        "github:2411_17538::code_search_anisotropy_problem"
+      ],
+      "conclusion": "github:2411_17538::conclusion_geometry_matters",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_29975018",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::finding_iso_mrr_relationship_nonlinear"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_32a1c27e",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_29975018",
+              "github:2411_17538::conclusion_geometry_matters"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_softzca_improves_code_search shows that simply changing the isotropy of the embedding space via Soft-ZCA produces consistent positive $\\Delta$MRR across all four configurations and seven languages. @finding_iso_mrr_relationship_nonlinear shows the relation is non-trivially monotonic. Together, these two findings -- combined with the prior expectation in @isotropy_benefits and @code_search_anisotropy_problem that isotropy underlies retrieval quality -- support the conclusion that embedding-space geometry crucially affects code search."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search",
+        "github:2411_17538::finding_iso_mrr_relationship_nonlinear"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14873be072445a6a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::conclusion_softzca_practical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__conjunction_result_8f7fa6a1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2411_17538::finding_softzca_improves_code_search",
+              "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning",
+              "github:2411_17538::obs_low_resource_r_helped"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__implication_result_32ec2d3e",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__conjunction_result_8f7fa6a1",
+              "github:2411_17538::conclusion_softzca_practical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "@finding_softzca_improves_code_search establishes consistent positive $\\Delta$MRR across four configurations and seven languages. @finding_optimal_isotropy_depends_on_finetuning gives concrete operational guidance ($\\epsilon \\in \\{0.1, 0.01\\}$ for base models, $\\epsilon = 0.0001$ for fine-tuned models). @obs_low_resource_r_helped demonstrates generalisation to a held-out low-resource language. Together these warrant the practical-utility conclusion."
+      },
+      "premises": [
+        "github:2411_17538::finding_softzca_improves_code_search",
+        "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning",
+        "github:2411_17538::obs_low_resource_r_helped"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bd06a9e54f4703d3",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2411_17538::table4_codet5plus_dim"
+      ],
+      "conclusion": "github:2411_17538::obs_codet5plus_dim256_better",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_2533fca0",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::hypothesis_lower_dim_higher_iso",
+              "github:2411_17538::obs_codet5plus_dim256_better"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@hypothesis_lower_dim_higher_iso predicts that the dim=256 variant should have both higher IsoScore and higher MRR than dim=768. The cell-by-cell numbers in @table4_codet5plus_dim (summarised in @obs_codet5plus_dim256_better) confirm both directions on every language."
+      },
+      "premises": [
+        "github:2411_17538::hypothesis_lower_dim_higher_iso"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_90b8ea6c08e99306",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::obs_codet5plus_dim256_better",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_de061435",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::alt_downprojection_layer_special",
+              "github:2411_17538::obs_codet5plus_dim256_better"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.55,
+        "reason": "Under @alt_downprojection_layer_special, the dim=256 variant should also win across the board because it is the better-trained head. @obs_codet5plus_dim256_better is consistent with this, but the alternative does not predict the simultaneous IsoScore gain as cleanly as the low-dim hypothesis."
+      },
+      "premises": [
+        "github:2411_17538::alt_downprojection_layer_special"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1ce8d2764bb2ebea",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2411_17538::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__equivalence_result_9dde6eed",
+            "operator": "equivalence",
+            "variables": [
+              "github:2411_17538::pred_lower_dim_helps",
+              "github:2411_17538::obs_codet5plus_dim256_better"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::__equivalence_result_a6e9802d",
+            "operator": "equivalence",
+            "variables": [
+              "github:2411_17538::pred_layer_special",
+              "github:2411_17538::obs_codet5plus_dim256_better"
+            ]
+          },
+          {
+            "conclusion": "github:2411_17538::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::__equivalence_result_a6e9802d",
+              "github:2411_17538::__equivalence_result_9dde6eed"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "@pred_lower_dim_helps captures both the MRR and the IsoScore directions in every cell, including the qualitative co-variation across languages. @pred_layer_special is consistent with the MRR ranking but is silent on the IsoScore gain. The low-dim hypothesis matches the observation more tightly."
+      },
+      "premises": [
+        "github:2411_17538::pred_lower_dim_helps",
+        "github:2411_17538::pred_layer_special",
+        "github:2411_17538::obs_codet5plus_dim256_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_12faeb7d012d0467",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2411_17538::model_codet5plus"
+      ],
+      "conclusion": "github:2411_17538::_anon_001",
+      "metadata": {
+        "reason": "Two competing explanations for the dim=256 vs dim=768 ablation on CodeT5+: the low-dimensionality-improves-isotropy hypothesis (@hypothesis_lower_dim_higher_iso) and the trained-layer alternative (@alt_downprojection_layer_special). The former matches the data more tightly because it predicts the joint MRR and IsoScore gain."
+      },
+      "premises": [
+        "github:2411_17538::hypothesis_lower_dim_higher_iso",
+        "github:2411_17538::alt_downprojection_layer_special",
+        "github:2411_17538::pred_lower_dim_helps",
+        "github:2411_17538::pred_layer_special",
+        "github:2411_17538::obs_codet5plus_dim256_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_64ac45c2d4327ed1",
+      "sub_strategies": [
+        "lcs_90b8ea6c08e99306",
+        "lcs_1ce8d2764bb2ebea",
+        "lcs_12faeb7d012d0467"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2411_17538::procedure_separate_whitening",
+        "github:2411_17538::soft_zca_controls_whitening",
+        "github:2411_17538::table5_separate_vs_combined"
+      ],
+      "conclusion": "github:2411_17538::finding_separate_whitening_better",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2411_17538::__implication_result_c3f08453",
+            "operator": "implication",
+            "variables": [
+              "github:2411_17538::obs_separate_mostly_better",
+              "github:2411_17538::finding_separate_whitening_better"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@obs_separate_mostly_better quantifies the per-cell MRR comparison reported in @table5_separate_vs_combined: 4/7 base CodeBERT cells and 6/6 FT CodeBERT cells favour separate whitening, with the exceptions being small and concentrated in low-MRR base-model cells. This directly substantiates the synthesis claim in @finding_separate_whitening_better and validates the design choice formalised in @procedure_separate_whitening."
+      },
+      "premises": [
+        "github:2411_17538::obs_separate_mostly_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fc59075fd1e4df60",
+      "type": "support"
+    }
+  ]
+}

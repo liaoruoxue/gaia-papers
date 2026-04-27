@@ -1,0 +1,78 @@
+{
+  "exports": [
+    {
+      "content": "Embedding-space geometry (specifically the degree of isotropy) plays a crucial role in semantic code-search performance: consistently across model architectures and programming languages, the MRR improvement obtained by reshaping the embedding space via Soft-ZCA is non-trivial.",
+      "content_hash": "4f978846b19cd2568ac911263efb37df793fd65d73bba99c8504e6cf0cca48ce",
+      "label": "conclusion_geometry_matters",
+      "qid": "github:2411_17538::conclusion_geometry_matters",
+      "type": "claim"
+    },
+    {
+      "content": "Soft-ZCA whitening with an appropriately tuned eigenvalue regularizer $\\epsilon$ is a simple, lightweight post-processing technique that reliably improves the semantic code-search performance of code language models -- both pre-trained and contrastively fine-tuned -- across multiple programming languages, including held-out low-resource languages. It is therefore a practical solution for production code-search systems.",
+      "content_hash": "ed537416f9edd37091cde7bbbcd3fd94c7d91c1c38cf05a5c8120bd084485716",
+      "label": "conclusion_softzca_practical",
+      "qid": "github:2411_17538::conclusion_softzca_practical",
+      "type": "claim"
+    },
+    {
+      "content": "The paper introduces an eigenvalue regularizer $\\epsilon$ added to the ZCA whitening matrix, which they call Soft-ZCA, providing direct control over the degree of whitening (and hence the resulting isotropy level) applied to the embeddings.",
+      "content_hash": "9e98cac0deaa71ff753e08f64df0ec6f81691c8249f32e5c6cb708dff899a122",
+      "label": "contribution_softzca_method",
+      "qid": "github:2411_17538::contribution_softzca_method",
+      "type": "claim"
+    },
+    {
+      "content": "Similarly to standard natural-language LMs, all three studied code language models exhibit highly anisotropic embedding spaces: their raw IsoScores are typically far below 1 (e.g. 0.005-0.014 for CodeBERT, 0.234-0.400 for CodeT5+, 0.002-0.010 for Code Llama on CodeSearchNet, see @table2_nonwhitened).",
+      "content_hash": "230c7db0bd660a7100026ea90de7cbf63d1507205e2fc3404044d296fea9ba47",
+      "label": "finding_code_lms_anisotropic",
+      "qid": "github:2411_17538::finding_code_lms_anisotropic",
+      "type": "claim"
+    },
+    {
+      "content": "Code and comment embeddings have only marginally different IsoScores across all studied models (differences typically $< 0.1$ in Table 2). In practice they can be treated as similarly isotropic.",
+      "content_hash": "72e7e4aa3a5f2497c00a8abbc94cd707e3f16a13fa062c697fe6187780d2a908",
+      "label": "finding_code_vs_comment_iso_similar",
+      "qid": "github:2411_17538::finding_code_vs_comment_iso_similar",
+      "type": "claim"
+    },
+    {
+      "content": "Contrastive fine-tuning does not strongly increase isotropy: on CodeBERT, fine-tuning improves the average IsoScore by only 0.073 while delivering large MRR gains, confirming that the MRR improvement from fine-tuning is largely orthogonal to the isotropy of the embedding space.",
+      "content_hash": "6ca0c090e130aef9d59e0580fcd920fedcfcf2c45faa6ad5c0dccb7acbc6fb00",
+      "label": "finding_finetuning_weak_on_isotropy",
+      "qid": "github:2411_17538::finding_finetuning_weak_on_isotropy",
+      "type": "claim"
+    },
+    {
+      "content": "Models with higher IsoScores generally perform better on code search, but the relationship between MRR and IsoScore is not linear. Concretely: FT CodeBERT reaches IsoScore > 0.99 with only modest MRR gains (+0.04--+0.08), while base Code Llama reaches IsoScore in the range 0.22--0.50 with very large MRR gains (up to +0.476).",
+      "content_hash": "bfee30bd6e0d7ec3c195cce7b8c5edd923edeee250513d8ea4e9c4dc92c85b7f",
+      "label": "finding_iso_mrr_relationship_nonlinear",
+      "qid": "github:2411_17538::finding_iso_mrr_relationship_nonlinear",
+      "type": "claim"
+    },
+    {
+      "content": "The optimal level of isotropy depends on whether the model has been contrastively fine-tuned: pre-trained-only models perform best with IsoScores between 0.2 and 0.8 (achieved at moderate $\\epsilon \\in \\{0.1, 0.01\\}$), whereas fine-tuned CodeBERT performs best with near-perfect isotropy (IsoScore $> 0.99$, achieved at $\\epsilon = 0.0001$).",
+      "content_hash": "aaf2407adf50dab30f9d8f454f1f3595e5b5c790c2bd9d8f57b0c7294e8b741b",
+      "label": "finding_optimal_isotropy_depends_on_finetuning",
+      "qid": "github:2411_17538::finding_optimal_isotropy_depends_on_finetuning",
+      "type": "claim"
+    },
+    {
+      "content": "Separate computation of the whitening matrix for code and comment embeddings is not only practical (matching production-system structure) but also empirically superior to combined whitening: it yields slightly higher MRR scores in most evaluated (model, language) cells, including all six FT CodeBERT cells.",
+      "content_hash": "51f115ac8bac10b74345178bda4289447100c05cb5ba86643ec70a72c48c3085",
+      "label": "finding_separate_whitening_better",
+      "qid": "github:2411_17538::finding_separate_whitening_better",
+      "type": "claim"
+    },
+    {
+      "content": "Applying Soft-ZCA whitening with an appropriately chosen eigenvalue regularizer $\\epsilon$ improves both the isotropy and the code-search MRR of all four model configurations across all seven evaluated programming languages (with the only exceptions being CodeT5+ on Go and Python where $\\Delta$MRR = 0). The improvement is robust across model architectures (encoder-only, encoder-decoder, decoder-only) and extends to a held-out low-resource language not seen during training.",
+      "content_hash": "5205548b8ce24f46726e23c17805419fc2d2ffb530bd4f064f64fed928a5deca",
+      "label": "finding_softzca_improves_code_search",
+      "qid": "github:2411_17538::finding_softzca_improves_code_search",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:15fe0163dfb16a1dc89719cf03814732a60db62b638434d43a4341dc22f40bac",
+  "manifest_schema_version": 1,
+  "package": "2411-17538",
+  "version": "0.1.0"
+}
