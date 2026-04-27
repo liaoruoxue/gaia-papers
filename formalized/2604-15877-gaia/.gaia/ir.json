@@ -1,0 +1,2776 @@
+{
+  "ir_hash": "sha256:52083d503a5d305290673cec25e95e7bfd0ed5b4a715e0b733ec86a43a89218e",
+  "knowledges": [
+    {
+      "content": "This paper studies knowledge extracted at the **scaffold level** -- runtime systems outside model weights. Training-time methods such as Reinforcement Learning from Human Feedback (RLHF, [@Ouyang2022rlhf]) and Constitutional AI ([@Bai2022cai]) are complementary but out of scope. Inclusion criteria for surveyed systems: (a) learn from interaction traces (excluding pre-specified rules), (b) produce persistent knowledge artifacts, and (c) have been published since 2023.",
+      "content_hash": "ea8106c539f01a234ca9cbb7b8a01ee59b615e179510535391167e1849281191",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15877::setup_scope",
+      "label": "setup_scope",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bai2022cai",
+              "Ouyang2022rlhf"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Scope: scaffold-level knowledge",
+      "type": "setting"
+    },
+    {
+      "content": "Two research communities address experience accumulation in Large Language Model (LLM) agents at the scaffold level: (a) the **agent memory community**, which builds systems for extracting and retrieving experiential knowledge (representative systems include MemGPT [@Packer2023memgpt], Mem0 [@Chhikara2025mem0], MemoryOS [@Kang2025memos]); (b) the **agent skill community**, which builds frameworks for discovering and reusing procedural capabilities from execution traces (representative systems include Voyager [@Wang2023voyager], SkillWeaver [@Zheng2025skillweaver], EvoSkill [@Alzubi2026evoskill]). Both communities address the same fundamental problem -- extracting reusable knowledge from interaction experience.",
+      "content_hash": "bc81ccd11232e98c52c3562bbed12a68406786d8b0299d62b7559ddece09df18",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15877::setup_communities",
+      "label": "setup_communities",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Alzubi2026evoskill",
+              "Chhikara2025mem0",
+              "Kang2025memos",
+              "Packer2023memgpt",
+              "Wang2023voyager",
+              "Zheng2025skillweaver"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Two research communities on experience accumulation",
+      "type": "setting"
+    },
+    {
+      "content": "Cognitive science offers analogues to multi-level knowledge representation. Complementary Learning Systems (CLS) theory [@McClelland1995cls] describes how the hippocampus rapidly encodes episodic memories that are gradually consolidated into neocortical knowledge -- a biological compression spectrum. ACT-R's declarative-procedural distinction [@Anderson1983actr] maps onto a memory/skill boundary, and Fitts and Posner's [@Fitts1967] skill acquisition theory shows that knowledge flows bidirectionally -- explicit rules compile into automatic procedures through practice.",
+      "content_hash": "8373f556e5af669c89bc82d9d8570054a624435ded12f5cf1f45837587a73075",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15877::setup_cls_theory",
+      "label": "setup_cls_theory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Anderson1983actr",
+              "Fitts1967",
+              "McClelland1995cls"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Cognitive-science analogues",
+      "type": "setting"
+    },
+    {
+      "content": "Can the apparent split between agent memory systems and agent skill discovery systems be unified into a single conceptual framework that exposes shared sub-problems and missing capabilities, and what design implications follow?",
+      "content_hash": "539206290ee05f342e97f6642ed8f68e3c34c5ce7d3a4685e84e69e2dfa38c96",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15877::rq_unification",
+      "label": "rq_unification",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Unification research question",
+      "type": "question"
+    },
+    {
+      "content": "A citation analysis spanning 22 primary papers (covering both agent memory and agent skill systems) catalogues a total of 1,136 references across these papers' bibliographies.",
+      "content_hash": "87c665b6a021db1537192571d90d9611691e00fb0870e59d02aa73860bb0b421",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15877::obs_total_references",
+      "label": "obs_total_references",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct count from the paper's Abstract and Section 1: 1,136 references across 22 primary papers. High confidence as an explicitly reported bibliometric measurement.",
+        "source_section": "artifacts/2604.15877.pdf, Abstract and Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Citation analysis corpus size",
+      "type": "claim"
+    },
+    {
+      "content": "Memory papers cite skill work at a rate of approximately 0.7%: only 4 out of 566 outgoing references in the surveyed memory papers point to agent-skill work.",
+      "content_hash": "8ff05a5679d38371e9e9d3d51077e1905ef6784eaeffdbf5ba2f624421c424d1",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15877::obs_memory_to_skill_citation",
+      "label": "obs_memory_to_skill_citation",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Direct numerator/denominator (4/566 = 0.7%) reported in Section 1. Mechanical citation count, high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memory-to-skill cross-citation rate",
+      "type": "claim"
+    },
+    {
+      "content": "Skill papers cite memory work at a rate of approximately 1.2%: only 7 out of 570 outgoing references in the surveyed skill papers point to agent-memory work.",
+      "content_hash": "da4a61b28b6f09f74fb42c782c675d5bd92ef36f168798292efd06767a05621f",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15877::obs_skill_to_memory_citation",
+      "label": "obs_skill_to_memory_citation",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Direct numerator/denominator (7/570 = 1.2%) reported in Section 1. Mechanical citation count, high confidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Skill-to-memory cross-citation rate",
+      "type": "claim"
+    },
+    {
+      "content": "Two recent surveys of agent skills ([@Jiang2026sok], [@Xu2026skillsurvey]) do not cite a single agent memory system in their bibliographies.",
+      "content_hash": "a35b49d4324f04e0c10c0c1dd9ba00cf89dd1778047a98f23d36328891538e3b",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15877::obs_skill_surveys_no_memory",
+      "label": "obs_skill_surveys_no_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jiang2026sok",
+              "Xu2026skillsurvey"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct review of two skill surveys (Jiang et al. 2026; Xu and Yan 2026) for any memory-system citation. High confidence as a verifiable claim about a small finite set of citations."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Skill surveys ignore memory work",
+      "type": "claim"
+    },
+    {
+      "content": "Among the recent agent memory surveys, only one ([@Yang2026graph]) cites any agent skill work, and that citation is restricted to a single system (Voyager).",
+      "content_hash": "b05131dff79e2375217844e6507d6115064b6f81e900c3a9affd3712edce82ac",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_15877::obs_memory_survey_only_voyager",
+      "label": "obs_memory_survey_only_voyager",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yang2026graph"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Direct review of memory surveys; only one (Yang et al. 2026a) cites a skill system, restricted to Voyager. High confidence; slight uncertainty because survey selection may not be exhaustive."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memory surveys cite at most one skill system",
+      "type": "claim"
+    },
+    {
+      "content": "The agent memory and agent skill research communities are largely disconnected: the cross-community citation rate is below 1% (0.7% memory-to-skill, 1.2% skill-to-memory). This separation is structural -- it is reflected not only in primary-paper citation patterns but also in the surveys, where skill surveys cite no memory work and memory surveys cite at most a single skill system.",
+      "content_hash": "a6d8293aa40edbda70170aae427e7dd26ebd22d51790bf30ef2bd0665ff77be6",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_15877::community_disconnect",
+      "label": "community_disconnect",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_memory_survey_only_voyager",
+              "obs_memory_to_skill_citation",
+              "obs_skill_surveys_no_memory",
+              "obs_skill_to_memory_citation",
+              "obs_total_references"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Cross-community citation rate is below 1%",
+      "type": "claim"
+    },
+    {
+      "content": "Memory extraction and skill discovery are instantiations of the same operation: compressing interaction experience into reusable knowledge at different granularities. A memory system extracts structured event records (~10x compression); a skill system extracts reusable behavioral patterns (~100x compression); a rule system extracts abstract decision principles (~1,000x+ compression). These are not three separate problems but three points on a single experience compression spectrum, where higher compression directly translates to reduced context consumption, faster retrieval, and lower compute overhead per decision.",
+      "content_hash": "09f8a842264e3e9132100ca036b38a16d5df71186745cb11494fabdb734d6625",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_15877::shared_problem",
+      "label": "shared_problem",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Conceptual reframing of memory and skill systems as instances of compression at different granularities. High plausibility as a theoretical lens, but the equivalence is conceptual rather than formally proved; some practitioners may dispute that memory and skill extraction are the 'same operation'."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memory, skills, rules as a single compression operation",
+      "type": "claim"
+    },
+    {
+      "content": "Practitioners already perform full-spectrum compression manually: hundreds of thousands of developers maintain CLAUDE.md and .cursorrules files that distill deployment experience into reusable rules (Level 0 raw experience compressed to Level 3 declarative rules). However, no automated system performs this compression; each existing system operates at a single, predetermined compression level.",
+      "content_hash": "ad31399cd0eedfb5ceaacbeb6c30e5f8bf909b6142dd83aecb98f1111e34509d",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_15877::practitioner_compression",
+      "label": "practitioner_compression",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Manual full-spectrum compression by practitioners",
+      "type": "claim"
+    },
+    {
+      "content": "**Definition 2.1 (Interaction Trace).** An interaction trace $T = \\{(s_t, a_t, o_t, f_t)\\}_{t=1}^{N}$ is a sequence of states $s_t$, actions $a_t$, observations $o_t$, and feedback signals $f_t$ collected during agent execution.",
+      "content_hash": "b4caa78f9aa0fc945d7f9ea655dbedd37285af0c4ad526c6ec9911f8246a7383",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15877::def_interaction_trace",
+      "label": "def_interaction_trace",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Definition 2.1: interaction trace",
+      "type": "setting"
+    },
+    {
+      "content": "**Definition 2.2 (Experience Compression Function).** An experience compression function $C_L: T \\to K_L$ maps interaction traces to knowledge artifacts at compression level $L \\in \\{0, 1, 2, 3\\}$. The output space $K_L$ corresponds to one of the four spectrum levels (raw trace, episodic memory, procedural skill, declarative rule).",
+      "content_hash": "688d8e937da893ad742e1d64c34105fb028dc6a462efce00dc1c04ec653d6cef",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15877::def_compression_function",
+      "label": "def_compression_function",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Definition 2.2: experience compression function",
+      "type": "setting"
+    },
+    {
+      "content": "**Level 0 (Raw Trace).** The uncompressed interaction record. Format: complete logs, execution trajectories. Compression ratio: 1:1. Reusability: minimal -- entirely context-bound.",
+      "content_hash": "28c1458e2b904aa6475a803c1fbd1b7c49efd5813218ab3488658b9957369565",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15877::def_level0",
+      "label": "def_level0",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Level 0: raw trace",
+      "type": "setting"
+    },
+    {
+      "content": "**Level 1 (Episodic Memory).** Structured extraction of *what happened*, preserving key contextual details while discarding redundant interaction mechanics. Format: key-value pairs, timestamped event summaries (e.g., '[2026-03-15] User requested Q3 revenue analysis via SQL. Preferred tabular format.'). Compression ratio: ~5-20x. Reusability: low to moderate -- tied to specific episodes.",
+      "content_hash": "eba61378f1ba18c7cfa293725215eaba8ef9f02fa5413278d12ec2823846310b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15877::def_level1",
+      "label": "def_level1",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Level 1: episodic memory",
+      "type": "setting"
+    },
+    {
+      "content": "**Level 2 (Procedural Skill).** Extraction of *how to act* in a class of situations, abstracting across instances into reusable behavioral patterns. Format: structured routines, code snippets, workflow templates (e.g., 'DATA ANALYSIS: (1) Confirm source, (2) Select tool, (3) Present in preferred format, (4) Verify.'). Compression ratio: ~50-500x. Reusability: high -- transferable across similar situations.",
+      "content_hash": "d25092ef14339d4c1be4c753cfb3234fea69b13214374f2ed390afaf35367f96",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15877::def_level2",
+      "label": "def_level2",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Level 2: procedural skill",
+      "type": "setting"
+    },
+    {
+      "content": "**Level 3 (Declarative Rule).** Extraction of *what principles govern decisions* -- domain-invariant knowledge. Format: natural-language principles, constraints, policies (e.g., 'Always verify computed results against source data before presenting.'). Compression ratio: ~1,000x or more. Reusability: highest -- domain-general but may lack actionable specificity.",
+      "content_hash": "210de3ed820742779f5d3305e086d672d78f190d04c25002037dc291060f08f4",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15877::def_level3",
+      "label": "def_level3",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Level 3: declarative rule",
+      "type": "setting"
+    },
+    {
+      "content": "Generalizability versus specificity trade-off: as compression level increases from Level 0 to Level 3, the extracted knowledge becomes more broadly applicable but less context-specific. Higher-level artifacts (skills, rules) discard concrete contextual details to expose patterns that transfer across instances; lower-level artifacts (raw traces, episodic memories) retain context at the cost of reusability.",
+      "content_hash": "c66262dcc7dbe366ef95b6eb80d763eb448d16e33adc17b053834fa36735425c",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_15877::generalizability_tradeoff",
+      "label": "generalizability_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "def_level0",
+              "def_level1",
+              "def_level2",
+              "def_level3",
+              "shared_problem"
+            ]
+          }
+        }
+      },
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Generalizability vs. specificity trade-off",
+      "type": "claim"
+    },
+    {
+      "content": "Mem0 ([@Chhikara2025mem0]) compresses multi-session conversation history (~26,000 tokens) into retrieved memory entries (~1,800 tokens), achieving roughly 15x compression at Level 1.",
+      "content_hash": "c9f87d0abf14cbd9c7974f8167209fbd72fbb16a8a1dc286e7020207f1aeedbe",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15877::obs_mem0_compression",
+      "label": "obs_mem0_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Chhikara2025mem0"
+            ]
+          }
+        }
+      },
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Mem0 ~15x Level-1 compression",
+      "type": "claim"
+    },
+    {
+      "content": "Trace2Skill ([@Ni2026trace2skill]) distills traces from 200 tasks via 128 parallel sub-agents into a compact skill directory, achieving roughly 100-500x compression at Level 2.",
+      "content_hash": "d5af7aef080ad4ddb6c8b79f360d4a8d84dd7932f543250784234b64e6ae643b",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_15877::obs_trace2skill_compression",
+      "label": "obs_trace2skill_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ni2026trace2skill"
+            ]
+          }
+        }
+      },
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Trace2Skill ~100-500x Level-2 compression",
+      "type": "claim"
+    },
+    {
+      "content": "Acquisition versus maintenance cost trade-off: Level 1 episodic memories are cheap to acquire (one trace per memory) but expensive to maintain at scale -- a Level-1-only system accumulating thousands of entries per day will exhaust any practical retrieval budget within weeks. Level 3 declarative rules require many traces to induce but form a compact, low-maintenance set. This trade-off makes upward compression not merely desirable but **necessary** for agents that operate at scale over extended deployments.",
+      "content_hash": "ab6e70a31ef43abec903e50694e7ce92a9e22a94a559d15004bd0eacc176ec02",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2604_15877::acquisition_maintenance_tradeoff",
+      "label": "acquisition_maintenance_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "storage_cost_calculation"
+            ]
+          }
+        }
+      },
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Acquisition vs. maintenance cost trade-off",
+      "type": "claim"
+    },
+    {
+      "content": "A worked storage estimate illustrates the maintenance burden. A Level-1-only agent storing 1,000 episodes at ~500 tokens each maintains a ~500K-token knowledge store that must be indexed and searched at every decision. Compressing the same content into Level-2 skills reduces storage to ~5K tokens; into Level-3 rules, ~500 tokens -- a 100-1,000x reduction in storage and retrieval overhead that compounds across thousands of daily decisions.",
+      "content_hash": "abc6b176178a380728348ba4e53e2632d3ceb23117c7cc4f327c1ec20253bb10",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_15877::storage_cost_calculation",
+      "label": "storage_cost_calculation",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Order-of-magnitude calculation: 1,000 episodes x 500 tokens = 500K; compressed to 5K (skills) and 500 (rules) tokens. The arithmetic is trivially correct; uncertainty is in the per-episode token estimate (~500 tokens) which may vary by domain."
+      },
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Storage estimate: 500K -> 5K -> 500 tokens",
+      "type": "claim"
+    },
+    {
+      "content": "The four levels describe an output space, not a fixed processing order. A system may compress directly from Level 0 to Level 3, or maintain knowledge at multiple levels simultaneously. The spectrum specifies the granularity of the extracted artifacts; it does not prescribe a sequential pipeline.",
+      "content_hash": "b714a75635a09ae66236f1aefc5058907625b4b725cef48aa42edfa377426724",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_15877::spectrum_not_pipeline",
+      "label": "spectrum_not_pipeline",
+      "module": "s2_spectrum",
+      "parameters": [],
+      "title": "Spectrum is descriptive, not procedural",
+      "type": "claim"
+    },
+    {
+      "content": "Ten surveyed systems cluster at Level 1 (episodic memory), spanning diverse mechanisms: LLM-driven extraction (Mem0), agentic indexing (A-MEM), hierarchical storage (MemoryOS), reinforcement-learning-optimized memory operations (MemSkill, Memory-R1, Mem-α, MemPO), meta-learned memory architectures (ALMA), multi-agent coordination (MemMA), and governance with temporal decay (SSGM). Despite the mechanistic diversity, all ten converge on the same output format: structured episodic records.",
+      "content_hash": "e96be9ec201027535a5bdcd87060469b354b153d701a0013380a34a0cf0144aa",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15877::obs_l1_systems",
+      "label": "obs_l1_systems",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Direct count from Table 2: ten Level-1 systems are listed with diverse mechanisms but converging output format. High confidence as a verifiable enumeration; slight uncertainty for borderline cases.",
+        "source_table": "artifacts/2604.15877.pdf, Table 2"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Ten Level-1 systems cluster on episodic records",
+      "type": "claim"
+    },
+    {
+      "content": "Eight surveyed systems cluster at Level 2 (procedural skill). Voyager ([@Wang2023voyager]) pioneered the paradigm; later entries include SkillWeaver, EvoSkill, CASCADE, AutoSkill, Trace2Skill, SkillRL, and EvolveR. CASCADE ([@Huang2025cascade]) chains cumulative skill creation with autonomous evolution.",
+      "content_hash": "2207ed68be9a8d9dcd028418c74cf5b0d9bbfea7b28827f9c02f27ae4ddd044a",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15877::obs_l2_systems",
+      "label": "obs_l2_systems",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Huang2025cascade",
+              "Wang2023voyager"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct count from Table 2: eight Level-2 systems are listed. High confidence as a verifiable enumeration.",
+        "source_table": "artifacts/2604.15877.pdf, Table 2"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Eight Level-2 systems",
+      "type": "claim"
+    },
+    {
+      "content": "Two surveyed systems operate across Levels 1 and 2 simultaneously: ExpeL ([@Zhao2024expel]) and AutoAgent ([@Wang2026autoagent]). Both use predetermined (fixed) levels without adaptive selection -- they are two-speed systems, not continuous spectra.",
+      "content_hash": "8d95844a61ae9a810ed0c35873c00c623c85fe29fc2b5351f60a38475ae937ca",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_15877::obs_cross_level_systems",
+      "label": "obs_cross_level_systems",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wang2026autoagent",
+              "Zhao2024expel"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct identification of ExpeL and AutoAgent as cross-level systems in Table 2; the 'fixed levels, no adaptive selection' characterization is supported by inspection of each system's documentation."
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Two cross-level (L1-L2) systems with fixed levels",
+      "type": "claim"
+    },
+    {
+      "content": "Level 3 (declarative rule) is notably sparse for *learned* rules: no surveyed system automates rule extraction from agent experience. Constitutional AI ([@Bai2022cai]) uses pre-specified rules; reward-design methods (Potential-Based Reward Shaping [@Ng1999pbrs], process rewards [@Lightman2023verify], rule-based rewards [@Shao2024deepseekmath]) encode Level-3-type knowledge but are human-designed, not learned. Weight-level rules (via Reinforcement Learning from Human Feedback, RLHF [@Ouyang2022rlhf]) are static after training, opaque to inspection, and cannot be updated without retraining.",
+      "content_hash": "5bfcf9df662177ccaaf3481768dce19300d85707698bb98bbdc50755b6c20251",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15877::obs_l3_empty",
+      "label": "obs_l3_empty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Bai2022cai",
+              "Lightman2023verify",
+              "Ng1999pbrs",
+              "Ouyang2022rlhf",
+              "Shao2024deepseekmath"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Survey-level claim that no surveyed system automates Level-3 rule extraction. High confidence within the survey scope; slight uncertainty because the field is broad and a system might be missing from the survey (e.g., the Q1 2026 snapshot caveat)."
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Level 3 is empty for learned rules",
+      "type": "claim"
+    },
+    {
+      "content": "Recent empirical work provides initial Level-3 evidence: RuleShaping ([@Zhang2026rules]) studies 25,000+ natural-language rules for coding agents and finds that **negative constraints (guardrails) improve performance by 7-14 percentage points** while positive directives hurt. SEVerA ([@Banerjee2026severa]) adds formal verification to self-evolving agents -- orthogonal to compression level but critical for correctness.",
+      "content_hash": "7a5e7b1f312cf89d46f511311e40108f984fea3f65a9623a2726b1031dfc419c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_15877::obs_l3_partial_evidence",
+      "label": "obs_l3_partial_evidence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Banerjee2026severa",
+              "Zhang2026rules"
+            ]
+          }
+        }
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Initial Level-3 empirical evidence",
+      "type": "claim"
+    },
+    {
+      "content": "SkillRL ([@Xia2026skillrl]) reports a +68.5 percentage-point gain on the ALFWorld benchmark when using Level-2 skills versus Level-1 trajectory retrieval, holding the underlying agent constant.",
+      "content_hash": "d87b13c32d2694876e32d3236edff3320d54b2a311ccbc80f563392b76bb4bba",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_15877::obs_skillrl_l2_vs_l1",
+      "label": "obs_skillrl_l2_vs_l1",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Xia2026skillrl"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from SkillRL Table 1: +68.5pp L2-skills vs. L1-trajectory retrieval on ALFWorld. High confidence as a reported benchmark result.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "SkillRL: +68.5pp L2 vs. L1 retrieval (ALFWorld)",
+      "type": "claim"
+    },
+    {
+      "content": "Trace2Skill ([@Ni2026trace2skill]) outperforms human-written skills by +21.5 percentage points on the SpreadsheetBench benchmark, indicating that automated Level-2 skill distillation can exceed manual skill curation.",
+      "content_hash": "65afb79e009114f34ee6acc022806b827b6373e4e4eff8792deb3f72b0b39143",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15877::obs_trace2skill_l2_vs_human",
+      "label": "obs_trace2skill_l2_vs_human",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ni2026trace2skill"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Trace2Skill Table 1: +21.5pp L2 vs. human-written skills on SpreadsheetBench.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Trace2Skill: +21.5pp L2 vs. human skill (SpreadsheetBench)",
+      "type": "claim"
+    },
+    {
+      "content": "Trace2Skill ([@Ni2026trace2skill]) reports a +42.1 percentage-point gain on SpreadsheetBench when using Level-2 skills versus a no-skill baseline.",
+      "content_hash": "0d969dff0a7d74f698d539448b8f0ba62bbe15bec7c8fbecbdfb941a1d84fea8",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_15877::obs_trace2skill_l2_vs_none",
+      "label": "obs_trace2skill_l2_vs_none",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ni2026trace2skill"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from Trace2Skill Table 1: +42.1pp L2 vs. no skill on SpreadsheetBench.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Trace2Skill: +42.1pp L2 vs. no skill (SpreadsheetBench)",
+      "type": "claim"
+    },
+    {
+      "content": "SkillsBench ([@Li2026skillsbench]) reports that **curated** Level-2 skills improve multi-task performance by +16.2 percentage points over a no-skill baseline.",
+      "content_hash": "ef4739111e861ce9941f996656c1e7d8552fe0825634f5440efe0c38d0768fe6",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_15877::obs_skillsbench_curated",
+      "label": "obs_skillsbench_curated",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2026skillsbench"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct measurement from SkillsBench Table 1: +16.2pp curated L2 vs. no skill on multi-task evaluation.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "SkillsBench: +16.2pp curated L2 vs. none",
+      "type": "claim"
+    },
+    {
+      "content": "SkillsBench ([@Li2026skillsbench]) reports that LLM-self-generated Level-2 skills produce **+0.0 percentage points** of improvement on multi-task tasks -- no benefit -- in contrast to the +16.2pp gain from curated skills.",
+      "content_hash": "b01a4a39fc6217556494005fed27b452337ea1709b29b9395e9c6957717d4e92",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_15877::obs_skillsbench_selfgen",
+      "label": "obs_skillsbench_selfgen",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2026skillsbench"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct measurement from SkillsBench Table 1: LLM-self-generated skills yield +0.0pp. High confidence as a reported benchmark result.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "SkillsBench: +0.0pp LLM-self-generated L2",
+      "type": "claim"
+    },
+    {
+      "content": "EvoSkill ([@Alzubi2026evoskill]) reports a +5.3% gain on the BrowseComp benchmark when using Level-2 skills versus no skill, providing additional empirical support for the L2-over-L1 pattern (though smaller in magnitude than the SkillRL/Trace2Skill results).",
+      "content_hash": "5d3910c11fea47975befaaf7e62850486055937b8bb36ef60da2029106e1f89d",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_15877::obs_evoskill_l2_vs_none",
+      "label": "obs_evoskill_l2_vs_none",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Alzubi2026evoskill"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from EvoSkill Table 1: +5.3% L2 vs. no skill on BrowseComp. Smaller magnitude but consistent direction.",
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "EvoSkill: +5.3% L2 vs. no skill (BrowseComp)",
+      "type": "claim"
+    },
+    {
+      "content": "RuleShaping ([@Zhang2026rules]) reports a +7-14 percentage-point gain from Level-3 negative constraints compared to a zero-shot baseline on the SWE-bench coding benchmark.",
+      "content_hash": "0252147f2809a26a8d7c277e2430f7227aff0e2664fbbcdc3653cd941533973d",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_15877::obs_ruleshaping_l3",
+      "label": "obs_ruleshaping_l3",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhang2026rules"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.15877.pdf, Table 1"
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "RuleShaping: +7-14pp L3 constraints (SWE-bench)",
+      "type": "claim"
+    },
+    {
+      "content": "An emerging empirical consensus, drawing on cross-level performance comparisons from multiple studies, supports the claim that **higher-compression representations (Level 2 skills) consistently outperform lower-compression baselines (Level 1 retrieval, no skill)** within the same study, on benchmarks spanning embodied reasoning (ALFWorld), spreadsheet manipulation (SpreadsheetBench), web browsing (BrowseComp), and multi-task evaluation. Although results from different studies cannot be directly compared, the **direction** is consistent across all comparisons except SkillsBench's self-generated condition.",
+      "content_hash": "c97930e3c6261d122e2d029dd906168e1e2e42696481f5269b66ee595ccef6d6",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2604_15877::higher_compression_better",
+      "label": "higher_compression_better",
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Higher compression consistently outperforms lower (within-study)",
+      "type": "claim"
+    },
+    {
+      "content": "Compression level alone is insufficient; the **fidelity of the compression process** determines whether the artifact is useful or merely compact noise. Curated Level-2 skills produce gains (+16.2pp) but LLM-self-generated Level-2 skills produce no benefit (+0.0pp) on the same SkillsBench evaluation. Therefore, achieving the right output format is necessary but not sufficient -- the extraction process must distill genuinely useful patterns.",
+      "content_hash": "75c6ba563902a58e74598f2fe4ca446a0d5a7e74c78d6db36939ea1a84972e2e",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2604_15877::fidelity_matters",
+      "label": "fidelity_matters",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_skillsbench_curated",
+              "obs_skillsbench_selfgen"
+            ]
+          }
+        }
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Compression fidelity matters as much as level",
+      "type": "claim"
+    },
+    {
+      "content": "The mapping reveals that systems cluster at Level 1 or Level 2, with minimal cross-level work and virtually no automated Level 3 work. We call this gap the **missing diagonal** -- the absence of systems that can: (1) **adaptively select** the appropriate compression level $L^*$ for a given trace $T$; (2) **promote** knowledge upward (from level $L$ to level $L' > L$) when sufficient evidence accumulates (many memories -> one skill -> one rule); (3) **demote** knowledge downward (from level $L$ to level $L' < L$) when a rule proves too abstract for a specific context.",
+      "content_hash": "ecee580e8b508d32b335d9c5a90b5630e087e14b94ebccc3f6d8df08159254c2",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2604_15877::missing_diagonal",
+      "label": "missing_diagonal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_cross_level_systems",
+              "obs_l1_systems",
+              "obs_l2_systems",
+              "obs_l3_empty"
+            ]
+          }
+        }
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "The missing diagonal: no adaptive cross-level system",
+      "type": "claim"
+    },
+    {
+      "content": "The missing diagonal reflects a **problem-framing limitation**, not missing engineering effort. Each community defines its output format a priori (memory papers fix L1, skill papers fix L2), so adaptive level selection is structurally outside the design space rather than merely unimplemented. Adaptive level selection is a **meta-learning problem**: learning what kind of knowledge to extract, not just what knowledge to extract.",
+      "content_hash": "936f6e9165be8f95e9176234ae7078062b787f930ac626377bba76d6a0ae20e7",
+      "declaration_index": 19,
+      "exported": true,
+      "id": "github:2604_15877::framing_limitation",
+      "label": "framing_limitation",
+      "metadata": {
+        "prior": 0.8,
+        "prior_justification": "Interpretive claim about why the missing diagonal exists (problem framing rather than missing engineering). Plausible but not directly testable; moderate-high prior reflecting reasonable inference from the survey data without independent confirmation."
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Missing diagonal stems from framing, not engineering",
+      "type": "claim"
+    },
+    {
+      "content": "The missing diagonal is also a **scalability bottleneck**: a Level-1-only system accumulating episodic memories faces linear growth in storage and retrieval cost, eventually degrading performance as irrelevant entries dilute useful knowledge. Upward compression (L1 -> L2 -> L3) is the natural solution: consolidate recurring patterns into compact skills or rules that scale sub-linearly with experience volume.",
+      "content_hash": "5c6fd3beb4ff6f25d6de9de3a31f2bbfb221f0ed64512ed600bf00f9d30535a5",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2604_15877::scalability_bottleneck",
+      "label": "scalability_bottleneck",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Quantitative scalability argument: linear cost growth in L1-only systems. The mathematical reasoning is straightforward; uncertainty is in whether real systems hit this bottleneck in practice (production deployments may use other mitigations like sharding)."
+      },
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "L1-only systems face linear-cost scalability bottleneck",
+      "type": "claim"
+    },
+    {
+      "content": "Four technical barriers explain the empty Level-3 cell: (i) distinguishing causal regularities from incidental correlations is harder than episode extraction; (ii) rules without Level-2 grounding risk being too abstract; (iii) no methodology exists for evaluating rule quality (infinite regress of meta-evaluation); (iv) using LLM-as-Judge gives a false sense that evaluation is solved.",
+      "content_hash": "2dbc92614527871289312da1660b9ab0fcb48a5c33b4f741e61ffee50171b8a4",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2604_15877::l3_barriers",
+      "label": "l3_barriers",
+      "module": "s2_mapping",
+      "parameters": [],
+      "title": "Four barriers to automated L3 extraction",
+      "type": "claim"
+    },
+    {
+      "content": "Both the agent memory and agent skill communities independently solve the same sub-problems without sharing solutions: retrieval over growing knowledge stores, conflict detection between contradictory entries, staleness recognition, and evaluation of downstream utility. The spectrum view (which exposes the shared compression operation) makes this redundancy visible.",
+      "content_hash": "6c7384a920f28f826506dc66d143a3f664684f9c2be1ac3d0953bcfb64ff1cb7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_15877::shared_subproblems",
+      "label": "shared_subproblems",
+      "metadata": {
+        "prior": 0.83,
+        "prior_justification": "Claim that both communities solve identical sub-problems (retrieval, conflict detection, staleness, evaluation). Verifiable by inspection of the surveyed papers; high confidence in the qualitative claim, slight uncertainty in 'identical' being literally true."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Communities solve identical sub-problems independently",
+      "type": "claim"
+    },
+    {
+      "content": "Real deployments require both **personalization** (memory-style user-specific context retention) and **capability** (skill-style reusable procedural patterns). An agent that abstracts reusable workflows but forgets user preferences is incomplete; one that remembers context but cannot consolidate recurring patterns will overwhelm its retrieval budget.",
+      "content_hash": "d39ca13aad05f39a569100d25b35c8fd40ab86a57ca75545a3c84768f1f55fd5",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_15877::deployment_needs_both",
+      "label": "deployment_needs_both",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Pragmatic claim about real deployment requirements (personalization + capability). Strongly supported by industry experience but not a controlled empirical result."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Deployments need both personalization and capability",
+      "type": "claim"
+    },
+    {
+      "content": "Specialization alone is insufficient as a justification for the memory-skill split. A unified architecture -- with **level-specific compressors** sharing common **retrieval, conflict-resolution, and lifecycle infrastructure** -- would avoid redundant engineering across communities while still allowing specialization at the compression-output layer.",
+      "content_hash": "79c1cc389a9ca2f92700ad3ed9d273c3781c8b5d4aa1fcb4a18a3d08a46eea05",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_15877::specialization_insufficient",
+      "label": "specialization_insufficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "community_disconnect",
+              "deployment_needs_both",
+              "shared_subproblems"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Specialization alone cannot justify the community split",
+      "type": "claim"
+    },
+    {
+      "content": "Existing evaluation methodology is **tightly coupled to the compression level**: Level 1 systems evaluate via question-answering metrics (F1, exact match); Level 2 systems evaluate via task success rate; Level 3 has no established methodology. This coupling means systems are optimized for their level's metric, which may not reflect true downstream utility. For example, MemSkill achieves strong QA F1 but its impact on multi-step task completion is unclear; EvoSkill's task-success metric cannot capture user-specific context.",
+      "content_hash": "082b35d3318118da156c55c1e58552c86d0357dbd9fe2610cfa122b47caa1a94",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_15877::evaluation_level_coupling",
+      "label": "evaluation_level_coupling",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Direct observation about current evaluation practice (L1 = QA metrics, L2 = task success, L3 = no methodology). Verifiable from the surveyed literature; high confidence."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Evaluation methods are level-coupled",
+      "type": "claim"
+    },
+    {
+      "content": "A unified evaluation framework should assess knowledge artifacts by their **downstream impact on agent performance across time**, regardless of compression level -- an efficiency metric that captures *value per token of stored knowledge*. This would replace level-specific metrics with a level-agnostic measure that exposes whether highly compressed artifacts genuinely outperform less-compressed ones at the system level.",
+      "content_hash": "db06fb899a865c6ad39f1984a9f1e219b28fa6cd2240e5306c34b04a3a54c5cc",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_15877::evaluation_should_unify",
+      "label": "evaluation_should_unify",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "evaluation_level_coupling",
+              "missing_diagonal"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Evaluation should be level-agnostic, value-per-token",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical evidence supports a **monotonic relationship** between compression level and transferability: Level 1 memories transfer across base models (MemSkill: LLaMA -> Qwen); Level 2 skills transfer across tasks (EvoSkill: SealQA -> BrowseComp, +5.3%) and across model sizes (Trace2Skill: 35B parameters -> 122B parameters, +57.7 percentage points). Higher-compression artifacts transfer more broadly because they carry less context-specific detail.",
+      "content_hash": "8aa765d14bb2763115d51316f4a5fcfd7b97d3106f3cd621ffa3cd72b14515e1",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_15877::transferability_monotonic",
+      "label": "transferability_monotonic",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_evoskill_l2_vs_none",
+              "obs_skillrl_l2_vs_l1",
+              "obs_trace2skill_size_transfer"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Transferability monotonically increases with compression",
+      "type": "claim"
+    },
+    {
+      "content": "Trace2Skill ([@Ni2026trace2skill]) reports a +57.7 percentage-point gain when transferring its Level-2 skills from a 35-billion-parameter model to a 122-billion-parameter model, demonstrating cross-model-size transferability of Level-2 skills.",
+      "content_hash": "7351f41bed0d3a2f2fa030a4486ce2ba5854e93c46581d7594c1304b5d073296",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2604_15877::obs_trace2skill_size_transfer",
+      "label": "obs_trace2skill_size_transfer",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ni2026trace2skill"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct measurement from Trace2Skill (Ni et al. 2026): +57.7pp from 35B to 122B model transfer. High confidence as a reported benchmark result."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Trace2Skill: +57.7pp 35B -> 122B transfer",
+      "type": "claim"
+    },
+    {
+      "content": "The transferability versus specificity curve **likely follows a concave shape**, with the sweet spot at Level 2 balancing transferability against specificity. This conjecture has not been validated by a controlled experiment (one that holds source experience constant and varies only the compression level), but existing evidence is consistent with it.",
+      "content_hash": "881a8f07e9799ccc367cd44837accee207deecaa42b4a2ef82c658cc07e9a7b9",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_15877::transferability_concavity",
+      "label": "transferability_concavity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "fidelity_matters",
+              "transferability_monotonic"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Concave transferability curve, sweet spot at L2",
+      "type": "claim"
+    },
+    {
+      "content": "Lifecycle management remains **largely an afterthought** across both communities. Existing systems focus on knowledge acquisition while treating maintenance as secondary. Some include partial mechanisms -- Mem0's LLM-driven operations, Memory-R1's RL-learned updates, ExpeL's importance counting, AutoSkill ([@Yang2026autoskill])'s version management -- but these remain isolated. No system addresses the full lifecycle: conflict detection across knowledge types, staleness recognition, principled deprecation, and cross-level consistency.",
+      "content_hash": "73431490e1fef65f5522ce11b0de77b1d8e76a15ddd43cea676e1ea2a5edd7e4",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_15877::lifecycle_neglected",
+      "label": "lifecycle_neglected",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yang2026autoskill"
+            ],
+            "referenced_claims": [
+              "obs_merge_swing"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Knowledge lifecycle management is neglected",
+      "type": "claim"
+    },
+    {
+      "content": "Merging skills does not always help: including success-trace signals during skill merging can cause performance swings of plus or minus 21 percentage points ([@Ni2026trace2skill]). Agent behavior can degrade over extended operation even when individual-step correctness is maintained, indicating that lifecycle issues compound over time.",
+      "content_hash": "d92498b152daa87dd14dd934889b938be978035fd97a9b7fcb41d39c491a58b1",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_15877::obs_merge_swing",
+      "label": "obs_merge_swing",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ni2026trace2skill"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Direct measurement from Trace2Skill: +/-21pp performance swings during skill merging with success-trace signals. High confidence as a reported finding; slight uncertainty in generalization beyond Trace2Skill's specific setup."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Skill merging can swing +/-21pp; behavior degrades over time",
+      "type": "claim"
+    },
+    {
+      "content": "The software-engineering community's version-control and deprecation practices offer a concrete opportunity for transfer to knowledge artifacts. Versioned artifacts with explicit deprecation protocols would address staleness, cross-level consistency, and conflict resolution simultaneously.",
+      "content_hash": "5d01739d7ef458e01209679e7bbcfadb1b9b38bc2fbe818fb539980505b8e8cc",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2604_15877::lifecycle_borrow_se",
+      "label": "lifecycle_borrow_se",
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Borrow version control and deprecation from software engineering",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 1.** Level-2 compression should outperform Level-1 retrieval on cross-domain transfer when source experience is held constant. This prediction follows directly from the monotonic-transferability hypothesis and would be falsified by a controlled experiment in which an L1 retrieval system matches or exceeds an L2 skill system on a transfer benchmark with identical training data.",
+      "content_hash": "36a1eab74e4ac363c342e5d7419535eeffee1a73c7ea84198b56b2c90cff67a7",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2604_15877::prediction_l2_beats_l1_transfer",
+      "label": "prediction_l2_beats_l1_transfer",
+      "metadata": {
+        "prior": 0.65,
+        "prior_justification": "Forward-looking prediction not yet validated by a controlled experiment. Consistent with within-study evidence (SkillRL +68.5pp on ALFWorld) but the controlled cross-domain transfer experiment has not been run."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Prediction 1: L2 > L1 on cross-domain transfer",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 2.** A multi-level knowledge store combining Level 1 (memories) and Level 2 (skills) should outperform either level alone, with the performance gap **widening** as deployment length increases. This follows from the acquisition-versus-maintenance trade-off: L2 alone misses user-specific context; L1 alone is overwhelmed at scale.",
+      "content_hash": "519b5869a58e5bfd4dfbae403cd988f89fd536f8f0f7b558fd22c52eab6a0e15",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2604_15877::prediction_multilevel_better",
+      "label": "prediction_multilevel_better",
+      "metadata": {
+        "prior": 0.6,
+        "prior_justification": "Forward-looking prediction about long-horizon multi-level systems. No system supports adaptive multi-level storage to date; prediction is well-motivated but speculative."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Prediction 2: L1+L2 store improves with deployment length",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 3.** The transferability-versus-specificity curve should be concave, with Level 2 at the sweet spot. This follows from the conjecture that transferability rises monotonically with compression but specificity falls; the two trends imply an interior optimum.",
+      "content_hash": "ae06f889eca98c399c69fad3f6ca4ba34952262c18cc17c985de4991018755b1",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2604_15877::prediction_concave_curve",
+      "label": "prediction_concave_curve",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Forward-looking prediction about transferability-vs-specificity curve shape. Direction (monotonic for L0->L2) supported by data, but the L2 sweet-spot conjecture has not been tested. Moderate prior reflecting high uncertainty about the specific functional form."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Prediction 3: concave transferability curve, peak at L2",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 4.** Level-3 declarative rules should help most when framed as **constraints (guardrails)** rather than directives (positive instructions). This is consistent with the early evidence from RuleShaping ([@Zhang2026rules]) showing that negative constraints improve performance by 7-14pp while positive directives hurt.",
+      "content_hash": "5458edf26bc30b0a19ead892823de9002e535b05be19be507a9c096b3216ffc7",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2604_15877::prediction_l3_constraints",
+      "label": "prediction_l3_constraints",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhang2026rules"
+            ]
+          }
+        },
+        "prior": 0.7,
+        "prior_justification": "Forward-looking prediction about L3 framing (guardrails > directives). Supported by the early RuleShaping evidence (+7-14pp from constraints). Higher prior than other predictions because partial empirical confirmation already exists."
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Prediction 4: L3 rules should be guardrails, not directives",
+      "type": "claim"
+    },
+    {
+      "content": "Validating or falsifying the four testable predictions (1-4 above) would establish whether the experience-compression spectrum is a useful **design tool** or merely a **descriptive framework**. A taxonomy that does not generate falsifiable predictions lacks engineering leverage; the four predictions provide concrete empirical tests.",
+      "content_hash": "3ae169a2a8e4bb467666a606e1ed7fca05fbf842a00d3f9b50f0135afec379b7",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_15877::predictions_distinguish_taxonomy",
+      "label": "predictions_distinguish_taxonomy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "prediction_concave_curve",
+              "prediction_l2_beats_l1_transfer",
+              "prediction_l3_constraints",
+              "prediction_multilevel_better"
+            ]
+          }
+        }
+      },
+      "module": "s3_insights",
+      "parameters": [],
+      "title": "Predictions distinguish design tool from taxonomy",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 1: Adaptive level selection.** Design a meta-controller that, given a new interaction trace $T$, determines the optimal compression level(s) $L^*$. The challenge is to formalize a **value-of-information** framework: how much future utility does the artifact $K_L$ provide relative to the cost of computing and maintaining it? A key design tension is whether to **jointly optimize** the meta-controller and level-specific compressors, or to **fix** the meta-controller and optimize only the compressors. Recent agentic RL surveys ([@Zhang2026agenticrl]) find that RL primarily amplifies existing capabilities, suggesting that the level of compression may matter more than the algorithm.",
+      "content_hash": "71d5c1cdd35516d5b886cb539057bc1bbca6addeac348765e37a6375b5a9a242",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2604_15877::problem_adaptive_selection",
+      "label": "problem_adaptive_selection",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Zhang2026agenticrl"
+            ]
+          }
+        },
+        "prior": 0.7,
+        "prior_justification": "Statement that adaptive level selection is an open problem requiring a value-of-information meta-controller. Well-motivated by the missing diagonal, but the framing involves specific design choices (joint-vs-fixed optimization) that are themselves debatable."
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Open Problem 1: adaptive level selection",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 2: Cross-level consistency.** When knowledge exists at multiple levels simultaneously (e.g., a Level-1 memory and a Level-3 rule about the same behavior), how should the system detect and resolve inconsistencies? The analogy to database normalization is suggestive but incomplete -- knowledge artifacts are **semantic** rather than relational, so equivalence checking cannot be reduced to key matching.",
+      "content_hash": "dd52d024679a9175ea32611be103203f91a507b8663a6a5482dadecc833b7250",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2604_15877::problem_cross_level_consistency",
+      "label": "problem_cross_level_consistency",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Open Problem 2: cross-level consistency",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 3: Principled lifecycle management.** Borrow from software engineering: version control for knowledge artifacts, dependency tracking between levels, deprecation protocols, and conflict resolution. Recent workflow-optimization surveys ([@Yue2026workflow]) advocate a 'minimum plasticity' principle; an analogous principle for knowledge management -- **promoting only when evidence warrants** -- would reduce maintenance burden while preserving adaptability.",
+      "content_hash": "b69e576e79cb7fdc5c4ac31d34a9709b5b0ffa82593f0835b915d4959234e0e9",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_15877::problem_lifecycle_management",
+      "label": "problem_lifecycle_management",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yue2026workflow"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Open Problem 3: principled lifecycle management",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 1: Level-agnostic compression core.** The compression engine should be parameterized by output level, not hard-coded. DSPy ([@Khattab2024dspy]) demonstrates that declarative specifications can be compiled into optimized pipelines at a predetermined level; a level-agnostic core would generalize this to make the level itself a tunable parameter.",
+      "content_hash": "cdcf8612116b532aa957f247a0d7cce26938fa9dbac771a9234841dc60d29b7a",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_15877::principle_level_agnostic_core",
+      "label": "principle_level_agnostic_core",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Khattab2024dspy"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Principle 1: level-agnostic compression core",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 2: Bidirectional promotion and demotion.** Knowledge should flow upward (memory -> skill -> rule when patterns accumulate) **and** downward (rule -> skill -> memory when context demands specificity). This bidirectional flow distinguishes the proposed architecture from current systems that treat compression as a one-way operation.",
+      "content_hash": "0680559046ca274f204ad5aa153e802d2f70b999db89bd6eb25a7abc280168d8",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_15877::principle_bidirectional",
+      "label": "principle_bidirectional",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Principle 2: bidirectional promotion/demotion",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 3: Continuous lifecycle governance.** Every knowledge artifact should carry metadata (provenance, confidence, usage frequency, last validation time) enabling principled maintenance. Without such metadata, deprecation, conflict resolution, and staleness detection cannot be automated.",
+      "content_hash": "edd11caf06e406ad5d1e5576b90db62dda284306a07ae6b43bcc750819bafa3e",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_15877::principle_lifecycle_governance",
+      "label": "principle_lifecycle_governance",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Principle 3: continuous lifecycle governance",
+      "type": "claim"
+    },
+    {
+      "content": "The spectrum suggests **idle-time consolidation**: upward compression (Level 1 -> Level 2 -> Level 3) should occur during low-activity periods, analogous to hippocampal-neocortical consolidation during sleep ([@McClelland1995cls]). No current system implements this -- all surveyed systems compress synchronously at ingestion time. Asynchronous consolidation would decouple compression cost from user-facing latency.",
+      "content_hash": "dac694929e7e26bc03e096fba8cec76bc34d383e1ffb3f9a875448b8fdf51f0d",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_15877::idle_time_consolidation",
+      "label": "idle_time_consolidation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "McClelland1995cls"
+            ],
+            "referenced_claims": [
+              "acquisition_maintenance_tradeoff",
+              "scalability_bottleneck",
+              "setup_cls_theory"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Idle-time consolidation, analogous to sleep",
+      "type": "claim"
+    },
+    {
+      "content": "A 'diagonal' system that addresses the missing-diagonal gap might comprise three components: (a) a **meta-controller** that routes each trace to one or more level-specific compressors based on novelty and frequency (a first-seen pattern stays at L1; after $k$ similar L1 entries accumulate, the promotion engine consolidates them into an L2 skill; after cross-domain recurrence, the engine generalizes to an L3 rule); (b) a **promotion/demotion engine** that handles transitions, validating newly promoted L2 skills against held-out tasks before replacing source L1 entries, and demoting when a skill is repeatedly retrieved but unused or when a rule fails in a specific context; (c) a **lifecycle manager** that tracks provenance, usage frequency, and last validation time for every artifact, enabling principled deprecation. Existing components -- MemSkill's RL controller for routing, EvoSkill's Pareto selection for promotion, AutoSkill's versioning ([@Yang2026autoskill]) for lifecycle -- could serve as building blocks.",
+      "content_hash": "ef2e685c8634b566169772d0f1f4bcafce160db45f8cc1ce8fc588acf578dc5e",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_15877::diagonal_architecture",
+      "label": "diagonal_architecture",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yang2026autoskill"
+            ]
+          }
+        },
+        "prior": 0.6,
+        "prior_justification": "Specific three-component architecture proposal (meta-controller, promotion/demotion engine, lifecycle manager). Concrete and implementable using existing building blocks, but no working implementation exists; many architectural choices remain open."
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Diagonal architecture: meta-controller + promotion/demotion + lifecycle",
+      "type": "claim"
+    },
+    {
+      "content": "Worked example of the diagonal architecture: a customer-support agent encounters a timeout on /api/export and stores an L1 memory. After five similar episodes, promotion produces an L2 skill (HANDLE EXPORT TIMEOUT: check batch size, reduce if >1000 rows, retry). After dozens of instances across endpoints, generalization yields an L3 rule ('Timeouts on data-intensive endpoints typically stem from oversized batches'). If the rule fails in a novel context, demotion drops back to L1, restarting evidence collection.",
+      "content_hash": "0a678a0f7c1efbe4e38aabbe224a2f793a688696c00237c842db7af321106a87",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_15877::worked_example",
+      "label": "worked_example",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Worked example: customer support timeout -> L1 -> L2 -> L3",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation: scaffold-level scope.** The framework focuses on scaffold-level knowledge; training-time methods (RLHF, Constitutional AI) are complementary but distinct. The framework does not unify these training-time methods with the scaffold-level spectrum.",
+      "content_hash": "1981900e5f7b4fab1adcd861095af2344541a0aa6d760052a09e0724df77d576",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_15877::limitation_scope",
+      "label": "limitation_scope",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Limitation: scaffold-level scope only",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation: conceptual rather than empirically validated.** The framework is a conceptual unification; the spectrum's utility as a **design tool** awaits experimental confirmation via the testable predictions (Section 3). The paper does not itself implement or evaluate a diagonal system.",
+      "content_hash": "c2414f14f36d25711b1bde6ae0f557cbbf396541aad5451e246b4ea27f2587b2",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2604_15877::limitation_conceptual",
+      "label": "limitation_conceptual",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Limitation: conceptual, not empirically validated",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation: discrete-level abstraction.** The four discrete levels are a simplifying abstraction; in practice, compression may be continuous. EvolveR ([@Wu2025evolver])'s strategies straddle Levels 2 and 3, suggesting the boundary may not be sharp in real systems.",
+      "content_hash": "f564017014278d9a9f9677d3ae8a00f7918ea46f2a643c89e7674ec9147ac662",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2604_15877::limitation_discrete_levels",
+      "label": "limitation_discrete_levels",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wu2025evolver"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Limitation: discrete levels are a simplification",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation: Q1 2026 snapshot.** The survey is a snapshot of the field as of Q1 2026; the field moves rapidly and additional systems (such as LightMem ([@Fang2025lightmem])) continue to appear that further corroborate or extend the patterns identified in the spectrum.",
+      "content_hash": "19bd150db9c054dddbaab3e9b6c1b2830157b3c5a697781f24e5d43dd573ae8e",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2604_15877::limitation_snapshot",
+      "label": "limitation_snapshot",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Fang2025lightmem"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Limitation: Q1 2026 snapshot",
+      "type": "claim"
+    },
+    {
+      "content": "**Limitation: text-only focus.** The analysis focuses on text-based agents. The spectrum naturally extends to multimodal experience -- visual observations and cross-modal interactions amplify the need for efficient compression at every level -- but this extension is not formally treated.",
+      "content_hash": "e15f8a8ee72b40c7a3cb3e7af4c6b464bd879f30142cb6dc38071138fe04a0da",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2604_15877::limitation_text_only",
+      "label": "limitation_text_only",
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Limitation: text-only focus, multimodal extension untreated",
+      "type": "claim"
+    },
+    {
+      "content": "Unification of the memory and skill perspectives is **timely**: with 10+ relevant papers in Q1 2026 alone and production systems increasingly managing persistent experiential knowledge ([@Chan2026composer2]), without a shared framework two communities risk solving the same problem twice. The most promising direction is building systems that **adaptively select compression granularity** to match the value and generality of each experience, enabling agents that scale efficiently across long deployments.",
+      "content_hash": "6fb16d7461f8e6b8fa1495e28f96c60fe4faa3760e505a2304746df401c0db58",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2604_15877::unification_is_timely",
+      "label": "unification_is_timely",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Chan2026composer2"
+            ],
+            "referenced_claims": [
+              "framing_limitation",
+              "lifecycle_neglected",
+              "missing_diagonal"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Unification is timely; adaptive selection is the priority",
+      "type": "claim"
+    },
+    {
+      "content": "The diagonal architecture (meta-controller + promotion/demotion engine + lifecycle manager) is the paper's **core constructive proposal**. It directly addresses the missing diagonal gap by providing concrete components that can be built from existing building blocks (MemSkill's RL controller, EvoSkill's Pareto selection, AutoSkill's versioning), so the proposal is implementable rather than purely speculative.",
+      "content_hash": "1b23444489dec39de68fab8b0fc57a2f3b7be75695242f7833e9dcd2d2ab6f17",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2604_15877::diagonal_is_core_proposal",
+      "label": "diagonal_is_core_proposal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "diagonal_architecture",
+              "missing_diagonal",
+              "problem_adaptive_selection"
+            ]
+          }
+        }
+      },
+      "module": "s4_design",
+      "parameters": [],
+      "title": "Diagonal architecture is the paper's core constructive proposal",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::obs_total_references,github:2604_15877::obs_memory_to_skill_citation,github:2604_15877::obs_skill_to_memory_citation,github:2604_15877::obs_skill_surveys_no_memory,github:2604_15877::obs_memory_survey_only_voyager)",
+      "content_hash": "ffe6c80685fd6240f0158050954aad35c56b978d2cd8e6c0dc676bda9ade8d28",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_3f2a1af2",
+      "label": "__conjunction_result_3f2a1af2",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::obs_total_references,github:2604_15877::obs_memory_to_skill_citation,github:2604_15877::obs_skill_to_memory_citation,github:2604_15877::obs_skill_surveys_no_memory,github:2604_15877::obs_memory_survey_only_voyager)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c79fb884b1aca4b2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_3f2a1af2,github:2604_15877::community_disconnect)",
+      "content_hash": "a0166c96b5d50dd5c444c1b5f59e067fa2cfbe1774725e5afb6069f7b0c85621",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_18303b5b",
+      "label": "__implication_result_18303b5b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_3f2a1af2,github:2604_15877::community_disconnect)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c79fb884b1aca4b2",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::shared_problem,github:2604_15877::generalizability_tradeoff)",
+      "content_hash": "86671299a966809614e4a17a59f8299cf11d05495cdc336cf6813b7c9e5bce72",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_40fbc4a5",
+      "label": "__implication_result_40fbc4a5",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::shared_problem,github:2604_15877::generalizability_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cd0fd51666a04211",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::storage_cost_calculation,github:2604_15877::acquisition_maintenance_tradeoff)",
+      "content_hash": "14b8502dca68405cb59fefdfbb71a61e579ed96a6a296c054b596583519102c4",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_ed0b5721",
+      "label": "__implication_result_ed0b5721",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::storage_cost_calculation,github:2604_15877::acquisition_maintenance_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8deee4832a59f1e1",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_skillrl_l2_vs_l1)",
+      "content_hash": "3c59f95dd1f7aa0e2ae2e0b5e7575d073289b826cb4c405bc6b398fd36bb9b60",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_6841fb3b",
+      "label": "__implication_result_6841fb3b",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_skillrl_l2_vs_l1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0e3fc7a726fe048e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_trace2skill_l2_vs_human)",
+      "content_hash": "e62e77b571d6f43029bc8853f1e5fb5e35c41ccdd74347d62a240bca55970148",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_430856c6",
+      "label": "__implication_result_430856c6",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_trace2skill_l2_vs_human)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_82f3ddf9366a416c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_trace2skill_l2_vs_none)",
+      "content_hash": "70d77c8203e232b9e5baae60e8def66e837df25489c4bcd77d553265f0836132",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_3f1e15e4",
+      "label": "__implication_result_3f1e15e4",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_trace2skill_l2_vs_none)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bc95cfaacbcac78f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_skillsbench_curated)",
+      "content_hash": "35db84fd894beab44fabb7d3fd69d22f1659cd33782665467940bf6366fc0871",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_41e0ed54",
+      "label": "__implication_result_41e0ed54",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_skillsbench_curated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b44755893a10737e",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_evoskill_l2_vs_none)",
+      "content_hash": "692bb000a81429a6da5ce07c7d82a4369b4d8f64e48caeca19bc780f33475142",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_b042e5ee",
+      "label": "__implication_result_b042e5ee",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::higher_compression_better,github:2604_15877::obs_evoskill_l2_vs_none)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_19dff7bedb1a4cb6",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::obs_skillsbench_curated,github:2604_15877::obs_skillsbench_selfgen)",
+      "content_hash": "71bd30c244b6cb417341888699ed44b95ad64a1c332b367deca2ae3797992ae6",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_f8f8b3d1",
+      "label": "__conjunction_result_f8f8b3d1",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::obs_skillsbench_curated,github:2604_15877::obs_skillsbench_selfgen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d8f331ef0b26aa1f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_f8f8b3d1,github:2604_15877::fidelity_matters)",
+      "content_hash": "b2fe29ba7e40de1f0137c854ded8ca6edde95bc64aa0418b9c8d249db029698d",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_bec21caf",
+      "label": "__implication_result_bec21caf",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_f8f8b3d1,github:2604_15877::fidelity_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d8f331ef0b26aa1f",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::obs_l1_systems,github:2604_15877::obs_l2_systems,github:2604_15877::obs_cross_level_systems,github:2604_15877::obs_l3_empty)",
+      "content_hash": "b53f544e9f56c9971bdbbb5dc0b23f08352f1be479553e663b4d4079b19b28fe",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_11e55413",
+      "label": "__conjunction_result_11e55413",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::obs_l1_systems,github:2604_15877::obs_l2_systems,github:2604_15877::obs_cross_level_systems,github:2604_15877::obs_l3_empty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7ce6bf9a080334f4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_11e55413,github:2604_15877::missing_diagonal)",
+      "content_hash": "229d2e17d01c497844a80a92e18603d4ac08e57935173f4dcca83239de36353a",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_5bbe789f",
+      "label": "__implication_result_5bbe789f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_11e55413,github:2604_15877::missing_diagonal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7ce6bf9a080334f4",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::shared_subproblems,github:2604_15877::deployment_needs_both,github:2604_15877::community_disconnect)",
+      "content_hash": "378cef83412e77657d181ae26066128b90c48796a2b7c79d8aa58f2fa116dca2",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_d2b16e86",
+      "label": "__conjunction_result_d2b16e86",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::shared_subproblems,github:2604_15877::deployment_needs_both,github:2604_15877::community_disconnect)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c7bad124d08e1ff4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_d2b16e86,github:2604_15877::specialization_insufficient)",
+      "content_hash": "e88f5fdc79c9a4902aed8ec7687feca426cf4fd625348e4116d9c0b830f0d18e",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_6036fc7e",
+      "label": "__implication_result_6036fc7e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_d2b16e86,github:2604_15877::specialization_insufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c7bad124d08e1ff4",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::evaluation_level_coupling,github:2604_15877::missing_diagonal)",
+      "content_hash": "a8a971464ebccf972b126ef1c2eece8d1bf4421f5d4e6798a86bccde31974600",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_0d66d659",
+      "label": "__conjunction_result_0d66d659",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::evaluation_level_coupling,github:2604_15877::missing_diagonal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9f0f7da0069ec216",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_0d66d659,github:2604_15877::evaluation_should_unify)",
+      "content_hash": "2dff9b522ed0f645a04a2b90218fbf980681b129f6bd0ef745e813b23af45b4f",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_b5315dc3",
+      "label": "__implication_result_b5315dc3",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_0d66d659,github:2604_15877::evaluation_should_unify)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9f0f7da0069ec216",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::obs_skillrl_l2_vs_l1,github:2604_15877::obs_evoskill_l2_vs_none,github:2604_15877::obs_trace2skill_size_transfer)",
+      "content_hash": "8fc1b0a4158982362adaa6723674207c0e27273422a04f9accf73f2ff07042f6",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_6101c657",
+      "label": "__conjunction_result_6101c657",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::obs_skillrl_l2_vs_l1,github:2604_15877::obs_evoskill_l2_vs_none,github:2604_15877::obs_trace2skill_size_transfer)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_14153d31094dd8a7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_6101c657,github:2604_15877::transferability_monotonic)",
+      "content_hash": "232887ac3ca836e9a02caf6ff659b7a206ba2518131ff9f05cee5a5b540d8a64",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_bd908527",
+      "label": "__implication_result_bd908527",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_6101c657,github:2604_15877::transferability_monotonic)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14153d31094dd8a7",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::transferability_monotonic,github:2604_15877::fidelity_matters)",
+      "content_hash": "dd85681dbedec2b4b7ad165151fa546e21d5da102b87df6df725060052f4e069",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_955f3384",
+      "label": "__conjunction_result_955f3384",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::transferability_monotonic,github:2604_15877::fidelity_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c9848410135cab68",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_955f3384,github:2604_15877::transferability_concavity)",
+      "content_hash": "e8faf1ff1506c8acbd439259708e228e555c2f6555d4e5010f58a1c0063c4e9a",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_60747d92",
+      "label": "__implication_result_60747d92",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_955f3384,github:2604_15877::transferability_concavity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c9848410135cab68",
+        "owning_strategy_type": "support",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::obs_merge_swing,github:2604_15877::lifecycle_neglected)",
+      "content_hash": "89f78b202fda3df558ab79b344421db14ef85f8f56ebd93deea0de6b8addeb8f",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_a03d5203",
+      "label": "__implication_result_a03d5203",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::obs_merge_swing,github:2604_15877::lifecycle_neglected)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_49a646a4655d12b6",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::prediction_l2_beats_l1_transfer,github:2604_15877::prediction_multilevel_better,github:2604_15877::prediction_concave_curve,github:2604_15877::prediction_l3_constraints)",
+      "content_hash": "36dfb1a08ab7644f34f2bf82e61e94d589af7094068e35424bda41ed22c924d8",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_377ca1f3",
+      "label": "__conjunction_result_377ca1f3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::prediction_l2_beats_l1_transfer,github:2604_15877::prediction_multilevel_better,github:2604_15877::prediction_concave_curve,github:2604_15877::prediction_l3_constraints)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9c95022eed58dee4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_377ca1f3,github:2604_15877::predictions_distinguish_taxonomy)",
+      "content_hash": "e7f619a4ffe9cb369dca5c9473ecade86951e8b970814e50b5fb03e87024cbbb",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_a75b27ef",
+      "label": "__implication_result_a75b27ef",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_377ca1f3,github:2604_15877::predictions_distinguish_taxonomy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9c95022eed58dee4",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::scalability_bottleneck,github:2604_15877::acquisition_maintenance_tradeoff)",
+      "content_hash": "2a6d41e8779bfae50e4b44ee25b11b6e0148a673aea84d95a5779d4401390838",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_92285585",
+      "label": "__conjunction_result_92285585",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::scalability_bottleneck,github:2604_15877::acquisition_maintenance_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_92500bbb34ea2ab0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_92285585,github:2604_15877::idle_time_consolidation)",
+      "content_hash": "c9a12e1c46d0ee382efeb8e9510ea730092a7a5201a8d04c8b6ea53ab77e0a80",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_5b568d12",
+      "label": "__implication_result_5b568d12",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_92285585,github:2604_15877::idle_time_consolidation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_92500bbb34ea2ab0",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::missing_diagonal,github:2604_15877::framing_limitation,github:2604_15877::lifecycle_neglected)",
+      "content_hash": "a65bcc127afbd726fd55350e85711fd6f36eb3a58ad407d62a503d6b6fca4215",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_e9a20605",
+      "label": "__conjunction_result_e9a20605",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::missing_diagonal,github:2604_15877::framing_limitation,github:2604_15877::lifecycle_neglected)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c0bd64f22687de1b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_e9a20605,github:2604_15877::unification_is_timely)",
+      "content_hash": "b8a1354b739bc69b054a03c540e329ee217e77c0a8219b399a64e012bed00379",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_43b8dd94",
+      "label": "__implication_result_43b8dd94",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_e9a20605,github:2604_15877::unification_is_timely)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c0bd64f22687de1b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_15877::diagonal_architecture,github:2604_15877::missing_diagonal,github:2604_15877::problem_adaptive_selection)",
+      "content_hash": "7e760a9bb8eb881c7b539121dcb78ac471d09035def9cdd859905981fdbd4705",
+      "exported": false,
+      "id": "github:2604_15877::__conjunction_result_c2c20997",
+      "label": "__conjunction_result_c2c20997",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_15877::diagonal_architecture,github:2604_15877::missing_diagonal,github:2604_15877::problem_adaptive_selection)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_674f4369e08910d3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_15877::__conjunction_result_c2c20997,github:2604_15877::diagonal_is_core_proposal)",
+      "content_hash": "39efaf620a4a45c3c8287a66dc14a77f12e1ddebc41867c1e1957994573109f2",
+      "exported": false,
+      "id": "github:2604_15877::__implication_result_50afd03f",
+      "label": "__implication_result_50afd03f",
+      "metadata": {
+        "canonical_name": "implies(github:2604_15877::__conjunction_result_c2c20997,github:2604_15877::diagonal_is_core_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_674f4369e08910d3",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_spectrum",
+    "s2_mapping",
+    "s3_insights",
+    "s4_design"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation: The disconnect between agent memory and skill communities.",
+    "s2_mapping": "Section 2.3-2.4: Mapping existing systems onto the spectrum and the missing diagonal.",
+    "s2_spectrum": "Section 2: The Experience Compression Spectrum -- formal framework and properties.",
+    "s3_insights": "Section 3: Four structural insights revealed by the spectrum view.",
+    "s4_design": "Section 4: Open problems, design principles, and limitations."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_15877",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_15877::setup_communities"
+      ],
+      "conclusion": "github:2604_15877::community_disconnect",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_3f2a1af2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::obs_total_references",
+              "github:2604_15877::obs_memory_to_skill_citation",
+              "github:2604_15877::obs_skill_to_memory_citation",
+              "github:2604_15877::obs_skill_surveys_no_memory",
+              "github:2604_15877::obs_memory_survey_only_voyager"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_18303b5b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_3f2a1af2",
+              "github:2604_15877::community_disconnect"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The four citation-rate observations consistently demonstrate cross-community isolation. Memory papers cite skill work at 0.7% (@obs_memory_to_skill_citation) and skill papers cite memory work at 1.2% (@obs_skill_to_memory_citation), both drawn from the 1,136-reference corpus (@obs_total_references). The survey-level evidence (@obs_skill_surveys_no_memory, @obs_memory_survey_only_voyager) corroborates this at the literature-review layer. Aggregated, the evidence supports the qualitative summary of 'cross-community citation rate below 1%'."
+      },
+      "premises": [
+        "github:2604_15877::obs_total_references",
+        "github:2604_15877::obs_memory_to_skill_citation",
+        "github:2604_15877::obs_skill_to_memory_citation",
+        "github:2604_15877::obs_skill_surveys_no_memory",
+        "github:2604_15877::obs_memory_survey_only_voyager"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c79fb884b1aca4b2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_15877::def_level0",
+        "github:2604_15877::def_level1",
+        "github:2604_15877::def_level2",
+        "github:2604_15877::def_level3"
+      ],
+      "conclusion": "github:2604_15877::generalizability_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_40fbc4a5",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::shared_problem",
+              "github:2604_15877::generalizability_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The unifying view (@shared_problem) identifies the spectrum's axis as compression of interaction experience into reusable knowledge. Definitionally (@def_level0, @def_level1, @def_level2, @def_level3), the four levels differ in how much contextual detail they retain: Level 0 retains everything (1:1) and is context-bound, while Level 3 retains only abstract principles (>1000x) and is domain-general. The trade-off is therefore intrinsic to the level definitions."
+      },
+      "premises": [
+        "github:2604_15877::shared_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cd0fd51666a04211",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::acquisition_maintenance_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_ed0b5721",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::storage_cost_calculation",
+              "github:2604_15877::acquisition_maintenance_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The storage estimate (@storage_cost_calculation) makes the maintenance asymmetry concrete: Level 1 storage scales linearly with episode count (500 tokens per episode), while higher-level artifacts compress thousands of episodes into a small fixed set. With thousands of daily decisions, Level-1 storage and retrieval costs become prohibitive within weeks, while Level-3 storage remains essentially flat. This grounds the qualitative trade-off in a quantitative scaling argument."
+      },
+      "premises": [
+        "github:2604_15877::storage_cost_calculation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8deee4832a59f1e1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::obs_skillrl_l2_vs_l1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_6841fb3b",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::higher_compression_better",
+              "github:2604_15877::obs_skillrl_l2_vs_l1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The higher-compression-better generalization predicts SkillRL's L2-over-L1 advantage on ALFWorld."
+      },
+      "premises": [
+        "github:2604_15877::higher_compression_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0e3fc7a726fe048e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::obs_trace2skill_l2_vs_human",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_430856c6",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::higher_compression_better",
+              "github:2604_15877::obs_trace2skill_l2_vs_human"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The generalization predicts Trace2Skill's L2-over-human-skill advantage on SpreadsheetBench."
+      },
+      "premises": [
+        "github:2604_15877::higher_compression_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_82f3ddf9366a416c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::obs_trace2skill_l2_vs_none",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_3f1e15e4",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::higher_compression_better",
+              "github:2604_15877::obs_trace2skill_l2_vs_none"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The generalization predicts Trace2Skill's L2-over-no-skill advantage on SpreadsheetBench."
+      },
+      "premises": [
+        "github:2604_15877::higher_compression_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bc95cfaacbcac78f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::obs_skillsbench_curated",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_41e0ed54",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::higher_compression_better",
+              "github:2604_15877::obs_skillsbench_curated"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The generalization predicts SkillsBench's curated-L2 advantage on multi-task evaluation."
+      },
+      "premises": [
+        "github:2604_15877::higher_compression_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b44755893a10737e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::obs_evoskill_l2_vs_none",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_b042e5ee",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::higher_compression_better",
+              "github:2604_15877::obs_evoskill_l2_vs_none"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The generalization predicts EvoSkill's L2-over-no-skill advantage on BrowseComp."
+      },
+      "premises": [
+        "github:2604_15877::higher_compression_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_19dff7bedb1a4cb6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::higher_compression_better",
+      "metadata": {
+        "reason": "ALFWorld and SpreadsheetBench are independent benchmarks, evaluated by different groups with different agent backbones."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillrl_l2_vs_l1",
+        "github:2604_15877::obs_trace2skill_l2_vs_human"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d9456a6769e31ea7",
+      "sub_strategies": [
+        "lcs_0e3fc7a726fe048e",
+        "lcs_82f3ddf9366a416c"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_15877::higher_compression_better",
+      "metadata": {
+        "reason": "The L2-vs-no-skill comparison adds an independent baseline (no-skill instead of human skill)."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillrl_l2_vs_l1",
+        "github:2604_15877::obs_trace2skill_l2_vs_human",
+        "github:2604_15877::obs_trace2skill_l2_vs_none"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3726c3459a1e1057",
+      "sub_strategies": [
+        "lcs_d9456a6769e31ea7",
+        "lcs_bc95cfaacbcac78f"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_15877::higher_compression_better",
+      "metadata": {
+        "reason": "SkillsBench provides an independent multi-task benchmark with curated rather than auto-generated skills."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillrl_l2_vs_l1",
+        "github:2604_15877::obs_trace2skill_l2_vs_human",
+        "github:2604_15877::obs_trace2skill_l2_vs_none",
+        "github:2604_15877::obs_skillsbench_curated"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b702910d3d716045",
+      "sub_strategies": [
+        "lcs_3726c3459a1e1057",
+        "lcs_b44755893a10737e"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_15877::higher_compression_better",
+      "metadata": {
+        "reason": "BrowseComp adds a fifth independent web-browsing benchmark; the direction is consistent across all five."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillrl_l2_vs_l1",
+        "github:2604_15877::obs_trace2skill_l2_vs_human",
+        "github:2604_15877::obs_trace2skill_l2_vs_none",
+        "github:2604_15877::obs_skillsbench_curated",
+        "github:2604_15877::obs_evoskill_l2_vs_none"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b708ad731e0673c0",
+      "sub_strategies": [
+        "lcs_b702910d3d716045",
+        "lcs_19dff7bedb1a4cb6"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2604_15877::fidelity_matters",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_f8f8b3d1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::obs_skillsbench_curated",
+              "github:2604_15877::obs_skillsbench_selfgen"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_bec21caf",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_f8f8b3d1",
+              "github:2604_15877::fidelity_matters"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "SkillsBench provides a within-study comparison that holds the compression level constant (both conditions are Level 2) and varies only the extraction process. Curated skills (@obs_skillsbench_curated) yield +16.2pp while LLM-self-generated skills (@obs_skillsbench_selfgen) yield +0.0pp. The same level produces opposite outcomes depending on extraction quality, so level alone cannot account for skill effectiveness."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillsbench_curated",
+        "github:2604_15877::obs_skillsbench_selfgen"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d8f331ef0b26aa1f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_15877::def_level1",
+        "github:2604_15877::def_level2",
+        "github:2604_15877::def_level3"
+      ],
+      "conclusion": "github:2604_15877::missing_diagonal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_11e55413",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::obs_l1_systems",
+              "github:2604_15877::obs_l2_systems",
+              "github:2604_15877::obs_cross_level_systems",
+              "github:2604_15877::obs_l3_empty"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_5bbe789f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_11e55413",
+              "github:2604_15877::missing_diagonal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "The mapping data establish the missing-diagonal claim by exhaustion: ten systems cluster at Level 1 (@obs_l1_systems), eight at Level 2 (@obs_l2_systems), and only two operate across Levels 1-2 -- both with fixed, non-adaptive level selection (@obs_cross_level_systems). Level 3 is empty for learned rules (@obs_l3_empty). No system in the survey supports adaptive level selection or upward/downward promotion-demotion. The claim follows by case enumeration over the 20+ surveyed systems."
+      },
+      "premises": [
+        "github:2604_15877::obs_l1_systems",
+        "github:2604_15877::obs_l2_systems",
+        "github:2604_15877::obs_cross_level_systems",
+        "github:2604_15877::obs_l3_empty"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7ce6bf9a080334f4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::specialization_insufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_d2b16e86",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::shared_subproblems",
+              "github:2604_15877::deployment_needs_both",
+              "github:2604_15877::community_disconnect"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_6036fc7e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_d2b16e86",
+              "github:2604_15877::specialization_insufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The specialization defense argues that distinct communities address distinct downstream needs. But the spectrum reveals shared sub-problems (@shared_subproblems) and deployment requirements that demand both flavors simultaneously (@deployment_needs_both). Combined with the empirically documented community disconnect (@community_disconnect), the argument supports adopting a shared infrastructure layer rather than parallel engineering tracks."
+      },
+      "premises": [
+        "github:2604_15877::shared_subproblems",
+        "github:2604_15877::deployment_needs_both",
+        "github:2604_15877::community_disconnect"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c7bad124d08e1ff4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::evaluation_should_unify",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_0d66d659",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::evaluation_level_coupling",
+              "github:2604_15877::missing_diagonal"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_b5315dc3",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_0d66d659",
+              "github:2604_15877::evaluation_should_unify"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Level-coupled evaluation (@evaluation_level_coupling) prevents fair cross-level comparison: an L1-optimized system maximizes QA F1, an L2 system maximizes task success, and the two metrics cannot be directly compared. Combined with the missing diagonal (@missing_diagonal), which requires comparing artifacts at different levels to decide promotion or demotion, the current methodology cannot drive adaptive selection. A level-agnostic value-per-token metric would enable both fair comparison and adaptive control."
+      },
+      "premises": [
+        "github:2604_15877::evaluation_level_coupling",
+        "github:2604_15877::missing_diagonal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9f0f7da0069ec216",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::transferability_monotonic",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_6101c657",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::obs_skillrl_l2_vs_l1",
+              "github:2604_15877::obs_evoskill_l2_vs_none",
+              "github:2604_15877::obs_trace2skill_size_transfer"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_bd908527",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_6101c657",
+              "github:2604_15877::transferability_monotonic"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Three cross-domain or cross-model transfer results consistently support the monotonic transferability claim: SkillRL's L2-over-L1 advantage on ALFWorld (@obs_skillrl_l2_vs_l1) is one cross-model setting; EvoSkill's transfer to BrowseComp (@obs_evoskill_l2_vs_none) demonstrates cross-task transfer; and Trace2Skill's 35B-to-122B transfer (@obs_trace2skill_size_transfer) demonstrates cross-model-size transfer. All three are consistent with the direction predicted by higher abstraction = broader applicability."
+      },
+      "premises": [
+        "github:2604_15877::obs_skillrl_l2_vs_l1",
+        "github:2604_15877::obs_evoskill_l2_vs_none",
+        "github:2604_15877::obs_trace2skill_size_transfer"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14153d31094dd8a7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::transferability_concavity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_955f3384",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::transferability_monotonic",
+              "github:2604_15877::fidelity_matters"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_60747d92",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_955f3384",
+              "github:2604_15877::transferability_concavity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "The monotonic claim (@transferability_monotonic) covers the L0-to-L2 transition where transferability rises with compression. The fidelity caveat (@fidelity_matters) -- that compression must preserve genuinely useful patterns -- implies an upper bound: at Level 3, compression to abstract principles may discard the actionable specificity needed for task execution. Together they suggest a peak at Level 2 (high transfer, still actionable), consistent with the concavity conjecture."
+      },
+      "premises": [
+        "github:2604_15877::transferability_monotonic",
+        "github:2604_15877::fidelity_matters"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c9848410135cab68",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::lifecycle_neglected",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__implication_result_a03d5203",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::obs_merge_swing",
+              "github:2604_15877::lifecycle_neglected"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The +/-21pp swing from skill merging (@obs_merge_swing) provides direct empirical evidence that current systems lack robust lifecycle mechanisms: even simple merge operations can degrade performance significantly. Combined with the partial-or-absent lifecycle support reported in Table 2 of the source survey, this grounds the qualitative neglect claim in a measurable failure mode."
+      },
+      "premises": [
+        "github:2604_15877::obs_merge_swing"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_49a646a4655d12b6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::predictions_distinguish_taxonomy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_377ca1f3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::prediction_l2_beats_l1_transfer",
+              "github:2604_15877::prediction_multilevel_better",
+              "github:2604_15877::prediction_concave_curve",
+              "github:2604_15877::prediction_l3_constraints"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_a75b27ef",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_377ca1f3",
+              "github:2604_15877::predictions_distinguish_taxonomy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The four testable predictions (@prediction_l2_beats_l1_transfer, @prediction_multilevel_better, @prediction_concave_curve, @prediction_l3_constraints) are individually falsifiable by concrete controlled experiments. Their existence demonstrates that the spectrum view yields engineering-relevant hypotheses, not only descriptive categorization."
+      },
+      "premises": [
+        "github:2604_15877::prediction_l2_beats_l1_transfer",
+        "github:2604_15877::prediction_multilevel_better",
+        "github:2604_15877::prediction_concave_curve",
+        "github:2604_15877::prediction_l3_constraints"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9c95022eed58dee4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_15877::setup_cls_theory"
+      ],
+      "conclusion": "github:2604_15877::idle_time_consolidation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_92285585",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::scalability_bottleneck",
+              "github:2604_15877::acquisition_maintenance_tradeoff"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_5b568d12",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_92285585",
+              "github:2604_15877::idle_time_consolidation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Synchronous compression at ingestion forces the cost of upward compression to land on the user-facing latency budget. The acquisition-versus-maintenance trade-off (@acquisition_maintenance_tradeoff) and the linear-cost scalability bottleneck (@scalability_bottleneck) both indicate that some compression must happen, but doing it asynchronously (during idle periods) decouples it from request latency. The biological CLS analogue (@setup_cls_theory) provides a design template for this asynchronous regime."
+      },
+      "premises": [
+        "github:2604_15877::scalability_bottleneck",
+        "github:2604_15877::acquisition_maintenance_tradeoff"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_92500bbb34ea2ab0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::unification_is_timely",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_e9a20605",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::missing_diagonal",
+              "github:2604_15877::framing_limitation",
+              "github:2604_15877::lifecycle_neglected"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_43b8dd94",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_e9a20605",
+              "github:2604_15877::unification_is_timely"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Three convergent observations support the urgency of unification: the missing diagonal (@missing_diagonal) shows no system handles cross-level compression; the framing limitation (@framing_limitation) shows the gap is structural rather than incidental; and lifecycle neglect (@lifecycle_neglected) shows the field lacks even basic maintenance infrastructure. Without unification the disconnect persists and engineering effort is duplicated."
+      },
+      "premises": [
+        "github:2604_15877::missing_diagonal",
+        "github:2604_15877::framing_limitation",
+        "github:2604_15877::lifecycle_neglected"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c0bd64f22687de1b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_15877::diagonal_is_core_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_15877::__conjunction_result_c2c20997",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_15877::diagonal_architecture",
+              "github:2604_15877::missing_diagonal",
+              "github:2604_15877::problem_adaptive_selection"
+            ]
+          },
+          {
+            "conclusion": "github:2604_15877::__implication_result_50afd03f",
+            "operator": "implication",
+            "variables": [
+              "github:2604_15877::__conjunction_result_c2c20997",
+              "github:2604_15877::diagonal_is_core_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The diagonal architecture (@diagonal_architecture) targets exactly the gap identified by the missing diagonal (@missing_diagonal) and operationalizes the adaptive-level-selection open problem (@problem_adaptive_selection). Because each component can be assembled from existing building blocks, the proposal is constructive rather than aspirational."
+      },
+      "premises": [
+        "github:2604_15877::diagonal_architecture",
+        "github:2604_15877::missing_diagonal",
+        "github:2604_15877::problem_adaptive_selection"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_674f4369e08910d3",
+      "type": "support"
+    }
+  ]
+}

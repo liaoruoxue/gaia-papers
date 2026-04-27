@@ -1,0 +1,239 @@
+{
+  "exports": [
+    {
+      "content": "Acquisition versus maintenance cost trade-off: Level 1 episodic memories are cheap to acquire (one trace per memory) but expensive to maintain at scale -- a Level-1-only system accumulating thousands of entries per day will exhaust any practical retrieval budget within weeks. Level 3 declarative rules require many traces to induce but form a compact, low-maintenance set. This trade-off makes upward compression not merely desirable but **necessary** for agents that operate at scale over extended deployments.",
+      "content_hash": "ab6e70a31ef43abec903e50694e7ce92a9e22a94a559d15004bd0eacc176ec02",
+      "label": "acquisition_maintenance_tradeoff",
+      "qid": "github:2604_15877::acquisition_maintenance_tradeoff",
+      "type": "claim"
+    },
+    {
+      "content": "The agent memory and agent skill research communities are largely disconnected: the cross-community citation rate is below 1% (0.7% memory-to-skill, 1.2% skill-to-memory). This separation is structural -- it is reflected not only in primary-paper citation patterns but also in the surveys, where skill surveys cite no memory work and memory surveys cite at most a single skill system.",
+      "content_hash": "a6d8293aa40edbda70170aae427e7dd26ebd22d51790bf30ef2bd0665ff77be6",
+      "label": "community_disconnect",
+      "qid": "github:2604_15877::community_disconnect",
+      "type": "claim"
+    },
+    {
+      "content": "A 'diagonal' system that addresses the missing-diagonal gap might comprise three components: (a) a **meta-controller** that routes each trace to one or more level-specific compressors based on novelty and frequency (a first-seen pattern stays at L1; after $k$ similar L1 entries accumulate, the promotion engine consolidates them into an L2 skill; after cross-domain recurrence, the engine generalizes to an L3 rule); (b) a **promotion/demotion engine** that handles transitions, validating newly promoted L2 skills against held-out tasks before replacing source L1 entries, and demoting when a skill is repeatedly retrieved but unused or when a rule fails in a specific context; (c) a **lifecycle manager** that tracks provenance, usage frequency, and last validation time for every artifact, enabling principled deprecation. Existing components -- MemSkill's RL controller for routing, EvoSkill's Pareto selection for promotion, AutoSkill's versioning ([@Yang2026autoskill]) for lifecycle -- could serve as building blocks.",
+      "content_hash": "ef2e685c8634b566169772d0f1f4bcafce160db45f8cc1ce8fc588acf578dc5e",
+      "label": "diagonal_architecture",
+      "qid": "github:2604_15877::diagonal_architecture",
+      "type": "claim"
+    },
+    {
+      "content": "The diagonal architecture (meta-controller + promotion/demotion engine + lifecycle manager) is the paper's **core constructive proposal**. It directly addresses the missing diagonal gap by providing concrete components that can be built from existing building blocks (MemSkill's RL controller, EvoSkill's Pareto selection, AutoSkill's versioning), so the proposal is implementable rather than purely speculative.",
+      "content_hash": "1b23444489dec39de68fab8b0fc57a2f3b7be75695242f7833e9dcd2d2ab6f17",
+      "label": "diagonal_is_core_proposal",
+      "qid": "github:2604_15877::diagonal_is_core_proposal",
+      "type": "claim"
+    },
+    {
+      "content": "A unified evaluation framework should assess knowledge artifacts by their **downstream impact on agent performance across time**, regardless of compression level -- an efficiency metric that captures *value per token of stored knowledge*. This would replace level-specific metrics with a level-agnostic measure that exposes whether highly compressed artifacts genuinely outperform less-compressed ones at the system level.",
+      "content_hash": "db06fb899a865c6ad39f1984a9f1e219b28fa6cd2240e5306c34b04a3a54c5cc",
+      "label": "evaluation_should_unify",
+      "qid": "github:2604_15877::evaluation_should_unify",
+      "type": "claim"
+    },
+    {
+      "content": "Compression level alone is insufficient; the **fidelity of the compression process** determines whether the artifact is useful or merely compact noise. Curated Level-2 skills produce gains (+16.2pp) but LLM-self-generated Level-2 skills produce no benefit (+0.0pp) on the same SkillsBench evaluation. Therefore, achieving the right output format is necessary but not sufficient -- the extraction process must distill genuinely useful patterns.",
+      "content_hash": "75c6ba563902a58e74598f2fe4ca446a0d5a7e74c78d6db36939ea1a84972e2e",
+      "label": "fidelity_matters",
+      "qid": "github:2604_15877::fidelity_matters",
+      "type": "claim"
+    },
+    {
+      "content": "The missing diagonal reflects a **problem-framing limitation**, not missing engineering effort. Each community defines its output format a priori (memory papers fix L1, skill papers fix L2), so adaptive level selection is structurally outside the design space rather than merely unimplemented. Adaptive level selection is a **meta-learning problem**: learning what kind of knowledge to extract, not just what knowledge to extract.",
+      "content_hash": "936f6e9165be8f95e9176234ae7078062b787f930ac626377bba76d6a0ae20e7",
+      "label": "framing_limitation",
+      "qid": "github:2604_15877::framing_limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Generalizability versus specificity trade-off: as compression level increases from Level 0 to Level 3, the extracted knowledge becomes more broadly applicable but less context-specific. Higher-level artifacts (skills, rules) discard concrete contextual details to expose patterns that transfer across instances; lower-level artifacts (raw traces, episodic memories) retain context at the cost of reusability.",
+      "content_hash": "c66262dcc7dbe366ef95b6eb80d763eb448d16e33adc17b053834fa36735425c",
+      "label": "generalizability_tradeoff",
+      "qid": "github:2604_15877::generalizability_tradeoff",
+      "type": "claim"
+    },
+    {
+      "content": "An emerging empirical consensus, drawing on cross-level performance comparisons from multiple studies, supports the claim that **higher-compression representations (Level 2 skills) consistently outperform lower-compression baselines (Level 1 retrieval, no skill)** within the same study, on benchmarks spanning embodied reasoning (ALFWorld), spreadsheet manipulation (SpreadsheetBench), web browsing (BrowseComp), and multi-task evaluation. Although results from different studies cannot be directly compared, the **direction** is consistent across all comparisons except SkillsBench's self-generated condition.",
+      "content_hash": "c97930e3c6261d122e2d029dd906168e1e2e42696481f5269b66ee595ccef6d6",
+      "label": "higher_compression_better",
+      "qid": "github:2604_15877::higher_compression_better",
+      "type": "claim"
+    },
+    {
+      "content": "The spectrum suggests **idle-time consolidation**: upward compression (Level 1 -> Level 2 -> Level 3) should occur during low-activity periods, analogous to hippocampal-neocortical consolidation during sleep ([@McClelland1995cls]). No current system implements this -- all surveyed systems compress synchronously at ingestion time. Asynchronous consolidation would decouple compression cost from user-facing latency.",
+      "content_hash": "dac694929e7e26bc03e096fba8cec76bc34d383e1ffb3f9a875448b8fdf51f0d",
+      "label": "idle_time_consolidation",
+      "qid": "github:2604_15877::idle_time_consolidation",
+      "type": "claim"
+    },
+    {
+      "content": "Four technical barriers explain the empty Level-3 cell: (i) distinguishing causal regularities from incidental correlations is harder than episode extraction; (ii) rules without Level-2 grounding risk being too abstract; (iii) no methodology exists for evaluating rule quality (infinite regress of meta-evaluation); (iv) using LLM-as-Judge gives a false sense that evaluation is solved.",
+      "content_hash": "2dbc92614527871289312da1660b9ab0fcb48a5c33b4f741e61ffee50171b8a4",
+      "label": "l3_barriers",
+      "qid": "github:2604_15877::l3_barriers",
+      "type": "claim"
+    },
+    {
+      "content": "The software-engineering community's version-control and deprecation practices offer a concrete opportunity for transfer to knowledge artifacts. Versioned artifacts with explicit deprecation protocols would address staleness, cross-level consistency, and conflict resolution simultaneously.",
+      "content_hash": "5d01739d7ef458e01209679e7bbcfadb1b9b38bc2fbe818fb539980505b8e8cc",
+      "label": "lifecycle_borrow_se",
+      "qid": "github:2604_15877::lifecycle_borrow_se",
+      "type": "claim"
+    },
+    {
+      "content": "Lifecycle management remains **largely an afterthought** across both communities. Existing systems focus on knowledge acquisition while treating maintenance as secondary. Some include partial mechanisms -- Mem0's LLM-driven operations, Memory-R1's RL-learned updates, ExpeL's importance counting, AutoSkill ([@Yang2026autoskill])'s version management -- but these remain isolated. No system addresses the full lifecycle: conflict detection across knowledge types, staleness recognition, principled deprecation, and cross-level consistency.",
+      "content_hash": "73431490e1fef65f5522ce11b0de77b1d8e76a15ddd43cea676e1ea2a5edd7e4",
+      "label": "lifecycle_neglected",
+      "qid": "github:2604_15877::lifecycle_neglected",
+      "type": "claim"
+    },
+    {
+      "content": "The mapping reveals that systems cluster at Level 1 or Level 2, with minimal cross-level work and virtually no automated Level 3 work. We call this gap the **missing diagonal** -- the absence of systems that can: (1) **adaptively select** the appropriate compression level $L^*$ for a given trace $T$; (2) **promote** knowledge upward (from level $L$ to level $L' > L$) when sufficient evidence accumulates (many memories -> one skill -> one rule); (3) **demote** knowledge downward (from level $L$ to level $L' < L$) when a rule proves too abstract for a specific context.",
+      "content_hash": "ecee580e8b508d32b335d9c5a90b5630e087e14b94ebccc3f6d8df08159254c2",
+      "label": "missing_diagonal",
+      "qid": "github:2604_15877::missing_diagonal",
+      "type": "claim"
+    },
+    {
+      "content": "Practitioners already perform full-spectrum compression manually: hundreds of thousands of developers maintain CLAUDE.md and .cursorrules files that distill deployment experience into reusable rules (Level 0 raw experience compressed to Level 3 declarative rules). However, no automated system performs this compression; each existing system operates at a single, predetermined compression level.",
+      "content_hash": "ad31399cd0eedfb5ceaacbeb6c30e5f8bf909b6142dd83aecb98f1111e34509d",
+      "label": "practitioner_compression",
+      "qid": "github:2604_15877::practitioner_compression",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 3.** The transferability-versus-specificity curve should be concave, with Level 2 at the sweet spot. This follows from the conjecture that transferability rises monotonically with compression but specificity falls; the two trends imply an interior optimum.",
+      "content_hash": "ae06f889eca98c399c69fad3f6ca4ba34952262c18cc17c985de4991018755b1",
+      "label": "prediction_concave_curve",
+      "qid": "github:2604_15877::prediction_concave_curve",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 1.** Level-2 compression should outperform Level-1 retrieval on cross-domain transfer when source experience is held constant. This prediction follows directly from the monotonic-transferability hypothesis and would be falsified by a controlled experiment in which an L1 retrieval system matches or exceeds an L2 skill system on a transfer benchmark with identical training data.",
+      "content_hash": "36a1eab74e4ac363c342e5d7419535eeffee1a73c7ea84198b56b2c90cff67a7",
+      "label": "prediction_l2_beats_l1_transfer",
+      "qid": "github:2604_15877::prediction_l2_beats_l1_transfer",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 4.** Level-3 declarative rules should help most when framed as **constraints (guardrails)** rather than directives (positive instructions). This is consistent with the early evidence from RuleShaping ([@Zhang2026rules]) showing that negative constraints improve performance by 7-14pp while positive directives hurt.",
+      "content_hash": "5458edf26bc30b0a19ead892823de9002e535b05be19be507a9c096b3216ffc7",
+      "label": "prediction_l3_constraints",
+      "qid": "github:2604_15877::prediction_l3_constraints",
+      "type": "claim"
+    },
+    {
+      "content": "**Testable Prediction 2.** A multi-level knowledge store combining Level 1 (memories) and Level 2 (skills) should outperform either level alone, with the performance gap **widening** as deployment length increases. This follows from the acquisition-versus-maintenance trade-off: L2 alone misses user-specific context; L1 alone is overwhelmed at scale.",
+      "content_hash": "519b5869a58e5bfd4dfbae403cd988f89fd536f8f0f7b558fd22c52eab6a0e15",
+      "label": "prediction_multilevel_better",
+      "qid": "github:2604_15877::prediction_multilevel_better",
+      "type": "claim"
+    },
+    {
+      "content": "Validating or falsifying the four testable predictions (1-4 above) would establish whether the experience-compression spectrum is a useful **design tool** or merely a **descriptive framework**. A taxonomy that does not generate falsifiable predictions lacks engineering leverage; the four predictions provide concrete empirical tests.",
+      "content_hash": "3ae169a2a8e4bb467666a606e1ed7fca05fbf842a00d3f9b50f0135afec379b7",
+      "label": "predictions_distinguish_taxonomy",
+      "qid": "github:2604_15877::predictions_distinguish_taxonomy",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 2: Bidirectional promotion and demotion.** Knowledge should flow upward (memory -> skill -> rule when patterns accumulate) **and** downward (rule -> skill -> memory when context demands specificity). This bidirectional flow distinguishes the proposed architecture from current systems that treat compression as a one-way operation.",
+      "content_hash": "0680559046ca274f204ad5aa153e802d2f70b999db89bd6eb25a7abc280168d8",
+      "label": "principle_bidirectional",
+      "qid": "github:2604_15877::principle_bidirectional",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 1: Level-agnostic compression core.** The compression engine should be parameterized by output level, not hard-coded. DSPy ([@Khattab2024dspy]) demonstrates that declarative specifications can be compiled into optimized pipelines at a predetermined level; a level-agnostic core would generalize this to make the level itself a tunable parameter.",
+      "content_hash": "cdcf8612116b532aa957f247a0d7cce26938fa9dbac771a9234841dc60d29b7a",
+      "label": "principle_level_agnostic_core",
+      "qid": "github:2604_15877::principle_level_agnostic_core",
+      "type": "claim"
+    },
+    {
+      "content": "**Design Principle 3: Continuous lifecycle governance.** Every knowledge artifact should carry metadata (provenance, confidence, usage frequency, last validation time) enabling principled maintenance. Without such metadata, deprecation, conflict resolution, and staleness detection cannot be automated.",
+      "content_hash": "edd11caf06e406ad5d1e5576b90db62dda284306a07ae6b43bcc750819bafa3e",
+      "label": "principle_lifecycle_governance",
+      "qid": "github:2604_15877::principle_lifecycle_governance",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 1: Adaptive level selection.** Design a meta-controller that, given a new interaction trace $T$, determines the optimal compression level(s) $L^*$. The challenge is to formalize a **value-of-information** framework: how much future utility does the artifact $K_L$ provide relative to the cost of computing and maintaining it? A key design tension is whether to **jointly optimize** the meta-controller and level-specific compressors, or to **fix** the meta-controller and optimize only the compressors. Recent agentic RL surveys ([@Zhang2026agenticrl]) find that RL primarily amplifies existing capabilities, suggesting that the level of compression may matter more than the algorithm.",
+      "content_hash": "71d5c1cdd35516d5b886cb539057bc1bbca6addeac348765e37a6375b5a9a242",
+      "label": "problem_adaptive_selection",
+      "qid": "github:2604_15877::problem_adaptive_selection",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 2: Cross-level consistency.** When knowledge exists at multiple levels simultaneously (e.g., a Level-1 memory and a Level-3 rule about the same behavior), how should the system detect and resolve inconsistencies? The analogy to database normalization is suggestive but incomplete -- knowledge artifacts are **semantic** rather than relational, so equivalence checking cannot be reduced to key matching.",
+      "content_hash": "dd52d024679a9175ea32611be103203f91a507b8663a6a5482dadecc833b7250",
+      "label": "problem_cross_level_consistency",
+      "qid": "github:2604_15877::problem_cross_level_consistency",
+      "type": "claim"
+    },
+    {
+      "content": "**Open Problem 3: Principled lifecycle management.** Borrow from software engineering: version control for knowledge artifacts, dependency tracking between levels, deprecation protocols, and conflict resolution. Recent workflow-optimization surveys ([@Yue2026workflow]) advocate a 'minimum plasticity' principle; an analogous principle for knowledge management -- **promoting only when evidence warrants** -- would reduce maintenance burden while preserving adaptability.",
+      "content_hash": "b69e576e79cb7fdc5c4ac31d34a9709b5b0ffa82593f0835b915d4959234e0e9",
+      "label": "problem_lifecycle_management",
+      "qid": "github:2604_15877::problem_lifecycle_management",
+      "type": "claim"
+    },
+    {
+      "content": "The missing diagonal is also a **scalability bottleneck**: a Level-1-only system accumulating episodic memories faces linear growth in storage and retrieval cost, eventually degrading performance as irrelevant entries dilute useful knowledge. Upward compression (L1 -> L2 -> L3) is the natural solution: consolidate recurring patterns into compact skills or rules that scale sub-linearly with experience volume.",
+      "content_hash": "5c6fd3beb4ff6f25d6de9de3a31f2bbfb221f0ed64512ed600bf00f9d30535a5",
+      "label": "scalability_bottleneck",
+      "qid": "github:2604_15877::scalability_bottleneck",
+      "type": "claim"
+    },
+    {
+      "content": "Memory extraction and skill discovery are instantiations of the same operation: compressing interaction experience into reusable knowledge at different granularities. A memory system extracts structured event records (~10x compression); a skill system extracts reusable behavioral patterns (~100x compression); a rule system extracts abstract decision principles (~1,000x+ compression). These are not three separate problems but three points on a single experience compression spectrum, where higher compression directly translates to reduced context consumption, faster retrieval, and lower compute overhead per decision.",
+      "content_hash": "09f8a842264e3e9132100ca036b38a16d5df71186745cb11494fabdb734d6625",
+      "label": "shared_problem",
+      "qid": "github:2604_15877::shared_problem",
+      "type": "claim"
+    },
+    {
+      "content": "Specialization alone is insufficient as a justification for the memory-skill split. A unified architecture -- with **level-specific compressors** sharing common **retrieval, conflict-resolution, and lifecycle infrastructure** -- would avoid redundant engineering across communities while still allowing specialization at the compression-output layer.",
+      "content_hash": "79c1cc389a9ca2f92700ad3ed9d273c3781c8b5d4aa1fcb4a18a3d08a46eea05",
+      "label": "specialization_insufficient",
+      "qid": "github:2604_15877::specialization_insufficient",
+      "type": "claim"
+    },
+    {
+      "content": "The four levels describe an output space, not a fixed processing order. A system may compress directly from Level 0 to Level 3, or maintain knowledge at multiple levels simultaneously. The spectrum specifies the granularity of the extracted artifacts; it does not prescribe a sequential pipeline.",
+      "content_hash": "b714a75635a09ae66236f1aefc5058907625b4b725cef48aa42edfa377426724",
+      "label": "spectrum_not_pipeline",
+      "qid": "github:2604_15877::spectrum_not_pipeline",
+      "type": "claim"
+    },
+    {
+      "content": "The transferability versus specificity curve **likely follows a concave shape**, with the sweet spot at Level 2 balancing transferability against specificity. This conjecture has not been validated by a controlled experiment (one that holds source experience constant and varies only the compression level), but existing evidence is consistent with it.",
+      "content_hash": "881a8f07e9799ccc367cd44837accee207deecaa42b4a2ef82c658cc07e9a7b9",
+      "label": "transferability_concavity",
+      "qid": "github:2604_15877::transferability_concavity",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical evidence supports a **monotonic relationship** between compression level and transferability: Level 1 memories transfer across base models (MemSkill: LLaMA -> Qwen); Level 2 skills transfer across tasks (EvoSkill: SealQA -> BrowseComp, +5.3%) and across model sizes (Trace2Skill: 35B parameters -> 122B parameters, +57.7 percentage points). Higher-compression artifacts transfer more broadly because they carry less context-specific detail.",
+      "content_hash": "8aa765d14bb2763115d51316f4a5fcfd7b97d3106f3cd621ffa3cd72b14515e1",
+      "label": "transferability_monotonic",
+      "qid": "github:2604_15877::transferability_monotonic",
+      "type": "claim"
+    },
+    {
+      "content": "Unification of the memory and skill perspectives is **timely**: with 10+ relevant papers in Q1 2026 alone and production systems increasingly managing persistent experiential knowledge ([@Chan2026composer2]), without a shared framework two communities risk solving the same problem twice. The most promising direction is building systems that **adaptively select compression granularity** to match the value and generality of each experience, enabling agents that scale efficiently across long deployments.",
+      "content_hash": "6fb16d7461f8e6b8fa1495e28f96c60fe4faa3760e505a2304746df401c0db58",
+      "label": "unification_is_timely",
+      "qid": "github:2604_15877::unification_is_timely",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:52083d503a5d305290673cec25e95e7bfd0ed5b4a715e0b733ec86a43a89218e",
+  "manifest_schema_version": 1,
+  "package": "2604-15877",
+  "version": "0.1.0"
+}

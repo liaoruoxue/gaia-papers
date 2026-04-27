@@ -1,0 +1,258 @@
+{
+  "holes": [
+    {
+      "content": "Real deployments require both **personalization** (memory-style user-specific context retention) and **capability** (skill-style reusable procedural patterns). An agent that abstracts reusable workflows but forgets user preferences is incomplete; one that remembers context but cannot consolidate recurring patterns will overwhelm its retrieval budget.",
+      "content_hash": "d39ca13aad05f39a569100d25b35c8fd40ab86a57ca75545a3c84768f1f55fd5",
+      "interface_hash": "sha256:1b466d98a196316ee9bf19e32c32ef912a499d5b7fcb870d30084eb7edeece24",
+      "label": "deployment_needs_both",
+      "qid": "github:2604_15877::deployment_needs_both",
+      "required_by": [
+        "github:2604_15877::specialization_insufficient"
+      ]
+    },
+    {
+      "content": "A 'diagonal' system that addresses the missing-diagonal gap might comprise three components: (a) a **meta-controller** that routes each trace to one or more level-specific compressors based on novelty and frequency (a first-seen pattern stays at L1; after $k$ similar L1 entries accumulate, the promotion engine consolidates them into an L2 skill; after cross-domain recurrence, the engine generalizes to an L3 rule); (b) a **promotion/demotion engine** that handles transitions, validating newly promoted L2 skills against held-out tasks before replacing source L1 entries, and demoting when a skill is repeatedly retrieved but unused or when a rule fails in a specific context; (c) a **lifecycle manager** that tracks provenance, usage frequency, and last validation time for every artifact, enabling principled deprecation. Existing components -- MemSkill's RL controller for routing, EvoSkill's Pareto selection for promotion, AutoSkill's versioning ([@Yang2026autoskill]) for lifecycle -- could serve as building blocks.",
+      "content_hash": "ef2e685c8634b566169772d0f1f4bcafce160db45f8cc1ce8fc588acf578dc5e",
+      "interface_hash": "sha256:4eca0371b65d76d8ec81ac862ea5950e965c96b7b633d236624b1449f7b28368",
+      "label": "diagonal_architecture",
+      "qid": "github:2604_15877::diagonal_architecture",
+      "required_by": [
+        "github:2604_15877::diagonal_is_core_proposal"
+      ]
+    },
+    {
+      "content": "Existing evaluation methodology is **tightly coupled to the compression level**: Level 1 systems evaluate via question-answering metrics (F1, exact match); Level 2 systems evaluate via task success rate; Level 3 has no established methodology. This coupling means systems are optimized for their level's metric, which may not reflect true downstream utility. For example, MemSkill achieves strong QA F1 but its impact on multi-step task completion is unclear; EvoSkill's task-success metric cannot capture user-specific context.",
+      "content_hash": "082b35d3318118da156c55c1e58552c86d0357dbd9fe2610cfa122b47caa1a94",
+      "interface_hash": "sha256:778cf1cb37f34d1b750dc8d2d183a1c75ec5143ef73dd80c867b2b34ebfa2457",
+      "label": "evaluation_level_coupling",
+      "qid": "github:2604_15877::evaluation_level_coupling",
+      "required_by": [
+        "github:2604_15877::evaluation_should_unify"
+      ]
+    },
+    {
+      "content": "The missing diagonal reflects a **problem-framing limitation**, not missing engineering effort. Each community defines its output format a priori (memory papers fix L1, skill papers fix L2), so adaptive level selection is structurally outside the design space rather than merely unimplemented. Adaptive level selection is a **meta-learning problem**: learning what kind of knowledge to extract, not just what knowledge to extract.",
+      "content_hash": "936f6e9165be8f95e9176234ae7078062b787f930ac626377bba76d6a0ae20e7",
+      "interface_hash": "sha256:648f30bb0dd008a1eebaabaa7c2480c4deb6c1900bba90804a8005b94eacc873",
+      "label": "framing_limitation",
+      "qid": "github:2604_15877::framing_limitation",
+      "required_by": [
+        "github:2604_15877::unification_is_timely"
+      ]
+    },
+    {
+      "content": "Two surveyed systems operate across Levels 1 and 2 simultaneously: ExpeL ([@Zhao2024expel]) and AutoAgent ([@Wang2026autoagent]). Both use predetermined (fixed) levels without adaptive selection -- they are two-speed systems, not continuous spectra.",
+      "content_hash": "8d95844a61ae9a810ed0c35873c00c623c85fe29fc2b5351f60a38475ae937ca",
+      "interface_hash": "sha256:1196a28fde4f347a4cb00f32eb63ad74acf270ecc61b7662c661cec7e83d00c3",
+      "label": "obs_cross_level_systems",
+      "qid": "github:2604_15877::obs_cross_level_systems",
+      "required_by": [
+        "github:2604_15877::missing_diagonal"
+      ]
+    },
+    {
+      "content": "Ten surveyed systems cluster at Level 1 (episodic memory), spanning diverse mechanisms: LLM-driven extraction (Mem0), agentic indexing (A-MEM), hierarchical storage (MemoryOS), reinforcement-learning-optimized memory operations (MemSkill, Memory-R1, Mem-α, MemPO), meta-learned memory architectures (ALMA), multi-agent coordination (MemMA), and governance with temporal decay (SSGM). Despite the mechanistic diversity, all ten converge on the same output format: structured episodic records.",
+      "content_hash": "e96be9ec201027535a5bdcd87060469b354b153d701a0013380a34a0cf0144aa",
+      "interface_hash": "sha256:f16fc7c6b4687f04c2e3944e9f826dbf815f139f645de9f259dfce0f35df8939",
+      "label": "obs_l1_systems",
+      "qid": "github:2604_15877::obs_l1_systems",
+      "required_by": [
+        "github:2604_15877::missing_diagonal"
+      ]
+    },
+    {
+      "content": "Eight surveyed systems cluster at Level 2 (procedural skill). Voyager ([@Wang2023voyager]) pioneered the paradigm; later entries include SkillWeaver, EvoSkill, CASCADE, AutoSkill, Trace2Skill, SkillRL, and EvolveR. CASCADE ([@Huang2025cascade]) chains cumulative skill creation with autonomous evolution.",
+      "content_hash": "2207ed68be9a8d9dcd028418c74cf5b0d9bbfea7b28827f9c02f27ae4ddd044a",
+      "interface_hash": "sha256:bee43c73c224736143801835bd6ec6e8cc8ac5e2b76e7ee9bff2f9ba346e4f8c",
+      "label": "obs_l2_systems",
+      "qid": "github:2604_15877::obs_l2_systems",
+      "required_by": [
+        "github:2604_15877::missing_diagonal"
+      ]
+    },
+    {
+      "content": "Level 3 (declarative rule) is notably sparse for *learned* rules: no surveyed system automates rule extraction from agent experience. Constitutional AI ([@Bai2022cai]) uses pre-specified rules; reward-design methods (Potential-Based Reward Shaping [@Ng1999pbrs], process rewards [@Lightman2023verify], rule-based rewards [@Shao2024deepseekmath]) encode Level-3-type knowledge but are human-designed, not learned. Weight-level rules (via Reinforcement Learning from Human Feedback, RLHF [@Ouyang2022rlhf]) are static after training, opaque to inspection, and cannot be updated without retraining.",
+      "content_hash": "5bfcf9df662177ccaaf3481768dce19300d85707698bb98bbdc50755b6c20251",
+      "interface_hash": "sha256:b388786407818d45a9ed6ae9a0c09f275b36f32345fffaaa757d63db71f4a916",
+      "label": "obs_l3_empty",
+      "qid": "github:2604_15877::obs_l3_empty",
+      "required_by": [
+        "github:2604_15877::missing_diagonal"
+      ]
+    },
+    {
+      "content": "Among the recent agent memory surveys, only one ([@Yang2026graph]) cites any agent skill work, and that citation is restricted to a single system (Voyager).",
+      "content_hash": "b05131dff79e2375217844e6507d6115064b6f81e900c3a9affd3712edce82ac",
+      "interface_hash": "sha256:aabf256e164322fcd02075178ff2fbeee5237658a33f56502a2a464a39615704",
+      "label": "obs_memory_survey_only_voyager",
+      "qid": "github:2604_15877::obs_memory_survey_only_voyager",
+      "required_by": [
+        "github:2604_15877::community_disconnect"
+      ]
+    },
+    {
+      "content": "Memory papers cite skill work at a rate of approximately 0.7%: only 4 out of 566 outgoing references in the surveyed memory papers point to agent-skill work.",
+      "content_hash": "8ff05a5679d38371e9e9d3d51077e1905ef6784eaeffdbf5ba2f624421c424d1",
+      "interface_hash": "sha256:1e9b5b84f039a78964ce840e6c2a738b93bd95895bfbe73cd155cb988730ac4a",
+      "label": "obs_memory_to_skill_citation",
+      "qid": "github:2604_15877::obs_memory_to_skill_citation",
+      "required_by": [
+        "github:2604_15877::community_disconnect"
+      ]
+    },
+    {
+      "content": "Merging skills does not always help: including success-trace signals during skill merging can cause performance swings of plus or minus 21 percentage points ([@Ni2026trace2skill]). Agent behavior can degrade over extended operation even when individual-step correctness is maintained, indicating that lifecycle issues compound over time.",
+      "content_hash": "d92498b152daa87dd14dd934889b938be978035fd97a9b7fcb41d39c491a58b1",
+      "interface_hash": "sha256:f43482c59e5a5e79ba913a87390f63b30cb4e47e5c1cf50ca9b9f5260db9f189",
+      "label": "obs_merge_swing",
+      "qid": "github:2604_15877::obs_merge_swing",
+      "required_by": [
+        "github:2604_15877::lifecycle_neglected"
+      ]
+    },
+    {
+      "content": "Two recent surveys of agent skills ([@Jiang2026sok], [@Xu2026skillsurvey]) do not cite a single agent memory system in their bibliographies.",
+      "content_hash": "a35b49d4324f04e0c10c0c1dd9ba00cf89dd1778047a98f23d36328891538e3b",
+      "interface_hash": "sha256:45ced8af7d6a086fd3986fa56b46c6cbedeb4e13aae49904732e653dcc9a470f",
+      "label": "obs_skill_surveys_no_memory",
+      "qid": "github:2604_15877::obs_skill_surveys_no_memory",
+      "required_by": [
+        "github:2604_15877::community_disconnect"
+      ]
+    },
+    {
+      "content": "Skill papers cite memory work at a rate of approximately 1.2%: only 7 out of 570 outgoing references in the surveyed skill papers point to agent-memory work.",
+      "content_hash": "da4a61b28b6f09f74fb42c782c675d5bd92ef36f168798292efd06767a05621f",
+      "interface_hash": "sha256:79d29ec6c07581ea56d5ca9ae89883d8df02a6d803ab3ccbc2f4d46701a5d653",
+      "label": "obs_skill_to_memory_citation",
+      "qid": "github:2604_15877::obs_skill_to_memory_citation",
+      "required_by": [
+        "github:2604_15877::community_disconnect"
+      ]
+    },
+    {
+      "content": "SkillsBench ([@Li2026skillsbench]) reports that LLM-self-generated Level-2 skills produce **+0.0 percentage points** of improvement on multi-task tasks -- no benefit -- in contrast to the +16.2pp gain from curated skills.",
+      "content_hash": "b01a4a39fc6217556494005fed27b452337ea1709b29b9395e9c6957717d4e92",
+      "interface_hash": "sha256:9924d1f87039b5d219026ed898350a9aec960704df38b12dbe6c380a9c4505a8",
+      "label": "obs_skillsbench_selfgen",
+      "qid": "github:2604_15877::obs_skillsbench_selfgen",
+      "required_by": [
+        "github:2604_15877::fidelity_matters"
+      ]
+    },
+    {
+      "content": "A citation analysis spanning 22 primary papers (covering both agent memory and agent skill systems) catalogues a total of 1,136 references across these papers' bibliographies.",
+      "content_hash": "87c665b6a021db1537192571d90d9611691e00fb0870e59d02aa73860bb0b421",
+      "interface_hash": "sha256:aea68b06097ba511f05d9fba10e1a2c5857d3c2712c826305dea6a34e6821e0a",
+      "label": "obs_total_references",
+      "qid": "github:2604_15877::obs_total_references",
+      "required_by": [
+        "github:2604_15877::community_disconnect"
+      ]
+    },
+    {
+      "content": "Trace2Skill ([@Ni2026trace2skill]) reports a +57.7 percentage-point gain when transferring its Level-2 skills from a 35-billion-parameter model to a 122-billion-parameter model, demonstrating cross-model-size transferability of Level-2 skills.",
+      "content_hash": "7351f41bed0d3a2f2fa030a4486ce2ba5854e93c46581d7594c1304b5d073296",
+      "interface_hash": "sha256:ecfa520319cd7e8601347095aa3affddcde48d556b7b72641f8c65dfb7b0e7ce",
+      "label": "obs_trace2skill_size_transfer",
+      "qid": "github:2604_15877::obs_trace2skill_size_transfer",
+      "required_by": [
+        "github:2604_15877::transferability_monotonic"
+      ]
+    },
+    {
+      "content": "**Testable Prediction 3.** The transferability-versus-specificity curve should be concave, with Level 2 at the sweet spot. This follows from the conjecture that transferability rises monotonically with compression but specificity falls; the two trends imply an interior optimum.",
+      "content_hash": "ae06f889eca98c399c69fad3f6ca4ba34952262c18cc17c985de4991018755b1",
+      "interface_hash": "sha256:bd6a221534e0ac0e4346606787ebeae1a3d315747f4a8cd58ce2c8cf8e46245a",
+      "label": "prediction_concave_curve",
+      "qid": "github:2604_15877::prediction_concave_curve",
+      "required_by": [
+        "github:2604_15877::predictions_distinguish_taxonomy"
+      ]
+    },
+    {
+      "content": "**Testable Prediction 1.** Level-2 compression should outperform Level-1 retrieval on cross-domain transfer when source experience is held constant. This prediction follows directly from the monotonic-transferability hypothesis and would be falsified by a controlled experiment in which an L1 retrieval system matches or exceeds an L2 skill system on a transfer benchmark with identical training data.",
+      "content_hash": "36a1eab74e4ac363c342e5d7419535eeffee1a73c7ea84198b56b2c90cff67a7",
+      "interface_hash": "sha256:b1e69353300104e2988559fd5ae4a98795bb65122f391b6d95f559cca143a11f",
+      "label": "prediction_l2_beats_l1_transfer",
+      "qid": "github:2604_15877::prediction_l2_beats_l1_transfer",
+      "required_by": [
+        "github:2604_15877::predictions_distinguish_taxonomy"
+      ]
+    },
+    {
+      "content": "**Testable Prediction 4.** Level-3 declarative rules should help most when framed as **constraints (guardrails)** rather than directives (positive instructions). This is consistent with the early evidence from RuleShaping ([@Zhang2026rules]) showing that negative constraints improve performance by 7-14pp while positive directives hurt.",
+      "content_hash": "5458edf26bc30b0a19ead892823de9002e535b05be19be507a9c096b3216ffc7",
+      "interface_hash": "sha256:3feda850bc6dc93ec6056713e8991fbbf862acef69298ff1e8d8c49a4c93a505",
+      "label": "prediction_l3_constraints",
+      "qid": "github:2604_15877::prediction_l3_constraints",
+      "required_by": [
+        "github:2604_15877::predictions_distinguish_taxonomy"
+      ]
+    },
+    {
+      "content": "**Testable Prediction 2.** A multi-level knowledge store combining Level 1 (memories) and Level 2 (skills) should outperform either level alone, with the performance gap **widening** as deployment length increases. This follows from the acquisition-versus-maintenance trade-off: L2 alone misses user-specific context; L1 alone is overwhelmed at scale.",
+      "content_hash": "519b5869a58e5bfd4dfbae403cd988f89fd536f8f0f7b558fd22c52eab6a0e15",
+      "interface_hash": "sha256:d4100c7bb16c189e58a8cec0eba1e25f14922c29cfb67eec6f735dbc0f87ab23",
+      "label": "prediction_multilevel_better",
+      "qid": "github:2604_15877::prediction_multilevel_better",
+      "required_by": [
+        "github:2604_15877::predictions_distinguish_taxonomy"
+      ]
+    },
+    {
+      "content": "**Open Problem 1: Adaptive level selection.** Design a meta-controller that, given a new interaction trace $T$, determines the optimal compression level(s) $L^*$. The challenge is to formalize a **value-of-information** framework: how much future utility does the artifact $K_L$ provide relative to the cost of computing and maintaining it? A key design tension is whether to **jointly optimize** the meta-controller and level-specific compressors, or to **fix** the meta-controller and optimize only the compressors. Recent agentic RL surveys ([@Zhang2026agenticrl]) find that RL primarily amplifies existing capabilities, suggesting that the level of compression may matter more than the algorithm.",
+      "content_hash": "71d5c1cdd35516d5b886cb539057bc1bbca6addeac348765e37a6375b5a9a242",
+      "interface_hash": "sha256:9cb5cbdf004d4c87d2228dbc5959176ade518e8313a77e87fa4c7fdaba8783a7",
+      "label": "problem_adaptive_selection",
+      "qid": "github:2604_15877::problem_adaptive_selection",
+      "required_by": [
+        "github:2604_15877::diagonal_is_core_proposal"
+      ]
+    },
+    {
+      "content": "The missing diagonal is also a **scalability bottleneck**: a Level-1-only system accumulating episodic memories faces linear growth in storage and retrieval cost, eventually degrading performance as irrelevant entries dilute useful knowledge. Upward compression (L1 -> L2 -> L3) is the natural solution: consolidate recurring patterns into compact skills or rules that scale sub-linearly with experience volume.",
+      "content_hash": "5c6fd3beb4ff6f25d6de9de3a31f2bbfb221f0ed64512ed600bf00f9d30535a5",
+      "interface_hash": "sha256:da3565e4015cc3316d068e772ea98024c72281ed358304a9c2c578a7bf74e97f",
+      "label": "scalability_bottleneck",
+      "qid": "github:2604_15877::scalability_bottleneck",
+      "required_by": [
+        "github:2604_15877::idle_time_consolidation"
+      ]
+    },
+    {
+      "content": "Memory extraction and skill discovery are instantiations of the same operation: compressing interaction experience into reusable knowledge at different granularities. A memory system extracts structured event records (~10x compression); a skill system extracts reusable behavioral patterns (~100x compression); a rule system extracts abstract decision principles (~1,000x+ compression). These are not three separate problems but three points on a single experience compression spectrum, where higher compression directly translates to reduced context consumption, faster retrieval, and lower compute overhead per decision.",
+      "content_hash": "09f8a842264e3e9132100ca036b38a16d5df71186745cb11494fabdb734d6625",
+      "interface_hash": "sha256:2f4b7d3101df28b31447d12b201dc00005b42558f85cf5653b358ba71dabf1d1",
+      "label": "shared_problem",
+      "qid": "github:2604_15877::shared_problem",
+      "required_by": [
+        "github:2604_15877::generalizability_tradeoff"
+      ]
+    },
+    {
+      "content": "Both the agent memory and agent skill communities independently solve the same sub-problems without sharing solutions: retrieval over growing knowledge stores, conflict detection between contradictory entries, staleness recognition, and evaluation of downstream utility. The spectrum view (which exposes the shared compression operation) makes this redundancy visible.",
+      "content_hash": "6c7384a920f28f826506dc66d143a3f664684f9c2be1ac3d0953bcfb64ff1cb7",
+      "interface_hash": "sha256:ace590ebce72b899e7ba1ab46dfe54098ad722e7733b3c4706291a4ff3cd1e61",
+      "label": "shared_subproblems",
+      "qid": "github:2604_15877::shared_subproblems",
+      "required_by": [
+        "github:2604_15877::specialization_insufficient"
+      ]
+    },
+    {
+      "content": "A worked storage estimate illustrates the maintenance burden. A Level-1-only agent storing 1,000 episodes at ~500 tokens each maintains a ~500K-token knowledge store that must be indexed and searched at every decision. Compressing the same content into Level-2 skills reduces storage to ~5K tokens; into Level-3 rules, ~500 tokens -- a 100-1,000x reduction in storage and retrieval overhead that compounds across thousands of daily decisions.",
+      "content_hash": "abc6b176178a380728348ba4e53e2632d3ceb23117c7cc4f327c1ec20253bb10",
+      "interface_hash": "sha256:98e0e060820f68c3f0ed6abbe6abb5b177c3dfaed5984f869c27af16bed35759",
+      "label": "storage_cost_calculation",
+      "qid": "github:2604_15877::storage_cost_calculation",
+      "required_by": [
+        "github:2604_15877::acquisition_maintenance_tradeoff"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:52083d503a5d305290673cec25e95e7bfd0ed5b4a715e0b733ec86a43a89218e",
+  "manifest_schema_version": 1,
+  "package": "2604-15877",
+  "version": "0.1.0"
+}
