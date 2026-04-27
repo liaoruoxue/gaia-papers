@@ -1,0 +1,155 @@
+{
+  "ir_hash": "sha256:f5ddb0023eb4ddaa1d09444d259c5aa2de56a141cfcf355f4578648e87e91f5e",
+  "manifest_schema_version": 1,
+  "package": "2510-00615",
+  "premises": [
+    {
+      "content": "ACON (Agent Context Optimization) is a unified framework that compresses **both** environment observations and interaction histories into concise but informative condensations, applied selectively only when the corresponding length exceeds a threshold ($T_{hist}$ for history, $T_{obs}$ for observation).",
+      "content_hash": "d873af091d3b2b0be65346ba91f969db6dca20f6769a72ae9baf5667585d08c4",
+      "exported": true,
+      "interface_hash": "sha256:2ae95c6623ea456e5e8fd67b74e0930f995da84262c81c5d674c3607b84de4b8",
+      "label": "acon_compresses_history_and_obs",
+      "qid": "github:2510_00615::acon_compresses_history_and_obs",
+      "required_by": [
+        "github:2510_00615::claim_helps_small_agents"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "On the same AppWorld benchmark, **observation compression** results are:\n\n| Method | Avg Acc. | Steps | Peak ($10^3$) | Dep. ($10^6$) |\n|--------|---------:|------:|--------------:|--------------:|\n| LLMLingua | 32.1 | 18.16 | 8.17 | 6.01 |\n| Prompting | 42.3 | 17.38 | 6.58 | 4.09 |\n| **ACON-UT** | 47.0 | 16.67 | 7.62 | 5.08 |\n| **ACON-UTCO** | **53.6** | 18.12 | 7.43 | 4.93 |\n\nACON-UTCO outperforms every baseline on accuracy (best 53.6 vs Prompting's 42.3) while keeping peak tokens lower than No-compression (9.93).",
+      "content_hash": "06c32261f1e044e82349ec928cae92550912a280d2ce79aa6294fb0554e6c35c",
+      "exported": false,
+      "interface_hash": "sha256:e459909a8a4b492a0fa12c1c5fef1a50d4026ddf1176fd215bc3ec9e6c567bd4",
+      "label": "appworld_observation_table",
+      "qid": "github:2510_00615::appworld_observation_table",
+      "required_by": [
+        "github:2510_00615::claim_peak_token_reduction"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In long-horizon agentic tasks the interaction history $h_{t-1}$ grows unboundedly with the number of steps because every action and observation is appended to the running history.",
+      "content_hash": "ab2e8d946381e94c2cd2a4a768128ff038333614c5a3670e6810c038054efca1",
+      "exported": false,
+      "interface_hash": "sha256:102521d9907bd12243a0d89b1c258fd7e3585ffe0667fd1b8de582bf667ef313",
+      "label": "context_grows_unbounded",
+      "qid": "github:2510_00615::context_grows_unbounded",
+      "required_by": [
+        "github:2510_00615::acon_solves_problem"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Transformer inference cost scales (super-linearly through attention) with the input token count $n$, so per-step cost rises as the history length grows. Combined with @context_grows_unbounded this makes naive long-horizon agent rollouts prohibitively expensive.",
+      "content_hash": "d6482840bf365a7246ceb610e813ef267a334dbf3b39f72af17813dc6c9f5e2d",
+      "exported": false,
+      "interface_hash": "sha256:59c8692caee8f35d22d19e5da02ce83ba07b663abadfe74354094d1535a2959c",
+      "label": "cost_scales_with_context",
+      "qid": "github:2510_00615::cost_scales_with_context",
+      "required_by": [
+        "github:2510_00615::acon_solves_problem"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Distilling the gpt-4.1 history compressor (UT-optimised guideline) into smaller models with LoRA gives the following downstream agent accuracies (gpt-4.1 agent):\n\n| Compressor | AppWorld | OfficeBench | 8-obj QA (EM) |\n|------------|---------:|------------:|--------------:|\n| Teacher (gpt-4.1) | 50.00 | 70.53 | 0.371 |\n| Qwen3-14B [@Yang2025] | 47.00 | 75.79 | 0.386 |\n| Qwen3-8B [@Yang2025] | 44.60 | 73.68 | 0.370 |\n| Phi-4 [@Abdin2024] | 42.30 | 77.89 | 0.379 |\n| gpt-4.1-mini (no distil.) | — | — | — |\n\nEach distilled student retains $\\geq$ 95% of the teacher's accuracy, and on OfficeBench/QA Phi-4 and Qwen3-14B even *exceed* the teacher.",
+      "content_hash": "bfc5796cece79456b1a6423ff5f7d89c894927f45c829c9084632d5839fce1d3",
+      "exported": false,
+      "interface_hash": "sha256:d1ac4abf6546ab684f4229aaf5e86bb0d9e903c18a6c34b2ef486b41ddcb3326",
+      "label": "distillation_results",
+      "qid": "github:2510_00615::distillation_results",
+      "required_by": [
+        "github:2510_00615::claim_distillation_preserves_accuracy"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Existing context-management heuristics fall short for long-horizon multi-step agents: dialogue summarisation targets conversational coherence but loses multi-step carry-over; document-centric methods (long-context QA, in-context learning) assume single-step reasoning where context can be discarded after the answer; FIFO truncation drops potentially load-bearing facts; retrieval fetches fragments but loses structural state. None of them preserve the diverse signal types (causal relations, evolving state, preconditions, decision cues) that productivity agents require.",
+      "content_hash": "b29a336cb88fa8c082348869df65a44f2143265ccef1ee03cb37f02607de3c21",
+      "exported": false,
+      "interface_hash": "sha256:6e8b0f755e348b1a775c32515e0bdf011773f1a1481d221b0fa8397c826295da",
+      "label": "heuristics_inadequate",
+      "qid": "github:2510_00615::heuristics_inadequate",
+      "required_by": [
+        "github:2510_00615::acon_solves_problem"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Excessively long contexts dilute relevant information and distract the model with outdated or extraneous details, lowering downstream accuracy [@Shi2023].",
+      "content_hash": "802e17142b31f71fe91ec09ccc55db68464800e6ee79ada65c782d8e815df54c",
+      "exported": false,
+      "interface_hash": "sha256:fe44d0105523757746198d5ae1ed3421952e64178f5bf1f64a21f8cf382dd346",
+      "label": "long_context_distracts",
+      "qid": "github:2510_00615::long_context_distracts",
+      "required_by": [
+        "github:2510_00615::acon_solves_problem",
+        "github:2510_00615::claim_helps_small_agents"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Ablation on the prompt-optimiser model and feedback type (AppWorld, gpt-4.1 agent + history compressor, Table 3):\n\n| Optimiser | Task contrastive feedback? | Average Acc. |\n|-----------|:--------------------------:|-------------:|\n| o3 | yes | **51.2** |\n| o3 | no | 50.6 (-0.6) |\n| gpt-4.1 | yes | 47.6 (-3.6) |\n| gpt-5 | yes | 50.6 (-0.6) |",
+      "content_hash": "d52f622622b620f0bd1e1266986a31e05acad951657b2d52bb12602d9e49827e",
+      "exported": false,
+      "interface_hash": "sha256:8e16dada12e80f4be07baed64f0291ca08194078af5e7a4c362013289aac1083",
+      "label": "optimizer_ablation_data",
+      "qid": "github:2510_00615::optimizer_ablation_data",
+      "required_by": [
+        "github:2510_00615::strong_optimizer_matters"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "When the agent itself is a smaller distilled LLM (Qwen3-14B, distilled from gpt-4.1 trajectories), ACON dramatically improves accuracy versus running the same small agent without compression. Reported gains:\n\n| Benchmark | Without compression | With ACON | Absolute gain |\n|-----------|---------------------|-----------|---------------|\n| AppWorld | 26.8% | 33.9% | +7.1 (i.e., +26-32% relative) |\n| OfficeBench | (lower baseline) | (improved) | +20% relative |\n| 8-objective QA | 0.158 EM | 0.197 EM | +0.039 (~+25-46% relative) |",
+      "content_hash": "e34ca4f55cb3e86475782db2f7aef51bf845f19d780a48211178a6db5e9d0740",
+      "exported": false,
+      "interface_hash": "sha256:db678c1ae1f3b75c663bdd581bd1e1c0bec21bd9891b8218d274d107b43af9bd",
+      "label": "small_agent_results",
+      "qid": "github:2510_00615::small_agent_results",
+      "required_by": [
+        "github:2510_00615::claim_helps_small_agents"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The teacher LLM with optimised guideline $P^*$ generates a supervised-imitation training set $\\{(x, f(x; \\phi_T, P^*))\\}$ for the student compressor.",
+      "content_hash": "a9ebe0fff9aab6d9ec2861cac1d945a015e7d277caab5f133bfca7d4fb1438e2",
+      "exported": false,
+      "interface_hash": "sha256:df1bb9d3a66caaa2a25cf7d032377c046661db64ce5954284b6dc7b77b3a91f3",
+      "label": "strat_distil_pipeline_pivot",
+      "qid": "github:2510_00615::strat_distil_pipeline_pivot",
+      "required_by": [
+        "github:2510_00615::acon_solves_problem",
+        "github:2510_00615::claim_distillation_preserves_accuracy"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "On AppWorld with gpt-4.1, varying the compression thresholds yields a U-shaped trade-off (Figure 6):\n\n- **History thresholds** scanned: $T_{hist} \\in \\{2048, 4096, 8192\\}$.\n- **Observation thresholds** scanned: $T_{obs} \\in \\{512, 1024, 2048\\}$.\n\nSmaller thresholds reduce tokens but trigger many more compression calls and degrade accuracy; larger thresholds preserve accuracy but with higher peak tokens. The Figure-6 right panel shows accuracy peaking around $T_{hist}=4096$ and $T_{obs}=1024$ (both close to the No-compression accuracy line) at substantially lower peak tokens than No-compression.",
+      "content_hash": "3fdd930f87308d7f8e0af82261aa69ac8ca178aa0706a93b3d89de4b3a80cb3d",
+      "exported": false,
+      "interface_hash": "sha256:2dfb85a64b6b5d88db58fb2383755c38f5c9d863c3f5fc0d154884b754422048",
+      "label": "threshold_ablation_data",
+      "qid": "github:2510_00615::threshold_ablation_data",
+      "required_by": [
+        "github:2510_00615::threshold_recommendation"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Trajectory-level comparisons between agent runs **with** vs **without** compression supply a denser quality signal than scalar terminal rewards. Specifically, a task that succeeds with full context $H$ but fails with compressed context $H'$ pinpoints a concrete loss of information caused by the compressor.",
+      "content_hash": "0e1409d7df472f00d9e3d5acb146ec866b457a83aab897cc59fc74a9f6de50ac",
+      "exported": false,
+      "interface_hash": "sha256:fd66c8b74317c2cf385222b0fa7f00ec154c657122af267da7a3999167e125ef",
+      "label": "trajectory_dense_signal",
+      "qid": "github:2510_00615::trajectory_dense_signal",
+      "required_by": [
+        "github:2510_00615::acon_is_gradient_free",
+        "github:2510_00615::acon_solves_problem"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

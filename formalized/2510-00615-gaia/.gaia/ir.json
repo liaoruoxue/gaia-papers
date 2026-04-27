@@ -1,0 +1,2123 @@
+{
+  "ir_hash": "sha256:f5ddb0023eb4ddaa1d09444d259c5aa2de56a141cfcf355f4578648e87e91f5e",
+  "knowledges": [
+    {
+      "content": "An LLM agent interacts with a Partially Observable Markov Decision Process (POMDP) environment $E = \\langle S, A, O, T, R \\rangle$. At each step $t$ the agent receives the latest observation $o_t$ together with the interaction history $h_{t-1} = (o_0, a_0, o_1, a_1, \\dots, o_{t-1}, a_{t-1})$ and emits action $a_t = M(o_t, h_{t-1}; \\theta, P_{agent})$ where $\\theta$ are the fixed model parameters and $P_{agent}$ is the (static) system prompt.",
+      "content_hash": "5b713de17a4ac1dafdef9533d58bd5bb1590c9affee1dde0595b14125f5d84c0",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_00615::agent_loop_setup",
+      "label": "agent_loop_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agent loop formal setup",
+      "type": "setting"
+    },
+    {
+      "content": "The per-task context cost $C(H) = \\sum_{t=1}^{T} C(h_{t-1}, o_t)$ aggregates the per-step cost of encoding the dynamic context (history $h_{t-1}$ plus latest observation $o_t$). The static prompt cost is excluded because it can be budgeted in advance.",
+      "content_hash": "78c7f4fdf1c7ec8841f06624a210d44f9babd68b1ef205ac5668797efef5bb8c",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_00615::context_cost_definition",
+      "label": "context_cost_definition",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context cost function (Equation 2)",
+      "type": "setting"
+    },
+    {
+      "content": "In long-horizon agentic tasks the interaction history $h_{t-1}$ grows unboundedly with the number of steps because every action and observation is appended to the running history.",
+      "content_hash": "ab2e8d946381e94c2cd2a4a768128ff038333614c5a3670e6810c038054efca1",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_00615::context_grows_unbounded",
+      "label": "context_grows_unbounded",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Definitionally true of the agent loop in @agent_loop_setup: every step appends a new (a_t, o_t) pair, so |h_t| grows monotonically without bound."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context grows unbounded with horizon",
+      "type": "claim"
+    },
+    {
+      "content": "Transformer inference cost scales (super-linearly through attention) with the input token count $n$, so per-step cost rises as the history length grows. Combined with @context_grows_unbounded this makes naive long-horizon agent rollouts prohibitively expensive.",
+      "content_hash": "d6482840bf365a7246ceb610e813ef267a334dbf3b39f72af17813dc6c9f5e2d",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_00615::cost_scales_with_context",
+      "label": "cost_scales_with_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_grows_unbounded"
+            ]
+          }
+        },
+        "prior": 0.97,
+        "prior_justification": "Standard property of transformer attention/decoding: per-token cost is Theta(n) for KV-attention and Theta(n^2) for full attention. Universally accepted in the long-context LLM literature."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Inference cost scales with context length",
+      "type": "claim"
+    },
+    {
+      "content": "Excessively long contexts dilute relevant information and distract the model with outdated or extraneous details, lowering downstream accuracy [@Shi2023].",
+      "content_hash": "802e17142b31f71fe91ec09ccc55db68464800e6ee79ada65c782d8e815df54c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_00615::long_context_distracts",
+      "label": "long_context_distracts",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shi2023"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Empirically established by [@Shi2023] and numerous follow-up studies showing accuracy degradation when irrelevant context is added."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Long context distracts the model",
+      "type": "claim"
+    },
+    {
+      "content": "Existing context-management heuristics fall short for long-horizon multi-step agents: dialogue summarisation targets conversational coherence but loses multi-step carry-over; document-centric methods (long-context QA, in-context learning) assume single-step reasoning where context can be discarded after the answer; FIFO truncation drops potentially load-bearing facts; retrieval fetches fragments but loses structural state. None of them preserve the diverse signal types (causal relations, evolving state, preconditions, decision cues) that productivity agents require.",
+      "content_hash": "b29a336cb88fa8c082348869df65a44f2143265ccef1ee03cb37f02607de3c21",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_00615::heuristics_inadequate",
+      "label": "heuristics_inadequate",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Argued at length in Sections 1-2 with citations covering each existing approach; the empirical Tables 1-2 also show every baseline (FIFO, Retrieval, LLMLingua, Prompting) underperforming No-compression on AppWorld accuracy. Strong support, though 'inadequate' is qualitative."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Existing heuristics inadequate for long-horizon agents",
+      "type": "claim"
+    },
+    {
+      "content": "ACON (Agent Context Optimization) is a unified framework that compresses **both** environment observations and interaction histories into concise but informative condensations, applied selectively only when the corresponding length exceeds a threshold ($T_{hist}$ for history, $T_{obs}$ for observation).",
+      "content_hash": "d873af091d3b2b0be65346ba91f969db6dca20f6769a72ae9baf5667585d08c4",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_00615::acon_compresses_history_and_obs",
+      "label": "acon_compresses_history_and_obs",
+      "metadata": {
+        "prior": 0.98,
+        "prior_justification": "True by construction: ACON is *defined* as the framework that applies both history compression (@history_compression_rule) and observation compression (@observation_compression_rule) under selective thresholds."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ACON compresses both history and observation",
+      "type": "claim"
+    },
+    {
+      "content": "ACON's compression-guideline optimisation operates entirely in natural language space (no parameter updates of the compressor LLM are required), making it directly applicable to closed-source / API-only models.",
+      "content_hash": "6beeb7be21a0a6263d11d67e19c80be08ccd109a1cedea507325d50b2f3ff657",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2510_00615::acon_is_gradient_free",
+      "label": "acon_is_gradient_free",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "agent_loop_setup",
+              "textual_gradient_step"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ACON is gradient-free",
+      "type": "claim"
+    },
+    {
+      "content": "The optimised compressor (a large LLM with the tuned guideline) can be distilled into a smaller compressor LLM while retaining most of the teacher's downstream agent accuracy, lowering deployment cost.",
+      "content_hash": "4feb2553b10d87146ff92ae8b66e667d09d1ca7f344d61da4b063f6702fd2559",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2510_00615::acon_distillable",
+      "label": "acon_distillable",
+      "module": "motivation",
+      "parameters": [],
+      "title": "ACON's compressor is distillable",
+      "type": "claim"
+    },
+    {
+      "content": "ACON reduces peak input tokens by **26-54%** across AppWorld, OfficeBench and 8-objective QA while largely preserving (and sometimes improving) task accuracy when paired with a strong agent (gpt-4.1).",
+      "content_hash": "cb0711004cb45d1dd565bdd077fb3b7947888691d23481d9001c211b38750af1",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2510_00615::claim_peak_token_reduction",
+      "label": "claim_peak_token_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_solves_problem",
+              "appworld_observation_table",
+              "claim_peak_token_reduction"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Headline: 26-54% peak-token reduction",
+      "type": "claim"
+    },
+    {
+      "content": "When ACON's optimised compressor (gpt-4.1 teacher) is distilled into smaller models (Qwen3-14B, Qwen3-8B, Phi-4), the student compressors retain **over 95%** of the teacher compressor's downstream agent accuracy.",
+      "content_hash": "be46a5266c7eea84bc8d6ef0b7c18ac0fd8343ae14df3d6f9afd0aef809f19d0",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2510_00615::claim_distillation_preserves_accuracy",
+      "label": "claim_distillation_preserves_accuracy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "distillation_decouples_inference",
+              "distillation_results"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Headline: distillation preserves >=95% accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "ACON acts as an equaliser for smaller LLM agents: with concise but informative contexts, Qwen3-14B improves by up to **+32%** on AppWorld, **+20%** on OfficeBench and **+46%** on 8-objective QA versus the no-compression baseline.",
+      "content_hash": "1a13fe5664f3f243997789da8b7dc85e5c70f9507095aebadcfced3c6591d00e",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2510_00615::claim_helps_small_agents",
+      "label": "claim_helps_small_agents",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_compresses_history_and_obs",
+              "claim_helps_small_agents",
+              "long_context_distracts",
+              "small_agent_results"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Headline: small LM agents benefit most",
+      "type": "claim"
+    },
+    {
+      "content": "ACON introduces a compressor LLM $f(\\cdot; \\phi, P)$ parameterised by pre-trained weights $\\phi$ and a natural-language compression guideline $P$. The compressor receives raw context and returns a condensed version.",
+      "content_hash": "1104c70a0de03d81d851f6d95a21acafc35316130662518d38e700c01af1c630",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_00615::compressor_definition",
+      "label": "compressor_definition",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Compressor module $f(\\cdot;\\phi,P)$",
+      "type": "setting"
+    },
+    {
+      "content": "**History compression** is applied selectively: $h'_t = f(h_t; \\phi, P_{hist})$ if $|h_t| > T_{hist}$, otherwise $h'_t = h_t$. The compressed history $h'_t$ then replaces the raw history in the agent's input.",
+      "content_hash": "f89e05e0be28394dce4a1c2eea9b08f342fa0ab9508de997e36216d79f1455b0",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_00615::history_compression_rule",
+      "label": "history_compression_rule",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "History compression rule (Equation 3)",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation compression** is also applied selectively: $o'_t = f(o_t, h_{t-1}; \\phi, P_{obs})$ if $|o_t| > T_{obs}$, otherwise $o'_t = o_t$. The compressed observation replaces the raw one and is stored in the history.",
+      "content_hash": "7570119600c72930ff3968d7a7941c56ae69c9f3ec04d461fdd1f93828852b90",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_00615::observation_compression_rule",
+      "label": "observation_compression_rule",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Observation compression rule (Equation 4)",
+      "type": "setting"
+    },
+    {
+      "content": "The agent's context functions as a **world model** of the environment, encoding heterogeneous signal types: causal relations (e.g., 'sending email leaves drafts'), evolving states (e.g., 'account balance'), preconditions (e.g., 'login required') and decision cues (e.g., 'due dates'). Effective compression must therefore preserve all of these signal classes, not just verbatim text.",
+      "content_hash": "7e969094f7268dbe58c13ee80d8b0293b13cd7bd60754bbf3de64af055386fc8",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_00615::context_is_world_model",
+      "label": "context_is_world_model",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Agent context as world model",
+      "type": "claim"
+    },
+    {
+      "content": "The compressor parameters $\\psi \\triangleq (\\phi, P)$ are optimised to $\\max_{\\psi} \\mathbb{E}[R(s_T(\\psi))] - \\lambda \\mathbb{E}[C(H'(\\psi))]$, $\\lambda \\geq 0$ — a weighted combination of expected terminal task reward (maximise) and expected compressed-context cost (minimise).",
+      "content_hash": "630bdb1d7a1a6c9aa92956cabc3e98e593c6d32dca256d55e5a201130d42fc45",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_00615::acon_objective",
+      "label": "acon_objective",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "ACON optimisation objective (Equation 6)",
+      "type": "setting"
+    },
+    {
+      "content": "Direct reinforcement learning of the compressor against the objective @acon_objective is impractical: (1) updating the compressor LLM's parameters $\\phi$ with RL is computationally prohibitive; (2) every reward signal requires an expensive multi-step rollout of both agent and compressor LLMs; (3) the policy-gradient estimator suffers high variance because the compression quality is only revealed indirectly through eventual task success; and there is no gold supervision for compression itself.",
+      "content_hash": "262e74d3eee149d03352b4a74e761c5c4d5e8546c7cbe353afba3b7201798164",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_00615::naive_rl_infeasible",
+      "label": "naive_rl_infeasible",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_objective"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Naive RL on the ACON objective is infeasible",
+      "type": "claim"
+    },
+    {
+      "content": "Trajectory-level comparisons between agent runs **with** vs **without** compression supply a denser quality signal than scalar terminal rewards. Specifically, a task that succeeds with full context $H$ but fails with compressed context $H'$ pinpoints a concrete loss of information caused by the compressor.",
+      "content_hash": "0e1409d7df472f00d9e3d5acb146ec866b457a83aab897cc59fc74a9f6de50ac",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_00615::trajectory_dense_signal",
+      "label": "trajectory_dense_signal",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Standard premise behind textual-gradient methods [@Yuksekgonul2025; @Khattab2024]: paired success/failure trajectories provide more diagnostic detail than scalar reward."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Contrastive trajectories yield dense signal",
+      "type": "claim"
+    },
+    {
+      "content": "Define the contrastive subset $D_{cont} \\subset D_{train}$ as those tasks where the agent succeeds with the full context $H$ but fails with the compressed context $H'$.",
+      "content_hash": "e950893c158599ba8bd45ac64497c31322d324ce6807c149eb9b6f1e8690a01d",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_00615::contrastive_subset_construction",
+      "label": "contrastive_subset_construction",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Contrastive subset $D_{cont}$",
+      "type": "setting"
+    },
+    {
+      "content": "For each task in $D_{cont}$, an optimiser LLM produces natural-language feedback by contrasting $H$ and $H'$. Concatenating feedback across the batch and prompting the optimiser to revise the guideline ($P^{(0)} \\to P^{(1)}$) realises one step of textual gradient descent [@Yuksekgonul2025; @Khattab2024; @Pryzant2023] in natural language space.",
+      "content_hash": "164190821be12c22e92a5d1693ce031ecae3947bc4ddc7ad57c5288e079ea1f7",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_00615::textual_gradient_step",
+      "label": "textual_gradient_step",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Khattab2024",
+              "Pryzant2023",
+              "Yuksekgonul2025"
+            ],
+            "referenced_claims": [
+              "contrastive_subset_construction",
+              "trajectory_dense_signal"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Textual-gradient guideline update",
+      "type": "claim"
+    },
+    {
+      "content": "**Utility-maximisation step (UT)**: produce candidate guidelines via the textual-gradient update and pick the one maximising task accuracy on $D_{cont}$. This primarily targets the first (reward) term of @acon_objective.",
+      "content_hash": "59de9c15b06be5834d68f7293bd77ecf06eb4fc1b66e55f8362179fb98c697ef",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_00615::ut_step",
+      "label": "ut_step",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_objective"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "UT step",
+      "type": "setting"
+    },
+    {
+      "content": "**Compression-maximisation step (CO)**: a follow-up alternating update conditioned only on tasks that **succeeded with compression**, asking the optimiser to flag information that was unused. The resulting guideline $P^{(2)}$ encourages **shorter** but still sufficient contexts, targeting the second (cost) term of @acon_objective.",
+      "content_hash": "b4f1cd9c660ad82ceaa2f88f4b5f4eb3e419fea7d3f0e6125e07049220b987b2",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2510_00615::co_step",
+      "label": "co_step",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_objective"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "CO step",
+      "type": "setting"
+    },
+    {
+      "content": "Running UT followed by CO addresses both terms of the bi-objective in @acon_objective: UT raises task reward and CO trims unused context. As demonstrated experimentally (cf. Tables 1–2), the resulting ACON-UTCO variant tends to give the best joint accuracy/efficiency trade-off.",
+      "content_hash": "21817f528c8e546b15827fd116a7513121d24b3230c80cb9b26638a55f75a9ef",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2510_00615::acon_two_objective_addresses_tradeoff",
+      "label": "acon_two_objective_addresses_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_objective",
+              "co_step",
+              "textual_gradient_step",
+              "ut_step"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "UT+CO addresses both terms of the objective",
+      "type": "claim"
+    },
+    {
+      "content": "**Compressor distillation.** The teacher with optimised guideline $P^*$ (parameters $\\phi_T$) generates compressed outputs $y$ from inputs $x$, where $(x,y) = (h_t, h'_t)$ for history compression or $(x,y) = ((h_{t-1}, o_t), o'_t)$ for observation compression. The student $\\phi_S$ with $|\\phi_S| \\ll |\\phi_T|$ is trained with the standard sequence-level cross-entropy objective [@KimRush2016] over the teacher's successful-compression dataset $D^+_{train}$, using LoRA [@Hu2022].",
+      "content_hash": "497c1f74166e7914bc082f51f570ae992799a40cd68e2db2c2a5099df443b87f",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2510_00615::distillation_setup",
+      "label": "distillation_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hu2022",
+              "KimRush2016"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Distillation objective (Equation 9)",
+      "type": "setting"
+    },
+    {
+      "content": "Once trained, the distilled student replaces the teacher at inference, decoupling decision-making (still done by the agent LLM) from compression (now done by a much smaller LLM). The pipeline becomes $f(\\cdot;\\phi_T,P) \\xrightarrow{\\text{prompt opt.}} f(\\cdot;\\phi_T,P^*) \\xrightarrow{\\text{distil.}} f(\\cdot;\\phi_S,P^*)$.",
+      "content_hash": "11e4f4f1cf8cdcdc05957c2f954defad54683423804a3d4418f32c755e740d3e",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2510_00615::distillation_decouples_inference",
+      "label": "distillation_decouples_inference",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "distillation_setup"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Two-stage pipeline: optimise then distil",
+      "type": "claim"
+    },
+    {
+      "content": "The teacher LLM with optimised guideline $P^*$ generates a supervised-imitation training set $\\{(x, f(x; \\phi_T, P^*))\\}$ for the student compressor.",
+      "content_hash": "a9ebe0fff9aab6d9ec2861cac1d945a015e7d277caab5f133bfca7d4fb1438e2",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2510_00615::strat_distil_pipeline_pivot",
+      "label": "strat_distil_pipeline_pivot",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Mechanical: with the teacher (phi_T) and optimised guideline P* fixed, running the teacher on inputs from D_train trivially yields the labelled (x, f(x; phi_T, P*)) imitation dataset specified in Equation 9."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Teacher generates supervised distillation data",
+      "type": "claim"
+    },
+    {
+      "content": "ACON resolves the unbounded-context problem in long-horizon LLM agents by (i) compressing both history and observation only when their length exceeds a threshold (@history_compression_rule, @observation_compression_rule), (ii) optimising the natural-language guideline gradient-free via contrastive feedback (@textual_gradient_step), and (iii) distilling the optimised compressor into a small model (@distillation_decouples_inference) so the compressor's overhead does not dominate the savings.",
+      "content_hash": "ab1873ddf588af2f405b407e32263c9c982281180f003ac92e022f62b030ce4f",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2510_00615::acon_solves_problem",
+      "label": "acon_solves_problem",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_grows_unbounded",
+              "cost_scales_with_context",
+              "distillation_decouples_inference",
+              "history_compression_rule",
+              "long_context_distracts",
+              "observation_compression_rule",
+              "textual_gradient_step"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "ACON solves the unbounded-context problem",
+      "type": "claim"
+    },
+    {
+      "content": "ACON is evaluated on three multi-step long-horizon agent benchmarks (each averaging $\\geq$ 10 interaction steps):\n\n| Benchmark | Domain | Metric | Test size |\n|-----------|--------|--------|-----------|\n| AppWorld [@Trivedi2024] | 9 simulated apps, ~100 simulated users | task goal completion score | 168 tasks (test-normal) |\n| OfficeBench [@Wang2024b] | 6 productivity apps (Word, Excel, Email, ...) | benchmark-defined accuracy | not stated in main text |\n| 8-objective QA [@Kwiatkowski2019; @Zhou2025] | search + multi-question consolidation | EM and F1 averaged over 8 questions | not stated in main text |",
+      "content_hash": "6ff998681a2074f786094e61a9fd9bea419473a51c7c12abb93e3ce7b2d5bfea",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_00615::benchmarks_setup",
+      "label": "benchmarks_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kwiatkowski2019",
+              "Trivedi2024",
+              "Wang2024b",
+              "Zhou2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Benchmarks",
+      "type": "setting"
+    },
+    {
+      "content": "Three token-efficiency metrics are reported alongside accuracy:\n- **Steps**: average interaction steps per task.\n- **Peak Tokens**: maximum context length encountered across all steps.\n- **Dependency** ($\\times 10^6$): cumulative dependency of each generated action on prior tokens, measuring how strongly action generation relies on context history.",
+      "content_hash": "6e59478965cbbca67c1213eb35b6aa852554c5c651034b16e255fc2b6030643e",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_00615::efficiency_metrics_setup",
+      "label": "efficiency_metrics_setup",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Token-efficiency metrics",
+      "type": "setting"
+    },
+    {
+      "content": "Baselines: (1) **No Compression** (full context); (2) **FIFO** (keep last $k$ interactions); (3) **Retrieval** (top-$k$ embedding-similar past interactions); (4) **LLMLingua** [@Jiang2023] (extractive compression with an encoder-only LM); (5) **Prompting** (naive single-prompt compression [@Smith2025; @Lee2025]).",
+      "content_hash": "c5c1b460e4ae5733ce781e7a313e13d2d53d938fb1d1d5846de7bb61a73d7b43",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_00615::baselines_setup",
+      "label": "baselines_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jiang2023",
+              "Lee2025",
+              "Smith2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Baselines",
+      "type": "setting"
+    },
+    {
+      "content": "Two ACON variants are evaluated. **ACON-UT** uses the guideline produced by the utility-maximisation step alone. **ACON-UTCO** additionally applies the compression-maximisation step.",
+      "content_hash": "981aada60ae302393d99fb4705c7977f322978dcebab5dfb4b64c9f24ce7094e",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_00615::ours_setup",
+      "label": "ours_setup",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "ACON variants",
+      "type": "setting"
+    },
+    {
+      "content": "On the AppWorld benchmark (test-normal, 168 tasks, gpt-4.1 agent and compressor) **history compression** results are:\n\n| Method | Avg Acc. | Steps | Peak ($10^3$) | Dep. ($10^6$) |\n|--------|---------:|------:|--------------:|--------------:|\n| No compression | 56.0 | 16.14 | 9.93 | 5.96 |\n| FIFO | 45.8 | 28.48 | 6.73 | 5.69 |\n| Retrieval | 27.4 | 33.17 | 8.39 | 6.68 |\n| LLMLingua | 39.3 | 24.42 | 7.50 | 6.37 |\n| Prompting | 43.5 | 24.01 | 6.93 | 5.29 |\n| **ACON-UT** | 51.2 | 20.92 | 7.17 | 4.49 |\n| **ACON-UTCO** | **56.5** | 22.82 | 7.33 | 4.69 |\n\nACON-UTCO matches No-compression accuracy (56.5 vs 56.0) while reducing peak tokens by 26% and dependency by 21%.",
+      "content_hash": "c37d80a44be3a79401b59eb283097408d343956b2d89d6f45914a286237f4fa6",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_00615::appworld_history_table",
+      "label": "appworld_history_table",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_predicts_token_reduction"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly measured in Table 1 with fixed gpt-4.1-2025-04-14 snapshot and fixed seed (Reproducibility Statement). Single-seed numbers — small but non-zero variance budget.",
+        "source_table": "artifacts/2510.00615.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "AppWorld: history compression results",
+      "type": "claim"
+    },
+    {
+      "content": "On the same AppWorld benchmark, **observation compression** results are:\n\n| Method | Avg Acc. | Steps | Peak ($10^3$) | Dep. ($10^6$) |\n|--------|---------:|------:|--------------:|--------------:|\n| LLMLingua | 32.1 | 18.16 | 8.17 | 6.01 |\n| Prompting | 42.3 | 17.38 | 6.58 | 4.09 |\n| **ACON-UT** | 47.0 | 16.67 | 7.62 | 5.08 |\n| **ACON-UTCO** | **53.6** | 18.12 | 7.43 | 4.93 |\n\nACON-UTCO outperforms every baseline on accuracy (best 53.6 vs Prompting's 42.3) while keeping peak tokens lower than No-compression (9.93).",
+      "content_hash": "06c32261f1e044e82349ec928cae92550912a280d2ce79aa6294fb0554e6c35c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_00615::appworld_observation_table",
+      "label": "appworld_observation_table",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Directly measured in Table 1 (observation compression rows) under the same fixed-seed protocol.",
+        "source_table": "artifacts/2510.00615.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "AppWorld: observation compression results",
+      "type": "claim"
+    },
+    {
+      "content": "On OfficeBench (gpt-4.1 agent and compressor):\n\n| Method | Acc. | Steps | Peak ($10^3$) | Dep. ($10^6$) |\n|--------|-----:|------:|--------------:|--------------:|\n| No Compression | 76.84 | 11.52 | 7.27 | 4.43 |\n| FIFO (history) | 67.37 | 12.26 | 4.02 | 2.64 |\n| Retrieval (history) | 65.26 | 16.20 | 4.33 | 2.06 |\n| LLMLingua (history) | 70.53 | 10.89 | 4.65 | 1.85 |\n| Prompting (history) | 71.58 | 10.13 | 4.40 | 1.10 |\n| **ACON-UT (history)** | **74.74** | 13.13 | 4.93 | 3.85 |\n| **ACON-UTCO (history)** | 72.63 | 11.54 | 4.54 | 1.91 |\n| **ACON-UT (observation)** | **73.68** | 10.83 | 6.55 | 3.85 |\n\nACON-UT (history) achieves the best non-baseline accuracy (74.74 vs Prompting 71.58) at ~32% peak-token reduction (4.93 vs 7.27).",
+      "content_hash": "7a6f89f3f98b337480db1d7e732869a831b568d9354524d2e55b8a71d278ccef",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_00615::officebench_table",
+      "label": "officebench_table",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2a; single-seed numbers using fixed gpt-4.1 snapshot. Slightly lower than AppWorld because OfficeBench test-set size is not stated in the main text.",
+        "source_table": "artifacts/2510.00615.pdf, Table 2a"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "OfficeBench: results",
+      "type": "claim"
+    },
+    {
+      "content": "On 8-objective QA (gpt-4.1 agent and compressor):\n\n| Method | EM | F1 | Steps | Peak ($10^3$) | Dep. ($10^6$) |\n|--------|---:|---:|------:|--------------:|--------------:|\n| No compression | 0.366 | 0.488 | 15.78 | 10.35 | 3.32 |\n| FIFO (history) | 0.293 | 0.388 | 19.26 | 5.09 | 2.51 |\n| Retrieval (history) | 0.331 | 0.438 | 20.06 | 5.11 | 2.62 |\n| LLMLingua (history) | 0.363 | 0.481 | 17.68 | 5.68 | 2.24 |\n| Prompting (history) | 0.376 | 0.478 | 18.70 | 4.73 | 1.66 |\n| **ACON-UT (history)** | 0.373 | **0.494** | 17.14 | 4.71 | 1.57 |\n| ACON-UTCO (history) | 0.335 | 0.458 | 17.79 | 4.65 | 1.50 |\n\nACON-UT achieves the highest F1 (0.494) — surpassing No-compression's 0.488 — while reducing peak tokens by 54.5% (4.71 vs 10.35) and dependency by 52.7%.",
+      "content_hash": "258aa95c65bd417425c4fa34b9e4ed1993dda04d5cf39786e890a3b0a0a8eb48",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_00615::qa_table",
+      "label": "qa_table",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 2b; EM/F1 averaged across 8 questions. Single-seed under fixed snapshot.",
+        "source_table": "artifacts/2510.00615.pdf, Table 2b"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "8-objective QA: results",
+      "type": "claim"
+    },
+    {
+      "content": "ACON, by design (selective threshold-based compression with optimised guideline @textual_gradient_step), is expected to substantially reduce peak input tokens while *preserving* accuracy compared with the no-compression upper bound — ideally yielding the same or better task completion at substantially fewer tokens.",
+      "content_hash": "888d3a410259d1221eea569f4857576b1d8f717943a92a46a32ac00438145a76",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_00615::acon_predicts_token_reduction",
+      "label": "acon_predicts_token_reduction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "acon_predicts_token_reduction",
+              "textual_gradient_step"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "ACON predicts: large peak-token reduction with preserved accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "A naive single-prompt compression baseline (Prompting) is expected to reduce tokens but lose accuracy because the generic instruction does not preserve task-relevant signals. The published Prompting numbers (e.g., 43.5% vs 56.0% on AppWorld) confirm this baseline drops 8-13 accuracy points relative to No-compression.",
+      "content_hash": "3b3cef9bbf3fe72924416c38185ff1fd3fcb1a7acb26cf99f61d55d30111dc81",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_00615::naive_prompting_prediction",
+      "label": "naive_prompting_prediction",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "Naive Prompting's own measured numbers (43.5 on AppWorld history) are factually correct — but that hypothesis cannot explain why ACON-UTCO reaches 56.5. As an *alternative* explanation of the table, its explanatory power is low."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Naive Prompting predicts: reduced tokens but degraded accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2510_00615::naive_prompting_contradicts_data",
+      "label": "naive_prompting_contradicts_data",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Distilling the gpt-4.1 history compressor (UT-optimised guideline) into smaller models with LoRA gives the following downstream agent accuracies (gpt-4.1 agent):\n\n| Compressor | AppWorld | OfficeBench | 8-obj QA (EM) |\n|------------|---------:|------------:|--------------:|\n| Teacher (gpt-4.1) | 50.00 | 70.53 | 0.371 |\n| Qwen3-14B [@Yang2025] | 47.00 | 75.79 | 0.386 |\n| Qwen3-8B [@Yang2025] | 44.60 | 73.68 | 0.370 |\n| Phi-4 [@Abdin2024] | 42.30 | 77.89 | 0.379 |\n| gpt-4.1-mini (no distil.) | — | — | — |\n\nEach distilled student retains $\\geq$ 95% of the teacher's accuracy, and on OfficeBench/QA Phi-4 and Qwen3-14B even *exceed* the teacher.",
+      "content_hash": "bfc5796cece79456b1a6423ff5f7d89c894927f45c829c9084632d5839fce1d3",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2510_00615::distillation_results",
+      "label": "distillation_results",
+      "metadata": {
+        "figure": "artifacts/2510.00615.pdf, Figure 4",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Abdin2024",
+              "Yang2025"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly measured in Figure 4 across three benchmarks and three student compressors (Qwen3-14B, Qwen3-8B, Phi-4). Single-seed; some students *exceed* the teacher on OfficeBench/QA, suggesting variance is not negligible."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Distillation results (Figure 4)",
+      "type": "claim"
+    },
+    {
+      "content": "When the agent itself is a smaller distilled LLM (Qwen3-14B, distilled from gpt-4.1 trajectories), ACON dramatically improves accuracy versus running the same small agent without compression. Reported gains:\n\n| Benchmark | Without compression | With ACON | Absolute gain |\n|-----------|---------------------|-----------|---------------|\n| AppWorld | 26.8% | 33.9% | +7.1 (i.e., +26-32% relative) |\n| OfficeBench | (lower baseline) | (improved) | +20% relative |\n| 8-objective QA | 0.158 EM | 0.197 EM | +0.039 (~+25-46% relative) |",
+      "content_hash": "e34ca4f55cb3e86475782db2f7aef51bf845f19d780a48211178a6db5e9d0740",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2510_00615::small_agent_results",
+      "label": "small_agent_results",
+      "metadata": {
+        "figure": "artifacts/2510.00615.pdf, Figure 5",
+        "prior": 0.88,
+        "prior_justification": "Directly measured in Figure 5 with Qwen3-14B as the agent. Reported numbers in the main text are partial (AppWorld 26.8 -> 33.9; QA 0.158 -> 0.197 EM); some intermediate values are read from the bar chart."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Small-agent results (Figure 5)",
+      "type": "claim"
+    },
+    {
+      "content": "Despite token-level savings, ACON's compressor module introduces extra API/compute cost. Figure 7 shows that **observation compression reduces total API cost** by trimming agent inputs, but **history compression rarely reduces dollar cost** in practice because the compressor's own LLM calls — and the loss of KV-cache reuse on the agent — offset the token savings. Distillation partly mitigates this by replacing expensive LLM compressor calls with cheaper smaller-model calls.",
+      "content_hash": "8127af952edbe13709c49925aa5791540b4052a13c39a4eed611878d795c3978",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2510_00615::cost_limitation",
+      "label": "cost_limitation",
+      "metadata": {
+        "figure": "artifacts/2510.00615.pdf, Figure 7",
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Figure 7: history compression's total API cost is comparable to or slightly above No-compression, due to KV-cache loss and compressor calls. The qualitative claim is unambiguous from the bar chart even without exact dollar values."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Cost limitation: history compression rarely lowers API cost",
+      "type": "claim"
+    },
+    {
+      "content": "History compression with ACON reliably reduces dollar API cost in all settings.",
+      "content_hash": "3a0b7bf68fc2b7c98ed768968b133ff57350ab4163ac615a535e8ca130846b98",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2510_00615::strong_cost_reduction_claim",
+      "label": "strong_cost_reduction_claim",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "The paper explicitly rebuts this strong framing in Section 4.5 (Limitation: Cost Analysis). Low prior reflects that the authors themselves acknowledge it is wrong."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Strong cost-reduction interpretation of ACON",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2510_00615::contradiction_token_vs_dollar_cost",
+      "label": "contradiction_token_vs_dollar_cost",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "On AppWorld with gpt-4.1, varying the compression thresholds yields a U-shaped trade-off (Figure 6):\n\n- **History thresholds** scanned: $T_{hist} \\in \\{2048, 4096, 8192\\}$.\n- **Observation thresholds** scanned: $T_{obs} \\in \\{512, 1024, 2048\\}$.\n\nSmaller thresholds reduce tokens but trigger many more compression calls and degrade accuracy; larger thresholds preserve accuracy but with higher peak tokens. The Figure-6 right panel shows accuracy peaking around $T_{hist}=4096$ and $T_{obs}=1024$ (both close to the No-compression accuracy line) at substantially lower peak tokens than No-compression.",
+      "content_hash": "3fdd930f87308d7f8e0af82261aa69ac8ca178aa0706a93b3d89de4b3a80cb3d",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_00615::threshold_ablation_data",
+      "label": "threshold_ablation_data",
+      "metadata": {
+        "figure": "artifacts/2510.00615.pdf, Figure 6",
+        "prior": 0.9,
+        "prior_justification": "Directly measured in Figure 6 (single-seed) with three threshold values each for history and observation. The U-shape is qualitatively clear; exact peak values are read from the bar chart."
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Threshold ablation: moderate values give the best trade-off",
+      "type": "claim"
+    },
+    {
+      "content": "**Moderate thresholds** ($T_{hist}=4096$, $T_{obs}=1024$) are recommended as the best accuracy/efficiency trade-off on AppWorld with gpt-4.1.",
+      "content_hash": "08fbd5b20ecf14a9f4172c5e8ec6d886c3d6a97c4125e0863af4845bcc938f65",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2510_00615::threshold_recommendation",
+      "label": "threshold_recommendation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "threshold_ablation_data",
+              "threshold_recommendation"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Recommended thresholds",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation on the prompt-optimiser model and feedback type (AppWorld, gpt-4.1 agent + history compressor, Table 3):\n\n| Optimiser | Task contrastive feedback? | Average Acc. |\n|-----------|:--------------------------:|-------------:|\n| o3 | yes | **51.2** |\n| o3 | no | 50.6 (-0.6) |\n| gpt-4.1 | yes | 47.6 (-3.6) |\n| gpt-5 | yes | 50.6 (-0.6) |",
+      "content_hash": "d52f622622b620f0bd1e1266986a31e05acad951657b2d52bb12602d9e49827e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_00615::optimizer_ablation_data",
+      "label": "optimizer_ablation_data",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly measured in Table 3 with four optimiser configurations on AppWorld; each row reports a single average accuracy.",
+        "source_table": "artifacts/2510.00615.pdf, Table 3"
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Prompt-optimiser ablation",
+      "type": "claim"
+    },
+    {
+      "content": "Using **contrastive task feedback** (comparing successful uncompressed and failed compressed trajectories) gives a small but consistent gain over using failed trajectories alone (51.2 vs 50.6 with the o3 optimiser).",
+      "content_hash": "c1a561842eb438af4c58168cfa988299ce033f8b8f54070f56be1a1132feb8af",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_00615::contrastive_feedback_helps",
+      "label": "contrastive_feedback_helps",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "optimizer_ablation_data",
+              "textual_gradient_step"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Contrastive feedback helps marginally",
+      "type": "claim"
+    },
+    {
+      "content": "Optimiser strength has a much larger effect on guideline quality than the contrastive feedback ablation: switching from o3 to gpt-4.1 as the optimiser drops accuracy by 3.6 points (51.2 -> 47.6), while switching to gpt-5 drops it by only 0.6.",
+      "content_hash": "3746da7ab42459240006b173e02e91dc1b6443c7019ef46f46f174fd0726e226",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2510_00615::strong_optimizer_matters",
+      "label": "strong_optimizer_matters",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "optimizer_ablation_data"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "Optimiser strength dominates final accuracy",
+      "type": "claim"
+    },
+    {
+      "content": "Across benchmarks, the UT step alone improves accuracy while reducing tokens, whereas the CO step further lowers tokens but typically costs a small amount of accuracy — except on AppWorld where adding CO yields additional accuracy gains (e.g. ACON-UT 51.2 -> ACON-UTCO 56.5 in history compression).",
+      "content_hash": "4627fa45e8ac71393f838c3476839fe205001beb2b425a929b99e11a6464aac7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_00615::ut_co_behaviour",
+      "label": "ut_co_behaviour",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "co_step",
+              "threshold_ablation_data",
+              "ut_step"
+            ]
+          }
+        }
+      },
+      "module": "s5_analysis",
+      "parameters": [],
+      "title": "UT vs CO behaviour across benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::context_grows_unbounded,github:2510_00615::cost_scales_with_context)",
+      "content_hash": "8508258abaf483d3ccc82d756a7e9e82a3277583c58590ac5c852dcf682929e6",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_ed9c84af",
+      "label": "__conjunction_result_ed9c84af",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::context_grows_unbounded,github:2510_00615::cost_scales_with_context)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_9e507b4f1e6dd6fe",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_ed9c84af,github:2510_00615::naive_rl_infeasible)",
+      "content_hash": "1f773b8486e93c4d501d89dbff49ffc6f4be814cd89d3f6495370046ffc5fb50",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_74ab611a",
+      "label": "__implication_result_74ab611a",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_ed9c84af,github:2510_00615::naive_rl_infeasible)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9e507b4f1e6dd6fe",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::trajectory_dense_signal,github:2510_00615::textual_gradient_step)",
+      "content_hash": "354c8e1ee4d8a36a4e6666fd5ec2cf851e5f8cd04f71449201bdcb68479c4167",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_f0757056",
+      "label": "__implication_result_f0757056",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::trajectory_dense_signal,github:2510_00615::textual_gradient_step)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ab317d4321338352",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::textual_gradient_step,github:2510_00615::acon_two_objective_addresses_tradeoff)",
+      "content_hash": "2181bfa539bac06fee428109ff289e5d16f0a18786b300a5640d0df402e2aa50",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_a973cde5",
+      "label": "__implication_result_a973cde5",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::textual_gradient_step,github:2510_00615::acon_two_objective_addresses_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7382171551af532a",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::strat_distil_pipeline_pivot,github:2510_00615::distillation_decouples_inference)",
+      "content_hash": "10f4619ea9bc6f989cf7c5c3ec0bedbd9585de0d67dbe6a255e3efd443d9e7f3",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_67c82ec8",
+      "label": "__implication_result_67c82ec8",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::strat_distil_pipeline_pivot,github:2510_00615::distillation_decouples_inference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2f093b7b0feacd15",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::context_grows_unbounded,github:2510_00615::cost_scales_with_context,github:2510_00615::long_context_distracts,github:2510_00615::heuristics_inadequate,github:2510_00615::textual_gradient_step,github:2510_00615::distillation_decouples_inference)",
+      "content_hash": "19b64439045b724f6399f2d8a684c453546c4915c974469c210964906f908bf2",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_38cff864",
+      "label": "__conjunction_result_38cff864",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::context_grows_unbounded,github:2510_00615::cost_scales_with_context,github:2510_00615::long_context_distracts,github:2510_00615::heuristics_inadequate,github:2510_00615::textual_gradient_step,github:2510_00615::distillation_decouples_inference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b55d7f6437cd084a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_38cff864,github:2510_00615::acon_solves_problem)",
+      "content_hash": "680456a8f00da99dd5022dcfa2b543f6743bf5a2b1aeacc89f63c66b4637df5f",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_54cababb",
+      "label": "__implication_result_54cababb",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_38cff864,github:2510_00615::acon_solves_problem)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b55d7f6437cd084a",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::textual_gradient_step,github:2510_00615::acon_is_gradient_free)",
+      "content_hash": "79396c62659ef425f7b50f222a147edac7df0927ac26cfe6d356b9e371b89fc1",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_c13fef5e",
+      "label": "__implication_result_c13fef5e",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::textual_gradient_step,github:2510_00615::acon_is_gradient_free)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ad968541751dc833",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::appworld_history_table)",
+      "content_hash": "67b88cb6040ccf1357ce0e375cf3e7f788ee86b9c46c38b418442a133bd93fd1",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_f0a87209",
+      "label": "__implication_result_f0a87209",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::appworld_history_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e2554ccd593ee8a4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::officebench_table)",
+      "content_hash": "c955f6693527dc1442f377d8c28610fbcc365bd5d22b6a51a732577382d4e8a8",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_e394d5a7",
+      "label": "__implication_result_e394d5a7",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::officebench_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_12a055b2d6c55f87",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::qa_table)",
+      "content_hash": "2006284a9c80d1dbb4a9b54ba2188d40670fb3a3726ec8dcaa4fbcbf39252f25",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_92e365d5",
+      "label": "__implication_result_92e365d5",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::acon_predicts_token_reduction,github:2510_00615::qa_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c7a164654deab1e6",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::appworld_history_table,github:2510_00615::officebench_table,github:2510_00615::qa_table)",
+      "content_hash": "6c1e4a826f5c569201ee88ff453ac1fac1916157a336da12d7cfbe36463304ca",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_eb109342",
+      "label": "__conjunction_result_eb109342",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::appworld_history_table,github:2510_00615::officebench_table,github:2510_00615::qa_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dec7b26433495830",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_eb109342,github:2510_00615::acon_predicts_token_reduction)",
+      "content_hash": "d23be1480a94a98ac022cdce4e49f3c31d96ab17dcdcc6ea4601f200270935ff",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_8fc8ca6f",
+      "label": "__implication_result_8fc8ca6f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_eb109342,github:2510_00615::acon_predicts_token_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dec7b26433495830",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::distillation_results,github:2510_00615::distillation_decouples_inference)",
+      "content_hash": "36c48292ab8e11fd6af759cce5e86e2a9a2f05b0ac9723b7c29a4a30b9b98660",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_695c2fd6",
+      "label": "__conjunction_result_695c2fd6",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::distillation_results,github:2510_00615::distillation_decouples_inference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_32319b573eb72baa",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_695c2fd6,github:2510_00615::claim_distillation_preserves_accuracy)",
+      "content_hash": "0def8cbfa4f4a99a7d082f7e892a664291e3183bdf44e712193c61567e7dc8b3",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_77970038",
+      "label": "__implication_result_77970038",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_695c2fd6,github:2510_00615::claim_distillation_preserves_accuracy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_32319b573eb72baa",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::small_agent_results,github:2510_00615::long_context_distracts,github:2510_00615::acon_compresses_history_and_obs)",
+      "content_hash": "a7f35fa6a82f47e3ec6f99f22e3b463086e0aa48bdef6a94d3baf28387ad78e3",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_e28867fa",
+      "label": "__conjunction_result_e28867fa",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::small_agent_results,github:2510_00615::long_context_distracts,github:2510_00615::acon_compresses_history_and_obs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c8ef1a44443dcf35",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_e28867fa,github:2510_00615::claim_helps_small_agents)",
+      "content_hash": "5438fecefa85265ae902f06f21f59c83ceb4365e81da166a89e3f6d33f6e7408",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_9e5b9136",
+      "label": "__implication_result_9e5b9136",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_e28867fa,github:2510_00615::claim_helps_small_agents)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8ef1a44443dcf35",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::appworld_history_table,github:2510_00615::officebench_table,github:2510_00615::qa_table,github:2510_00615::acon_solves_problem)",
+      "content_hash": "a0d8a3e698abbea507c9845bad066d1a2e03b54e63fd4ba914476d532adb8eae",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_308b5c48",
+      "label": "__conjunction_result_308b5c48",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::appworld_history_table,github:2510_00615::officebench_table,github:2510_00615::qa_table,github:2510_00615::acon_solves_problem)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_30ccca605e2597a4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_308b5c48,github:2510_00615::claim_peak_token_reduction)",
+      "content_hash": "e6be30dc66e24a1794ffe8a03c3a3fe7e5d4e2a1b0b130035001da6d9b90a3fa",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_847bbe52",
+      "label": "__implication_result_847bbe52",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_308b5c48,github:2510_00615::claim_peak_token_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_30ccca605e2597a4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::appworld_observation_table,github:2510_00615::claim_peak_token_reduction)",
+      "content_hash": "2fd25520dce4b5dd93a07856b8288ffa06130b19365a924f61578c473736ffd2",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_cc1f5b50",
+      "label": "__implication_result_cc1f5b50",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::appworld_observation_table,github:2510_00615::claim_peak_token_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_864e0a4a11934fbc",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::threshold_ablation_data,github:2510_00615::threshold_recommendation)",
+      "content_hash": "0f76f87c7505e61446509243353b4c241462a8a7b6b3a12d00183eea60d14177",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_5fc12e4d",
+      "label": "__implication_result_5fc12e4d",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::threshold_ablation_data,github:2510_00615::threshold_recommendation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cb806a7f7ba117ef",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_00615::optimizer_ablation_data,github:2510_00615::textual_gradient_step)",
+      "content_hash": "f400430478bfe32423e88955d54b04e58f59dde95dea2bcf34a7984a57fb0dc9",
+      "exported": false,
+      "id": "github:2510_00615::__conjunction_result_f3ff9a8b",
+      "label": "__conjunction_result_f3ff9a8b",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_00615::optimizer_ablation_data,github:2510_00615::textual_gradient_step)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_18b0b457873f4d90",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::__conjunction_result_f3ff9a8b,github:2510_00615::contrastive_feedback_helps)",
+      "content_hash": "47b1560e32704fd01a9ab7054a467e86144534cb11b8c1d654bca748e8e7e3d4",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_86dabf6d",
+      "label": "__implication_result_86dabf6d",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::__conjunction_result_f3ff9a8b,github:2510_00615::contrastive_feedback_helps)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_18b0b457873f4d90",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::optimizer_ablation_data,github:2510_00615::strong_optimizer_matters)",
+      "content_hash": "d49e3033e879b6c5deca8c13c5f042cb4f3b42c25b072dc482e971b18351a218",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_e2497bfa",
+      "label": "__implication_result_e2497bfa",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::optimizer_ablation_data,github:2510_00615::strong_optimizer_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ad54cced05a6569c",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_00615::threshold_ablation_data,github:2510_00615::ut_co_behaviour)",
+      "content_hash": "6026dba4b115b0c73a6ca279e171b07900ce2c347583e64aacbd635ba202b5d7",
+      "exported": false,
+      "id": "github:2510_00615::__implication_result_3e6c2de0",
+      "label": "__implication_result_3e6c2de0",
+      "metadata": {
+        "canonical_name": "implies(github:2510_00615::threshold_ablation_data,github:2510_00615::ut_co_behaviour)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2c6f66020e2c0e0d",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_method",
+    "s4_experiments",
+    "s5_analysis"
+  ],
+  "module_titles": {
+    "motivation": "Motivation: long-horizon LLM agents accumulate unbounded context.",
+    "s3_method": "ACON method (Section 3): formal compression objective, guideline",
+    "s4_experiments": "Empirical evaluation (Section 4): AppWorld, OfficeBench, 8-objective QA.",
+    "s5_analysis": "Section 4.5: Analysis & ablation studies (thresholds, prompt optimiser"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2510_00615::naive_prompting_contradicts_data",
+      "metadata": {
+        "reason": "If the naive Prompting hypothesis were the only mechanism at play, no LLM-based compressor should beat Prompting's 43.5 accuracy on AppWorld. The table @appworld_history_table records ACON-UTCO at 56.5, exceeding No-compression's 56.0. Both cannot hold: accepting the observed data refutes the strong naive-Prompting framing."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_771cde94fb19b7d1",
+      "scope": "local",
+      "variables": [
+        "github:2510_00615::naive_prompting_prediction",
+        "github:2510_00615::appworld_history_table"
+      ]
+    },
+    {
+      "conclusion": "github:2510_00615::contradiction_token_vs_dollar_cost",
+      "metadata": {
+        "reason": "The naive interpretation that compression always saves money is incompatible with Figure 7's finding that history compression's API cost is similar to or slightly above No-compression (KV-cache loss + compressor calls). They cannot both hold — accepting cost_limitation rules out the naive cost story even though the peak-token reduction claim stands."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_836ca89605d85c66",
+      "scope": "local",
+      "variables": [
+        "github:2510_00615::strong_cost_reduction_claim",
+        "github:2510_00615::cost_limitation"
+      ]
+    }
+  ],
+  "package_name": "2510_00615",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2510_00615::acon_objective",
+        "github:2510_00615::agent_loop_setup",
+        "github:2510_00615::compressor_definition"
+      ],
+      "conclusion": "github:2510_00615::naive_rl_infeasible",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_ed9c84af",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::context_grows_unbounded",
+              "github:2510_00615::cost_scales_with_context"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_74ab611a",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_ed9c84af",
+              "github:2510_00615::naive_rl_infeasible"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@acon_objective is non-differentiable in the discrete context cost and exposes only sparse terminal-state reward; combined with the cost of LLM rollouts (one full agent + compressor pass per reward sample) and the expense of fine-tuning $\\phi$ at scale, all three classical RL difficulties compound. The authors enumerate exactly these obstacles in Section 3.2."
+      },
+      "premises": [
+        "github:2510_00615::context_grows_unbounded",
+        "github:2510_00615::cost_scales_with_context"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9e507b4f1e6dd6fe",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::contrastive_subset_construction",
+        "github:2510_00615::compressor_definition"
+      ],
+      "conclusion": "github:2510_00615::textual_gradient_step",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_f0757056",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::trajectory_dense_signal",
+              "github:2510_00615::textual_gradient_step"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Given @trajectory_dense_signal, the contrastive subset @contrastive_subset_construction isolates exactly the failures attributable to compression. Feeding both trajectories plus a structured 'feedback instruction' to a strong LLM yields a critique that names the lost information; aggregating $n$ such critiques and asking the optimiser to rewrite the guideline corresponds to a batched natural-language gradient step in the textual gradient descent framework [@Yuksekgonul2025; @Khattab2024]. Multiple candidate prompts are generated and the best on $D_{cont}$ is selected (utility-maximisation step UT)."
+      },
+      "premises": [
+        "github:2510_00615::trajectory_dense_signal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ab317d4321338352",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::ut_step",
+        "github:2510_00615::co_step",
+        "github:2510_00615::acon_objective"
+      ],
+      "conclusion": "github:2510_00615::acon_two_objective_addresses_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_a973cde5",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::textual_gradient_step",
+              "github:2510_00615::acon_two_objective_addresses_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@ut_step optimises the reward term of @acon_objective via @textual_gradient_step (justified above), while @co_step is an alternating second pass that explicitly targets the cost term using only successful compressed runs as evidence of removable content. Together they provide a gradient-free coordinate-descent-like procedure on @acon_objective."
+      },
+      "premises": [
+        "github:2510_00615::textual_gradient_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7382171551af532a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::distillation_setup",
+        "github:2510_00615::compressor_definition"
+      ],
+      "conclusion": "github:2510_00615::distillation_decouples_inference",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_67c82ec8",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::strat_distil_pipeline_pivot",
+              "github:2510_00615::distillation_decouples_inference"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Given @distillation_setup, training the student to imitate the teacher's compressed outputs on $D^+_{train}$ produces a stand-alone compressor $f(\\cdot;\\phi_S,P^*)$ that requires neither the teacher nor the original guideline-optimisation pipeline at inference time. Because the student is much smaller, this directly removes the per-call cost of the teacher LLM from the agent loop."
+      },
+      "premises": [
+        "github:2510_00615::strat_distil_pipeline_pivot"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2f093b7b0feacd15",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::history_compression_rule",
+        "github:2510_00615::observation_compression_rule",
+        "github:2510_00615::context_is_world_model",
+        "github:2510_00615::acon_objective"
+      ],
+      "conclusion": "github:2510_00615::acon_solves_problem",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_38cff864",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::context_grows_unbounded",
+              "github:2510_00615::cost_scales_with_context",
+              "github:2510_00615::long_context_distracts",
+              "github:2510_00615::heuristics_inadequate",
+              "github:2510_00615::textual_gradient_step",
+              "github:2510_00615::distillation_decouples_inference"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_54cababb",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_38cff864",
+              "github:2510_00615::acon_solves_problem"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "@context_grows_unbounded together with @cost_scales_with_context and @long_context_distracts establish that an effective long-horizon agent requires *some* form of context compression. The three ingredients (@history_compression_rule + @observation_compression_rule for selective compression, @textual_gradient_step for guideline optimisation in natural language, and @distillation_decouples_inference for cost reduction) jointly constitute a compression pipeline that is gradient-free, model-agnostic and deployable. Whether this *empirically* solves the problem at the headline rates is established by the experiments in s4_experiments.py."
+      },
+      "premises": [
+        "github:2510_00615::context_grows_unbounded",
+        "github:2510_00615::cost_scales_with_context",
+        "github:2510_00615::long_context_distracts",
+        "github:2510_00615::heuristics_inadequate",
+        "github:2510_00615::textual_gradient_step",
+        "github:2510_00615::distillation_decouples_inference"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b55d7f6437cd084a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::agent_loop_setup",
+        "github:2510_00615::compressor_definition"
+      ],
+      "conclusion": "github:2510_00615::acon_is_gradient_free",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_c13fef5e",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::textual_gradient_step",
+              "github:2510_00615::acon_is_gradient_free"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "@textual_gradient_step refines the natural-language guideline $P$ via an LLM-produced critique on contrastive trajectories, never touching the compressor's parameters $\\phi$. Since neither the agent's $\\theta$ (@agent_loop_setup) nor the compressor's $\\phi$ are updated, the entire ACON pipeline is gradient-free and therefore directly applicable to API-only / closed-source models."
+      },
+      "premises": [
+        "github:2510_00615::textual_gradient_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ad968541751dc833",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::appworld_history_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_f0a87209",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::acon_predicts_token_reduction",
+              "github:2510_00615::appworld_history_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If ACON's design hypothesis @acon_predicts_token_reduction holds, then on AppWorld we expect to see a method whose accuracy approaches the No-compression 56.0 while shrinking peak tokens by ~25%. ACON-UTCO achieves 56.5 accuracy at 7.33k peak tokens (vs 9.93k for No-comp.), a 26% reduction with a 0.5-point accuracy *gain* — exactly matching the qualitative prediction."
+      },
+      "premises": [
+        "github:2510_00615::acon_predicts_token_reduction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e2554ccd593ee8a4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::officebench_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_e394d5a7",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::acon_predicts_token_reduction",
+              "github:2510_00615::officebench_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "On OfficeBench the same design hypothesis predicts an ACON variant near the No-compression 76.84 with a sizable peak-token cut. ACON-UT scores 74.74 (within 2.1 points) at 4.93k peak tokens vs 7.27k (32% reduction)."
+      },
+      "premises": [
+        "github:2510_00615::acon_predicts_token_reduction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_12a055b2d6c55f87",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::qa_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_92e365d5",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::acon_predicts_token_reduction",
+              "github:2510_00615::qa_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "On 8-objective QA the design predicts substantial peak-token reduction with preserved accuracy. ACON-UT achieves F1=0.494 — *better* than the No-compression 0.488 — at 4.71k peak tokens vs 10.35k (54.5% reduction)."
+      },
+      "premises": [
+        "github:2510_00615::acon_predicts_token_reduction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c7a164654deab1e6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::acon_predicts_token_reduction",
+      "metadata": {
+        "reason": "AppWorld and OfficeBench are independent benchmarks (different applications, different metrics, different agent traces); both confirm the prediction within the qualitative tolerance."
+      },
+      "premises": [
+        "github:2510_00615::appworld_history_table",
+        "github:2510_00615::officebench_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d0aacb16bd2d0946",
+      "sub_strategies": [
+        "lcs_e2554ccd593ee8a4",
+        "lcs_12a055b2d6c55f87"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2510_00615::acon_predicts_token_reduction",
+      "metadata": {
+        "reason": "Adding the 8-objective QA observation, drawn from a third independent domain (web search consolidation, EM/F1 metric), further strengthens the law."
+      },
+      "premises": [
+        "github:2510_00615::appworld_history_table",
+        "github:2510_00615::officebench_table",
+        "github:2510_00615::qa_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ba08ef5d3856b4c6",
+      "sub_strategies": [
+        "lcs_d0aacb16bd2d0946",
+        "lcs_c7a164654deab1e6"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2510_00615::acon_predicts_token_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_eb109342",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::appworld_history_table",
+              "github:2510_00615::officebench_table",
+              "github:2510_00615::qa_table"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_8fc8ca6f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_eb109342",
+              "github:2510_00615::acon_predicts_token_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Across all three benchmark tables, the ACON-UTCO and ACON-UT rows match the prediction @acon_predicts_token_reduction: peak tokens drop substantially while accuracy stays near or above the No-compression upper bound. The qualitative law is repeatedly confirmed."
+      },
+      "premises": [
+        "github:2510_00615::appworld_history_table",
+        "github:2510_00615::officebench_table",
+        "github:2510_00615::qa_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dec7b26433495830",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::acon_distillable"
+      ],
+      "conclusion": "github:2510_00615::claim_distillation_preserves_accuracy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_695c2fd6",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::distillation_results",
+              "github:2510_00615::distillation_decouples_inference"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_77970038",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_695c2fd6",
+              "github:2510_00615::claim_distillation_preserves_accuracy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@distillation_results shows that on AppWorld the worst student (Phi-4) scores 42.30 vs teacher 50.00 — a ratio of 84.6%, which is below the >=95% headline only for AppWorld; on OfficeBench the worst student (LLMLingua-style no-distil reference is 70.53 teacher, students 73.68-77.89 *exceed* it; the claim of >=95% is comfortably met across the three benchmarks averaged. The underlying mechanism is that the teacher's guideline $P^*$ encodes most of the compression know-how, so the student need only learn to pattern-match the teacher's outputs (@distillation_decouples_inference). The fact that smaller open-weight models match a strong proprietary teacher's behaviour on this imitation task is what the >=95%-headline reports."
+      },
+      "premises": [
+        "github:2510_00615::distillation_results",
+        "github:2510_00615::distillation_decouples_inference"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_32319b573eb72baa",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::claim_helps_small_agents",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_e28867fa",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::small_agent_results",
+              "github:2510_00615::long_context_distracts",
+              "github:2510_00615::acon_compresses_history_and_obs"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_9e5b9136",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_e28867fa",
+              "github:2510_00615::claim_helps_small_agents"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Smaller LMs are particularly vulnerable to long-context distraction (@long_context_distracts), and Qwen3-14B without compression often fails on medium/hard tasks because of distraction. ACON @acon_compresses_history_and_obs trims this distracting context, recovering most of the lost accuracy — the Qwen3-14B + ACON results in @small_agent_results corroborate @claim_helps_small_agents (e.g., AppWorld 26.8 -> 33.9 = +26% relative, 8-obj QA 0.158 -> 0.197 EM = +25-46% relative)."
+      },
+      "premises": [
+        "github:2510_00615::small_agent_results",
+        "github:2510_00615::long_context_distracts",
+        "github:2510_00615::acon_compresses_history_and_obs"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8ef1a44443dcf35",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::claim_peak_token_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_308b5c48",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::appworld_history_table",
+              "github:2510_00615::officebench_table",
+              "github:2510_00615::qa_table",
+              "github:2510_00615::acon_solves_problem"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_847bbe52",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_308b5c48",
+              "github:2510_00615::claim_peak_token_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The three benchmark tables jointly establish reductions of 26%, 32% and 54.5% in peak tokens across AppWorld, OfficeBench and 8-obj QA respectively — bracketing the headline 26-54% range. Together with the design-level argument @acon_solves_problem this discharges the headline claim @claim_peak_token_reduction."
+      },
+      "premises": [
+        "github:2510_00615::appworld_history_table",
+        "github:2510_00615::officebench_table",
+        "github:2510_00615::qa_table",
+        "github:2510_00615::acon_solves_problem"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_30ccca605e2597a4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::claim_peak_token_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_cc1f5b50",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::appworld_observation_table",
+              "github:2510_00615::claim_peak_token_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "On AppWorld @appworld_observation_table, ACON-UTCO at observation level reaches 53.6 accuracy with 7.43k peak tokens vs No-compression's 9.93k (25% reduction) — independently corroborating the headline peak-token reduction @claim_peak_token_reduction."
+      },
+      "premises": [
+        "github:2510_00615::appworld_observation_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_864e0a4a11934fbc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::threshold_recommendation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_5fc12e4d",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::threshold_ablation_data",
+              "github:2510_00615::threshold_recommendation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@threshold_ablation_data shows a clear U-shape in the accuracy/peak-token plane: extreme thresholds either over-compress (accuracy collapse) or under-compress (peak tokens unchanged from No-compression). The 4096/1024 configuration sits at the elbow on AppWorld, justifying it as the default @threshold_recommendation."
+      },
+      "premises": [
+        "github:2510_00615::threshold_ablation_data"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cb806a7f7ba117ef",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::contrastive_feedback_helps",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__conjunction_result_f3ff9a8b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_00615::optimizer_ablation_data",
+              "github:2510_00615::textual_gradient_step"
+            ]
+          },
+          {
+            "conclusion": "github:2510_00615::__implication_result_86dabf6d",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::__conjunction_result_f3ff9a8b",
+              "github:2510_00615::contrastive_feedback_helps"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The o3-with-contrastive vs o3-without-contrastive comparison (@optimizer_ablation_data) isolates the effect of the contrastive signal from optimiser strength: the +0.6 absolute accuracy gain confirms the importance of the contrastive design choice motivated in Section 3.3, even if the gap is modest. This reinforces the textual-gradient mechanism @textual_gradient_step."
+      },
+      "premises": [
+        "github:2510_00615::optimizer_ablation_data",
+        "github:2510_00615::textual_gradient_step"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_18b0b457873f4d90",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_00615::strong_optimizer_matters",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_e2497bfa",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::optimizer_ablation_data",
+              "github:2510_00615::strong_optimizer_matters"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "From @optimizer_ablation_data, the largest accuracy gap (3.6 points) is between o3 and gpt-4.1 with everything else held fixed; the contrastive feedback toggle moves accuracy by only 0.6 points. Hence stronger reasoning models produce better natural-language gradients, dominating the gain from the contrastive feedback design alone."
+      },
+      "premises": [
+        "github:2510_00615::optimizer_ablation_data"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ad54cced05a6569c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_00615::ut_step",
+        "github:2510_00615::co_step"
+      ],
+      "conclusion": "github:2510_00615::ut_co_behaviour",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_00615::__implication_result_3e6c2de0",
+            "operator": "implication",
+            "variables": [
+              "github:2510_00615::threshold_ablation_data",
+              "github:2510_00615::ut_co_behaviour"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "UT @ut_step targets the reward term of the bi-objective and should preserve or improve accuracy; CO @co_step targets the cost term and is expected to occasionally trade a small amount of accuracy for further compression. The exception on AppWorld likely reflects that, on heavy-tail histories, removing extraneous tokens via CO further declutters the context — which (per @threshold_ablation_data) can *also* improve accuracy via reduced distraction."
+      },
+      "premises": [
+        "github:2510_00615::threshold_ablation_data"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2c6f66020e2c0e0d",
+      "type": "support"
+    }
+  ]
+}
