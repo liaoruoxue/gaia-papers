@@ -1,0 +1,2499 @@
+{
+  "ir_hash": "sha256:e1623bcc1c02058c6d433005b02ca55c678b27121f3133abfcf18aaf8bc073c8",
+  "knowledges": [
+    {
+      "content": "Deep search and long-horizon information seeking are tasks where LLM-based agents must explore unfamiliar information spaces over many steps, repeatedly issue search queries, integrate heterogeneous evidence, and sustain coherent reasoning across extended interaction horizons (multi-step retrieval, evidence integration, decision making).",
+      "content_hash": "48c5c7290a0454dcfc440f2068553e9d4582e177ce3703bc0726cd8b59f27fdc",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_12030::deep_search_setting",
+      "label": "deep_search_setting",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Deep search task setting",
+      "type": "setting"
+    },
+    {
+      "content": "LLM performance degrades in long-horizon settings: as interaction histories grow, models struggle to maintain coherent and task-relevant internal states. This phenomenon is termed *context rot* and has been attributed to long-term credit assignment failures, representational bottlenecks, and attention dilution in long contexts [@Hong2025].",
+      "content_hash": "8bdb1aebc3e6dbb582fa1243991145f01a4bb031cc93cc6156922d09142031b9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_12030::context_rot",
+      "label": "context_rot",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hong2025"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Context rot is a documented phenomenon (Hong et al., 2025 and prior work on attention dilution / long-context degradation). High confidence the framing is sound, slight discount because the framing collapses several distinct mechanisms (credit assignment, representational bottleneck, attention dilution) under one label.",
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Context rot phenomenon",
+      "type": "claim"
+    },
+    {
+      "content": "Directly appending raw interaction histories — including reasoning, actions, and observations — into the working context (e.g., ReAct-style agents) leads to rapid context growth and attention dilution, harming performance on long-horizon tasks [@Yao2023].",
+      "content_hash": "d3b6ac5482ddeaec5b1c391360eabd899e63caf204c897c18b2aeeb4d1d3e588",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_12030::raw_history_limitation",
+      "label": "raw_history_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yao2023"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "ReAct-style raw concatenation is widely documented to scale poorly with horizon length. High confidence; small discount because some recent long-context models tolerate raw history better than older ones.",
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Raw history accumulation limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Passive compression strategies that periodically summarize past interactions (e.g., ReSum) control context length but treat context as a static storage artifact rather than an actively maintained reasoning state. Once compressed, early errors, outdated assumptions, and misaligned emphasis are difficult to correct because prior summaries are rarely revisited [@Wu2025b].",
+      "content_hash": "12d5dfbfe3601326501da925a4bc6a15dce97f98cc275b87fc62c062e3bb8325",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_12030::passive_summarization_limitation",
+      "label": "passive_summarization_limitation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wu2025b"
+            ]
+          }
+        },
+        "prior": 0.82,
+        "prior_justification": "The argument that passive summarization is limited rests on plausible mechanism (early errors persist after compression) plus indirect support from the paper's own ARC vs ReSum comparison. Moderate-high confidence; the limitation is real but the magnitude is debated.",
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Passive summarization limitation",
+      "type": "claim"
+    },
+    {
+      "content": "Both raw-history and passive-compression strategies share a common limitation: context is managed primarily to satisfy length constraints, not to evolve with the agent's understanding. Information once written is seldom reassessed in light of downstream reasoning outcomes.",
+      "content_hash": "ac007bb6dd5abc927eee6eaf96cc332d3e204033b799241c680ec02278d99d6f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_12030::passive_strategies_share_limitation",
+      "label": "passive_strategies_share_limitation",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "The shared-limitation framing is a useful synthesis but has a slight tendency to strawman by characterizing all length-driven approaches uniformly. The core point (no semantic re-evaluation) is sound.",
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Passive strategies share length-only focus",
+      "type": "claim"
+    },
+    {
+      "content": "Context should be treated as a dynamic internal state that can be continuously monitored and actively managed, rather than as an append-only record or a passively compressed summary. The challenge of long-horizon information seeking lies not only in deciding what to retain, but in enabling context to evolve as the agent's understanding changes.",
+      "content_hash": "1d284c7a9fbb24728a6d505d3b12a5541e6bf5d87012733b376d429d20efd105",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_12030::active_management_view",
+      "label": "active_management_view",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Active management view (paper's central thesis)",
+      "type": "claim"
+    },
+    {
+      "content": "Can active, reflection-driven context management improve long-horizon information-seeking performance over passive accumulation or static summarization?",
+      "content_hash": "7dfdf2d14d28998884ccd14090ec7e8f6bb48fe8218aa63d7bec1dd4820ff24b",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_12030::q_active_management",
+      "label": "q_active_management",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q1: Does active context management help?",
+      "type": "question"
+    },
+    {
+      "content": "Is context management a learnable capability that can be supervised independently of action generation, allowing a smaller trained Context Manager to outperform a larger untrained one?",
+      "content_hash": "1a70bd8481c16653f6d16fef466d568f4c5b8f19ad5e1842e5d14aa579a3b7f2",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_12030::q_learnable_cm",
+      "label": "q_learnable_cm",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q2: Is the Context Manager learnable?",
+      "type": "question"
+    },
+    {
+      "content": "Does per-turn (always-on) context management outperform delayed or budget-triggered strategies?",
+      "content_hash": "173a4eacff2b5f1d0ee8925b88117b4b07e3bf99e4baff1496bab1679dbfdc6b",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2601_12030::q_management_frequency",
+      "label": "q_management_frequency",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Q3: Optimal context management frequency?",
+      "type": "question"
+    },
+    {
+      "content": "The paper identifies a fundamental gap between *passive context compression* and *active context management* in long-horizon information-seeking agents, arguing that context management is not merely about fitting history into a limited window, but about continuously maintaining a task-aligned internal reasoning state.",
+      "content_hash": "74515b665b7b267a9bd1504c93bf3b5df0c32895b1d7a811b350c31f9c961349",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_12030::contribution_perspective",
+      "label": "contribution_perspective",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "arc_outperforms_resum",
+              "context_degradation_is_dominant_failure",
+              "contribution_perspective"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 1: Passive vs active distinction",
+      "type": "claim"
+    },
+    {
+      "content": "The paper proposes ARC (Active and Reflection-driven Context management), a framework that treats context as a dynamically managed internal state, enabling continuous revision and realignment during reasoning via always-on incremental summarization plus selectively triggered reflection.",
+      "content_hash": "07bafe697dd15a0deeb4231837d654f094b07d28141afa1161d9d6c6ccdf4cfc",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2601_12030::contribution_arc_framework",
+      "label": "contribution_arc_framework",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "contribution_arc_framework",
+              "dual_architecture",
+              "incremental_preserves_evidence",
+              "incremental_summarization",
+              "reflection_enables_repair",
+              "reflection_operator"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 2: ARC framework",
+      "type": "claim"
+    },
+    {
+      "content": "The paper introduces a dual-component agent architecture with a dedicated Context Manager (CM), decoupled from action execution and responsible for online context construction and reflection-driven revision. The CM is reusable across different actor models.",
+      "content_hash": "9b986cb577c0e146e9c9165b0a73981ad4b9bc1088c278481b9881ddf411bdda",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2601_12030::contribution_dual_architecture",
+      "label": "contribution_dual_architecture",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "actor_policy",
+              "cm_training_setup",
+              "decoupling_enables_reuse",
+              "dual_architecture"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 3: Dual-component architecture (Actor + CM)",
+      "type": "claim"
+    },
+    {
+      "content": "ARC adopts a *dual-component architecture* that explicitly separates action execution from context management. The agent maintains three internal components at each turn:\n\n- **Checklist** ($L_t$): an inspectable and mutable control structure tracking objectives and execution progress.\n- **Interaction Memory** ($M_t$): a dynamically managed memory compactly summarizing task-relevant information from past interactions.\n- **Previous Interaction** ($I_{t-1} = (r_{t-1}, a_{t-1}, o_{t-1})$): the complete raw interaction from the preceding turn — internal reasoning, executed action, and resulting observation.\n\nA learnable model called the *Context Manager (CM)* is responsible for context management; the *Actor* is responsible only for action generation.",
+      "content_hash": "a0f8b3a5a5a2a2696004a050bd89f6ce8a70e1fc5743314495b7d38aa07b739a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_12030::dual_architecture",
+      "label": "dual_architecture",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.1"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Dual-component architecture (Actor + CM)",
+      "type": "setting"
+    },
+    {
+      "content": "At turn $t$, the Actor generates an internal reasoning state and an action via:\n$$(r_t, a_t) \\sim \\pi_{actor}(Q, L_{t-1}, M_{t-1}, I_{t-1})$$\nwhere $Q$ is the task query. The environment then executes $a_t$ and returns observation $o_t$.",
+      "content_hash": "74d3ba50c3e02bab5d1583a438eba085b8f09ff78b69f1236dfd0c3e414158f7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_12030::actor_policy",
+      "label": "actor_policy",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.3, Eq. 3"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Actor policy (Eq. 3)",
+      "type": "setting"
+    },
+    {
+      "content": "The Context Manager updates the interaction memory at each turn via incremental summarization:\n$$M_t = \\mathrm{Summarize}(Q, L_{t-1}, M_{t-1}, I_{t-1})$$\nThis update is *strictly incremental*: the CM incorporates information only from the most recent interaction and does not revise, reorder, or remove previously stored memory content. The summarizer removes redundancy while preserving task-relevant evidence and factual fidelity, without introducing new assumptions.",
+      "content_hash": "60ecdbe393eb20caa0599bef150660a9f5edfe6f3c45b1806dd1d0c35fd56072",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_12030::incremental_summarization",
+      "label": "incremental_summarization",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.2.1, Eq. 1"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Incremental summarization (Eq. 1)",
+      "type": "setting"
+    },
+    {
+      "content": "The most recent turn's interaction is *not* immediately compressed at the time of action selection. Instead it is retained in raw form and provided directly to the Actor at the next turn, ensuring access to fine-grained details before being absorbed into the interaction memory.",
+      "content_hash": "29b79642ffc1f458199276393808e47d949be8e1f63f0c4c56ca633fb7e52a48",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_12030::raw_recent_turn_retained",
+      "label": "raw_recent_turn_retained",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.2.1"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Raw recent-turn retention",
+      "type": "setting"
+    },
+    {
+      "content": "When triggered, the Context Manager performs a joint internal state update via the reflection operator $R$:\n$$(M_t, L_t) \\leftarrow R(Q, L_{t-1}, M_t, I_{t-1})$$\nReflection enables *non-local* modifications: the CM may rewrite or merge memory elements to correct errors, remove outdated assumptions, or re-emphasize task-relevant information. The checklist is revised in the same step. Reflection is purely an internal state transformation; it does not generate actions or modify the actor's policy.",
+      "content_hash": "665587000805955e567c804b81fac8c5b32f500d5911e1acde7b69f642301e27",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2601_12030::reflection_operator",
+      "label": "reflection_operator",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.2.2, Eq. 2"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Reflection operator (Eq. 2)",
+      "type": "setting"
+    },
+    {
+      "content": "Reflection triggering is integrated into the summarization process: during each incremental update, the CM performs a lightweight self-assessment of the current interaction memory to detect signals of degradation — stalled progress, unresolved inconsistencies, or ineffective repetition. The CM decides whether to trigger reflection based on this assessment.",
+      "content_hash": "52e429e461bec13001d83bb623a636e2def3460f3bff24be079ff820126374e6",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2601_12030::reflection_trigger",
+      "label": "reflection_trigger",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.2.2"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Reflection trigger (self-assessment)",
+      "type": "setting"
+    },
+    {
+      "content": "The Context Manager is trained via supervised fine-tuning (SFT) on trajectories collected from information-seeking and search-based tasks. Each training example pairs an interaction $I_t$ with target memory and checklist states $(M_t^*, L_t^*)$. Training trajectories are generated by strong language models and filtered to retain only those exhibiting coherent summarization and valid reflection behavior. Trained CM (\"ARC-CM\") in Section 4.4 uses Qwen3-14B as base.",
+      "content_hash": "36454b99f5c62206bd837318690c28f4ff83035774e1b8b0e285889d2ea64653",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_12030::cm_training_setup",
+      "label": "cm_training_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 3.4, Appendix A"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "CM training setup (SFT)",
+      "type": "setting"
+    },
+    {
+      "content": "Always-on incremental summarization preserves complete semantic information from the most recent interaction *before* any abstraction or omission accumulates across multiple steps, yielding a compact yet semantically faithful representation of the agent's past experience.",
+      "content_hash": "95e2474d2af20bcd0a7bd8be3ade579e2d54b364276b20feb04e51db08845a1e",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2601_12030::incremental_preserves_evidence",
+      "label": "incremental_preserves_evidence",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The claim that always-on incremental summarization preserves the most recent turn's semantics before abstraction accumulates is largely a design property of the per-turn summarize-then-update protocol. High confidence; small discount because 'preserves evidence' depends on the fidelity of the summarizer, which is empirical.",
+        "source": "artifacts/2601.12030.pdf, Sections 3.2.1, 4.5"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Incremental summarization preserves evidence",
+      "type": "claim"
+    },
+    {
+      "content": "Reflection-driven reorganization enables the agent to repair degraded context: incorrect early assumptions, outdated information, or misplaced emphasis can be rewritten, merged, or removed — modifications that incremental summarization alone cannot perform because it never revises previously stored content.",
+      "content_hash": "848d8c0da38896756dc18dd08b1906a21dceea5cd572ee9183d89d5f1080ee02",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_12030::reflection_enables_repair",
+      "label": "reflection_enables_repair",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Reflection's non-local rewrite capability is definitional in the operator R (Eq. 2). High confidence the mechanism is as described; small residual uncertainty because the quality of the repair depends on the CM's ability to detect actual misalignment, which is itself imperfect.",
+        "source": "artifacts/2601.12030.pdf, Section 3.2.2"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Reflection enables non-local context repair",
+      "type": "claim"
+    },
+    {
+      "content": "Decoupling action execution from context management makes the Context Manager reusable across different Actors and tasks, and allows context-management performance to be analyzed and improved independently of Actor capability.",
+      "content_hash": "6da1476c3983b5e7cc3bbea9df377770acaa972440ffb7f445dfd577733b11c0",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_12030::decoupling_enables_reuse",
+      "label": "decoupling_enables_reuse",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "The decoupling between Actor and CM is structural — once the CM has its own model and its own training signal, it can be plugged into different Actors. The Section 4.4 experiment substitutes CMs to demonstrate this in practice. Very high confidence.",
+        "source": "artifacts/2601.12030.pdf, Sections 3.1, 4.4, 5"
+      },
+      "module": "s3_methodology",
+      "parameters": [],
+      "title": "Decoupling enables CM reuse and isolated analysis",
+      "type": "claim"
+    },
+    {
+      "content": "ARC is evaluated on five long-horizon information-seeking benchmarks: HotpotQA (Yang et al., 2018), GAIA text-only subset (Mialon et al., 2023), xBench-DeepSearch (Chen et al., 2025), BrowseComp (Wei et al., 2025a), and BrowseComp-ZH (Zhou et al., 2025a). HotpotQA uses a 512-question random sample evaluated under active search-and-browse (not oracle retrieval). BrowseComp uses subsets from BrowseComp-LongContext under an information-seeking agent setting. All other benchmarks use the full test set.",
+      "content_hash": "1294bdfbf943faf7f605f66644f906d6b68da398cf4e1d604a127d2e00541a20",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_12030::benchmark_setup",
+      "label": "benchmark_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 4.1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "Benchmark setup (5 datasets)",
+      "type": "setting"
+    },
+    {
+      "content": "Two baselines are compared:\n- **ReAct** [@Yao2023]: directly concatenates the full raw interaction history at each step without any explicit context compression or revision.\n- **ReSum** [@Wu2025b]: performs passive, static summarization to control context length. When the interaction history approaches the maximum context budget, past interactions are compressed into a single summary.\n\nAll baselines share the same Actor model, tool interface, and search mechanism. The only difference is how past interactions are represented and maintained.",
+      "content_hash": "b82652c1c1572acad1f435301f1212678cf5ad2091f9d76b7e901598324bd505",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_12030::baselines_setup",
+      "label": "baselines_setup",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Wu2025b",
+              "Yao2023"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "Baselines setup (ReAct, ReSum)",
+      "type": "setting"
+    },
+    {
+      "content": "Actor models evaluated: Qwen2.5-7B-Instruct, Qwen2.5-32B-Instruct (Team, 2024), Qwen3-14B, Qwen3-32B (Team, 2025), and DeepSeek-v3.2 (DeepSeek-AI, 2025). Across all settings, the same Context Manager is instantiated using GPT-OSS-120B (OpenAI, 2025a) — fixing the CM ensures performance differences arise from the context management strategy rather than disparities in CM capacity.",
+      "content_hash": "242db2ecfc51e39033c3c2a4a4f1b0ae0bc624b4818e6288724e5c47c932a0b2",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2601_12030::actor_models_setup",
+      "label": "actor_models_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 4.1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "Actor models setup (5 actors, fixed CM = GPT-OSS-120B)",
+      "type": "setting"
+    },
+    {
+      "content": "Table 1 reports Pass@1 / Pass@3 accuracies for ReAct, ReSum, and ARC across five actor models and five benchmarks. Selected entries:\n\n**Qwen2.5-32B-Instruct** (Pass@1):\n- HotpotQA: ReAct 65.5, ReSum 68.6, ARC 71.3\n- GAIA: ReAct 28.5, ReSum 27.3, ARC 34.9\n- xBench-DS: ReAct 33.3, ReSum 36.3, ARC 40.7\n- BrowseComp: ReAct 1.0, ReSum 1.2, ARC 3.0\n- BrowseComp-ZH: ReAct 7.1, ReSum 7.4, ARC 18.0 (+10.9 vs ReAct, +10.6 vs ReSum)\n\n**Qwen3-14B** (Pass@1): GAIA ReAct 26.5 / ReSum 31.3 / ARC 41.0; xBench-DS ReAct 32.6 / ReSum 32.0 / ARC 46.0; BrowseComp-ZH ReAct 8.5 / ReSum 10.0 / ARC 17.9.\n\n**DeepSeek-v3.2** (Pass@1): GAIA ReAct 63.7 / ReSum 67.1 / ARC 69.1; BrowseComp ReAct 16.8 / ReSum 22.2 / ARC 26.6; BrowseComp-ZH ReAct 37.7 / ReSum 45.7 / ARC 51.7.\n\nAcross every reported actor, ARC's Pass@1 exceeds both ReAct and ReSum on the harder search-heavy settings (GAIA, xBench-DS, BrowseComp, BrowseComp-ZH).",
+      "content_hash": "67f1136382b0db9db14a8613a3003e4d7372b8a216a511cd22ff7ec6e32081b1",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2601_12030::table1_observation",
+      "label": "table1_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Table 1 numbers are direct reads of the authors' reported experimental results across 5 actors x 5 benchmarks. Very high confidence the numbers are reported as stated. Residual uncertainty: small possibility of typos / rounding artifacts. Whether the numbers are reproducible across seeds is a separate question (the paper does not report seed-level variance for Pass@1).",
+        "source": "artifacts/2601.12030.pdf, Section 4.2, Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "Table 1 results: ARC > ReAct/ReSum across actors and benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "ARC outperforms ReAct (raw history concatenation) on long-horizon information-seeking benchmarks across actor models, with the largest gains on harder benchmarks. For example, with Qwen2.5-32B-Instruct, ARC improves BrowseComp-ZH Pass@1 from 7.1 to 18.0 (+10.9 absolute), and improves GAIA Pass@1 from 28.5 to 34.9 (+6.4 absolute).",
+      "content_hash": "2822348c8108fda215c4200784d81aaeb13dcc1253153b12c3248807d8fa896f",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_12030::arc_outperforms_react",
+      "label": "arc_outperforms_react",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "actor_models_setup",
+              "baselines_setup",
+              "benchmark_setup",
+              "table1_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.2, Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "ARC outperforms ReAct",
+      "type": "claim"
+    },
+    {
+      "content": "ARC outperforms ReSum (passive periodic summarization) on long-horizon benchmarks. For example, with Qwen2.5-32B-Instruct, ARC improves BrowseComp-ZH Pass@1 from 7.4 to 18.0 (+10.6 absolute), and with Qwen3-14B improves GAIA Pass@1 from 31.3 to 41.0 (+9.7 absolute). The 11% absolute improvement on BrowseComp-ZH highlighted in the abstract refers to the Qwen2.5-32B-Instruct setting.",
+      "content_hash": "8c70c665e7a2e2d5b6452cd187d886918356a0119e18b3b74e6853117343c5f7",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_12030::arc_outperforms_resum",
+      "label": "arc_outperforms_resum",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table1_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.2, Table 1, Abstract"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "ARC outperforms ReSum",
+      "type": "claim"
+    },
+    {
+      "content": "ReAct (raw history) outperforms ARC on the long-horizon information-seeking benchmarks in Table 1.",
+      "content_hash": "c14fa3b72cc109507617f64ed947638848a815a9b4f4bca6ca1490ab20d14315",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_12030::react_better_than_arc",
+      "label": "react_better_than_arc",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Neutral prior: the counterfactual claim that ReAct beats ARC is independent of its negation in the BP graph. The contradiction strategy against Table 1 will drive its posterior toward zero.",
+        "source": "Counterfactual to Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "(Counterfactual) ReAct beats ARC",
+      "type": "claim"
+    },
+    {
+      "content": "ReSum (passive periodic summarization) outperforms ARC on the long-horizon information-seeking benchmarks in Table 1.",
+      "content_hash": "7b7577e4243f37cd3acba1ee9086d5e6bb0a06882f1744c8106a7ae94fb9349b",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_12030::resum_better_than_arc",
+      "label": "resum_better_than_arc",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Neutral prior on the counterfactual that ReSum beats ARC; contradiction against Table 1 will drive the posterior down.",
+        "source": "Counterfactual to Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "(Counterfactual) ReSum beats ARC",
+      "type": "claim"
+    },
+    {
+      "content": "The advantage of ARC over passive baselines amplifies on harder, longer-horizon tasks. Gains are most pronounced on GAIA, xBench-DS, BrowseComp, and BrowseComp-ZH and smaller on HotpotQA — supporting the interpretation that the harder the task, the more context must be actively managed (not merely compressed).",
+      "content_hash": "ea33ffac6852547577795772823e729be9d00baa053061cc687d50e44799cfd0",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2601_12030::gain_amplifies_with_difficulty",
+      "label": "gain_amplifies_with_difficulty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table1_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.2, Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "ARC gain amplifies with task difficulty",
+      "type": "claim"
+    },
+    {
+      "content": "ARC substantially lifts weaker actors (Qwen2.5-7B-Instruct on BrowseComp-ZH: 4.7 -> 13.1 Pass@1; Qwen3-14B on GAIA: 26.5 -> 41.0) while still improving strong actors (DeepSeek-v3.2 on BrowseComp-ZH: 37.7 -> 51.7). Context management is therefore complementary to model scaling, not a substitute for it.",
+      "content_hash": "c5ad2d82d3d78489648f22235801d65be0954911882bc9b6876a4e011bca9d24",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_12030::arc_lifts_both_small_and_large_actors",
+      "label": "arc_lifts_both_small_and_large_actors",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table1_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.2, Table 1"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "ARC benefits both small and large actors",
+      "type": "claim"
+    },
+    {
+      "content": "The empirical pattern that passive baselines under-perform on long-horizon tasks supports the view that long-horizon failures are often driven by *context degradation* (rot, drift, attention dilution) rather than insufficient reasoning capacity, and that reflection-driven reorganization helps prevent error accumulation and unproductive loops.",
+      "content_hash": "57d24bbf39894727bd1a60d5dc5d53aefd04214629fe26910f1bac2e49e12757",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2601_12030::context_degradation_is_dominant_failure",
+      "label": "context_degradation_is_dominant_failure",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "active_management_view",
+              "arc_outperforms_react",
+              "arc_outperforms_resum",
+              "gain_amplifies_with_difficulty"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.2"
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "title": "Long-horizon failures driven by context degradation",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2601_12030::strat_react_beats_arc_contra",
+      "label": "strat_react_beats_arc_contra",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2601_12030::strat_resum_beats_arc_contra",
+      "label": "strat_resum_beats_arc_contra",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_main_results",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Ablation variants share the same Actor (Qwen2.5-32B-Instruct) so that performance differences isolate the impact of context-management components:\n\n- **Summary**: incremental online summarization only; no reflection; memory and checklist are never revised after initialization.\n- **Summary + Checklist**: reflection updates the checklist as a control signal; the interaction memory remains purely incremental and is never revised.\n- **Reflection + Checklist-Only**: reflection triggers when execution stalls and revises the checklist, but explicitly disables interaction-memory modification.\n- **ARC (Full)**: incremental construction + triggered reflection that *jointly* revises memory and checklist.",
+      "content_hash": "ca2ad99b84bbdfd0ab3cf6cab5283acf43e324cd678c95d0eedffc7197178f6c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2601_12030::ablation_setup",
+      "label": "ablation_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 4.3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Ablation setup",
+      "type": "setting"
+    },
+    {
+      "content": "Table 2 (averaged Pass@1 over GAIA / xBench-DS / BrowseComp-ZH; same Qwen2.5-32B Actor):\n\n| Variant | GAIA | xBench-DS | BrowseComp-ZH |\n|---|---|---|---|\n| Summary | 32.1 | 38.4 | 14.4 |\n| Summary + Checklist | 33.0 | 37.6 | 15.0 |\n| Reflection + Checklist-Only | 26.2 | 34.3 | 6.9 |\n| ARC (Full) | 34.9 | 40.7 | 18.0 |\n\nARC (Full) is best on every benchmark. Summary+Checklist gives only marginal/inconsistent gains over Summary. The Reflection+Checklist-Only variant — which forbids memory revision — is *worse* than the Summary baseline on every benchmark, especially BrowseComp-ZH (6.9 vs 14.4).",
+      "content_hash": "fc552b820a4753bd904bf36a015490f3ab8d43ca5488057dc8919de46ec31fbd",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2601_12030::table2_observation",
+      "label": "table2_observation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Table 2 ablation numbers are direct reads of the authors' reported values. Very high confidence as a textual report. Same caveat about seed-level variance applies; the Reflection+Checklist-Only catastrophic drop on BrowseComp-ZH (6.9) is large enough to be robust to noise.",
+        "source": "artifacts/2601.12030.pdf, Section 4.3, Table 2"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Table 2 ablation results",
+      "type": "claim"
+    },
+    {
+      "content": "Incremental summarization alone (the Summary variant) provides a meaningful and consistent baseline, stabilizing context length and preserving task-relevant evidence.",
+      "content_hash": "52893ecf53ac3ae0fc43843a84472bf4ba25347e3ae6f385f2ec37b156ad86ae",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2601_12030::incremental_helps_baseline",
+      "label": "incremental_helps_baseline",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "ablation_setup",
+              "table2_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.3, Table 2"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Incremental summarization helps as a baseline",
+      "type": "claim"
+    },
+    {
+      "content": "Checklist-based reflection alone (without memory revision) yields only marginal or inconsistent gains over pure incremental summarization (Summary 32.1/38.4/14.4 vs Summary+Checklist 33.0/37.6/15.0; one benchmark slightly worse).",
+      "content_hash": "f8e254ca7c2139e96522d99749b8486ab16afbb4d16343f83536306f7273bcb9",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2601_12030::checklist_alone_marginal",
+      "label": "checklist_alone_marginal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table2_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.3, Table 2"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Checklist alone yields only marginal gains",
+      "type": "claim"
+    },
+    {
+      "content": "Reflection that revises only the checklist while *forbidding* interaction-memory revision is harmful: Reflection+Checklist-Only is strictly worse than the pure-Summary baseline on all three benchmarks (GAIA 26.2 vs 32.1; xBench-DS 34.3 vs 38.4; BrowseComp-ZH 6.9 vs 14.4). Reflection without the ability to repair memory creates control/memory inconsistency that actively hurts performance.",
+      "content_hash": "2119ee8600981a710003ccc0781df987d556fa5fc26510298254810e631af6aa",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2601_12030::reflection_without_memory_harmful",
+      "label": "reflection_without_memory_harmful",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "reflection_enables_repair",
+              "table2_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.3, Table 2"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Reflection without memory revision hurts performance",
+      "type": "claim"
+    },
+    {
+      "content": "ARC's strongest performance arises only when reflection *jointly* revises both interaction memory and checklist; the checklist is most valuable as part of a jointly revisable internal state, not as an isolated planning artifact.",
+      "content_hash": "0810f476ac161027794960df2c66e7589d9cfd907437216caf1f5a2811fffc0c",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2601_12030::joint_revision_required",
+      "label": "joint_revision_required",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "checklist_alone_marginal",
+              "reflection_operator",
+              "reflection_without_memory_harmful",
+              "table2_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Joint memory+checklist revision is required",
+      "type": "claim"
+    },
+    {
+      "content": "Checklist-based reflection alone (without interaction-memory revision) yields large, consistent improvements over pure incremental summarization.",
+      "content_hash": "799e8fb62b85e25853c2b5b0d3091c637439068b2757eeb2e2892b63f06602e5",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2601_12030::checklist_alone_strong",
+      "label": "checklist_alone_strong",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Neutral prior on the counterfactual that checklist-only reflection is strongly beneficial; contradiction against Table 2 will drive it down.",
+        "source": "Counterfactual to Table 2"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "(Counterfactual) Checklist alone is strong",
+      "type": "claim"
+    },
+    {
+      "content": "To isolate the role of the Context Manager, the Actor and execution loop are fixed and only the CM model varies. The trained ARC-CM uses Qwen3-14B as base.",
+      "content_hash": "561e048f34dcd4afacdd77167f3481bf9cd08c3ab83096afa86a159cb2a70c61",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2601_12030::cm_choice_setup",
+      "label": "cm_choice_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 4.4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "CM-choice experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Table 3 (Pass@1 with fixed Actor, varying CM):\n\n| CM | HotpotQA | GAIA | xBench-DS |\n|---|---|---|---|\n| Qwen3-32B | 72.1 | 35.1 | 39.0 |\n| GPT-OSS-120B | 74.6 | 34.9 | 40.7 |\n| DeepSeek-v3.2 | 75.4 | 48.4 | 52.0 |\n| ARC-CM (trained, Qwen3-14B base) | 76.1 | 42.6 | 46.3 |\n\nARC-CM (~14B) outperforms the much larger GPT-OSS-120B on every benchmark (76.1 vs 74.6, 42.6 vs 34.9, 46.3 vs 40.7), and outperforms Qwen3-32B as well, while being substantially smaller. DeepSeek-v3.2 (a larger, stronger general model) still beats ARC-CM on GAIA and xBench-DS.",
+      "content_hash": "7feda6a97baf549f8bde7d8e25cabdd717aea1b330425aac1033d440d1ab0797",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2601_12030::table3_observation",
+      "label": "table3_observation",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 3 CM-choice numbers are direct reads. High confidence as reported. Slight discount because ARC-CM training data may overlap with evaluation distribution in ways not fully ablated, which could inflate ARC-CM's relative advantage.",
+        "source": "artifacts/2601.12030.pdf, Section 4.4, Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Table 3 CM-choice results",
+      "type": "claim"
+    },
+    {
+      "content": "The choice of Context Manager consistently affects end-to-end performance, especially on long-horizon benchmarks (GAIA, xBench-DS), with measured spreads of >10 absolute Pass@1 points across CM choices.",
+      "content_hash": "2863b90950a2f0c4eda7e30ae95abb5fbfff3ce9a85082f15ec2bf412cd3c7a5",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2601_12030::cm_choice_matters",
+      "label": "cm_choice_matters",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cm_choice_setup",
+              "table3_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.4, Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "CM choice materially affects performance",
+      "type": "claim"
+    },
+    {
+      "content": "Context management is a *learnable* capability, not merely an emergent property of model scale: a trained ARC-CM with Qwen3-14B base outperforms substantially larger untrained models such as GPT-OSS-120B (~9x more parameters) across HotpotQA, GAIA, and xBench-DS.",
+      "content_hash": "f3016e4526570b806fc960b2a7827dafd570dd1f39e2d988c1247f550968e8a6",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2601_12030::cm_is_learnable",
+      "label": "cm_is_learnable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cm_choice_setup",
+              "cm_training_setup",
+              "table3_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Context management is learnable (ARC-CM beats GPT-OSS-120B)",
+      "type": "claim"
+    },
+    {
+      "content": "Context-management quality is purely an emergent property of CM scale, so a trained 14B CM cannot outperform a 120B untrained CM.",
+      "content_hash": "a84d79f2f0c4e2036e1be53d12357267e621358007afcb3e1a3ae22101040c55",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2601_12030::cm_emergent_only",
+      "label": "cm_emergent_only",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Neutral prior on the counterfactual that CM quality is purely emergent from scale; contradiction against Table 3 will drive it down.",
+        "source": "Counterfactual to Table 3"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "(Counterfactual) CM quality is purely emergent from scale",
+      "type": "claim"
+    },
+    {
+      "content": "Actively learned context management raises the effective reasoning ceiling of the Actor: the same Actor achieves better long-horizon performance with a smaller trained CM than with a much larger untrained CM, while reducing summarization and reflection cost during execution.",
+      "content_hash": "0ea7066be7f797622ced50d528ad853d4bc455476e7b60820306379a4f769e13",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2601_12030::cm_lifts_actor_ceiling",
+      "label": "cm_lifts_actor_ceiling",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cm_choice_setup",
+              "cm_is_learnable",
+              "decoupling_enables_reuse",
+              "table3_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Trained CM raises effective reasoning ceiling",
+      "type": "claim"
+    },
+    {
+      "content": "The frequency study fixes the Actor, CM, tools, and context budget, varying only when summarization and reflection checks are performed: (i) **step-by-step** at every turn, (ii) **delayed** every 3 or 5 turns, and (iii) **budget-triggered** when context length exceeds 8k, 16k, or 32k tokens. All settings use the same interaction limits. Accuracy is averaged over GAIA, xBench-DeepSearch, and BrowseComp.",
+      "content_hash": "784d534ce3d33d7d42c0f7768c9dad244981d54fa37bfd6a9714a34fda22dbf7",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2601_12030::frequency_setup",
+      "label": "frequency_setup",
+      "metadata": {
+        "source": "artifacts/2601.12030.pdf, Section 4.5"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Management-frequency experiment setup",
+      "type": "setting"
+    },
+    {
+      "content": "Table 4 (average accuracy over GAIA, xBench-DS, BrowseComp):\n\n| Strategy | Setting | Accuracy (%) |\n|---|---|---|\n| Step-by-step | Every turn | 31.2 |\n| Delayed | Every 3 turns | 26.5 |\n| Delayed | Every 5 turns | 24.5 |\n| Budget-triggered | 8k tokens | 27.1 |\n| Budget-triggered | 16k tokens | 24.4 |\n| Budget-triggered | 32k tokens | 24.6 |\n\nPer-turn step-by-step management (31.2) strictly beats every delayed and every budget-triggered alternative.",
+      "content_hash": "09a8bfaa43321fac1d713bb9555c68d995b67f9d065a43ed7de86314e9098a83",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2601_12030::table4_observation",
+      "label": "table4_observation",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 4 frequency numbers are direct reads, averaged across three benchmarks. High confidence; small discount because averaging across heterogeneous benchmarks can obscure benchmark-specific reversals.",
+        "source": "artifacts/2601.12030.pdf, Section 4.5, Table 4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Table 4 frequency results",
+      "type": "claim"
+    },
+    {
+      "content": "Per-turn (always-on) summarization and reflection-checking outperform both delayed (every 3 or 5 turns) and budget-triggered (8k/16k/32k token thresholds) strategies on long-horizon information-seeking benchmarks. Per-turn updates preserve the most recent interaction's complete semantic information *before* abstraction or omission accumulates across multiple steps.",
+      "content_hash": "f5434f3d5253614b2714eb67781af82636dbd68574583a24d499e81e332d8b19",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2601_12030::per_turn_best",
+      "label": "per_turn_best",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "frequency_setup",
+              "incremental_preserves_evidence",
+              "table4_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.5"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Per-turn management is best",
+      "type": "claim"
+    },
+    {
+      "content": "Delayed summarization must compress several interactions at once, increasing the risk that intermediate reasoning, failed attempts, or subtle evidence is lost or conflated.",
+      "content_hash": "a7b722defc9cf410abd69aa2a6f2567003365f0c0b445fc324587ad5365fd01b",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2601_12030::delayed_loses_evidence",
+      "label": "delayed_loses_evidence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table4_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.5"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Delayed summarization conflates evidence",
+      "type": "claim"
+    },
+    {
+      "content": "Budget-triggered strategies are reactive: by the time compression is applied, misleading assumptions or unproductive patterns may already have shaped subsequent decisions, preventing timely correction.",
+      "content_hash": "1d3706589e728579de36aadb68797bcaf714d371d083901897ee8d256c783906",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2601_12030::budget_triggered_too_late",
+      "label": "budget_triggered_too_late",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table4_observation"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.5"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Budget-triggered strategies act too late",
+      "type": "claim"
+    },
+    {
+      "content": "Context management in long-horizon information seeking is not merely about reducing length but about maintaining a semantically faithful and task-aligned internal reasoning state. Always-on, per-turn updates with lightweight reflection checks prevent early deviations from compounding and enable timely correction.",
+      "content_hash": "65719f0a2423ce4471f0e0993cfe657cb2f95608d51a88d9cfc24dad250b3412",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2601_12030::context_mgmt_is_semantic_alignment",
+      "label": "context_mgmt_is_semantic_alignment",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "budget_triggered_too_late",
+              "delayed_loses_evidence",
+              "per_turn_best"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 4.5"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "Context management is about semantic alignment, not length",
+      "type": "claim"
+    },
+    {
+      "content": "Budget-triggered context management (compress only when tokens exceed a threshold) outperforms per-turn step-by-step management.",
+      "content_hash": "23737526a82b37ff879c47d0bfd63a620761ba16c6f155d28d7216a0d1e96e30",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2601_12030::budget_triggered_best",
+      "label": "budget_triggered_best",
+      "metadata": {
+        "prior": 0.5,
+        "prior_justification": "Neutral prior on the counterfactual that budget-triggered management is best; contradiction against Table 4 will drive it down.",
+        "source": "Counterfactual to Table 4"
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "title": "(Counterfactual) Budget-triggered is best",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2601_12030::strat_checklist_alone_strong_contra",
+      "label": "strat_checklist_alone_strong_contra",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2601_12030::strat_cm_emergent_contra",
+      "label": "strat_cm_emergent_contra",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2601_12030::strat_budget_best_contra",
+      "label": "strat_budget_best_contra",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_ablations",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "ARC introduces an explicit context-management component (the CM), which incurs additional computational and system overhead compared to single-model agent designs. Although the CM is decoupled from action execution and can be implemented efficiently, active context monitoring and revision add cost that may be undesirable in latency- or resource-constrained settings.",
+      "content_hash": "dc361db8a6dff375b29d5f99cd66263e72bf01b69c39bf65f79571e44eefaad3",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2601_12030::limitation_overhead",
+      "label": "limitation_overhead",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "The CM is an additional model call; the overhead is essentially definitional. Very high confidence.",
+        "source": "artifacts/2601.12030.pdf, Limitations"
+      },
+      "module": "limitations",
+      "parameters": [],
+      "title": "Limitation: extra computational overhead",
+      "type": "claim"
+    },
+    {
+      "content": "Evaluation focuses on long-horizon information-seeking and search-based tasks. The applicability of reflection-driven context management to other agentic scenarios (e.g., embodied agents, tool-heavy automation, code generation) remains to be explored.",
+      "content_hash": "3c08d947ad52c5caf0b919fa185887eaf71a2b8ad7525993b94ad4d495c401c5",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2601_12030::limitation_scope",
+      "label": "limitation_scope",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "The paper explicitly evaluates only on info-seeking benchmarks. The scope limitation is a factual statement about what was tested, with very high confidence.",
+        "source": "artifacts/2601.12030.pdf, Limitations"
+      },
+      "module": "limitations",
+      "parameters": [],
+      "title": "Limitation: scope restricted to information seeking",
+      "type": "claim"
+    },
+    {
+      "content": "Training the Context Manager relies on curated trajectories that exhibit desirable summarization and reflection behaviors. The dependence on annotated/filtered data may limit scalability; more data-efficient or self-supervised paradigms remain future work.",
+      "content_hash": "cf289c9eebe0ee748bb7f2fdb71967305b6f4d283583a4883f5f0182cf16efd8",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2601_12030::limitation_training_data",
+      "label": "limitation_training_data",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The CM is SFT-trained on filtered trajectories; the dependence on curated data is a real practical limitation. High confidence; small discount because data efficiency is an active research area and the limitation may be partly addressable.",
+        "source": "artifacts/2601.12030.pdf, Limitations"
+      },
+      "module": "limitations",
+      "parameters": [],
+      "title": "Limitation: CM training depends on curated data",
+      "type": "claim"
+    },
+    {
+      "content": "Long-horizon failures in deep-search agents stem in large part from how interaction history is compressed, organized, and reused over time, not solely from limited reasoning capacity. ARC — an active and reflection-driven framework with always-on incremental memory plus selectively triggered reflection, implemented by a dedicated learnable Context Manager — consistently improves long-horizon performance over raw history concatenation and passive summarization, and effective context management is itself a learnable capability.",
+      "content_hash": "238752f46264ec8649b31f167fe119dc8a0918375bf6fe9619e79c657b8e1435",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2601_12030::conclusion_main",
+      "label": "conclusion_main",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "arc_outperforms_react",
+              "arc_outperforms_resum",
+              "cm_is_learnable",
+              "context_degradation_is_dominant_failure",
+              "contribution_arc_framework",
+              "contribution_dual_architecture",
+              "per_turn_best"
+            ]
+          }
+        },
+        "source": "artifacts/2601.12030.pdf, Section 5"
+      },
+      "module": "limitations",
+      "parameters": [],
+      "title": "Overall conclusion",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::incremental_preserves_evidence,github:2601_12030::reflection_enables_repair)",
+      "content_hash": "550a1b577f86d0192b5b3b55de1cbf4136eee675215a0eddf145d136637aa722",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_450b4fac",
+      "label": "__conjunction_result_450b4fac",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::incremental_preserves_evidence,github:2601_12030::reflection_enables_repair)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_34d29771d2cee390",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_450b4fac,github:2601_12030::contribution_arc_framework)",
+      "content_hash": "ba84676ca5da8073a3abb1bfbe79cb056a2b8b6172f41fc452ac1ab96eaa0727",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_cb8b5705",
+      "label": "__implication_result_cb8b5705",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_450b4fac,github:2601_12030::contribution_arc_framework)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_34d29771d2cee390",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::decoupling_enables_reuse,github:2601_12030::contribution_dual_architecture)",
+      "content_hash": "23e84ccea3ccc957f3fc88ef8b13da3c532484b0000c5b2ecc6ab40629c382da",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_7a56e1b9",
+      "label": "__implication_result_7a56e1b9",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::decoupling_enables_reuse,github:2601_12030::contribution_dual_architecture)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1d3c9a6f6f9c42cf",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_outperforms_react)",
+      "content_hash": "cdaf49c12a14982e02ff3da0ed3f2bcec368e656898a1c080762e7c8eea4eea7",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_9affe4cf",
+      "label": "__implication_result_9affe4cf",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_outperforms_react)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_93fd3d10979fcad5",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_outperforms_resum)",
+      "content_hash": "3284c81f5678aaad9217c14a15482bee2d6ccc8f85293366874b134b0543ec84",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_c2086df7",
+      "label": "__implication_result_c2086df7",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_outperforms_resum)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_eb891f3e29fe2f5f",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table1_observation,github:2601_12030::gain_amplifies_with_difficulty)",
+      "content_hash": "fef0f7a10a52a897954533262f3da28336476e2b865192593423b16abe571e86",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_c2eef249",
+      "label": "__implication_result_c2eef249",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table1_observation,github:2601_12030::gain_amplifies_with_difficulty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e2b7ce48adedc883",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_lifts_both_small_and_large_actors)",
+      "content_hash": "a5629b2ba29ff288dcb4838428564d62a5647b2449c84dcb14ef6e2458b1f5af",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_b92d99ff",
+      "label": "__implication_result_b92d99ff",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table1_observation,github:2601_12030::arc_lifts_both_small_and_large_actors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8a113af772e2c836",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::arc_outperforms_react,github:2601_12030::arc_outperforms_resum,github:2601_12030::gain_amplifies_with_difficulty)",
+      "content_hash": "9726cade4e72b232203aa076a7bcc5241716f0315648886f757dfa6e2eeb28ae",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_5acc134a",
+      "label": "__conjunction_result_5acc134a",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::arc_outperforms_react,github:2601_12030::arc_outperforms_resum,github:2601_12030::gain_amplifies_with_difficulty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2613a1dbe781cf0b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_5acc134a,github:2601_12030::context_degradation_is_dominant_failure)",
+      "content_hash": "429981c5ee22289ec11baef92eb1f4f5b8e9e5d372805173bbc445b32f69aa07",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_6a751dd4",
+      "label": "__implication_result_6a751dd4",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_5acc134a,github:2601_12030::context_degradation_is_dominant_failure)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2613a1dbe781cf0b",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::context_degradation_is_dominant_failure,github:2601_12030::arc_outperforms_resum)",
+      "content_hash": "033accb85e3335a13a3d2e4c2ab8b1aa7e5f178a17b27596e03ac0313b96d38c",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_d091bc66",
+      "label": "__conjunction_result_d091bc66",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::context_degradation_is_dominant_failure,github:2601_12030::arc_outperforms_resum)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_80240fe56a3ef37a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_d091bc66,github:2601_12030::contribution_perspective)",
+      "content_hash": "818f3555ce2f669575d7a45b3c05ed7b16f3e69b38b58ffe43127cddf10c1132",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_937d54b3",
+      "label": "__implication_result_937d54b3",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_d091bc66,github:2601_12030::contribution_perspective)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_80240fe56a3ef37a",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table2_observation,github:2601_12030::incremental_helps_baseline)",
+      "content_hash": "f69187d37eb5cd34cc7b247c050d4533e5ee0416d0f4bc6312a4358bbc269b1a",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_b46254d9",
+      "label": "__implication_result_b46254d9",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table2_observation,github:2601_12030::incremental_helps_baseline)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ef8d959d8b9c7a2f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table2_observation,github:2601_12030::checklist_alone_marginal)",
+      "content_hash": "9f6078561672875d561df15df9039ba446e74d7386413e5f9927d84b06e93f7a",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_e10d1117",
+      "label": "__implication_result_e10d1117",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table2_observation,github:2601_12030::checklist_alone_marginal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2b20b37313c7e320",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table2_observation,github:2601_12030::reflection_without_memory_harmful)",
+      "content_hash": "a729771fc4e661a9e839bc4ce92752674e556022abf76110ad17c71e5270f4e0",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_44878530",
+      "label": "__implication_result_44878530",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table2_observation,github:2601_12030::reflection_without_memory_harmful)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_824a6a78d9bb0d7b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::table2_observation,github:2601_12030::reflection_without_memory_harmful,github:2601_12030::checklist_alone_marginal)",
+      "content_hash": "a33088502247d9b3962bd05e06066a45a64b20f9913850a1f845193bd2356a1a",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_f174bc12",
+      "label": "__conjunction_result_f174bc12",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::table2_observation,github:2601_12030::reflection_without_memory_harmful,github:2601_12030::checklist_alone_marginal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6845bbb53908e35b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_f174bc12,github:2601_12030::joint_revision_required)",
+      "content_hash": "636fccd7a4ef691cff97fd7c7417d6e2e4589f2940af8757341b9be6e2690bee",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_1f652544",
+      "label": "__implication_result_1f652544",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_f174bc12,github:2601_12030::joint_revision_required)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6845bbb53908e35b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table3_observation,github:2601_12030::cm_choice_matters)",
+      "content_hash": "04c3577e4020d39df43a55c62fdcc3b7e2d6a0cff9cf2f312cfbeb14a710ed05",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_168284fe",
+      "label": "__implication_result_168284fe",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table3_observation,github:2601_12030::cm_choice_matters)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d6000f8fb442239f",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table3_observation,github:2601_12030::cm_is_learnable)",
+      "content_hash": "3705cae535b53db0e4773f21927ccb51443b3be634a19260ea597203095f3fd9",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_b7317f45",
+      "label": "__implication_result_b7317f45",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table3_observation,github:2601_12030::cm_is_learnable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6278af77615a85ba",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::cm_is_learnable,github:2601_12030::table3_observation)",
+      "content_hash": "3135c227ea21fb424a1be10ce37bd364516a79f52988c4adffe720700d051369",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_dd507453",
+      "label": "__conjunction_result_dd507453",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::cm_is_learnable,github:2601_12030::table3_observation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_287c4c43e009bd9d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_dd507453,github:2601_12030::cm_lifts_actor_ceiling)",
+      "content_hash": "86607361e267769b6683b46c1e2210896d11e0d51cf2afd42fc687a0896331bf",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_3b484944",
+      "label": "__implication_result_3b484944",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_dd507453,github:2601_12030::cm_lifts_actor_ceiling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_287c4c43e009bd9d",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table4_observation,github:2601_12030::per_turn_best)",
+      "content_hash": "79c26bf68f61a5d9585b037945225790daaa89a05f91bc38e89288da21664e5e",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_2654519a",
+      "label": "__implication_result_2654519a",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table4_observation,github:2601_12030::per_turn_best)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_82843a988f491209",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table4_observation,github:2601_12030::delayed_loses_evidence)",
+      "content_hash": "ddf83793dd3e1e90e445435e38e9eaf975cb464151469dcad464cee7dce5f2d8",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_fd539b53",
+      "label": "__implication_result_fd539b53",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table4_observation,github:2601_12030::delayed_loses_evidence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_428b0a50874a0c2e",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::table4_observation,github:2601_12030::budget_triggered_too_late)",
+      "content_hash": "dd85bb831ad0c2595021980aa682ffa5e83426dfac4575dcabba2b3c273c7924",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_47b907e0",
+      "label": "__implication_result_47b907e0",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::table4_observation,github:2601_12030::budget_triggered_too_late)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_02e250d88e7ac842",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::per_turn_best,github:2601_12030::delayed_loses_evidence,github:2601_12030::budget_triggered_too_late)",
+      "content_hash": "3dd78799169012dc332fa670191594c764ae853ef6f07815a63c130ed6d99c92",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_c8e83dc7",
+      "label": "__conjunction_result_c8e83dc7",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::per_turn_best,github:2601_12030::delayed_loses_evidence,github:2601_12030::budget_triggered_too_late)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_3254de587d8f7fe4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_c8e83dc7,github:2601_12030::context_mgmt_is_semantic_alignment)",
+      "content_hash": "6f74d888ead5c40a8f5cf294aab3a5ff38de2ddefc4bc70695f65a0103d4932f",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_ad47f7e7",
+      "label": "__implication_result_ad47f7e7",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_c8e83dc7,github:2601_12030::context_mgmt_is_semantic_alignment)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3254de587d8f7fe4",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2601_12030::arc_outperforms_react,github:2601_12030::arc_outperforms_resum,github:2601_12030::context_degradation_is_dominant_failure,github:2601_12030::cm_is_learnable,github:2601_12030::per_turn_best)",
+      "content_hash": "43f4e50c1e09a3742f516ace0d09dd0bbe8aa9df952f4bb6d768be491f9f86e9",
+      "exported": false,
+      "id": "github:2601_12030::__conjunction_result_cbcacb0e",
+      "label": "__conjunction_result_cbcacb0e",
+      "metadata": {
+        "canonical_name": "all_true(github:2601_12030::arc_outperforms_react,github:2601_12030::arc_outperforms_resum,github:2601_12030::context_degradation_is_dominant_failure,github:2601_12030::cm_is_learnable,github:2601_12030::per_turn_best)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1ae5bc02406ec185",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2601_12030::__conjunction_result_cbcacb0e,github:2601_12030::conclusion_main)",
+      "content_hash": "7713e89390e4024145af7acdce54fde0a63387674d309a38c46b354ea936fc2b",
+      "exported": false,
+      "id": "github:2601_12030::__implication_result_57a0d2f0",
+      "label": "__implication_result_57a0d2f0",
+      "metadata": {
+        "canonical_name": "implies(github:2601_12030::__conjunction_result_cbcacb0e,github:2601_12030::conclusion_main)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1ae5bc02406ec185",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_methodology",
+    "s4_main_results",
+    "s4_ablations",
+    "limitations"
+  ],
+  "module_titles": {
+    "limitations": "Limitations & Conclusion",
+    "motivation": "Introduction & Motivation: Active vs Passive Context Management",
+    "s3_methodology": "Section 3: ARC Methodology — Dual Architecture, Memory Construction, Reflection",
+    "s4_ablations": "Section 4.3-4.5: Ablations, Context Manager Choice, Management Frequency",
+    "s4_main_results": "Section 4.1-4.2: Main Experimental Results — ARC vs ReAct vs ReSum"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2601_12030::strat_react_beats_arc_contra",
+      "metadata": {
+        "reason": "Table 1 (@table1_observation) shows ARC's Pass@1 strictly above ReAct on every reported actor x benchmark cell on the long-horizon datasets, directly contradicting the claim that ReAct beats ARC."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_aa70b765bc840427",
+      "scope": "local",
+      "variables": [
+        "github:2601_12030::table1_observation",
+        "github:2601_12030::react_better_than_arc"
+      ]
+    },
+    {
+      "conclusion": "github:2601_12030::strat_resum_beats_arc_contra",
+      "metadata": {
+        "reason": "Table 1 (@table1_observation) shows ARC's Pass@1 above ReSum on the harder long-horizon benchmarks across every reported actor (e.g., GAIA, xBench-DS, BrowseComp, BrowseComp-ZH), directly contradicting the claim that ReSum beats ARC."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_9b91466c175914b1",
+      "scope": "local",
+      "variables": [
+        "github:2601_12030::table1_observation",
+        "github:2601_12030::resum_better_than_arc"
+      ]
+    },
+    {
+      "conclusion": "github:2601_12030::strat_checklist_alone_strong_contra",
+      "metadata": {
+        "reason": "Table 2 (@table2_observation) shows Summary+Checklist differs from Summary by less than 1 absolute point on every benchmark (and is worse on xBench-DS), which directly contradicts the claim of large consistent improvement from checklist-only reflection."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_b4a9b27a17d86251",
+      "scope": "local",
+      "variables": [
+        "github:2601_12030::table2_observation",
+        "github:2601_12030::checklist_alone_strong"
+      ]
+    },
+    {
+      "conclusion": "github:2601_12030::strat_cm_emergent_contra",
+      "metadata": {
+        "reason": "Table 3 (@table3_observation) shows the trained 14B ARC-CM beating the untrained 120B GPT-OSS on all three benchmarks. If CM quality were purely emergent from scale, the 120B model could not be beaten by the 14B model — a direct contradiction."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_712faf3e6a4d5314",
+      "scope": "local",
+      "variables": [
+        "github:2601_12030::table3_observation",
+        "github:2601_12030::cm_emergent_only"
+      ]
+    },
+    {
+      "conclusion": "github:2601_12030::strat_budget_best_contra",
+      "metadata": {
+        "reason": "All three budget-triggered settings (8k=27.1, 16k=24.4, 32k=24.6) in Table 4 (@table4_observation) are below step-by-step (31.2). The claim that budget-triggered beats per-turn is directly contradicted by the table."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_59698ce2f1b9b9a8",
+      "scope": "local",
+      "variables": [
+        "github:2601_12030::table4_observation",
+        "github:2601_12030::budget_triggered_best"
+      ]
+    }
+  ],
+  "package_name": "2601_12030",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2601_12030::dual_architecture",
+        "github:2601_12030::incremental_summarization",
+        "github:2601_12030::reflection_operator"
+      ],
+      "conclusion": "github:2601_12030::contribution_arc_framework",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_450b4fac",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::incremental_preserves_evidence",
+              "github:2601_12030::reflection_enables_repair"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_cb8b5705",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_450b4fac",
+              "github:2601_12030::contribution_arc_framework"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The ARC framework (@contribution_arc_framework) is constituted by exactly two mechanisms: always-on incremental summarization (@incremental_summarization), which preserves evidence (@incremental_preserves_evidence), and selectively-triggered reflection (@reflection_operator), which enables non-local repair (@reflection_enables_repair). Together these realize the active-management view by continuously updating the working context within the dual-component architecture (@dual_architecture)."
+      },
+      "premises": [
+        "github:2601_12030::incremental_preserves_evidence",
+        "github:2601_12030::reflection_enables_repair"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_34d29771d2cee390",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::dual_architecture",
+        "github:2601_12030::actor_policy",
+        "github:2601_12030::cm_training_setup"
+      ],
+      "conclusion": "github:2601_12030::contribution_dual_architecture",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_7a56e1b9",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::decoupling_enables_reuse",
+              "github:2601_12030::contribution_dual_architecture"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The dual-component architecture (@dual_architecture) is well-defined: the Actor is responsible for $(r_t, a_t)$ given current context (@actor_policy), and the Context Manager performs only memory/checklist updates. Because the CM is a separate trainable component (@cm_training_setup), it can be paired with any Actor and reused across tasks (@decoupling_enables_reuse), substantiating the dual-architecture contribution."
+      },
+      "premises": [
+        "github:2601_12030::decoupling_enables_reuse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1d3c9a6f6f9c42cf",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::benchmark_setup",
+        "github:2601_12030::baselines_setup",
+        "github:2601_12030::actor_models_setup"
+      ],
+      "conclusion": "github:2601_12030::arc_outperforms_react",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_9affe4cf",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table1_observation",
+              "github:2601_12030::arc_outperforms_react"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Table 1 (@table1_observation) directly reports Pass@1 numbers showing ARC > ReAct on every reported actor x benchmark cell on the harder long-horizon datasets. The controlled setup (@benchmark_setup, @baselines_setup, @actor_models_setup) — same Actor, tools, search mechanism, and fixed CM — isolates context-management strategy as the only varying factor, so the observed gap is causally attributable to ARC."
+      },
+      "premises": [
+        "github:2601_12030::table1_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_93fd3d10979fcad5",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::benchmark_setup",
+        "github:2601_12030::baselines_setup",
+        "github:2601_12030::actor_models_setup"
+      ],
+      "conclusion": "github:2601_12030::arc_outperforms_resum",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_c2086df7",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table1_observation",
+              "github:2601_12030::arc_outperforms_resum"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Table 1 (@table1_observation) directly reports Pass@1 numbers showing ARC > ReSum on the harder benchmarks. The 11% absolute BrowseComp-ZH improvement claimed in the abstract corresponds to Qwen2.5-32B-Instruct (7.4 -> 18.0 = +10.6, rounded). The controlled setup ensures this gap reflects active vs passive context management, not differences in Actor or CM capacity."
+      },
+      "premises": [
+        "github:2601_12030::table1_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_eb891f3e29fe2f5f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::benchmark_setup"
+      ],
+      "conclusion": "github:2601_12030::gain_amplifies_with_difficulty",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_c2eef249",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table1_observation",
+              "github:2601_12030::gain_amplifies_with_difficulty"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Comparing ARC vs ReSum gaps in Table 1 (@table1_observation): on HotpotQA the gap is small (Qwen2.5-32B: 71.3 - 68.6 = +2.7), but on GAIA and BrowseComp-ZH it is several times larger (+7.6 and +10.6 respectively), and similar amplification holds across actors. This monotonically increasing gap with benchmark difficulty supports the amplification claim."
+      },
+      "premises": [
+        "github:2601_12030::table1_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e2b7ce48adedc883",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::actor_models_setup"
+      ],
+      "conclusion": "github:2601_12030::arc_lifts_both_small_and_large_actors",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_b92d99ff",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table1_observation",
+              "github:2601_12030::arc_lifts_both_small_and_large_actors"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Table 1 (@table1_observation) reports gains both for the smallest tested actor (Qwen2.5-7B-Instruct: BrowseComp-ZH 4.7 -> 13.1) and the strongest tested actor (DeepSeek-v3.2: BrowseComp-ZH 37.7 -> 51.7). The presence of substantial gains at both ends of the capacity spectrum directly substantiates the complementarity claim."
+      },
+      "premises": [
+        "github:2601_12030::table1_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8a113af772e2c836",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::active_management_view"
+      ],
+      "conclusion": "github:2601_12030::context_degradation_is_dominant_failure",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_5acc134a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::arc_outperforms_react",
+              "github:2601_12030::arc_outperforms_resum",
+              "github:2601_12030::gain_amplifies_with_difficulty"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_6a751dd4",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_5acc134a",
+              "github:2601_12030::context_degradation_is_dominant_failure"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "If long-horizon failures were dominated by limited reasoning capacity, varying the context-management strategy while holding the Actor fixed would have little effect. Instead the experiments show large, difficulty-amplified gains from active management (@arc_outperforms_react, @arc_outperforms_resum, @gain_amplifies_with_difficulty), consistent with the active-management view (@active_management_view) that context degradation, not reasoning capacity, is the dominant failure mode."
+      },
+      "premises": [
+        "github:2601_12030::arc_outperforms_react",
+        "github:2601_12030::arc_outperforms_resum",
+        "github:2601_12030::gain_amplifies_with_difficulty"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2613a1dbe781cf0b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_12030::contribution_perspective",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_d091bc66",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::context_degradation_is_dominant_failure",
+              "github:2601_12030::arc_outperforms_resum"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_937d54b3",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_d091bc66",
+              "github:2601_12030::contribution_perspective"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The paper's perspective contribution (@contribution_perspective) — that context management requires *active* maintenance, not just length compression — is supported by the empirical observation that passive ReSum is substantially worse than active ARC (@arc_outperforms_resum), and that the gap traces to context degradation effects (@context_degradation_is_dominant_failure)."
+      },
+      "premises": [
+        "github:2601_12030::context_degradation_is_dominant_failure",
+        "github:2601_12030::arc_outperforms_resum"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_80240fe56a3ef37a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::ablation_setup"
+      ],
+      "conclusion": "github:2601_12030::incremental_helps_baseline",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_b46254d9",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table2_observation",
+              "github:2601_12030::incremental_helps_baseline"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Table 2 (@table2_observation) shows the Summary variant achieves 32.1/38.4/14.4 — a meaningful and stable baseline well above zero on all three benchmarks. Since the Actor is fixed across variants (@ablation_setup), this isolates incremental summarization as the contributor to that baseline."
+      },
+      "premises": [
+        "github:2601_12030::table2_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ef8d959d8b9c7a2f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::ablation_setup"
+      ],
+      "conclusion": "github:2601_12030::checklist_alone_marginal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_e10d1117",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table2_observation",
+              "github:2601_12030::checklist_alone_marginal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Comparing Summary vs Summary+Checklist in Table 2 (@table2_observation): the differences are +0.9 (GAIA), -0.8 (xBench-DS), +0.6 (BrowseComp-ZH). One benchmark is even slightly worse, directly substantiating the marginal/inconsistent characterization."
+      },
+      "premises": [
+        "github:2601_12030::table2_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2b20b37313c7e320",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::ablation_setup",
+        "github:2601_12030::reflection_enables_repair"
+      ],
+      "conclusion": "github:2601_12030::reflection_without_memory_harmful",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_44878530",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table2_observation",
+              "github:2601_12030::reflection_without_memory_harmful"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Reflection+Checklist-Only in Table 2 (@table2_observation) achieves 26.2/34.3/6.9 vs Summary's 32.1/38.4/14.4 — strictly worse on every benchmark, and dramatically so on BrowseComp-ZH (less than half the accuracy). Without the ability to repair memory (@reflection_enables_repair), reflection-driven checklist updates create control/memory inconsistency that hurts the agent."
+      },
+      "premises": [
+        "github:2601_12030::table2_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_824a6a78d9bb0d7b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::ablation_setup",
+        "github:2601_12030::reflection_operator"
+      ],
+      "conclusion": "github:2601_12030::joint_revision_required",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_f174bc12",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::table2_observation",
+              "github:2601_12030::reflection_without_memory_harmful",
+              "github:2601_12030::checklist_alone_marginal"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_1f652544",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_f174bc12",
+              "github:2601_12030::joint_revision_required"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "ARC (Full) achieves the best score on every benchmark in Table 2 (@table2_observation). Neither memory revision alone (Summary, ~baseline) nor checklist revision alone (@checklist_alone_marginal, marginal; @reflection_without_memory_harmful, actively harmful) reproduces the full effect. Only the joint update, as specified by the reflection operator (@reflection_operator), realizes the full gain — directly supporting the joint-revision claim."
+      },
+      "premises": [
+        "github:2601_12030::table2_observation",
+        "github:2601_12030::reflection_without_memory_harmful",
+        "github:2601_12030::checklist_alone_marginal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6845bbb53908e35b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::cm_choice_setup"
+      ],
+      "conclusion": "github:2601_12030::cm_choice_matters",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_168284fe",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table3_observation",
+              "github:2601_12030::cm_choice_matters"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "With the Actor fixed (@cm_choice_setup), Table 3 (@table3_observation) shows GAIA scores of 35.1, 34.9, 48.4, 42.6 across CM choices — a 13.5-point spread. Such large variation in end-to-end performance from changing only the CM directly substantiates the claim that CM choice matters."
+      },
+      "premises": [
+        "github:2601_12030::table3_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d6000f8fb442239f",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::cm_choice_setup",
+        "github:2601_12030::cm_training_setup"
+      ],
+      "conclusion": "github:2601_12030::cm_is_learnable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_b7317f45",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table3_observation",
+              "github:2601_12030::cm_is_learnable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "ARC-CM (Qwen3-14B base, ~14B params) beats GPT-OSS-120B (~120B params) on every benchmark in Table 3 (@table3_observation): 76.1>74.6, 42.6>34.9, 46.3>40.7. Because the Actor and execution loop are fixed (@cm_choice_setup), the only variable is the CM, and the smaller-but-trained model wins — supporting that learning, not scale, drives CM quality (@cm_training_setup)."
+      },
+      "premises": [
+        "github:2601_12030::table3_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6278af77615a85ba",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::cm_choice_setup",
+        "github:2601_12030::decoupling_enables_reuse"
+      ],
+      "conclusion": "github:2601_12030::cm_lifts_actor_ceiling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_dd507453",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::cm_is_learnable",
+              "github:2601_12030::table3_observation"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_3b484944",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_dd507453",
+              "github:2601_12030::cm_lifts_actor_ceiling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Because the Actor is held fixed across CM choices (@cm_choice_setup) and a trained smaller CM yields strictly better end-to-end Actor performance than larger untrained CMs (@cm_is_learnable; numbers in @table3_observation), context management acts as a lever that raises the effective reasoning ceiling of the Actor, not a substitute for Actor capacity. The decoupled architecture (@decoupling_enables_reuse) makes this isolation rigorous."
+      },
+      "premises": [
+        "github:2601_12030::cm_is_learnable",
+        "github:2601_12030::table3_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_287c4c43e009bd9d",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::frequency_setup",
+        "github:2601_12030::incremental_preserves_evidence"
+      ],
+      "conclusion": "github:2601_12030::per_turn_best",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_2654519a",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table4_observation",
+              "github:2601_12030::per_turn_best"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Table 4 (@table4_observation) shows step-by-step (every turn) at 31.2% strictly above every delayed (26.5, 24.5) and every budget-triggered (27.1, 24.4, 24.6) alternative with all other variables held constant (@frequency_setup). This is consistent with the evidence-preservation rationale (@incremental_preserves_evidence)."
+      },
+      "premises": [
+        "github:2601_12030::table4_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_82843a988f491209",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::frequency_setup"
+      ],
+      "conclusion": "github:2601_12030::delayed_loses_evidence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_fd539b53",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table4_observation",
+              "github:2601_12030::delayed_loses_evidence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Delayed-3 (26.5) and Delayed-5 (24.5) in Table 4 (@table4_observation) are markedly below step-by-step (31.2), and the gap widens monotonically as the delay grows (31.2 -> 26.5 -> 24.5). This monotone degradation with delay length is the empirical signature predicted by the evidence-conflation explanation."
+      },
+      "premises": [
+        "github:2601_12030::table4_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_428b0a50874a0c2e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::frequency_setup"
+      ],
+      "conclusion": "github:2601_12030::budget_triggered_too_late",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__implication_result_47b907e0",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::table4_observation",
+              "github:2601_12030::budget_triggered_too_late"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Budget-triggered variants (27.1, 24.4, 24.6 for 8k/16k/32k) all sit at or below Delayed-3 in Table 4 (@table4_observation) and well below per-turn (31.2). The reactive nature of budget triggers means context corrections cannot occur until after the threshold is crossed — by which point misalignment may have already shaped decisions."
+      },
+      "premises": [
+        "github:2601_12030::table4_observation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_02e250d88e7ac842",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2601_12030::context_mgmt_is_semantic_alignment",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_c8e83dc7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::per_turn_best",
+              "github:2601_12030::delayed_loses_evidence",
+              "github:2601_12030::budget_triggered_too_late"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_ad47f7e7",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_c8e83dc7",
+              "github:2601_12030::context_mgmt_is_semantic_alignment"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "If context management were purely about reducing length, budget-triggered strategies (which directly target length) would be at least competitive with per-turn updates. Instead, per-turn beats every length-targeted variant (@per_turn_best), delay loses evidence (@delayed_loses_evidence), and budget triggers are too late (@budget_triggered_too_late). Together, these support the reframing of context management as semantic alignment rather than length control."
+      },
+      "premises": [
+        "github:2601_12030::per_turn_best",
+        "github:2601_12030::delayed_loses_evidence",
+        "github:2601_12030::budget_triggered_too_late"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3254de587d8f7fe4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2601_12030::contribution_arc_framework",
+        "github:2601_12030::contribution_dual_architecture"
+      ],
+      "conclusion": "github:2601_12030::conclusion_main",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2601_12030::__conjunction_result_cbcacb0e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2601_12030::arc_outperforms_react",
+              "github:2601_12030::arc_outperforms_resum",
+              "github:2601_12030::context_degradation_is_dominant_failure",
+              "github:2601_12030::cm_is_learnable",
+              "github:2601_12030::per_turn_best"
+            ]
+          },
+          {
+            "conclusion": "github:2601_12030::__implication_result_57a0d2f0",
+            "operator": "implication",
+            "variables": [
+              "github:2601_12030::__conjunction_result_cbcacb0e",
+              "github:2601_12030::conclusion_main"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The conclusion combines four empirical pillars established earlier: (1) ARC beats raw concatenation (@arc_outperforms_react) and (2) passive summarization (@arc_outperforms_resum) across actors and benchmarks; (3) the failure mode is context degradation rather than reasoning capacity (@context_degradation_is_dominant_failure); (4) effective context management is learnable (@cm_is_learnable) and is best applied per-turn (@per_turn_best). The framework (@contribution_arc_framework) and decoupled architecture (@contribution_dual_architecture) are the design principles that operationalize these findings."
+      },
+      "premises": [
+        "github:2601_12030::arc_outperforms_react",
+        "github:2601_12030::arc_outperforms_resum",
+        "github:2601_12030::context_degradation_is_dominant_failure",
+        "github:2601_12030::cm_is_learnable",
+        "github:2601_12030::per_turn_best"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1ae5bc02406ec185",
+      "type": "support"
+    }
+  ]
+}
