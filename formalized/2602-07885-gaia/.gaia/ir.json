@@ -1,0 +1,3830 @@
+{
+  "ir_hash": "sha256:4f5e5f6b97bd8246398f9c282bf80212be8d22a18f4f978f749227c2113fa5a4",
+  "knowledges": [
+    {
+      "content": "Large Language Models (LLMs) are increasingly deployed as persistent autonomous agents that must perform complex, extended reasoning tasks across long-horizon interactions. Such use cases require robust long-term memory systems capable of retaining entity states that evolve over time, resolving temporal dependencies across sessions, and synthesizing evidence distributed across many turns [@Xi2023; @Wang2024; @Ferrag2025].",
+      "content_hash": "fb928ad837658d078df8690d754dc28dc8c0db01450deb02cda48820d1b005f3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_07885::setup_llm_agents",
+      "label": "setup_llm_agents",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ferrag2025",
+              "Wang2024",
+              "Xi2023"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM agents and long-term memory",
+      "type": "setting"
+    },
+    {
+      "content": "Existing memory frameworks for LLM agents fall into two paradigms. Retrieval-centric approaches (e.g., RAG variants) preserve verbatim details but accumulate redundancy and incur retrieval noise [@Lewis2021; @Asai2023; @Yan2024; @Gao2024; @Ram2023]. Memory-augmented approaches (e.g., MemGPT, MemoryBank, A-MEM, O-Mem) employ LLM-driven summarization for compression but sacrifice fine-grained fidelity required for precise reasoning [@Packer2024; @Zhong2023; @Xu2025; @Wang2025].",
+      "content_hash": "86b4c6b3e47514a1c6096d999ff6ac3ebdda4af51393d4268b5cab904bf0e14b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_07885::setup_existing_paradigms",
+      "label": "setup_existing_paradigms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Asai2023",
+              "Gao2024",
+              "Lewis2021",
+              "Packer2024",
+              "Ram2023",
+              "Wang2025",
+              "Xu2025",
+              "Yan2024",
+              "Zhong2023"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Two paradigms in agentic memory",
+      "type": "setting"
+    },
+    {
+      "content": "The Information Bottleneck (IB) principle [@Slonim1999; @Tishby2015] frames compression as a trade-off: minimize the mutual information between input X and compressed representation M (compression term I(X; M)) while maximizing the mutual information between M and downstream tasks Y (relevance term I(M; Y)). Formally, IB minimizes the Lagrangian L = I(X; M) - beta * I(M; Y).",
+      "content_hash": "e1410c922f15ede37cf6a788b438e8b055902f87b6d7e1bb813c97455402afe5",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_07885::setup_ib_principle",
+      "label": "setup_ib_principle",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim1999",
+              "Tishby2015"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Information Bottleneck principle",
+      "type": "setting"
+    },
+    {
+      "content": "Existing long-term memory frameworks for LLM agents face a fundamental dilemma between compressing redundant information efficiently and maintaining precise retrieval fidelity for downstream tasks. Neither retrieval-centric nor memory-augmented paradigms adequately resolves this tension because they lack a unified, principled objective for what to retain versus discard [@Kuffo2026].",
+      "content_hash": "09f7407e8ab1d8c0d512a91cec4e4e25d3656c495a9311964b86af6894169758",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2602_07885::claim_compression_fidelity_dilemma",
+      "label": "claim_compression_fidelity_dilemma",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ib_design_validated",
+              "claim_memory_augmented_fidelity_loss",
+              "claim_retrieval_centric_redundancy"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Compression-fidelity dilemma in agentic memory",
+      "type": "claim"
+    },
+    {
+      "content": "Retrieval-centric memory systems preserve verbatim details but accumulate redundancy without consolidation, leading to monotonic entropy increase and elevated retrieval noise. They operate as inference-time optimizations that refine the read path while treating the underlying memory as a passive index, rendering them vulnerable to vector dilution under multi-hop evidence synthesis [@Lewis2021; @Gao2024; @Asai2023].",
+      "content_hash": "a414c807e541701d2e98b96940965c89fb155b8783085da9a796f004ae0f7429",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2602_07885::claim_retrieval_centric_redundancy",
+      "label": "claim_retrieval_centric_redundancy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Asai2023",
+              "Gao2024",
+              "Lewis2021"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Well-documented characterization of retrieval-centric (RAG) systems in the literature; multiple cited surveys (Lewis 2021, Gao 2024, Asai 2023) explicitly identify redundancy and vector dilution issues."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Retrieval-centric systems suffer redundancy and vector dilution",
+      "type": "claim"
+    },
+    {
+      "content": "LLM-driven summarization in memory-augmented systems compresses interaction history into discrete units but optimizes for compression efficiency without a principled mechanism for preserving task-relevant information. As a result, fine-grained fidelity required for precise reasoning is sacrificed [@Packer2024; @Zhong2023; @Xu2025; @Wang2025].",
+      "content_hash": "add23fb71db255472c71b8d129cc37695e9daefafe08fe64cfc3bff2b5042843",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2602_07885::claim_memory_augmented_fidelity_loss",
+      "label": "claim_memory_augmented_fidelity_loss",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Packer2024",
+              "Wang2025",
+              "Xu2025",
+              "Zhong2023"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Acknowledged limitation of LLM-summarization-based memory systems (MemGPT, MemoryBank, A-MEM, O-Mem). Less unanimously characterized than RAG redundancy but well established in the cited works."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memory-augmented systems sacrifice fidelity",
+      "type": "claim"
+    },
+    {
+      "content": "The compression-fidelity trade-off in agentic memory construction is fundamentally an information-theoretic optimization problem that aligns with the Information Bottleneck principle: compress redundant observations while preserving sufficient fidelity for future tasks [@Slonim1999].",
+      "content_hash": "2c4725baf99d693e3b09689ac9d01bf3eebb894e5201a916ef51a88c76748da3",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2602_07885::claim_ib_aligns_with_memory",
+      "label": "claim_ib_aligns_with_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim1999"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Plausible theoretical alignment, but the IB-to-agentic-memory bridge is the paper's framing rather than a pre-existing result. Strong but not fully established."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Memory optimization aligns with the IB principle",
+      "type": "claim"
+    },
+    {
+      "content": "Direct manipulation of high-dimensional embedding spaces is ill-posed due to the curse of dimensionality, which manifests as sparsity and noise in similarity structures [@Slonim2000].",
+      "content_hash": "592030d80da5bd3735578e928b387b03934e8c7bd0dadb189067cddee289ce0e",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_07885::claim_high_dim_curse",
+      "label": "claim_high_dim_curse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim2000"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Curse of dimensionality is a textbook fact in high-dimensional similarity search; cited Slonim & Tishby 2000 establishes the sparsity issue formally."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "High-dimensional embedding spaces are noisy",
+      "type": "claim"
+    },
+    {
+      "content": "Is there a unified, principled objective that resolves the compression-fidelity dilemma in agentic long-term memory construction?",
+      "content_hash": "1ef21ed7340fced39f0eb6b263b63036463407c44307fe3c37ee93af1c34bb51",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_07885::q_unified_objective",
+      "label": "q_unified_objective",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "Can the offline Agglomerative Information Bottleneck (AIB) algorithm be adapted to an online streaming setting where future tasks Y are unknown at construction time?",
+      "content_hash": "4341838ae774a1519f0f670514243e0465b8e4db5223080e3e67d410e1cf567c",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_07885::q_online_ib",
+      "label": "q_online_ib",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_07885::contradiction_paradigms",
+      "label": "contradiction_paradigms",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.78
+      },
+      "module": "motivation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY models the memory state at time t as a random variable M_t taking values in a structured state space. For computational realization, M_t is instantiated as a dynamic graph G_t = (V_t, E_t, Phi_t), where V_t is the set of memory nodes, E_t are topological connections, and Phi_t maps each node to a dense embedding and textual content.",
+      "content_hash": "2f0e114631636d348a2abc995f2f732972bb3580f3b8b1d825e3db9d42d38772",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_07885::setup_memory_state",
+      "label": "setup_memory_state",
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MEMFLY memory state representation",
+      "type": "setting"
+    },
+    {
+      "content": "The Double Clustering framework [@Slonim2000] addresses high-dimensional co-occurrence sparsity through a two-stage abstraction process: (1) features are first aggregated into 'word clusters' Y -> Y_tilde based on conditional distributions p(x|y), yielding distributionally robust intermediate centroids; (2) data points are clustered X -> X_tilde based on distributions over those intermediate clusters. This intermediate symbolic layer projects data onto a denser, less noisy representation.",
+      "content_hash": "b6f0dde8fa7fdf8626813900143ee63102a159ba21c915bc4e0810efcca644d3",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_07885::setup_double_clustering",
+      "label": "setup_double_clustering",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim2000"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Double Clustering principle",
+      "type": "setting"
+    },
+    {
+      "content": "The Agglomerative Information Bottleneck (AIB) algorithm [@Slonim1999] is an offline greedy procedure that, on each step, merges the cluster pair (z_i, z_j) that minimizes information loss quantified by the Jensen-Shannon divergence: delta_I_Y(z_i, z_j) = (p(z_i) + p(z_j)) * D_JS(p(Y|z_i), p(Y|z_j)).",
+      "content_hash": "44a5490f39443ff48dd113077b4306036ef765f284403f30606a2a347f674399",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_07885::setup_aib",
+      "label": "setup_aib",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim1999"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Agglomerative Information Bottleneck (AIB)",
+      "type": "setting"
+    },
+    {
+      "content": "In the agentic setting, memory must be constructed online from a continuous stream X_{1:t} = {x_1, ..., x_t}, and future reasoning tasks Y are unknown at construction time. This precludes direct evaluation of distributions p(Y|z) required by the offline AIB algorithm.",
+      "content_hash": "86d7595fdfd5ee0d55d4e59ac2027c1eca7906c4a9d77db1e1a8957235eaf755",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_07885::setup_streaming",
+      "label": "setup_streaming",
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Online streaming constraint",
+      "type": "setting"
+    },
+    {
+      "content": "MEMFLY formulates agentic memory construction as the minimization of a Memory Information Bottleneck Lagrangian L_IB(M_t) = I(X_{1:t}; M_t) - beta * I(M_t; Y), where the compression term I(X_{1:t}; M_t) measures how much input-stream information is retained in the memory state, and the relevance term I(M_t; Y) measures the mutual information between the memory state and future tasks Y. The hyperparameter beta > 0 controls the compression-relevance trade-off [@Kuffo2026, Eq. 1].",
+      "content_hash": "33a3e40fb8ea342f4df954ce762080a8f89d4e5d452ebe372d313df2fb177347",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2602_07885::claim_memory_ib_lagrangian",
+      "label": "claim_memory_ib_lagrangian",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026",
+              "Slonim1999"
+            ],
+            "referenced_claims": [
+              "claim_ib_aligns_with_memory"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Memory IB Lagrangian objective",
+      "type": "claim"
+    },
+    {
+      "content": "A key difficulty in applying the Information Bottleneck principle to agentic memory is that future tasks Y are not directly observable during memory construction. This invalidates direct computation of distributions p(Y|z) needed by the standard AIB merge criterion (Eq. 3) [@Kuffo2026].",
+      "content_hash": "aea780a77e83bde788d0e8989902f73439c43a86993f6917f406499ea15032ce",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_07885::claim_y_unknown_at_construction",
+      "label": "claim_y_unknown_at_construction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Self-evident in the streaming online setting: at construction time, no future query has been issued, so p(Y|z) is literally unobservable."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Y is unknown at memory construction time",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY approximates the latent relevance variable Y through two proxy signals: (1) local coherence — the semantic consistency within and across memory units, captured by Keyword co-occurrence patterns; (2) global navigability — the accessibility of evidence chains, captured by the Topic hierarchy and associative links. These proxies reflect the observation that reasoning tasks typically require either entity-centric evidence retrieval or thematic evidence aggregation [@Kuffo2026].",
+      "content_hash": "004b40157627ac40dda328560057ccf8f20b28c6a90b45702539ed7f995ed576",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_07885::claim_proxy_signals",
+      "label": "claim_proxy_signals",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ablation_no_keyword",
+              "claim_ablation_no_neighbor",
+              "claim_ablation_no_topic"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Proxy signals for unobservable Y",
+      "type": "claim"
+    },
+    {
+      "content": "Directly optimizing the Memory IB Lagrangian over the entire interaction history is computationally intractable due to the combinatorial explosion of possible memory configurations. Online streaming therefore requires an approximate greedy procedure rather than a global optimum search.",
+      "content_hash": "6c4986bf17d8ca6b0fcc5c7678cab1b36f88001ee50396d628a84e0a660f58ad",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_07885::claim_online_intractable",
+      "label": "claim_online_intractable",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_memory_ib_lagrangian"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Direct IB optimization is intractable",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY adopts a greedy online approximation that, at each time step, minimizes the incremental Lagrangian cost Delta_L = Delta_I_compress - beta * Delta_I_relevance (Eq. 2), making locally optimal decisions over a candidate neighborhood retrieved by sparse-dense indices. This extends the offline AIB merge step to handle streaming inputs [@Slonim1999].",
+      "content_hash": "f36b6feecdef1de008cdabf1e47372ba9089f97d304e427417ae921c9b5e2577",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_07885::claim_greedy_aib_extension",
+      "label": "claim_greedy_aib_extension",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim1999"
+            ],
+            "referenced_claims": [
+              "claim_online_intractable",
+              "claim_y_unknown_at_construction",
+              "setup_aib"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Online greedy AIB extension",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY employs an LLM as a gradient-free policy [@Yang2024] that approximates AIB merge decisions through semantic assessment. Given two memory units n_t and n_i, the LLM outputs a redundancy score s_red(n_t, n_i) in [0, 1] and a complementarity score s_comp(n_t, n_i) in [0, 1]. The hypothesis is s_red(n_t, n_i) approx 1 - D_JS(p(Y|n_t), p(Y|n_i)), so high redundancy indicates low JS-divergence and the units provide similar downstream information [@Kuffo2026, Eq. 4].",
+      "content_hash": "9b280fa61e931380d9e90df3d595320f7904327d51fcea9964148a6eaa7cd412",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_07885::claim_llm_proxies_js",
+      "label": "claim_llm_proxies_js",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026",
+              "Yang2024"
+            ],
+            "referenced_claims": [
+              "claim_llm_implicit_knowledge",
+              "claim_y_unknown_at_construction"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "LLM as JS-divergence approximator",
+      "type": "claim"
+    },
+    {
+      "content": "Pre-trained LLMs implicitly encode task-relevant distributional properties across diverse domains. Their semantic similarity assessments correlate with the JS-divergence between conditional distributions p(Y|z) over plausible downstream tasks Y, even when those distributions are not directly accessible.",
+      "content_hash": "910390f890819f6302b78e41fb3a3fcf9492cb48ac777a722aa5273599f0cda7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_07885::claim_llm_implicit_knowledge",
+      "label": "claim_llm_implicit_knowledge",
+      "metadata": {
+        "prior": 0.78,
+        "prior_justification": "Consistent with extensive literature on LLM-as-judge and LLM-as-optimizer (Yang et al. 2024). The specific link to JS-divergence approximation is an analogical hypothesis, not a theorem."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "LLM pre-training implicitly captures task-relevant distributions",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY instantiates the memory state as a stratified Note-Keyword-Topic hierarchy. Layer 1 (Notes N): atomic memory units n_i = (r_i, c_i, h_i, K_i) preserving raw observational fidelity. Layer 2 (Keywords K): symbolic anchors extracted by the LLM that bridge dense embeddings and discrete reasoning. Layer 3 (Topics T): clusters of co-occurring keywords that partition the memory latent space into navigable regions enabling O(1) macro-semantic localization [@Kuffo2026].",
+      "content_hash": "ef9b1ab75b334e3533f84d52fdb90e7456bf5e2009685c64c8d41326477bb53b",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2602_07885::claim_three_layer_hierarchy",
+      "label": "claim_three_layer_hierarchy",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_compression_fidelity_dilemma",
+              "claim_keywords_resolve_sparsity",
+              "claim_notes_preserve_fidelity",
+              "claim_topics_enable_navigation"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Note-Keyword-Topic three-layer hierarchy",
+      "type": "claim"
+    },
+    {
+      "content": "The Notes layer is designed to preserve raw observational fidelity, approximating the IB condition I(N; X) approx H(X). By explicitly maintaining non-parametric access to original inputs, MEMFLY mitigates hallucination risks inherent in purely parametric or compression-heavy memory systems [@Kuffo2026].",
+      "content_hash": "608226852a665d314a4edc71a77bd12457771cf6257b239785af913c62f95da2",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2602_07885::claim_notes_preserve_fidelity",
+      "label": "claim_notes_preserve_fidelity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct architectural property: Notes store verbatim raw content r_i, so the I(N; X) ≈ H(X) condition holds approximately by construction."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Notes layer preserves raw fidelity",
+      "type": "claim"
+    },
+    {
+      "content": "Keywords resolve semantic sparsity by grounding proximity in shared symbolic substructures rather than potentially spurious vector correlations. They serve the same functional role as 'word clusters' (Y_tilde) in the double clustering framework [@Slonim2000], providing a lower-dimensional, distributionally robust feature space that stabilizes semantic proximity and mitigates vector dilution [@Kuffo2026].",
+      "content_hash": "bd060157a19ca9666cc8bb967e034d7f66ab5e0e65502772a5b45ed6c098259a",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2602_07885::claim_keywords_resolve_sparsity",
+      "label": "claim_keywords_resolve_sparsity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026",
+              "Slonim2000"
+            ],
+            "referenced_claims": [
+              "claim_high_dim_curse",
+              "setup_double_clustering"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Keywords stabilize semantic proximity",
+      "type": "claim"
+    },
+    {
+      "content": "Topics aggregate keywords based on co-occurrence structure, analogous to document clusters (X_tilde) in the double clustering framework. They serve as semantic centroids that partition the memory latent into navigable regions, enabling O(1) macro-semantic localization during retrieval [@Kuffo2026].",
+      "content_hash": "99b635247cd57cc2983bb47a29c37126355947a09427dca964a50e14aad0f206",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2602_07885::claim_topics_enable_navigation",
+      "label": "claim_topics_enable_navigation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_keywords_resolve_sparsity"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Topics enable O(1) macro-semantic navigation",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY's gated structural update executes one of three operations on each incoming note n_t given a candidate ni in the retrieved neighborhood: MERGE(n_i <- n_i ⊕ n_t) when s_red(n_t, n_i) > tau_m, LINK(n_i <-> n_t) when s_comp(n_t, n_i) > tau_l, otherwise APPEND(n_t). Thresholds tau_m and tau_l are hyperparameters [@Kuffo2026, Eq. 6].",
+      "content_hash": "47e4303a8a48ae03c118e75b9db0c436dfe69fd88d9df30ed95b44f0360393d5",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2602_07885::claim_gated_three_ops",
+      "label": "claim_gated_three_ops",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_append_preserves_diversity",
+              "claim_extends_aib",
+              "claim_link_preserves_relevance",
+              "claim_merge_reduces_compression"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Three structural operations: merge, link, append",
+      "type": "claim"
+    },
+    {
+      "content": "The Merge operation directly reduces I(X_{1:t}; M_t) by reducing the cardinality |V_t| of memory nodes. Content r_i is unioned with r_t, context c_i' is synthesized via an LLM-based F_merge function preserving distinct information, and the embedding and keyword set are updated. This is analogous to the AIB merge step that selects pairs with minimal JS-divergence [@Slonim1999].",
+      "content_hash": "8d3ac2e265bee932d2436b65c1d9eea3cba3b8537f450237f62b6c94a35e9669",
+      "declaration_index": 16,
+      "exported": true,
+      "id": "github:2602_07885::claim_merge_reduces_compression",
+      "label": "claim_merge_reduces_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Slonim1999"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct algorithmic property: MERGE reduces |V_t|, which mechanically reduces I(X_{1:t}; M_t) under any reasonable measure. Mathematically clear."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Merge reduces compression term I(X; M)",
+      "type": "claim"
+    },
+    {
+      "content": "The Link operation does not directly reduce I(X_{1:t}; M_t), but it preserves conditional dependencies that support I(M_t; Y). Link is triggered when I(n_t; Y | n_i) > 0 ∧ I(n_t; n_i) > 0 (Eq. 11): n_t provides additional task-relevant information beyond n_i, and the two are logically related. Encoding this in E_RELATED preserves conditional structure necessary for multi-hop reasoning without increasing redundancy [@Kuffo2026, Remark 3.2].",
+      "content_hash": "62394bcc3e58bfdc156af1456c8b51a8ed1a88ae36f2e3fcae27255544e51b92",
+      "declaration_index": 17,
+      "exported": true,
+      "id": "github:2602_07885::claim_link_preserves_relevance",
+      "label": "claim_link_preserves_relevance",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.78,
+        "prior_justification": "The Information-theoretic interpretation (Remark 3.2) is plausible but framed as a hypothesis (the trigger condition I(n_t; Y | n_i) > 0 cannot be directly evaluated; LLM scores are a heuristic). Ablation supports it."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Link preserves conditional dependencies for I(M; Y)",
+      "type": "claim"
+    },
+    {
+      "content": "The Append operation, triggered when neither merge nor link thresholds are met, introduces n_t as an autonomous unit. This preserves distributional diversity for novel content that has neither sufficient redundancy to merge nor sufficient complementarity to link.",
+      "content_hash": "030028b5800c54aa52a2c7e83ac67974037f70dddb108a724b37852a07b5a669",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2602_07885::claim_append_preserves_diversity",
+      "label": "claim_append_preserves_diversity",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Direct architectural property: APPEND introduces a new node, preserving novel content. Diversity preservation is operationally clear."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Append preserves novel content diversity",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY extends the original AIB algorithm — which supports only merge operations on fixed co-occurrence matrices — with Link and Append operations to handle streaming settings where information arrives incrementally and may exhibit complementary or novel content. This adaptation maintains the greedy optimization spirit while accommodating agentic memory requirements [@Kuffo2026, Remark 3.3].",
+      "content_hash": "05e5aaa1fd3a1f14e9479436e4b3ab98bef72f841b6d1a43c37fae81655cc0ac",
+      "declaration_index": 19,
+      "exported": true,
+      "id": "github:2602_07885::claim_extends_aib",
+      "label": "claim_extends_aib",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Factual statement about the algorithmic extension: original AIB is merge-only, MEMFLY adds Link and Append. Trivially true at the algorithmic level."
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "MEMFLY extends classical AIB beyond merges",
+      "type": "claim"
+    },
+    {
+      "content": "Semantic ingestion projects raw input x_t into a structured Note n_t = F_ingest(x_t) = (r_t, c_t, h_t, K_t) where r_t preserves raw content, c_t is a denoised context summary, h_t = Embed(c_t), and K_t is the LLM-extracted keyword set. This transformation enhances signal-to-noise ratio, improving I(n_t; Y) relative to I(x_t; Y) [@Kuffo2026, Eq. 5].",
+      "content_hash": "2aa22c5d92b313c0a3afaefed01e852b3da671926dc706a9303a2717e1c4c2a8",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2602_07885::claim_ingestion_denoises",
+      "label": "claim_ingestion_denoises",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ablation_full",
+              "claim_ablation_no_denoise"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Ingestion denoises and structures input",
+      "type": "claim"
+    },
+    {
+      "content": "Topic evolution is formalized as constrained graph partitioning over the Keyword co-occurrence graph G_kw: maximize the modularity Q(T, G_kw) subject to cardinality bounds delta_min <= |C_i| <= delta_max. MEMFLY uses the Leiden algorithm [@Traag2019] for efficiency. While modularity differs from direct IB clustering, empirical studies establish strong correlation between modularity-based and information-theoretic community structures [@Fortunato2010].",
+      "content_hash": "e7a0fe431addcd6fdbf50643b2ba2de386721785cbfa455b5a446c8bfd1db1c9",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2602_07885::claim_topic_evolution_modularity",
+      "label": "claim_topic_evolution_modularity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Fortunato2010",
+              "Traag2019"
+            ],
+            "referenced_claims": [
+              "claim_topics_enable_navigation"
+            ]
+          }
+        }
+      },
+      "module": "s3_framework",
+      "parameters": [],
+      "title": "Topic evolution via Leiden modularity optimization",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY's retrieval pipeline begins with an LLM-based semantic parser F_theta that disentangles a raw query q into two complementary signals: a topical embedding h_topic and a set of entity embeddings H_keys = {h_k1, ..., h_km} representing core entities in the query (Eq. 13).",
+      "content_hash": "4ff168cf47f0dc6f43a50d1d0119395bce2df05c8da5b76e7c5bca3a6fcc8d66",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_07885::setup_query_parsing",
+      "label": "setup_query_parsing",
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Query parsing for retrieval",
+      "type": "setting"
+    },
+    {
+      "content": "Reciprocal Rank Fusion (RRF) [@Cormack2009] aggregates the reciprocal ranks of candidates across multiple retrieval pathways, prioritizing evidence that consistently appears at the top of multiple lists without requiring score normalization.",
+      "content_hash": "14592da1d115d475748f29fa6d94a9d0fb85d045450330d3d4dbe22a3f13dc5b",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_07885::setup_rrf",
+      "label": "setup_rrf",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Cormack2009"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Reciprocal Rank Fusion",
+      "type": "setting"
+    },
+    {
+      "content": "Pathway 1 (Macro-Semantic Localization) identifies the top-K_topic relevant Topic centroids T* = TopK(cos(h_topic, mu_C) | C in T) and retrieves notes via hierarchy traversal: R_topic = {n in N | exists k in K_n, exists C in T*, k in C}. This addresses the navigation challenge in large-scale memory [@Kuffo2026, Eq. 14-15].",
+      "content_hash": "795b0b7b9b315e8db0f9f1f3801aa5dc8f3ab839a3694c9df4b01645c524ff93",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2602_07885::claim_macro_semantic_path",
+      "label": "claim_macro_semantic_path",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_topics_enable_navigation"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Macro-semantic pathway via Topics",
+      "type": "claim"
+    },
+    {
+      "content": "Pathway 2 (Micro-Symbolic Anchoring) matches query entities against the keyword index: K* = ⋃ TopK(cos(h_k, e_k')) and retrieves R_key = {n in N | K_n ∩ K* ≠ ∅}. This addresses the precision challenge for entity-centric queries [@Kuffo2026, Eq. 16-17].",
+      "content_hash": "98a65e04eb591e2c835aa133e264331b48e88e1a782cce49c6d8a584bcc77332",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2602_07885::claim_micro_symbolic_path",
+      "label": "claim_micro_symbolic_path",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_keywords_resolve_sparsity"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Micro-symbolic pathway via Keywords",
+      "type": "claim"
+    },
+    {
+      "content": "Pathway 3 (Topological Expansion) starts from the anchor set E_anc = R_topic ∪ R_key and expands along E_RELATED edges established during consolidation: E_expand = {m in N | exists n in E_anc, (n, m) in E_RELATED}. This addresses connectivity for multi-hop reasoning by retrieving evidence that is logically related but vectorially distant [@Kuffo2026, Eq. 18-19].",
+      "content_hash": "40957284fc747f507b17494bc6c5fa4c359a9c742632fad1e44efb49c5b944fd",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2602_07885::claim_topological_path",
+      "label": "claim_topological_path",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_link_preserves_relevance"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Topological pathway via E_RELATED edges",
+      "type": "claim"
+    },
+    {
+      "content": "The final evidence pool is constructed by Reciprocal Rank Fusion (RRF) over the three pathways together with the topological expansion: E_pool = TopK_final(score_RRF ∪ E_expand). This prioritizes evidence appearing at the top of multiple ranked lists without requiring score normalization [@Cormack2009].",
+      "content_hash": "7bd42df9da230e2fbaaee3dec12e896621a74117d5f3a35707dea2f0552e02d3",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_07885::claim_evidence_fusion_rrf",
+      "label": "claim_evidence_fusion_rrf",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Cormack2009"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "RRF-based evidence fusion",
+      "type": "claim"
+    },
+    {
+      "content": "Tri-pathway retrieval decomposes queries into complementary semantic signals (topical and entity-level), then executes parallel traversals over the memory graph. Unlike conventional flat vector search, this approach matches different query intents (thematic vs. entity-centric vs. multi-hop) to specialized structural pathways, exploiting the optimized memory structure [@Kuffo2026].",
+      "content_hash": "8ba91f2ddf2e5208b3eb9f1b26032f686c7293171204656327833ccbbe6bea86",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2602_07885::claim_tripath_addresses_query_diversity",
+      "label": "claim_tripath_addresses_query_diversity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_macro_semantic_path",
+              "claim_micro_symbolic_path",
+              "claim_three_layer_hierarchy",
+              "claim_topological_path"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Tri-pathway retrieval matches diverse query intents",
+      "type": "claim"
+    },
+    {
+      "content": "The Iterative Evidence Refinement (IER) protocol progressively expands the evidence pool for complex queries. At each iteration i, a sufficiency predicate Suf(E_i, q) (computed by an LLM that assesses information completeness, Eq. 21) decides whether the pool addresses the query. If gaps remain, a refined sub-query q_{i+1} is synthesized to target missing aspects and retrieval is re-executed; the pool is updated as E_{i+1} = E_i ∪ {n in R(q_{i+1}) | n ∉ E_i}. This continues until sufficiency or I_max iterations [@Kuffo2026, Eq. 21-22].",
+      "content_hash": "055f814665c9d079b5ecbf530bdbeeea9499ddc09f4d7ae9fee9a0479e1d858d",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_07885::claim_ier_protocol",
+      "label": "claim_ier_protocol",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "The IER protocol is described algorithmically with a clear sufficiency predicate and refinement loop. The architectural description is unambiguous; high confidence in the protocol statement."
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "Iterative Evidence Refinement (IER) protocol",
+      "type": "claim"
+    },
+    {
+      "content": "IER handles complex multi-hop queries by progressively expanding the evidence pool to cover information that is not directly accessible from the initial query. The sub-query refinement step explicitly targets missing aspects identified by the LLM-based sufficiency check, supporting reasoning that spans multiple distinct evidence chunks [@Kuffo2026].",
+      "content_hash": "94c4428d7209305bfb80c64bd71da8608b6008aa40acc4c63f79b052f3117f68",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_07885::claim_ier_handles_multihop",
+      "label": "claim_ier_handles_multihop",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ier_protocol"
+            ]
+          }
+        }
+      },
+      "module": "s3_retrieval",
+      "parameters": [],
+      "title": "IER addresses complex multi-hop queries",
+      "type": "claim"
+    },
+    {
+      "content": "LoCoMo benchmark [@Maharana2024] is a long-horizon conversation dataset designed to assess the long-term information synthesis capabilities of LLM agents. It contains conversations with interleaved topics and evolving entity states, and covers five reasoning categories: Multi-Hop, Temporal, Open Domain, Single Hop, and Adversarial.",
+      "content_hash": "b98204e798c5b4ca4b01c007e8993d7cae955fc3b5868187946f27e5bcc130f2",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_07885::setup_locomo",
+      "label": "setup_locomo",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Maharana2024"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "LoCoMo benchmark",
+      "type": "setting"
+    },
+    {
+      "content": "Evaluation uses two primary metrics following [@Xu2025]: F1 (token-level overlap and precision of answer spans) and BLEU-1 [@Papineni2002] (lexical fidelity of generated responses against ground truth). Ablation additionally reports Recall (proportion of ground-truth evidence retrieved) and Hit Rate (whether any relevant evidence appears in candidates).",
+      "content_hash": "779f633df07577d1f83bbf6c14151b201de08d800845d3cf906655f576fc87b9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_07885::setup_metrics",
+      "label": "setup_metrics",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Papineni2002",
+              "Xu2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Evaluation metrics",
+      "type": "setting"
+    },
+    {
+      "content": "MEMFLY is implemented using a triple-layer graph architecture backed by Neo4j, integrating both vector indices and explicit topological relationships. Retrieval hyperparameters: K_topic = 3, K_key = 10, K_final = 20, 1-hop expansion along E_RELATED, I_max = 3 IER iterations. Construction hyperparameters: merge threshold tau_m = 0.7 and link threshold tau_l = 0.5 (set via validation). Backbones: GPT-4o-mini, GPT-4o, Qwen3-8B, Qwen3-14B with temperature 0.7 (general) / 0.5 (adversarial). Baselines: LOCOMO, READAGENT, MEMORYBANK, MEMGPT, A-MEM, MEM-0 with their official defaults.",
+      "content_hash": "18e78129b3f20e29add156fb7252244951bcfa9c22b2b4490ab22512514ca8b6",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_07885::setup_implementation",
+      "label": "setup_implementation",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MEMFLY implementation and hyperparameters",
+      "type": "setting"
+    },
+    {
+      "content": "On LoCoMo with GPT-4o-mini, MEMFLY achieves the highest average F1 = 43.76% and BLEU-1 = 37.27%, outperforming the strongest baseline (A-MEM at 41.97% F1) by 1.79 F1 points. Per category MEMFLY achieves: Multi-Hop F1 = 32.11, Temporal F1 = 46.61, Open Domain F1 = 23.98, Single Hop F1 = 44.74, Adversarial F1 = 51.48 [@Kuffo2026, Table 1].",
+      "content_hash": "7e966f71714d22325efb3150bf20343e84d97ac524635d97ce791578c86b1cdd",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2602_07885::claim_avg_gpt4omini",
+      "label": "claim_avg_gpt4omini",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement reported in Table 1; high confidence from a controlled benchmark with standard metrics.",
+        "source_table": "artifacts/2602.07885.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GPT-4o-mini results on LoCoMo",
+      "type": "claim"
+    },
+    {
+      "content": "On LoCoMo with GPT-4o, MEMFLY achieves average F1 = 44.39% and BLEU = 38.70%, topping all six baselines. The best baseline (LOCOMO) reaches F1 = 44.12; MEMFLY exceeds it by 0.27 F1 points. MEMFLY tops Multi-Hop (35.89), Open Domain (25.74), and ties or leads in Temporal (39.78), with strong Single Hop (49.08) and Adversarial (48.24) results [@Kuffo2026, Table 1].",
+      "content_hash": "844f779ee5ebdba3cf8d784c3032ca3369f0bbf21edc780869f8e3486fcf009e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2602_07885::claim_avg_gpt4o",
+      "label": "claim_avg_gpt4o",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement reported in Table 1; high confidence.",
+        "source_table": "artifacts/2602.07885.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GPT-4o results on LoCoMo",
+      "type": "claim"
+    },
+    {
+      "content": "On LoCoMo with Qwen3-8B, MEMFLY achieves average F1 = 38.62% and BLEU = 34.51%, surpassing the second-best A-MEM (32.76% F1) by 5.86 F1 points. Per category: Multi-Hop 28.24, Temporal 38.39, Open Domain 15.43, Single Hop 42.09, Adversarial 43.79 [@Kuffo2026, Table 2].",
+      "content_hash": "383a0fd0b000d001e1e8ada630f9e12411ef7435f8517c1f76326f580d15cedf",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2602_07885::claim_avg_qwen8b",
+      "label": "claim_avg_qwen8b",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement reported in Table 2; high confidence.",
+        "source_table": "artifacts/2602.07885.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Qwen3-8B results on LoCoMo",
+      "type": "claim"
+    },
+    {
+      "content": "On LoCoMo with Qwen3-14B, MEMFLY achieves average F1 = 33.65% and BLEU = 28.45%, the highest across all six baselines. Per category: Multi-Hop 30.80, Temporal 29.25, Open Domain 14.11, Single Hop 42.25, Adversarial 26.59 [@Kuffo2026, Table 2].",
+      "content_hash": "043d8ff5862875860b32eac73aca8e7f129c34992fa2cda6c4eeabaf00f2ab07",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2602_07885::claim_avg_qwen14b",
+      "label": "claim_avg_qwen14b",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct experimental measurement reported in Table 2; slightly lower confidence because Qwen3-14B's MEMFLY win margin is smaller and category-specific (e.g., Single Hop dominates Adversarial loss).",
+        "source_table": "artifacts/2602.07885.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Qwen3-14B results on LoCoMo",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY's improvement margin over the strongest baseline is larger for open-source models (Qwen3-8B: +5.86 F1 over A-MEM) than for closed-source models (GPT-4o-mini: +1.79; GPT-4o: +0.27). This pattern suggests that structured memory organization compensates more strongly for weaker in-context reasoning capabilities in smaller / open-source models [@Kuffo2026].",
+      "content_hash": "6a5ea461f3114e7c95c2ec746bbd97bb0cca6c6b57aecfc0ee525b2a9e5c3f51",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_07885::claim_open_source_advantage_larger",
+      "label": "claim_open_source_advantage_larger",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_avg_gpt4omini",
+              "claim_avg_qwen8b"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Open-source models benefit more from structured memory",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY achieves the highest average F1 across all four foundation models evaluated (GPT-4o-mini, GPT-4o, Qwen3-8B, Qwen3-14B), demonstrating that the improvements generalize across heterogeneous architectures [@Kuffo2026].",
+      "content_hash": "58639d48f3b7c40f7026dda8e8190bc5277e568a89bbed391492e92d22a01fc9",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_07885::claim_consistent_across_backbones",
+      "label": "claim_consistent_across_backbones",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Consistent improvements across backbones",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY achieves the largest gain on Open Domain queries on GPT-4o (25.74% F1 vs. MEM-0 at 17.73%), an improvement attributable to Topic-based macro-semantic navigation localizing relevant memory regions before fine-grained retrieval [@Kuffo2026].",
+      "content_hash": "e03e6f718aff5ab795d66bba3cd9109155820d9b54dc200176875ceb53953a78",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_07885::claim_open_domain_gain",
+      "label": "claim_open_domain_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_avg_gpt4o",
+              "claim_macro_semantic_path"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Open Domain F1 gain attributed to Topic navigation",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY achieves the top Single Hop F1 on both Qwen models (Qwen3-8B: 42.09; Qwen3-14B: 42.25), indicating effective Keyword-based anchoring for queries that require precise entity matching [@Kuffo2026].",
+      "content_hash": "2c72a555661370142b36d732c54c66bb071fba1234c9521e41dd13b4b78132a7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_07885::claim_single_hop_qwen",
+      "label": "claim_single_hop_qwen",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_avg_qwen14b",
+              "claim_avg_qwen8b",
+              "claim_micro_symbolic_path"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Single Hop F1 attributed to Keyword anchoring",
+      "type": "claim"
+    },
+    {
+      "content": "Full MEMFLY (Qwen3-8B) achieves F1 = 38.62, BLEU = 36.85, Recall = 62.22, Hit Rate = 67.12 on LoCoMo, serving as the ablation reference point [@Kuffo2026, Table 3].",
+      "content_hash": "47e4377e36f25c42337a29a1698831f94a7debc4b092dfb4ddedb6d11f328c03",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_full",
+      "label": "claim_ablation_full",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct experimental measurement of the full MEMFLY system on Qwen3-8B; this is the reference row in Table 3.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MEMFLY full ablation reference",
+      "type": "claim"
+    },
+    {
+      "content": "Removing the entire gated structural update (w/o Update) causes the most severe degradation: F1 drops from 38.62% to 27.97%, Recall from 62.22% to 42.11%. Adversarial and Temporal categories show the most pronounced decline. This confirms that without active consolidation, noise accumulates and temporal dependencies are disrupted [@Kuffo2026, Figure 2(a)].",
+      "content_hash": "8057c1e1f6216a80d4123d9a648e643406296ba0eaf735e9c09986eb73869a3e",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_update",
+      "label": "claim_ablation_no_update",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct experimental ablation; large effect size (10.65 F1 drop) makes the measurement robust against noise.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Update — most severe degradation",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling the Link operation (w/o Link) drops F1 to 33.57%, larger impact than w/o Merge (34.79%). Figure 2(a) shows Link removal particularly affects Adversarial performance, indicating that associative edges are critical for filtering distractors [@Kuffo2026, Table 3, Figure 2(a)].",
+      "content_hash": "c3e1aed81e1d013d847f72b18f3157ce87f0e7da3045a66e32d9c6859dd68cc5",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_link",
+      "label": "claim_ablation_no_link",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation; consistent with the design rationale that Link preserves multi-hop conditional structure.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Link — Adversarial impact",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling the Merge operation (w/o Merge) drops F1 to 34.79%, demonstrating the importance of redundancy consolidation but with smaller magnitude than removing Link (33.57%) [@Kuffo2026, Table 3].",
+      "content_hash": "ba409b2c8c1e68ab9185532d1e463f9da94c45c901b536a601a67e4d8f6518f7",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_merge",
+      "label": "claim_ablation_no_merge",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation; smaller effect than w/o Link but clearly above noise floor.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Merge",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling semantic denoising (w/o Denoise) yields F1 = 36.07%, the second-best construction-phase ablation. Performance remains relatively stable across all categories, suggesting that denoising provides consistent but auxiliary improvements [@Kuffo2026, Table 3].",
+      "content_hash": "881dc61d262be859a6ece7147d1ba6de0dcd61f98d7b1c4af3ac6300a2f50a3c",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_denoise",
+      "label": "claim_ablation_no_denoise",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Direct experimental ablation; the smallest construction-phase effect, consistent with denoising being auxiliary.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Denoise — auxiliary contribution",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling Topic-based macro retrieval (w/o Topic) yields F1 = 36.79% — the second-best retrieval ablation — with relatively uniform degradation across categories. This indicates Topics provide general retrieval guidance rather than category-specific support [@Kuffo2026, Figure 2(b)].",
+      "content_hash": "85426bcbeb5eeef3d957dbafabe6e32cf474773449d82c8dc90e1537d9ede9c9",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_topic",
+      "label": "claim_ablation_no_topic",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation reporting F1 = 36.79; second-best retrieval ablation.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Topic — uniform but mild degradation",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling Keyword-based micro retrieval (w/o Keyword) yields F1 = 32.69%, the largest retrieval-phase drop. Single-Hop queries show the most pronounced decline, validating that symbolic anchoring is essential for precise entity matching [@Kuffo2026, Figure 2(b)].",
+      "content_hash": "e968babcdf3e92f2ac430580f7745d64cfd2fb3ba2a2f9d799779d36b7cec6ba",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_keyword",
+      "label": "claim_ablation_no_keyword",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation reporting F1 = 32.69; the largest retrieval-phase drop.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Keyword — Single-Hop impact",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling topological E_RELATED expansion (w/o Neighbor) yields F1 = 34.26%, primarily impacting Adversarial. This confirms that topological expansion via associative edges helps distinguish relevant evidence from distractors [@Kuffo2026, Figure 2(b)].",
+      "content_hash": "3d0fb82dac2d8a25843620e40629deafadfe4f9640bcb04893a6f689ae79295f",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_neighbor",
+      "label": "claim_ablation_no_neighbor",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation reporting F1 = 34.26; primarily affects Adversarial.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o Neighbor — Adversarial impact",
+      "type": "claim"
+    },
+    {
+      "content": "Disabling Iterative Evidence Refinement (w/o IER) yields F1 = 32.94%, with the largest degradation on Adversarial and Open Domain categories. This demonstrates IER is critical for queries requiring progressive evidence accumulation [@Kuffo2026, Figure 2(b)].",
+      "content_hash": "5ad1db1e02d258feab4ef397035181917520a919e874a2782210adbd863eab73",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2602_07885::claim_ablation_no_ier",
+      "label": "claim_ablation_no_ier",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Direct experimental ablation reporting F1 = 32.94; affects Adversarial and Open Domain most strongly.",
+        "source_table": "artifacts/2602.07885.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Ablation: w/o IER — multi-hop impact",
+      "type": "claim"
+    },
+    {
+      "content": "The gated structural update is the single most critical component of MEMFLY: removing it (w/o Update) causes a 10.65 F1-point drop, larger than any single operation removal. This validates the IB-grounded consolidation as the core mechanism rather than any auxiliary refinement.",
+      "content_hash": "88bdc4fd4195ac654d03b8bb9c7b81723967bbbc9b94e75cb136d8742a713f4c",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2602_07885::claim_update_critical",
+      "label": "claim_update_critical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_ablation_full",
+              "claim_ablation_no_update"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Gated update is the most critical component",
+      "type": "claim"
+    },
+    {
+      "content": "Among individual structural operations, removing Link causes a larger F1 drop (38.62 -> 33.57, -5.05) than removing Merge (38.62 -> 34.79, -3.83). This indicates that preserving conditional dependencies via E_RELATED edges is more valuable for downstream task accuracy than reducing redundancy via merges.",
+      "content_hash": "23d2f7c52e8bc7f2ebc5a7ed038e7b6c583fe225e95184ff7a59a8324a12f985",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2602_07885::claim_link_more_important_than_merge",
+      "label": "claim_link_more_important_than_merge",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_ablation_full",
+              "claim_ablation_no_link",
+              "claim_ablation_no_merge"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Link contributes more than Merge to downstream F1",
+      "type": "claim"
+    },
+    {
+      "content": "Keyword-based micro-symbolic anchoring is critical for Single-Hop queries: removing it produces the largest retrieval-phase drop (F1 = 32.69, the lowest of all retrieval ablations) with the impact concentrated on Single-Hop categories where precise entity matching is required [@Kuffo2026, Figure 2(b)].",
+      "content_hash": "a79ad7acc1cbbdcb3ed212d198c92958a2c8da99db4a5541e23bde999c363de0",
+      "declaration_index": 22,
+      "exported": true,
+      "id": "github:2602_07885::claim_keyword_critical_for_singlehop",
+      "label": "claim_keyword_critical_for_singlehop",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ablation_no_keyword"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Keyword anchoring critical for Single-Hop",
+      "type": "claim"
+    },
+    {
+      "content": "IER is critical for queries requiring progressive evidence accumulation: disabling it yields the second-largest retrieval-phase drop (F1 = 32.94) with Adversarial and Open Domain showing the largest declines.",
+      "content_hash": "c34fb26cf8d20e0621c94770cc779378adf6a4c93bc97e70e590ec242fd535bc",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2602_07885::claim_ier_critical_for_multihop",
+      "label": "claim_ier_critical_for_multihop",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_ablation_no_ier",
+              "claim_ier_handles_multihop"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "IER critical for progressive multi-hop reasoning",
+      "type": "claim"
+    },
+    {
+      "content": "MEMFLY substantially outperforms state-of-the-art baselines in memory coherence, response fidelity, and answer accuracy on LoCoMo across both closed-source (GPT-4o-mini/4o) and open-source (Qwen3-8B/14B) backbones, consistent with the IB-grounded design rationale [@Kuffo2026].",
+      "content_hash": "66e4341f5449b1b5e7299b2b30cd4b0f169c93ee8c3fd675519c29719c02f72f",
+      "declaration_index": 24,
+      "exported": true,
+      "id": "github:2602_07885::claim_memfly_outperforms",
+      "label": "claim_memfly_outperforms",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_consistent_across_backbones"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "MEMFLY outperforms state-of-the-art baselines",
+      "type": "claim"
+    },
+    {
+      "content": "Empirical results validate that grounding agentic memory in the Information Bottleneck principle — combined with a Note-Keyword-Topic hierarchy and tri-pathway retrieval — resolves the compression-fidelity dilemma in practice. The consistent improvements across heterogeneous backbones indicate the approach is not specific to a single backbone family.",
+      "content_hash": "80fab274c64f5ab4093204f2aa71045c226311ea47f9b7e1ab65344a1fd67c88",
+      "declaration_index": 25,
+      "exported": true,
+      "id": "github:2602_07885::claim_ib_design_validated",
+      "label": "claim_ib_design_validated",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_memfly_outperforms",
+              "claim_proxy_signals_validated",
+              "claim_three_layer_hierarchy",
+              "claim_update_critical"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "IB-grounded design validated empirically",
+      "type": "claim"
+    },
+    {
+      "content": "Ablation results empirically validate that optimizing structural surrogates for the unobservable relevance variable Y (Keyword co-occurrence and Topic hierarchy) significantly improves downstream response fidelity and accuracy. Removing any structural component causes meaningful F1 drops, supporting the claim that these surrogates carry task-relevant information [@Kuffo2026, Sec. 4.3].",
+      "content_hash": "8275158f0a839230ae41cbbad4ff5afd2e41169c1387aa36886b635e9286a07d",
+      "declaration_index": 26,
+      "exported": true,
+      "id": "github:2602_07885::claim_proxy_signals_validated",
+      "label": "claim_proxy_signals_validated",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kuffo2026"
+            ],
+            "referenced_claims": [
+              "claim_ablation_no_ier",
+              "claim_ablation_no_keyword",
+              "claim_ablation_no_neighbor",
+              "claim_ablation_no_topic"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Structural proxy signals validated by ablation",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative hypothesis: existing memory frameworks (LOCOMO, READAGENT, MEMORYBANK, MEMGPT, A-MEM, MEM-0) already achieve near-optimal long-term memory performance on LoCoMo, leaving little room for improvement.",
+      "content_hash": "a203004c113bd8630c00254b91efc91ba9c8bd8d7068aa1f09a16c2ccbbfc3bc",
+      "declaration_index": 30,
+      "exported": false,
+      "id": "github:2602_07885::claim_baselines_optimal_alt",
+      "label": "claim_baselines_optimal_alt",
+      "metadata": {
+        "prior": 0.15,
+        "prior_justification": "Implausible given the diversity of baselines and the consistent margin across four backbones. Low prior reflects the strong empirical evidence against this view."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative: existing baselines are already near-optimal",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 31,
+      "exported": false,
+      "id": "github:2602_07885::contradiction_alt",
+      "label": "contradiction_alt",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.8
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_retrieval_centric_redundancy,github:2602_07885::claim_memory_augmented_fidelity_loss)",
+      "content_hash": "5dffcae43b49780baaae2591a475c7481bdd86d4398fe78366f2eec7d5d67ed0",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_2fb15cd2",
+      "label": "__conjunction_result_2fb15cd2",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_retrieval_centric_redundancy,github:2602_07885::claim_memory_augmented_fidelity_loss)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f32d11f927a980ae",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_2fb15cd2,github:2602_07885::claim_compression_fidelity_dilemma)",
+      "content_hash": "86c6231e5c123063ec37a16d625f4d8a9c7540465c930e59665a0c9d8089ac8e",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_257eef76",
+      "label": "__implication_result_257eef76",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_2fb15cd2,github:2602_07885::claim_compression_fidelity_dilemma)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f32d11f927a980ae",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_ib_aligns_with_memory,github:2602_07885::claim_memory_ib_lagrangian)",
+      "content_hash": "7020ea80822881a5be55b026d0526d399ae16a05923fd2502203a3fddcf9c150",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_bbd5ace2",
+      "label": "__implication_result_bbd5ace2",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_ib_aligns_with_memory,github:2602_07885::claim_memory_ib_lagrangian)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_46e2f44fc5d12006",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_memory_ib_lagrangian,github:2602_07885::claim_online_intractable)",
+      "content_hash": "55a6107b62e62fb33a2e221dbfaa4981586d0ed59c751e9840f24709ea1ff31b",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_a897de1b",
+      "label": "__implication_result_a897de1b",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_memory_ib_lagrangian,github:2602_07885::claim_online_intractable)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_738ebadc4f30b69a",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_online_intractable,github:2602_07885::claim_y_unknown_at_construction)",
+      "content_hash": "8539c9c8495a26695dbfc2db796ead744a4e3b187e58ea201edfa14ee9b4114b",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_70f0034e",
+      "label": "__conjunction_result_70f0034e",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_online_intractable,github:2602_07885::claim_y_unknown_at_construction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_48f86a2e720a2d4e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_70f0034e,github:2602_07885::claim_greedy_aib_extension)",
+      "content_hash": "5fda2ca0c073d25d6d5f75c254d99b57d654956b70449d1a4bb3a25d3b24bfb7",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_8b82ecb9",
+      "label": "__implication_result_8b82ecb9",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_70f0034e,github:2602_07885::claim_greedy_aib_extension)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_48f86a2e720a2d4e",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_llm_implicit_knowledge,github:2602_07885::claim_y_unknown_at_construction)",
+      "content_hash": "919211472b872b0814f1ed40fa7a2d47d788c486d832492d46b871fdbd8b113c",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_fe2390e5",
+      "label": "__conjunction_result_fe2390e5",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_llm_implicit_knowledge,github:2602_07885::claim_y_unknown_at_construction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_23281bd1e50e8506",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_fe2390e5,github:2602_07885::claim_llm_proxies_js)",
+      "content_hash": "88eb088fb621ec25387231fd3194019776acfd7da6851d03c0877292c87d02a9",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_06d3f608",
+      "label": "__implication_result_06d3f608",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_fe2390e5,github:2602_07885::claim_llm_proxies_js)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_23281bd1e50e8506",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_high_dim_curse,github:2602_07885::claim_keywords_resolve_sparsity)",
+      "content_hash": "9f4f777fa5f9e697c2de9b34ab4edec181bf844374d0e1839362e9891531e1d8",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_8a9b5838",
+      "label": "__implication_result_8a9b5838",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_high_dim_curse,github:2602_07885::claim_keywords_resolve_sparsity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_948ff73dc7f74f0b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_topics_enable_navigation)",
+      "content_hash": "238b646193f2de4d67f89ce9acbb20ade9572c5aa0a7083203510fc42d97e82d",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_8f77e60c",
+      "label": "__implication_result_8f77e60c",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_topics_enable_navigation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c718ffe525abf4a7",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_notes_preserve_fidelity,github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_topics_enable_navigation)",
+      "content_hash": "0dd0123b816677f0f8320ca2234b404427e22975c89d3ee9f6c5c6b162cf84ea",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_c40da114",
+      "label": "__conjunction_result_c40da114",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_notes_preserve_fidelity,github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_topics_enable_navigation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fb319e7baee3f656",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_c40da114,github:2602_07885::claim_three_layer_hierarchy)",
+      "content_hash": "945e4facbee85de6ed9c3c048e2d745d94bef7eb0cf9ead4693e1cb32b5b06f8",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_7942f8e3",
+      "label": "__implication_result_7942f8e3",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_c40da114,github:2602_07885::claim_three_layer_hierarchy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fb319e7baee3f656",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_extends_aib,github:2602_07885::claim_merge_reduces_compression,github:2602_07885::claim_link_preserves_relevance,github:2602_07885::claim_append_preserves_diversity)",
+      "content_hash": "eda43764886a219e34b425398c87a26f7a90704e9da8e05e2caa43a7e852aa05",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_e9f2b7b7",
+      "label": "__conjunction_result_e9f2b7b7",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_extends_aib,github:2602_07885::claim_merge_reduces_compression,github:2602_07885::claim_link_preserves_relevance,github:2602_07885::claim_append_preserves_diversity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c808a68d2fd37d28",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_e9f2b7b7,github:2602_07885::claim_gated_three_ops)",
+      "content_hash": "b848e2cbc1c7e0634a83ecd31f611f35619b2d3084d885424b48413a32c74e9d",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_5573aa8d",
+      "label": "__implication_result_5573aa8d",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_e9f2b7b7,github:2602_07885::claim_gated_three_ops)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c808a68d2fd37d28",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_topics_enable_navigation,github:2602_07885::claim_topic_evolution_modularity)",
+      "content_hash": "59c5497d419062c1f235a877c6efc79c007b02def52e068790d43ca7fdaf5756",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_cb32ba27",
+      "label": "__implication_result_cb32ba27",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_topics_enable_navigation,github:2602_07885::claim_topic_evolution_modularity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_53d2672689a0bad9",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_topics_enable_navigation,github:2602_07885::claim_macro_semantic_path)",
+      "content_hash": "baa54fccdcb856b904e05c7c6f2b14216730471dc69b70bd8feb0d4e2824dcb7",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_73161030",
+      "label": "__implication_result_73161030",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_topics_enable_navigation,github:2602_07885::claim_macro_semantic_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_647e079d3d36b635",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_micro_symbolic_path)",
+      "content_hash": "7418345b7fc30093739315fa9339aa7ea19296419019a3a3cefcd1775389ade1",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_f92306de",
+      "label": "__implication_result_f92306de",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_keywords_resolve_sparsity,github:2602_07885::claim_micro_symbolic_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cea66247f965568a",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_link_preserves_relevance,github:2602_07885::claim_topological_path)",
+      "content_hash": "a461707dab12561abc864f0a5fdeb2bd3d14d41942272edec42e58c5025f8881",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_1803a5cb",
+      "label": "__implication_result_1803a5cb",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_link_preserves_relevance,github:2602_07885::claim_topological_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f006eb3ce9548423",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_macro_semantic_path,github:2602_07885::claim_micro_symbolic_path,github:2602_07885::claim_topological_path,github:2602_07885::claim_three_layer_hierarchy)",
+      "content_hash": "7b7da379ce42bcd84cc50772f67d30d124daef3eadbee58d6c5a1b858b62a2d8",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_f74f67f5",
+      "label": "__conjunction_result_f74f67f5",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_macro_semantic_path,github:2602_07885::claim_micro_symbolic_path,github:2602_07885::claim_topological_path,github:2602_07885::claim_three_layer_hierarchy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6052bada69350e84",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_f74f67f5,github:2602_07885::claim_tripath_addresses_query_diversity)",
+      "content_hash": "db8bb012013a138cd5b33d7b27ffbdeae6de8a005cb74bf23761c4709aece7d3",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_5ef7ca37",
+      "label": "__implication_result_5ef7ca37",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_f74f67f5,github:2602_07885::claim_tripath_addresses_query_diversity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6052bada69350e84",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_macro_semantic_path,github:2602_07885::claim_micro_symbolic_path,github:2602_07885::claim_topological_path)",
+      "content_hash": "e4952212913361d04654aed4becbcba024fac1d8f9e0f801dc4c82e35d8adfe4",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_aa942686",
+      "label": "__conjunction_result_aa942686",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_macro_semantic_path,github:2602_07885::claim_micro_symbolic_path,github:2602_07885::claim_topological_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_20ca5c5e611454bd",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_aa942686,github:2602_07885::claim_evidence_fusion_rrf)",
+      "content_hash": "df179421e94c7dbc80d33cffc8a0781050b27f2794049d704ecc18003f4a8bd8",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_96d2369a",
+      "label": "__implication_result_96d2369a",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_aa942686,github:2602_07885::claim_evidence_fusion_rrf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_20ca5c5e611454bd",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_ier_protocol,github:2602_07885::claim_ier_handles_multihop)",
+      "content_hash": "4c0f6a7aa99edcfacae941eb70847506482d4c19a0b917db0031444ff5747120",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_e278c7b8",
+      "label": "__implication_result_e278c7b8",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_ier_protocol,github:2602_07885::claim_ier_handles_multihop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_720b99f5b7c025c6",
+        "owning_strategy_type": "support",
+        "prior": 0.86,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_gpt4omini)",
+      "content_hash": "84b97be8ad0aeea60217c1c71e530e02097b1f6c9b356821c1e9083b716f2a4a",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_ea48b119",
+      "label": "__implication_result_ea48b119",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_gpt4omini)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e1a6292c821d6399",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_gpt4o)",
+      "content_hash": "df28bf398e71e4b3337e442e24b2ff8f6978387d8047a8c1865162fd3d084799",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_62fa736c",
+      "label": "__implication_result_62fa736c",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_gpt4o)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0e154dc93c2abe57",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_qwen8b)",
+      "content_hash": "69eb6da70683754bfeef1e40405bf2bc97982f485094fbede63cf8dd3518ff4c",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_6b2340f8",
+      "label": "__implication_result_6b2340f8",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_qwen8b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3268d84fa4b72164",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_qwen14b)",
+      "content_hash": "09697b4a10291893bac10b521924fbf6fa318909da5c384c5835c3aefbeccfd1",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_8f71058e",
+      "label": "__implication_result_8f71058e",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_avg_qwen14b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5a12d9b5aa3eb1d3",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_avg_gpt4omini,github:2602_07885::claim_avg_qwen8b)",
+      "content_hash": "628c0a17e2cdda556f1b25304d1c082feb62599e96b3fd1ea4a30b2a3414ff09",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_1d653539",
+      "label": "__conjunction_result_1d653539",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_avg_gpt4omini,github:2602_07885::claim_avg_qwen8b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8d45852ed696dc4c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_1d653539,github:2602_07885::claim_open_source_advantage_larger)",
+      "content_hash": "6d04c92c417d18687f07fb252ba844ff7d1fb35e171ee8caf16b2c13b624d66d",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_81bd52c8",
+      "label": "__implication_result_81bd52c8",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_1d653539,github:2602_07885::claim_open_source_advantage_larger)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8d45852ed696dc4c",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_avg_gpt4o,github:2602_07885::claim_macro_semantic_path)",
+      "content_hash": "ab26114b3f22ab88737f0f5a66186abe4b19562c6a3528c9dbbea2352dc78aac",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_1eb839cb",
+      "label": "__conjunction_result_1eb839cb",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_avg_gpt4o,github:2602_07885::claim_macro_semantic_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_045229ad3aad66b4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_1eb839cb,github:2602_07885::claim_open_domain_gain)",
+      "content_hash": "0e82b468ae4e7208bb9f05ab425016913d04efc2e5001df4a43217a0d8c44b47",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_ce0cd8a4",
+      "label": "__implication_result_ce0cd8a4",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_1eb839cb,github:2602_07885::claim_open_domain_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_045229ad3aad66b4",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_avg_qwen8b,github:2602_07885::claim_avg_qwen14b,github:2602_07885::claim_micro_symbolic_path)",
+      "content_hash": "2ee684ba490960b0805f46533682628b8771460f92ab64207ca0f3c69ccf8f3e",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_6fbc66ec",
+      "label": "__conjunction_result_6fbc66ec",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_avg_qwen8b,github:2602_07885::claim_avg_qwen14b,github:2602_07885::claim_micro_symbolic_path)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c8344574dd3af7d9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_6fbc66ec,github:2602_07885::claim_single_hop_qwen)",
+      "content_hash": "4d0c55a0661574dc3d6cef6dd6442bebfe2eff64e07a9a5723547121577ee23c",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_5e78e499",
+      "label": "__implication_result_5e78e499",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_6fbc66ec,github:2602_07885::claim_single_hop_qwen)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c8344574dd3af7d9",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_full,github:2602_07885::claim_ablation_no_update)",
+      "content_hash": "ce3af68d0bf5c73f2f8e790d7c6c9adf73c3953b4c1f14990a33d8ca3636bc5f",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_940f687c",
+      "label": "__conjunction_result_940f687c",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_full,github:2602_07885::claim_ablation_no_update)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_72ae9f48da8a2b7a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_940f687c,github:2602_07885::claim_update_critical)",
+      "content_hash": "c63ae96fb5781438aaccddf81178e4fc2515743c4dc8edf00ddaa1d7ddcc5f9d",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_728d2db4",
+      "label": "__implication_result_728d2db4",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_940f687c,github:2602_07885::claim_update_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_72ae9f48da8a2b7a",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_no_link,github:2602_07885::claim_ablation_no_merge,github:2602_07885::claim_ablation_full)",
+      "content_hash": "2958579014d7e69c6906c6757ab489a8d39aafc0effcb1e81d026bb84d111c21",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_b2c75b7d",
+      "label": "__conjunction_result_b2c75b7d",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_no_link,github:2602_07885::claim_ablation_no_merge,github:2602_07885::claim_ablation_full)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_659c41c20ea2b5c7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_b2c75b7d,github:2602_07885::claim_link_more_important_than_merge)",
+      "content_hash": "59e0402c4ba646ac4df9ff9b17cb1d1e513253e9d6c78205d832df64b5c2feeb",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_a0842d1c",
+      "label": "__implication_result_a0842d1c",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_b2c75b7d,github:2602_07885::claim_link_more_important_than_merge)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_659c41c20ea2b5c7",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_keyword_critical_for_singlehop)",
+      "content_hash": "5d9bfc5b4300dec9b496172b5ccad42dacbdf157d20b60931437f16d159b1a7c",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_53dd6a95",
+      "label": "__implication_result_53dd6a95",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_keyword_critical_for_singlehop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6e15ed31fb3b876b",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_no_ier,github:2602_07885::claim_ier_handles_multihop)",
+      "content_hash": "08499ff6ad469cd6b38140ae9409e7718a530ac1db595c548b33df3760f33651",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_0236a70c",
+      "label": "__conjunction_result_0236a70c",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_no_ier,github:2602_07885::claim_ier_handles_multihop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_25c17c63166d0fbd",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_0236a70c,github:2602_07885::claim_ier_critical_for_multihop)",
+      "content_hash": "3a47c227f87f0c5c1f4e0f8ce775399ee3b15b52e7d075273cda2545380c2903",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_5182aff9",
+      "label": "__implication_result_5182aff9",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_0236a70c,github:2602_07885::claim_ier_critical_for_multihop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_25c17c63166d0fbd",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_memfly_outperforms)",
+      "content_hash": "fd688e925a908465081576abf60319bde87be1fb733130fe6b8472dc49a38822",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_cdc5547f",
+      "label": "__implication_result_cdc5547f",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_consistent_across_backbones,github:2602_07885::claim_memfly_outperforms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e1b8534d7fd933a0",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_no_denoise,github:2602_07885::claim_ablation_full)",
+      "content_hash": "92fce08c63560e04bc6b80918fb96efa21da29a14620a08cd853803f83c00633",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_bd10a62f",
+      "label": "__conjunction_result_bd10a62f",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_no_denoise,github:2602_07885::claim_ablation_full)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6b0b197e04711744",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_bd10a62f,github:2602_07885::claim_ingestion_denoises)",
+      "content_hash": "99d45d4c9c7bf915c4f992cbf22a9ba111c62c93f411faeef9e9b04f6734b9c4",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_a0d96322",
+      "label": "__implication_result_a0d96322",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_bd10a62f,github:2602_07885::claim_ingestion_denoises)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6b0b197e04711744",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_ablation_no_topic,github:2602_07885::claim_ablation_no_neighbor)",
+      "content_hash": "186cb883273c00e594699f66907620c28c9a4ddfda0ed035213460facfa46eab",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_7cba4bd5",
+      "label": "__conjunction_result_7cba4bd5",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_ablation_no_topic,github:2602_07885::claim_ablation_no_neighbor)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_706b77cd5a6991b5",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_7cba4bd5,github:2602_07885::claim_proxy_signals)",
+      "content_hash": "cac9f073298727ff2452acf07fbc4b52f2a4ac74413c74b00466d20b6b506a1d",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_9c1c4c99",
+      "label": "__implication_result_9c1c4c99",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_7cba4bd5,github:2602_07885::claim_proxy_signals)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_706b77cd5a6991b5",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_ablation_no_topic,github:2602_07885::claim_ablation_no_neighbor,github:2602_07885::claim_ablation_no_ier,github:2602_07885::claim_ablation_no_denoise,github:2602_07885::claim_proxy_signals)",
+      "content_hash": "02edc78f652bad947042dc0ad2c082ac0b96dab0d26835a70fe494130989cade",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_ecbd5fa9",
+      "label": "__conjunction_result_ecbd5fa9",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_ablation_no_keyword,github:2602_07885::claim_ablation_no_topic,github:2602_07885::claim_ablation_no_neighbor,github:2602_07885::claim_ablation_no_ier,github:2602_07885::claim_ablation_no_denoise,github:2602_07885::claim_proxy_signals)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_570f599c00cded36",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_ecbd5fa9,github:2602_07885::claim_proxy_signals_validated)",
+      "content_hash": "a2c8110edc5bcc6fd6fee87c167f5f1a044aa67de5a9303d42400b90778810d2",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_e1862864",
+      "label": "__implication_result_e1862864",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_ecbd5fa9,github:2602_07885::claim_proxy_signals_validated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_570f599c00cded36",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_07885::claim_memfly_outperforms,github:2602_07885::claim_proxy_signals_validated,github:2602_07885::claim_update_critical,github:2602_07885::claim_three_layer_hierarchy)",
+      "content_hash": "e942a50b2f169ce32fa5cabcba5ad06f1e0b51d5fa0558b92ba7fc86e9fef7d4",
+      "exported": false,
+      "id": "github:2602_07885::__conjunction_result_46434989",
+      "label": "__conjunction_result_46434989",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_07885::claim_memfly_outperforms,github:2602_07885::claim_proxy_signals_validated,github:2602_07885::claim_update_critical,github:2602_07885::claim_three_layer_hierarchy)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0a7ba2f06ae3f28f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::__conjunction_result_46434989,github:2602_07885::claim_ib_design_validated)",
+      "content_hash": "55e5aa1bcddbae5ed423450d129ccf7478afa6260e732075226b18bb178fde46",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_054bb6ff",
+      "label": "__implication_result_054bb6ff",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::__conjunction_result_46434989,github:2602_07885::claim_ib_design_validated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0a7ba2f06ae3f28f",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_07885::claim_ib_design_validated,github:2602_07885::claim_compression_fidelity_dilemma)",
+      "content_hash": "329b3ce43de8afdecd9e5814394fac39a467745404d0d0b5a8ec994570350cc3",
+      "exported": false,
+      "id": "github:2602_07885::__implication_result_60c15d7d",
+      "label": "__implication_result_60c15d7d",
+      "metadata": {
+        "canonical_name": "implies(github:2602_07885::claim_ib_design_validated,github:2602_07885::claim_compression_fidelity_dilemma)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a772d4e3265a7426",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_framework",
+    "s3_retrieval",
+    "s4_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Section 1-2: Motivation and Related Work",
+    "s3_framework": "Section 3: The MEMFLY Framework — IB Formulation, Structural Prior, Construction",
+    "s3_retrieval": "Section 3.4: Memory Retrieval — Tri-Pathway Hybrid + Iterative Refinement",
+    "s4_experiments": "Section 4: Experimental Evaluation on LoCoMo"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2602_07885::contradiction_paradigms",
+      "metadata": {
+        "reason": "The two existing paradigms make opposing trade-offs: retrieval-centric systems prioritize fidelity at the cost of compression, while memory-augmented systems prioritize compression at the cost of fidelity. They cannot both be optimal under a unified IB objective; this tension motivates a principled middle ground."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_794f32a269d59fb7",
+      "scope": "local",
+      "variables": [
+        "github:2602_07885::claim_retrieval_centric_redundancy",
+        "github:2602_07885::claim_memory_augmented_fidelity_loss"
+      ]
+    },
+    {
+      "conclusion": "github:2602_07885::contradiction_alt",
+      "metadata": {
+        "reason": "If existing baselines were near-optimal (@claim_baselines_optimal_alt), MEMFLY could not improve over the best baseline by 1.79 F1 points on GPT-4o-mini (@claim_avg_gpt4omini). The two cannot both hold."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_13e4ac2149d2a59e",
+      "scope": "local",
+      "variables": [
+        "github:2602_07885::claim_avg_gpt4omini",
+        "github:2602_07885::claim_baselines_optimal_alt"
+      ]
+    }
+  ],
+  "package_name": "2602_07885",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2602_07885::setup_existing_paradigms"
+      ],
+      "conclusion": "github:2602_07885::claim_compression_fidelity_dilemma",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_2fb15cd2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_retrieval_centric_redundancy",
+              "github:2602_07885::claim_memory_augmented_fidelity_loss"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_257eef76",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_2fb15cd2",
+              "github:2602_07885::claim_compression_fidelity_dilemma"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "If retrieval-centric systems accumulate redundancy (@claim_retrieval_centric_redundancy) and memory-augmented systems sacrifice fidelity (@claim_memory_augmented_fidelity_loss), then the two existing paradigms occupy opposite ends of the compression-fidelity axis without a unifying objective. The dilemma is a direct consequence."
+      },
+      "premises": [
+        "github:2602_07885::claim_retrieval_centric_redundancy",
+        "github:2602_07885::claim_memory_augmented_fidelity_loss"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f32d11f927a980ae",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_ib_principle",
+        "github:2602_07885::setup_memory_state"
+      ],
+      "conclusion": "github:2602_07885::claim_memory_ib_lagrangian",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_bbd5ace2",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_ib_aligns_with_memory",
+              "github:2602_07885::claim_memory_ib_lagrangian"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Since memory optimization aligns with the IB principle (@claim_ib_aligns_with_memory) which minimizes I(X; M) - beta * I(M; Y) by definition [@Slonim1999], substituting the agentic memory state M_t and the input stream X_{1:t} yields the Memory IB Lagrangian directly."
+      },
+      "premises": [
+        "github:2602_07885::claim_ib_aligns_with_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_46e2f44fc5d12006",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_online_intractable",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_a897de1b",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_memory_ib_lagrangian",
+              "github:2602_07885::claim_online_intractable"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "The Memory IB Lagrangian (@claim_memory_ib_lagrangian) ranges over the combinatorial space of possible memory configurations at each step. As the history length grows, exhaustive search over partitions of |X_{1:t}| becomes computationally infeasible."
+      },
+      "premises": [
+        "github:2602_07885::claim_memory_ib_lagrangian"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_738ebadc4f30b69a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_aib",
+        "github:2602_07885::setup_streaming"
+      ],
+      "conclusion": "github:2602_07885::claim_greedy_aib_extension",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_70f0034e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_online_intractable",
+              "github:2602_07885::claim_y_unknown_at_construction"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_8b82ecb9",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_70f0034e",
+              "github:2602_07885::claim_greedy_aib_extension"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Given that direct IB optimization is intractable (@claim_online_intractable) and Y is unknown at construction time (@claim_y_unknown_at_construction), an online greedy strategy that minimizes the incremental Lagrangian over a candidate neighborhood is the natural adaptation: it preserves the AIB merge principle (@setup_aib) while restricting the decision space to a tractable local subgraph."
+      },
+      "premises": [
+        "github:2602_07885::claim_online_intractable",
+        "github:2602_07885::claim_y_unknown_at_construction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_48f86a2e720a2d4e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_llm_proxies_js",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_fe2390e5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_llm_implicit_knowledge",
+              "github:2602_07885::claim_y_unknown_at_construction"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_06d3f608",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_fe2390e5",
+              "github:2602_07885::claim_llm_proxies_js"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "JS-divergence between conditional task distributions cannot be computed directly because Y is unknown (@claim_y_unknown_at_construction). However, since pre-trained LLMs implicitly encode task-relevant distributional properties (@claim_llm_implicit_knowledge), their semantic redundancy scores can act as a gradient-free proxy for 1 - D_JS(p(Y|n_t), p(Y|n_i)) [@Yang2024]."
+      },
+      "premises": [
+        "github:2602_07885::claim_llm_implicit_knowledge",
+        "github:2602_07885::claim_y_unknown_at_construction"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_23281bd1e50e8506",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_double_clustering"
+      ],
+      "conclusion": "github:2602_07885::claim_keywords_resolve_sparsity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_8a9b5838",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_high_dim_curse",
+              "github:2602_07885::claim_keywords_resolve_sparsity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The high-dimensional embedding curse (@claim_high_dim_curse) motivates an intermediate symbolic layer. Adopting the double clustering insight (@setup_double_clustering) that compression succeeds via robust feature centroids, MEMFLY's Keywords serve the role of word clusters Y_tilde — a denser, distributionally robust feature space that stabilizes proximity."
+      },
+      "premises": [
+        "github:2602_07885::claim_high_dim_curse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_948ff73dc7f74f0b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_double_clustering"
+      ],
+      "conclusion": "github:2602_07885::claim_topics_enable_navigation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_8f77e60c",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_keywords_resolve_sparsity",
+              "github:2602_07885::claim_topics_enable_navigation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Once Keywords stabilize the symbolic substructure (@claim_keywords_resolve_sparsity), aggregating them by co-occurrence yields Topics that play the role of document clusters X_tilde in double clustering. Topics partition the memory latent into navigable macro-regions, enabling O(1) localization during retrieval."
+      },
+      "premises": [
+        "github:2602_07885::claim_keywords_resolve_sparsity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c718ffe525abf4a7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_double_clustering"
+      ],
+      "conclusion": "github:2602_07885::claim_three_layer_hierarchy",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_c40da114",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_notes_preserve_fidelity",
+              "github:2602_07885::claim_keywords_resolve_sparsity",
+              "github:2602_07885::claim_topics_enable_navigation"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_7942f8e3",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_c40da114",
+              "github:2602_07885::claim_three_layer_hierarchy"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The three layers jointly address the compression-fidelity dilemma (@claim_compression_fidelity_dilemma): Notes preserve raw fidelity (@claim_notes_preserve_fidelity, fidelity term), Keywords resolve sparsity (@claim_keywords_resolve_sparsity, robustness term), and Topics enable navigation (@claim_topics_enable_navigation, retrievability term). Their composition realizes the stratified structural prior."
+      },
+      "premises": [
+        "github:2602_07885::claim_notes_preserve_fidelity",
+        "github:2602_07885::claim_keywords_resolve_sparsity",
+        "github:2602_07885::claim_topics_enable_navigation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fb319e7baee3f656",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_gated_three_ops",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_e9f2b7b7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_extends_aib",
+              "github:2602_07885::claim_merge_reduces_compression",
+              "github:2602_07885::claim_link_preserves_relevance",
+              "github:2602_07885::claim_append_preserves_diversity"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_5573aa8d",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_e9f2b7b7",
+              "github:2602_07885::claim_gated_three_ops"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Each operation maps to a specific term of the IB Lagrangian: Merge reduces I(X; M) (@claim_merge_reduces_compression), Link preserves conditional structure for I(M; Y) (@claim_link_preserves_relevance), Append maintains diversity for novel content (@claim_append_preserves_diversity). The three-way gate is the natural streaming extension of AIB's merge-only step (@claim_extends_aib)."
+      },
+      "premises": [
+        "github:2602_07885::claim_extends_aib",
+        "github:2602_07885::claim_merge_reduces_compression",
+        "github:2602_07885::claim_link_preserves_relevance",
+        "github:2602_07885::claim_append_preserves_diversity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c808a68d2fd37d28",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_topic_evolution_modularity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_cb32ba27",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_topics_enable_navigation",
+              "github:2602_07885::claim_topic_evolution_modularity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Maintaining O(1) macro-navigability (@claim_topics_enable_navigation) requires periodic re-partitioning of the keyword co-occurrence graph. Modularity-based community detection via Leiden [@Traag2019] is computationally efficient and empirically correlates with information-theoretic clustering [@Fortunato2010], making it a sound stand-in for exact IB clustering."
+      },
+      "premises": [
+        "github:2602_07885::claim_topics_enable_navigation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_53d2672689a0bad9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_query_parsing"
+      ],
+      "conclusion": "github:2602_07885::claim_macro_semantic_path",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_73161030",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_topics_enable_navigation",
+              "github:2602_07885::claim_macro_semantic_path"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Since Topics enable O(1) macro-semantic localization (@claim_topics_enable_navigation), matching the query's topical embedding h_topic against Topic centroids mu_C is the natural macro-localization step: it narrows retrieval to a small number of relevant memory regions before fine-grained search."
+      },
+      "premises": [
+        "github:2602_07885::claim_topics_enable_navigation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_647e079d3d36b635",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_query_parsing"
+      ],
+      "conclusion": "github:2602_07885::claim_micro_symbolic_path",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_f92306de",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_keywords_resolve_sparsity",
+              "github:2602_07885::claim_micro_symbolic_path"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Since Keywords serve as distributionally robust symbolic anchors (@claim_keywords_resolve_sparsity), matching query entity embeddings against the keyword index leverages this layer's stability to provide precise entity-centric retrieval that resists vector dilution."
+      },
+      "premises": [
+        "github:2602_07885::claim_keywords_resolve_sparsity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cea66247f965568a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_topological_path",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_1803a5cb",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_link_preserves_relevance",
+              "github:2602_07885::claim_topological_path"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Because Link operations preserve conditional dependencies (@claim_link_preserves_relevance) for multi-hop reasoning, traversing E_RELATED edges from the anchor set retrieves logically related but vectorially distant evidence. This expansion exploits the structural memory built during consolidation."
+      },
+      "premises": [
+        "github:2602_07885::claim_link_preserves_relevance"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f006eb3ce9548423",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_tripath_addresses_query_diversity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_f74f67f5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_macro_semantic_path",
+              "github:2602_07885::claim_micro_symbolic_path",
+              "github:2602_07885::claim_topological_path",
+              "github:2602_07885::claim_three_layer_hierarchy"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_5ef7ca37",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_f74f67f5",
+              "github:2602_07885::claim_tripath_addresses_query_diversity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The three pathways correspond to the three layers of the memory hierarchy (@claim_three_layer_hierarchy), each specialized for a different query intent: Topics for thematic queries (@claim_macro_semantic_path), Keywords for entity-centric queries (@claim_micro_symbolic_path), and E_RELATED for multi-hop queries (@claim_topological_path). Their parallel execution covers the diversity of agentic queries."
+      },
+      "premises": [
+        "github:2602_07885::claim_macro_semantic_path",
+        "github:2602_07885::claim_micro_symbolic_path",
+        "github:2602_07885::claim_topological_path",
+        "github:2602_07885::claim_three_layer_hierarchy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6052bada69350e84",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_rrf"
+      ],
+      "conclusion": "github:2602_07885::claim_evidence_fusion_rrf",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_aa942686",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_macro_semantic_path",
+              "github:2602_07885::claim_micro_symbolic_path",
+              "github:2602_07885::claim_topological_path"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_96d2369a",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_aa942686",
+              "github:2602_07885::claim_evidence_fusion_rrf"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "With three heterogeneous ranked lists from the pathways, RRF [@Cormack2009] is well-suited because it does not require comparable scores across lists. It promotes evidence appearing high in multiple lists, naturally consolidating the tri-pathway results."
+      },
+      "premises": [
+        "github:2602_07885::claim_macro_semantic_path",
+        "github:2602_07885::claim_micro_symbolic_path",
+        "github:2602_07885::claim_topological_path"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_20ca5c5e611454bd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_ier_handles_multihop",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_e278c7b8",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_ier_protocol",
+              "github:2602_07885::claim_ier_handles_multihop"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.86,
+        "reason": "The IER protocol (@claim_ier_protocol) iteratively detects missing aspects via an LLM sufficiency check and re-runs the tri-pathway retrieval with refined sub-queries. This loop accumulates evidence chains that single-shot retrieval misses, enabling multi-hop reasoning that progressively uncovers indirect dependencies."
+      },
+      "premises": [
+        "github:2602_07885::claim_ier_protocol"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_720b99f5b7c025c6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_avg_gpt4omini",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_ea48b119",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_consistent_across_backbones",
+              "github:2602_07885::claim_avg_gpt4omini"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If MEMFLY leads consistently across backbones, GPT-4o-mini should show MEMFLY winning average F1 — observed at 43.76%."
+      },
+      "premises": [
+        "github:2602_07885::claim_consistent_across_backbones"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e1a6292c821d6399",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_avg_gpt4o",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_62fa736c",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_consistent_across_backbones",
+              "github:2602_07885::claim_avg_gpt4o"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If MEMFLY leads consistently across backbones, GPT-4o should show MEMFLY winning average F1 — observed at 44.39%."
+      },
+      "premises": [
+        "github:2602_07885::claim_consistent_across_backbones"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0e154dc93c2abe57",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_avg_qwen8b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_6b2340f8",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_consistent_across_backbones",
+              "github:2602_07885::claim_avg_qwen8b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If MEMFLY leads consistently across backbones, Qwen3-8B should show MEMFLY winning average F1 — observed at 38.62%."
+      },
+      "premises": [
+        "github:2602_07885::claim_consistent_across_backbones"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3268d84fa4b72164",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_avg_qwen14b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_8f71058e",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_consistent_across_backbones",
+              "github:2602_07885::claim_avg_qwen14b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If MEMFLY leads consistently across backbones, Qwen3-14B should show MEMFLY winning average F1 — observed at 33.65%."
+      },
+      "premises": [
+        "github:2602_07885::claim_consistent_across_backbones"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5a12d9b5aa3eb1d3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_consistent_across_backbones",
+      "metadata": {
+        "reason": "GPT-4o-mini and GPT-4o jointly confirm the consistent-across-backbones law within the closed-source family."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_gpt4omini",
+        "github:2602_07885::claim_avg_gpt4o"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_25e25ae5d8ad05b7",
+      "sub_strategies": [
+        "lcs_e1a6292c821d6399",
+        "lcs_0e154dc93c2abe57"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_consistent_across_backbones",
+      "metadata": {
+        "reason": "Adding Qwen3-8B extends the law to the open-source family with a different parameter scale."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_gpt4omini",
+        "github:2602_07885::claim_avg_gpt4o",
+        "github:2602_07885::claim_avg_qwen8b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_136bb8e47e75ca13",
+      "sub_strategies": [
+        "lcs_25e25ae5d8ad05b7",
+        "lcs_3268d84fa4b72164"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_consistent_across_backbones",
+      "metadata": {
+        "reason": "Adding Qwen3-14B further extends the law to a larger open-source backbone, completing four heterogeneous backbones."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_gpt4omini",
+        "github:2602_07885::claim_avg_gpt4o",
+        "github:2602_07885::claim_avg_qwen8b",
+        "github:2602_07885::claim_avg_qwen14b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bb4cc0a77cdb57c0",
+      "sub_strategies": [
+        "lcs_136bb8e47e75ca13",
+        "lcs_5a12d9b5aa3eb1d3"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_open_source_advantage_larger",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_1d653539",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_avg_gpt4omini",
+              "github:2602_07885::claim_avg_qwen8b"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_81bd52c8",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_1d653539",
+              "github:2602_07885::claim_open_source_advantage_larger"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Comparing MEMFLY's margin over the strongest baseline across closed-source (@claim_avg_gpt4omini: +1.79 over A-MEM) and open-source backbones (@claim_avg_qwen8b: +5.86 over A-MEM) shows the larger gain on open-source, directly supporting the open-source advantage claim."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_gpt4omini",
+        "github:2602_07885::claim_avg_qwen8b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8d45852ed696dc4c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_open_domain_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_1eb839cb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_avg_gpt4o",
+              "github:2602_07885::claim_macro_semantic_path"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_ce0cd8a4",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_1eb839cb",
+              "github:2602_07885::claim_open_domain_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The Open Domain F1 gap of 25.74 vs 17.73 reported in (@claim_avg_gpt4o) is explained mechanistically by Topic-based macro-semantic navigation (@claim_macro_semantic_path), which localizes relevant memory regions before fine-grained retrieval — directly the operation Open Domain queries benefit from."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_gpt4o",
+        "github:2602_07885::claim_macro_semantic_path"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_045229ad3aad66b4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_single_hop_qwen",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_6fbc66ec",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_avg_qwen8b",
+              "github:2602_07885::claim_avg_qwen14b",
+              "github:2602_07885::claim_micro_symbolic_path"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_5e78e499",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_6fbc66ec",
+              "github:2602_07885::claim_single_hop_qwen"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Single Hop F1 leadership on both Qwen models (@claim_avg_qwen8b: 42.09 and @claim_avg_qwen14b: 42.25) is consistent with Keyword-based micro-symbolic anchoring (@claim_micro_symbolic_path) being the precise entity-matching mechanism Single Hop queries depend on."
+      },
+      "premises": [
+        "github:2602_07885::claim_avg_qwen8b",
+        "github:2602_07885::claim_avg_qwen14b",
+        "github:2602_07885::claim_micro_symbolic_path"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c8344574dd3af7d9",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_update_critical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_940f687c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_full",
+              "github:2602_07885::claim_ablation_no_update"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_728d2db4",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_940f687c",
+              "github:2602_07885::claim_update_critical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "The 10.65 F1-point drop from removing the gated update (@claim_ablation_no_update vs @claim_ablation_full) exceeds the drop from removing any single operation, establishing the gated update as MEMFLY's single most critical component."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_full",
+        "github:2602_07885::claim_ablation_no_update"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_72ae9f48da8a2b7a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_link_more_important_than_merge",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_b2c75b7d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_link",
+              "github:2602_07885::claim_ablation_no_merge",
+              "github:2602_07885::claim_ablation_full"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_a0842d1c",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_b2c75b7d",
+              "github:2602_07885::claim_link_more_important_than_merge"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Comparing per-operation drops: w/o Link (@claim_ablation_no_link) yields 33.57 F1, w/o Merge (@claim_ablation_no_merge) yields 34.79 F1. Both vs. Full at 38.62 (@claim_ablation_full): Link removal costs 5.05 F1 while Merge removal costs 3.83 F1. Conditional structure is therefore more important for downstream accuracy than redundancy reduction."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_link",
+        "github:2602_07885::claim_ablation_no_merge",
+        "github:2602_07885::claim_ablation_full"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_659c41c20ea2b5c7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_keyword_critical_for_singlehop",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_53dd6a95",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_keyword",
+              "github:2602_07885::claim_keyword_critical_for_singlehop"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The w/o Keyword ablation (@claim_ablation_no_keyword) produces the lowest retrieval-phase F1 (32.69) with the impact concentrated on Single-Hop queries — directly supporting the criticality of Keyword anchoring for precise entity matching."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_keyword"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6e15ed31fb3b876b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_ier_critical_for_multihop",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_0236a70c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_ier",
+              "github:2602_07885::claim_ier_handles_multihop"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_5182aff9",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_0236a70c",
+              "github:2602_07885::claim_ier_critical_for_multihop"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The w/o IER ablation (@claim_ablation_no_ier) shows the largest declines on Adversarial and Open Domain — categories that involve multi-hop or progressive reasoning. Combined with the design intent for IER (@claim_ier_handles_multihop), this confirms its criticality for progressive evidence accumulation."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_ier",
+        "github:2602_07885::claim_ier_handles_multihop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_25c17c63166d0fbd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_memfly_outperforms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_cdc5547f",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_consistent_across_backbones",
+              "github:2602_07885::claim_memfly_outperforms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "MEMFLY achieving top average F1 on every evaluated backbone (@claim_consistent_across_backbones) is the empirical content of outperforming the state of the art across families."
+      },
+      "premises": [
+        "github:2602_07885::claim_consistent_across_backbones"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e1b8534d7fd933a0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_ingestion_denoises",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_bd10a62f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_denoise",
+              "github:2602_07885::claim_ablation_full"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_a0d96322",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_bd10a62f",
+              "github:2602_07885::claim_ingestion_denoises"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "The w/o Denoise ablation (@claim_ablation_no_denoise) drops F1 from @claim_ablation_full's 38.62 to 36.07, demonstrating that semantic denoising during ingestion produces measurable downstream gains. This is consistent with denoising improving the signal-to-noise ratio of stored Notes (i.e., increasing I(n_t; Y) over I(x_t; Y))."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_denoise",
+        "github:2602_07885::claim_ablation_full"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6b0b197e04711744",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_proxy_signals",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_7cba4bd5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_keyword",
+              "github:2602_07885::claim_ablation_no_topic",
+              "github:2602_07885::claim_ablation_no_neighbor"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_9c1c4c99",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_7cba4bd5",
+              "github:2602_07885::claim_proxy_signals"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The structural ablations on Keyword (@claim_ablation_no_keyword), Topic (@claim_ablation_no_topic), and Neighbor (@claim_ablation_no_neighbor) each cause meaningful F1 drops. Since these structures embody the local-coherence and global-navigability proxies for the unobservable Y, their individual contributions empirically validate the proxy choice."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_keyword",
+        "github:2602_07885::claim_ablation_no_topic",
+        "github:2602_07885::claim_ablation_no_neighbor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_706b77cd5a6991b5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_proxy_signals_validated",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_ecbd5fa9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_ablation_no_keyword",
+              "github:2602_07885::claim_ablation_no_topic",
+              "github:2602_07885::claim_ablation_no_neighbor",
+              "github:2602_07885::claim_ablation_no_ier",
+              "github:2602_07885::claim_ablation_no_denoise",
+              "github:2602_07885::claim_proxy_signals"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_e1862864",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_ecbd5fa9",
+              "github:2602_07885::claim_proxy_signals_validated"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Each removal of a structural surrogate (Keyword (@claim_ablation_no_keyword), Topic (@claim_ablation_no_topic), Neighbor (@claim_ablation_no_neighbor), IER (@claim_ablation_no_ier)) causes a meaningful F1 drop. This demonstrates that each surrogate carries task-relevant information beyond what the remaining components provide."
+      },
+      "premises": [
+        "github:2602_07885::claim_ablation_no_keyword",
+        "github:2602_07885::claim_ablation_no_topic",
+        "github:2602_07885::claim_ablation_no_neighbor",
+        "github:2602_07885::claim_ablation_no_ier",
+        "github:2602_07885::claim_ablation_no_denoise",
+        "github:2602_07885::claim_proxy_signals"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_570f599c00cded36",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_07885::setup_locomo",
+        "github:2602_07885::setup_metrics"
+      ],
+      "conclusion": "github:2602_07885::claim_ib_design_validated",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__conjunction_result_46434989",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_07885::claim_memfly_outperforms",
+              "github:2602_07885::claim_proxy_signals_validated",
+              "github:2602_07885::claim_update_critical",
+              "github:2602_07885::claim_three_layer_hierarchy"
+            ]
+          },
+          {
+            "conclusion": "github:2602_07885::__implication_result_054bb6ff",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::__conjunction_result_46434989",
+              "github:2602_07885::claim_ib_design_validated"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "MEMFLY's empirical superiority (@claim_memfly_outperforms), the validated contribution of its proxy signals (@claim_proxy_signals_validated), the criticality of the gated IB-grounded update (@claim_update_critical), and the structural realization of the IB compression-fidelity trade-off (@claim_three_layer_hierarchy) jointly support that the IB-grounded design resolves the compression-fidelity dilemma in practice."
+      },
+      "premises": [
+        "github:2602_07885::claim_memfly_outperforms",
+        "github:2602_07885::claim_proxy_signals_validated",
+        "github:2602_07885::claim_update_critical",
+        "github:2602_07885::claim_three_layer_hierarchy"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0a7ba2f06ae3f28f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_07885::claim_compression_fidelity_dilemma",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_07885::__implication_result_60c15d7d",
+            "operator": "implication",
+            "variables": [
+              "github:2602_07885::claim_ib_design_validated",
+              "github:2602_07885::claim_compression_fidelity_dilemma"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The IB-grounded design's empirical validation (@claim_ib_design_validated) shows that the compression-fidelity dilemma admits a constructive resolution via principled structural priors and a gated update guided by an IB Lagrangian — confirming the dilemma was real (paper motivation) and actionable."
+      },
+      "premises": [
+        "github:2602_07885::claim_ib_design_validated"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a772d4e3265a7426",
+      "type": "support"
+    }
+  ]
+}
