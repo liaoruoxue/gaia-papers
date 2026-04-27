@@ -1,0 +1,155 @@
+{
+  "exports": [
+    {
+      "content": "KV-memory (quadratic transformer) and FW-memory (linear transformer / FWP) have complementary properties on four axes:\n\n| Property            | Key-value memory | Fast weight memory |\n|---------------------|------------------|---------------------|\n| Complexity          | quadratic        | linear              |\n| Context length      | bounded          | unbounded           |\n| Retrieval precision | high             | low                 |\n| Expressivity        | low              | high                |",
+      "content_hash": "d075e5e7450832ad118c03554ef5bc4dcbfb0cf46ff0c6a012c7914cbeaccafa",
+      "label": "claim_complementarity_table",
+      "qid": "github:2506_00744::claim_complementarity_table",
+      "type": "claim"
+    },
+    {
+      "content": "Delayed-Streaming and Delayed-Chunk HQLTs feed FW-memory only with inputs that have already been observed for several time steps (the delay equals the KV-window size). For state-tracking tasks that require updating the fast-weight state on every fresh input (e.g., parity, modular arithmetic), this delay prevents the FW component from operating in real time and predicts that the delayed variants cannot solve such tasks.",
+      "content_hash": "b81375aeaadb63b5311244ffc9ef40f39f2eb2026f82f9b729079f8723711158",
+      "label": "claim_delayed_lose_expressivity",
+      "qid": "github:2506_00744::claim_delayed_lose_expressivity",
+      "type": "claim"
+    },
+    {
+      "content": "The paper's overarching design principle for intra-layer hybrid attention is: (i) combine the two memory operators on the same per-step $(q_t, k_t, v_t)$ stream within a single layer; (ii) feed the same input synchronously to both; and (iii) choose a state-tracking-capable FWP (DeltaNet) for the FW branch. Following these three principles yields the best overall design across LM, expressivity, retrieval and RL.",
+      "content_hash": "bd442216dcebd8ebc6af08a3d636f9790e6a12a8f301fe117c2f2c690ae2bfcd",
+      "label": "claim_design_principle",
+      "qid": "github:2506_00744::claim_design_principle",
+      "type": "claim"
+    },
+    {
+      "content": "A potential remediation suggested by the paper is to introduce a communication mechanism whereby FW-memory can selectively *revive* memory events and reinsert them into the limited KV-memory, replacing the current strict sliding-window policy. Such a mechanism is non-trivial to implement under hardware-efficiency constraints and is left as future work.",
+      "content_hash": "9d711ab08720aaedbddb913ed9703fef0d900757dceb4120a498eccc1fe112b7",
+      "label": "claim_future_revival_mechanism",
+      "qid": "github:2506_00744::claim_future_revival_mechanism",
+      "type": "claim"
+    },
+    {
+      "content": "The choice of FW-memory operator matters: Synchronous HQLT requires a DeltaNet-class FWP rather than a vanilla LA. Substituting vanilla LA loses 5.6 points of average accuracy and quadruples LAMBADA perplexity, indicating that the hybrid's quality is bounded by the strength of its FW branch.",
+      "content_hash": "3e372a7525a4099d3c5b26968a6f2f3d484b33aa67f638ee3827924dd356d77e",
+      "label": "claim_fw_choice_matters",
+      "qid": "github:2506_00744::claim_fw_choice_matters",
+      "type": "claim"
+    },
+    {
+      "content": "Holding window size equal at $S=1024$, HQLT Synchronous (340M) reaches average 40.4 across SWDE/SQuAD/FDA versus 29.0 for the Transformer++ trained with the same 1024-token context — a 11.4 point absolute improvement attributable to the FW-memory branch covering the part of context outside the KV-window.",
+      "content_hash": "f95d41b535b1e49f3cb601d07be403487831598ad97245bfd243292553e75df2",
+      "label": "claim_hqlt_beats_matched_window",
+      "qid": "github:2506_00744::claim_hqlt_beats_matched_window",
+      "type": "claim"
+    },
+    {
+      "content": "All three HQLT variants match or slightly improve on the average 6-task score relative to both baselines. At 340M the best HQLT (Synchronous) averages 47.8 vs 47.6 (Transformer++) and 46.8 (DeltaNet); at 1.3B the best HQLT (Delayed-Stream) averages 54.5 vs 53.0 (Transformer++) and 52.3 (DeltaNet), an improvement of up to ~1% absolute over DeltaNet.",
+      "content_hash": "2641bff7487162d6488dc80dcf3e0a51c65aef1b0f242b4d080a39d5eb6ec218",
+      "label": "claim_hqlts_match_or_beat",
+      "qid": "github:2506_00744::claim_hqlts_match_or_beat",
+      "type": "claim"
+    },
+    {
+      "content": "On LAMBADA perplexity (LMB ppl), Synchronous HQLT achieves about 15% relative improvement over both baselines at both scales: 29.4 vs 34.9 (Transformer++) / 35.0 (DeltaNet) at 340M, and 15.9 vs 17.9 / 19.9 at 1.3B.",
+      "content_hash": "d57c2ab6e59e2f0b20898a82fca5f3f84f56fdaa8b7084dbbc0922f4be5daa02",
+      "label": "claim_lambada_synchronous_best",
+      "qid": "github:2506_00744::claim_lambada_synchronous_best",
+      "type": "claim"
+    },
+    {
+      "content": "On the general language-modeling evaluation suite, Transformer++ and DeltaNet perform comparably at both 340M and 1.3B scales: 6-task averages are 47.6 vs 46.8 (340M) and 53.0 vs 52.3 (1.3B). DeltaNet trails by $\\le 0.8$ absolute on average.",
+      "content_hash": "f64264f22e52ac1c35e1aa1ceb01ca146b184cd93b64e577ad8343b16e7c31d3",
+      "label": "claim_lm_baselines_comparable",
+      "qid": "github:2506_00744::claim_lm_baselines_comparable",
+      "type": "claim"
+    },
+    {
+      "content": "For precise long-range retrieval, the experiments suggest that a large KV-memory window remains unavoidable: even the best HQLT with a 1024-token window does not reach the full-context (2048-token) Transformer++ on the FDA/SWDE/SQuAD suite. There is non-zero chance that more layers/depth could close this gap with a small window, but the paper does not demonstrate it.",
+      "content_hash": "5d3657ce92704d2f74bf464ede5d962237f427c496aced2df936af226f07240c",
+      "label": "claim_long_window_unavoidable",
+      "qid": "github:2506_00744::claim_long_window_unavoidable",
+      "type": "claim"
+    },
+    {
+      "content": "The passive-visual-match result extends Synchronous HQLT's benefit beyond language: a short KV-window of 64 plus FW-memory recovers most of the long-range memory benefit of full-context softmax attention (window 780) for a retrieval-with-distraction RL task.",
+      "content_hash": "0a539c46584af198c51aec08775e94bbe10812770d75dc4b977091a9c1602a37",
+      "label": "claim_rl_supports_synchronous",
+      "qid": "github:2506_00744::claim_rl_supports_synchronous",
+      "type": "claim"
+    },
+    {
+      "content": "Synchronous HQLT is the only variant in which FW-memory receives every input synchronously; it therefore preserves DeltaNet's state-tracking expressivity and is predicted to solve parity/modular arithmetic tasks at the same level as standalone DeltaNet.",
+      "content_hash": "629066510f0b93ce6b880d63006ed61e52c87786d77f9af81e8f0216bfe5cd47",
+      "label": "claim_synchronous_keeps_expressivity",
+      "qid": "github:2506_00744::claim_synchronous_keeps_expressivity",
+      "type": "claim"
+    },
+    {
+      "content": "On retrieval-intensive tasks, KV-window size is the dominant performance lever for HQLT: increasing $S$ from 64 to 1024 raises the 3-task average from 19.8 to 40.4 at 340M parameters, while task-level effects are non-monotonic (e.g., SWDE: 20.0 -> 16.9 at S=128 then up to 22.9 at S=512).",
+      "content_hash": "d77e87793021d57c43d7e2aa0738ca18ab1542bdb9a630e38d7f30cf8d66520d",
+      "label": "claim_window_drives_retrieval",
+      "qid": "github:2506_00744::claim_window_drives_retrieval",
+      "type": "claim"
+    },
+    {
+      "content": "Delayed-Chunk HQLT inserts a softmax inside the intra-chunk attention term of the chunk-wise update Eq. 6: the second term becomes $V_n \\mathrm{softmax}(K_n^{\\top} Q_n \\odot M)$ while the inter-chunk term $W_n Q_n$ continues to flow through the fast weight matrix. The same chunk scheme is also used at inference time. As a consequence FW-memory only sees an entire previous chunk and is delayed by up to $S$ steps relative to the current input.",
+      "content_hash": "20987ad60863790c7f0826d4b281a667d4d43d1b0431601aa77517a120d3377b",
+      "label": "def_delayed_chunk",
+      "qid": "github:2506_00744::def_delayed_chunk",
+      "type": "setting"
+    },
+    {
+      "content": "The Delayed-Streaming HQLT updates KV-memory by removing the oldest pair $(k_{t-S}, v_{t-S})$ that falls outside the window and inserting the new pair $(k_t, v_t)$:\n\n$$K_t = K_{t-1} \\ominus k_{t-S} \\oplus k_t,\\qquad V_t = V_{t-1} \\ominus v_{t-S} \\oplus v_t.$$\n\nThe pair *removed* from KV-memory is then fed into FW-memory via the delta rule:\n\n$$W_t = W_{t-1} + \\sigma(\\beta_t)(v_{t-S} - W_{t-1}\\phi(k_{t-S})) \\otimes \\phi(k_{t-S}),$$\n\nand the output combines both branches: $y_t = W_t\\phi(q_t) + V_t \\mathrm{softmax}(K_t^{\\top} q_t)$.",
+      "content_hash": "f62f8e2c04c8caf35ce8fc393652b364ba95054c420c016bcc8cc08655070513",
+      "label": "def_delayed_stream",
+      "qid": "github:2506_00744::def_delayed_stream",
+      "type": "setting"
+    },
+    {
+      "content": "DeltaNet [@Schlag2021; @Yang2024Delta] is a linear transformer whose fast weight matrix is updated by the classic delta learning rule [@Widrow1960]: $W_t = W_{t-1} + \\sigma(\\beta_t)(v_t - W_{t-1}\\phi(k_t)) \\otimes \\phi(k_t)$, with a slow-net-generated dynamic learning rate $\\sigma(\\beta_t) \\in (0,1)$. It enables certain state-tracking computations that softmax attention cannot express [@Grazzi2025; @Siems2025DeltaProduct].",
+      "content_hash": "ff36034e3e08d5adfd67e367cd3e16640fb27a36b19f87ba5bd80ca906675281",
+      "label": "def_deltanet",
+      "qid": "github:2506_00744::def_deltanet",
+      "type": "setting"
+    },
+    {
+      "content": "A Hybrid Quadratic-Linear Transformer (HQLT) is a single-layer architecture that maintains both KV-memory $(K_t, V_t)$ and FW-memory $W_t$ in parallel and produces an output by combining a softmax-attention term and a fast-weight term that share the same query/key/value generators.",
+      "content_hash": "c8d0f7a15868da3465f1516293f7f41fd6d0a5b1ba707d134cbb677a5ec0f4fd",
+      "label": "def_hqlt",
+      "qid": "github:2506_00744::def_hqlt",
+      "type": "setting"
+    },
+    {
+      "content": "A linear transformer (LT) / fast weight programmer (FWP) replaces softmax attention by an outer-product update of a fixed-size matrix-valued state (fast weight memory, FW-memory) [@Schmidhuber1992; @Katharopoulos2020]. The per-step computation is constant in $t$, so total time is linear in sequence length and there is no explicit context-window cap.",
+      "content_hash": "ee96f122b2a09add6b30d4a7c97da01b67a142da6e0697b3627ae7c473004222",
+      "label": "def_linear_transformer",
+      "qid": "github:2506_00744::def_linear_transformer",
+      "type": "setting"
+    },
+    {
+      "content": "The quadratic transformer (QT) is the standard transformer of Vaswani et al. [@Vaswani2017]: at every time step, queries are matched against key-value pairs stored explicitly for each previous step; outputs are computed by softmax attention over the stored pairs (KV-memory). Storage scales linearly with sequence length and self-attention scales quadratically.",
+      "content_hash": "5e09794b63b0b9a49fb60b279765482fa1262b5ff2068f9d34e2854fcbcf7a97",
+      "label": "def_quadratic_transformer",
+      "qid": "github:2506_00744::def_quadratic_transformer",
+      "type": "setting"
+    },
+    {
+      "content": "Synchronous HQLT uses the same equations as Delayed-Streaming HQLT except that the *current* key-value pair $(k_t, v_t)$ is fed simultaneously to both FW-memory and KV-memory, rather than only to KV-memory. The FW-memory update becomes $W_t = W_{t-1} + \\sigma(\\beta_t)(v_t - W_{t-1}\\phi(k_t)) \\otimes \\phi(k_t)$, i.e., FW-memory has no delay.",
+      "content_hash": "5d127fd0dd1b7554b152155f7a1d00c9ac77992970079abe9bd75ec39aa267b3",
+      "label": "def_synchronous",
+      "qid": "github:2506_00744::def_synchronous",
+      "type": "setting"
+    },
+    {
+      "content": "The paper's main empirical conclusion is that the Synchronous HQLT is the best overall blending strategy: it preserves the FW-memory expressivity advantage of DeltaNet (which the delayed variants lose), while matching or improving on the language-modeling, retrieval, and POMDP-RL performance of either base model.",
+      "content_hash": "843d4f401f6b755679bf619fc1f2fda217d752712ebe8840f2e896c18b8b647b",
+      "label": "proposal_synchronous_best",
+      "qid": "github:2506_00744::proposal_synchronous_best",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:ce430c6ef076fa94683b34253f8f3a97b3e4a077bdb3a3c18551350c0ebb74eb",
+  "manifest_schema_version": 1,
+  "package": "2506-00744",
+  "version": "0.1.0"
+}

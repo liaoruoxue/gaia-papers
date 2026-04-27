@@ -1,0 +1,244 @@
+{
+  "ir_hash": "sha256:ce430c6ef076fa94683b34253f8f3a97b3e4a077bdb3a3c18551350c0ebb74eb",
+  "manifest_schema_version": 1,
+  "package": "2506-00744",
+  "premises": [
+    {
+      "content": "Chunk-wise parallel training (@def_chunkwise) gives an efficient sub-quadratic training algorithm for LA and other FWPs: intra-chunk uses parallel computation (scaling as $O(S^2)$ inside each chunk), while inter-chunk uses the recurrent form. With a fixed chunk size $S$, total cost scales as $O(t S)$ in $t$, matching prior reports for FlashLinearAttention [@Yang2024Delta].",
+      "content_hash": "04f50f6c306a19e192b493be7e3415717f8b7fa5258d6ccfaf5d4ffbdac09d7a",
+      "exported": false,
+      "interface_hash": "sha256:222ef0c749a78f58917273bda5f25f8eadf9189bd75f1817f704ba6da54d8714",
+      "label": "claim_chunkwise_subquadratic",
+      "qid": "github:2506_00744::claim_chunkwise_subquadratic",
+      "required_by": [
+        "github:2506_00744::claim_synchronous_keeps_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "All HQLT variants are compatible with existing hardware-efficient implementations of quadratic and linear attention (e.g., FlashAttention-2 and the flash-linear-attention library), because the quadratic and linear branches remain structurally identical to their base operators and only the per-step outputs are summed/mixed.",
+      "content_hash": "cfd91a733ca2ce8f5fa46a50179a5967f383ec39c056abe477c6b4e8dd071426",
+      "exported": false,
+      "interface_hash": "sha256:fa7af7aff4f0917a643f12e5b2313f2ff73fda1fe048884949dd946aa2b34c1f",
+      "label": "claim_compatibility_with_efficient_kernels",
+      "qid": "github:2506_00744::claim_compatibility_with_efficient_kernels",
+      "required_by": [
+        "github:2506_00744::claim_design_principle"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In Delayed-Streaming HQLT, FW-memory $W_t$ stores information from all time steps $\\tau \\le t-S$ (anything older than $S$ steps), while KV-memory $(K_t, V_t)$ holds the $S$ most recent steps $t-S < \\tau \\le t$. The two memory systems thus implement a strict division of labor *over time*: recent context to KV-memory, old context to FW-memory.",
+      "content_hash": "2386de5748459e177bbc5609e8f9753e60c7cf455a7ca7ab519fb9fc12982903",
+      "exported": false,
+      "interface_hash": "sha256:a6da76f879ef0318c6f5a904159d0162fa9cfca403a551a6a4fe68450c2b6b40",
+      "label": "claim_delayed_stream_division",
+      "qid": "github:2506_00744::claim_delayed_stream_division",
+      "required_by": [
+        "github:2506_00744::claim_delayed_lose_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Total state size of a Delayed-Streaming HQLT layer is $S(d_{in} + d_{out}) + d_{out} d_{in}$ matrix entries, fixed independently of sequence length. This achieves untruncated context modeling at fixed memory cost.",
+      "content_hash": "714ff8d83356bbf704f8527b3da46816e88172c229a7bf9bb452721c43a6ae95",
+      "exported": false,
+      "interface_hash": "sha256:d5076293fc7d6bc0fd0b2a6de1be7b8a07b0eaba8d1f9b0f415f3bf9cf89fc86",
+      "label": "claim_delayed_stream_state_size",
+      "qid": "github:2506_00744::claim_delayed_stream_state_size",
+      "required_by": [
+        "github:2506_00744::claim_delayed_lose_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "In Eq. 8 (@def_delta_rule_update) the variables $v_t$, $\\phi(k_t)$, and $\\sigma(\\beta_t)$ play the roles of *target*, *input*, and *learning rate* of the classic delta rule [@Widrow1960] respectively, so each step performs one rank-1 delta-rule update of the fast weight matrix.",
+      "content_hash": "7e89edf7fb8720bef889d250d96f252eea6f56698eda610678484294b2bc1ab3",
+      "exported": false,
+      "interface_hash": "sha256:5c2d11b09cb96037a66a71dc245114cb4709d69cdbf2175cd4a10a506a4a9339",
+      "label": "claim_deltanet_uses_delta_rule",
+      "qid": "github:2506_00744::claim_deltanet_uses_delta_rule",
+      "required_by": [
+        "github:2506_00744::claim_complementarity_table",
+        "github:2506_00744::claim_synchronous_keeps_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Because the LA recurrent form (@def_la_recurrent_form) maintains a fixed matrix $W_t \\in \\mathbb{R}^{d_{out} \\times d_{key}}$ and applies one outer product per step, per-step computation is constant in $t$. Total time is therefore linear in sequence length and memory is $O(d_{out} d_{key})$ regardless of context length.",
+      "content_hash": "a989b8e998d130559acaa42d0d0467308e5b67760f961f8534ae0b7d739ab4d0",
+      "exported": false,
+      "interface_hash": "sha256:2a3931ea3384600e7933210d6f9d396572ce0b879b608dfd05b334dabf73f65e",
+      "label": "claim_la_constant_per_step",
+      "qid": "github:2506_00744::claim_la_constant_per_step",
+      "required_by": [
+        "github:2506_00744::claim_complementarity_table"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "An alternative way to combine quadratic and linear memory is the layer-wise strategy used by xLSTM, Griffin, Samba and similar models: different layers use different memory operators, but no single layer integrates both operators on the same key/value/query stream.",
+      "content_hash": "1b6b9b1e47c0de7c929c1b8aa5faed93c3e6bf2061e966eb29d6bce433f68fbe",
+      "exported": false,
+      "interface_hash": "sha256:eaece29618265df48a9c56642559944da1408d5f363143c9fbc0ff1833d0d2d3",
+      "label": "claim_layerwise_hybrid_alt",
+      "qid": "github:2506_00744::claim_layerwise_hybrid_alt",
+      "required_by": [
+        "github:2506_00744::claim_design_principle"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Setting $\\sigma$ to twice-sigmoid (giving $\\sigma(\\beta_t) \\in (0, 2)$) introduces negative eigenvalues in the linear state-transition matrix of the delta rule, which Grazzi et al. [@Grazzi2025] identify as the key ingredient enabling DeltaNet's strong state-tracking abilities (e.g., parity).",
+      "content_hash": "8ad41e3746a6c7e61bd86dd02f3e9d114c026c58aa4655f58bd09e7c6b602fac",
+      "exported": false,
+      "interface_hash": "sha256:20c7d94bb939e8b9bd95307585631932bda6e8ef3fda5cb01846a51244db698d",
+      "label": "claim_negative_eigvals",
+      "qid": "github:2506_00744::claim_negative_eigvals",
+      "required_by": [
+        "github:2506_00744::claim_complementarity_table",
+        "github:2506_00744::claim_synchronous_keeps_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Softmax over per-step keys yields sharp, item-addressable retrieval: the query selects a near-one-hot weighting over stored values, enabling precise recall of specific past tokens. This precision is what FW-memory sacrifices when softmax is replaced by a separable kernel [@Vaswani2017; @Katharopoulos2020].",
+      "content_hash": "f866371ede9e9dfafc5bd8539be3ac6e3507e7f2f3fb373478c4faaa578b4757",
+      "exported": false,
+      "interface_hash": "sha256:bdcba5e57efa98912226d577e96b52a954febb99dd952cff59b346c48d1048b0",
+      "label": "claim_qt_precise_recall",
+      "qid": "github:2506_00744::claim_qt_precise_recall",
+      "required_by": [
+        "github:2506_00744::claim_complementarity_table"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Because each step appends a new column to $K_t$ and $V_t$, the size of KV-memory grows linearly with $t$, and the total work to compute the attention output across all steps is therefore $O(t^2)$ in time and $O(t)$ in memory.",
+      "content_hash": "d93cc127e96b2fc7070bf584f96794e7cf1919d59670a97c678124c5587ec1bc",
+      "exported": false,
+      "interface_hash": "sha256:2cd6db863d7fba56bc11f58ed7aef55ce4c091c170d257908eb4d35c11f5fb17",
+      "label": "claim_qt_storage_grows",
+      "qid": "github:2506_00744::claim_qt_storage_grows",
+      "required_by": [
+        "github:2506_00744::claim_complementarity_table"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Applying the softmax function to the dot products $K_t^{\\top} q_t$ sharpens the similarity scores into a near-one-hot weighting, which is the key mechanism enabling precise key-value retrieval. Without softmax (i.e., with an arbitrary nonlinearity applied independently to keys and queries), this sharpening is lost.",
+      "content_hash": "9eb555738a442de25bed1aaf2baa88ba6bc18568d53a3e1b163cdd0e922a2d56",
+      "exported": false,
+      "interface_hash": "sha256:4aa24da906ccc5f57f6fa3c39dd931fe0ba29e05e9bdf4199ef6bd030cba359a",
+      "label": "claim_softmax_sharpness",
+      "qid": "github:2506_00744::claim_softmax_sharpness",
+      "required_by": [
+        "github:2506_00744::claim_hqlt_beats_matched_window"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Synchronous HQLT generalises the hybrid design of Arora et al. [@Arora2024Based] from vanilla linear attention to DeltaNet. Arora et al. use a vanilla LA whose performance lags far behind softmax attention, limiting the achievable hybrid quality, whereas Synchronous HQLT inherits DeltaNet's stronger expressivity.",
+      "content_hash": "ea6f432a9a01049a339c6c7207ca5a2b3ea76561eab3906b22d73e9c4025905c",
+      "exported": false,
+      "interface_hash": "sha256:cace97b2b8d258cdda1bbb58673c4b53c5fce5ea9cd6504700abac38a2f72440",
+      "label": "claim_synchronous_arora_connection",
+      "qid": "github:2506_00744::claim_synchronous_arora_connection",
+      "required_by": [
+        "github:2506_00744::claim_design_principle"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Because the *current* key-value pair is delivered to FW-memory in the same step it is generated (@def_synchronous), Synchronous HQLT can use FW-memory's expressive computation on the most recent input — there is no $S$-step lag between input availability and FW-memory update, unlike either delayed variant.",
+      "content_hash": "f7b461348ef81e606f5113c6b4e212199e70e12b14e72323833f5c0b33d9230d",
+      "exported": false,
+      "interface_hash": "sha256:e6cd040399a1c3048824d8924f5cc17ed909a6863344c7e987fdff7157c24b78",
+      "label": "claim_synchronous_no_delay",
+      "qid": "github:2506_00744::claim_synchronous_no_delay",
+      "required_by": [
+        "github:2506_00744::claim_delayed_lose_expressivity",
+        "github:2506_00744::claim_synchronous_keeps_expressivity"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Replacing DeltaNet by vanilla linear attention inside Synchronous HQLT (340M) drops the 6-task average from 47.8 to 42.2 and inflates LMB ppl from 29.4 to 114.2 (Table 2 bottom block).",
+      "content_hash": "e0c591b815cdcde93eaab5e23522ecff7f1bdff030272ca7f591a86d603221df",
+      "exported": false,
+      "interface_hash": "sha256:020edd81d8920b66d38997a1465b1c177183830d2dbb4d576fe2b5219169bd82",
+      "label": "obs_la_ablation",
+      "qid": "github:2506_00744::obs_la_ablation",
+      "required_by": [
+        "github:2506_00744::claim_fw_choice_matters"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Figure 2 (B/C) shows average return and success rate over 20 test episodes vs training environment steps with 3 seeds. Synchronous HQLT (window $S{=}64$) largely closes the gap between DeltaNet and the full-context Transformer (window 780): 'one of [HQLT's] seeds consistently achieved above 70%' success while DeltaNet underperforms.",
+      "content_hash": "bfa75ccfea8c8af7b80f8be739fdab5c5245548cc3a8ad42947524e5a84f2e9c",
+      "exported": false,
+      "interface_hash": "sha256:78cab79281f1a7f3f933c7510226903df1a436843b0db7299dd8b1cfd2233892",
+      "label": "obs_rl_results",
+      "qid": "github:2506_00744::obs_rl_results",
+      "required_by": [
+        "github:2506_00744::claim_rl_supports_synchronous"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Replacing DeltaNet with vanilla LA inside the Synchronous HQLT also fails the expressivity tasks: 2.5% on parity, 44.5% on modular arithmetic.",
+      "content_hash": "3e3c4002bb7d0cc5c438ae80c4f28b928e9df93df5e4cb3f3bbb032948ffd3ff",
+      "exported": false,
+      "interface_hash": "sha256:f5de6b5b9387d19b6478c1ad58f4732d3037ed73cc246d67ca1786466d79d478",
+      "label": "obs_synchronous_la_fails",
+      "qid": "github:2506_00744::obs_synchronous_la_fails",
+      "required_by": [
+        "github:2506_00744::claim_fw_choice_matters"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Main language-modeling results (Table 2). Lower is better for ppl; higher is better for acc and average. Window size $S=64$, dynamic vector mixing.\n\n**340M parameters**\n\n| Model               | Wiki ppl | LMB ppl | LMB acc | PIQA | Hella | Wino | ARC-e | ARC-c | Avg |\n|---------------------|---------|---------|---------|------|-------|------|-------|-------|-----|\n| Transformer++       | 26.5    | 34.9    | 33.9    | 67.6 | 41.0  | 53.7 | 60.2  | 29.0  | 47.6 |\n| DeltaNet            | 27.6    | 35.0    | 32.8    | 67.1 | 40.8  | 52.6 | 58.5  | 28.8  | 46.8 |\n| HQLT Delayed-Stream | 26.4    | 33.1    | 33.6    | 67.9 | 42.1  | 51.8 | 59.4  | 29.5  | 47.4 |\n| HQLT Delayed-Chunk  | 26.7    | 29.9    | 33.5    | 66.8 | 42.3  | 50.9 | 61.1  | 30.6  | 47.5 |\n| HQLT Synchronous    | 26.3    | 29.4    | 33.3    | 66.2 | 42.7  | 53.8 | 61.5  | 29.4  | 47.8 |\n\n**1.3B parameters**\n\n| Model               | Wiki ppl | LMB ppl | LMB acc | PIQA | Hella | Wino | ARC-e | ARC-c | Avg |\n|---------------------|---------|---------|---------|------|-------|------|-------|-------|-----|\n| Transformer++       | 19.8    | 17.9    | 42.6    | 71.0 | 50.3  | 55.8 | 65.2  | 33.2  | 53.0 |\n| DeltaNet            | 20.6    | 19.9    | 39.3    | 70.1 | 49.5  | 52.5 | 68.5  | 34.2  | 52.3 |\n| HQLT Delayed-Stream | 20.0    | 16.5    | 43.5    | 70.7 | 51.6  | 56.0 | 69.3  | 36.0  | 54.5 |\n| HQLT Delayed-Chunk  | 20.2    | 16.3    | 41.3    | 71.8 | 50.9  | 55.0 | 67.9  | 35.2  | 53.7 |\n| HQLT Synchronous    | 19.8    | 15.9    | 42.8    | 72.0 | 51.5  | 56.1 | 68.1  | 33.1  | 53.9 |",
+      "content_hash": "1a6b7d12967983fcb6403b7fc158bdce06c9aeb6e8d34f50c11994f29219ce07",
+      "exported": false,
+      "interface_hash": "sha256:075ab29c6dbb9c7cb66c690d17136574e7690796a21a306b466350175c1efda0",
+      "label": "obs_table2_main",
+      "qid": "github:2506_00744::obs_table2_main",
+      "required_by": [
+        "github:2506_00744::claim_hqlts_match_or_beat",
+        "github:2506_00744::claim_lambada_synchronous_best",
+        "github:2506_00744::claim_lm_baselines_comparable"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Expressivity results on parity and modular arithmetic without brackets (Table 3). Normalised accuracy [%], chance = 0%.\n\n| Model                       | Parity | Mod Arith |\n|-----------------------------|--------|-----------|\n| Transformer [@Grazzi2025]   | 2.2    | 3.1       |\n| Mamba [@Grazzi2025]         | 100.0  | 24.1      |\n| DeltaNet [@Grazzi2025]      | 100.0  | 97.1      |\n| HQLT Delayed-Stream         | 3.3    | 27.8      |\n| HQLT Delayed-Chunk          | 2.8    | 1.4       |\n| HQLT Synchronous            | 100.0  | 97.0      |\n| HQLT Synchronous w. Linear Attn. | 2.5  | 44.5    |",
+      "content_hash": "846051b9e11a3c4db626ae60c721b3068c9edd10a52fc79f45ff07baebcf4ec8",
+      "exported": false,
+      "interface_hash": "sha256:6e205735f7b5857702dfeee784dadecfe72b59c93ffe3daaffd958b5408dedb9",
+      "label": "obs_table3_expressivity",
+      "qid": "github:2506_00744::obs_table3_expressivity",
+      "required_by": [
+        "github:2506_00744::claim_delayed_lose_expressivity",
+        "github:2506_00744::proposal_synchronous_best"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Retrieval results (Table 4). All HQLTs are Synchronous variants. \n\n**340M params**\n\n| Model                          | Window | SWDE | SQuAD | FDA  | Avg  |\n|--------------------------------|--------|------|-------|------|------|\n| Transformer++                  | 2048   | 44.9 | 36.9  | 52.3 | 44.7 |\n| Transformer++                  | 1024   | 30.4 | 25.5  | 31.2 | 29.0 |\n| DeltaNet                       | -      | 18.5 | 25.2  | 8.6  | 17.4 |\n| HQLT sum mixer                 | 64     | 13.3 | 26.2  | 12.6 | 17.4 |\n| HQLT dynamic scalar mixer      | 64     | 21.1 | 27.7  | 11.4 | 20.1 |\n| HQLT dynamic vector mixer      | 64     | 20.0 | 28.4  | 10.9 | 19.8 |\n| HQLT (vector mixer)            | 128    | 16.9 | 30.5  | 17.9 | 21.8 |\n| HQLT (vector mixer)            | 256    | 18.6 | 35.6  | 15.1 | 23.1 |\n| HQLT (vector mixer)            | 512    | 22.9 | 35.7  | 17.3 | 25.3 |\n| HQLT (vector mixer)            | 1024   | 34.0 | 37.1  | 50.1 | 40.4 |\n\n**1.3B params**\n\n| Model            | Window | SWDE | SQuAD | FDA  | Avg  |\n|------------------|--------|------|-------|------|------|\n| Transformer++    | 2048   | 53.7 | 41.5  | 64.7 | 53.3 |\n| DeltaNet         | -      | 32.9 | 29.9  | 23.6 | 28.8 |\n| HQLT Synchronous | 64     | 31.9 | 31.2  | 30.2 | 31.1 |",
+      "content_hash": "e7bd5ceed624fab9c53a439fd7d809d6c91fcb0d6409b99104abe8f6634dffa7",
+      "exported": false,
+      "interface_hash": "sha256:92d38e6f549252572f241fea5191e2354f91d77b669e41bf90af466a4348e494",
+      "label": "obs_table4_retrieval",
+      "qid": "github:2506_00744::obs_table4_retrieval",
+      "required_by": [
+        "github:2506_00744::claim_hqlt_beats_matched_window",
+        "github:2506_00744::claim_long_window_unavoidable",
+        "github:2506_00744::claim_window_drives_retrieval"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}
