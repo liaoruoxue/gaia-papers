@@ -1,0 +1,1937 @@
+{
+  "ir_hash": "sha256:d42f364b63973f4b4199438c193ccc5d37e6195e10953379480076a32eddcefc",
+  "knowledges": [
+    {
+      "content": "An LLM-based interactive agent operates in an episodic environment $E$ with horizon $T$. At each step $t$ the environment emits a textual observation $o_t$ and the policy $\\pi_\\theta$ samples an action $a_t \\sim \\pi_\\theta(\\cdot | h_t, q)$ where the history $h_t = (o_0, a_0, \\dots, o_{t-1}, a_{t-1}, o_t)$ and $q$ is the task instruction. A trajectory $\\tau = (q, o_0, a_0, \\dots, o_T)$ terminates with a verifier-determined binary success or failure signal.",
+      "content_hash": "3d7c11d4c73cdc1b8f0208a0c592ddcae8a0568b62e6ce052b2c214a7bdccea1",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_16843::setup_agent",
+      "label": "setup_agent",
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLM agent / interactive episode setup",
+      "type": "setting"
+    },
+    {
+      "content": "Pass@K is the capability metric: for each problem, $K$ rollouts are drawn from the policy and the problem is scored 1 if at least one rollout succeeds. Pass@K is the dataset average of those binary scores. Pass@1 measures single-try (deployment-style) accuracy; Pass@K with large $K$ (e.g. 128, 1024) approximates the model's capability ceiling under best-of-$K$ sampling [@Yue2025].",
+      "content_hash": "6eb28582ab35572912d754fa82ce25abb446f049808dc93112d568c9e3545430",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_16843::setup_passk",
+      "label": "setup_passk",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yue2025"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Pass@K capability metric",
+      "type": "setting"
+    },
+    {
+      "content": "Reinforcement Learning with Verifiable Rewards (RLVR) post-trains an LLM policy using a programmatic verifier that returns a single scalar reward for each completed trajectory (e.g. pass/fail or fraction of unit tests passed). PPO and group-based optimizers such as GRPO [@DeepSeekR1; @Shao2024] are standard choices. GRPO normalizes rewards within a group of rollouts of the same problem and updates the policy via a clipped surrogate plus a KL regularizer to a reference policy.",
+      "content_hash": "19ee29b95d351871f2451ef6ceeb4f96d197461f4e6f5ab5262c7b52e2b1319c",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_16843::setup_rlvr",
+      "label": "setup_rlvr",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DeepSeekR1",
+              "Shao2024"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR / GRPO post-training",
+      "type": "setting"
+    },
+    {
+      "content": "Long-horizon interactive environments (web navigation, program synthesis, embodied tasks) emit rich and structured feedback — invalid actions, state transitions, compiler/runtime errors — that pinpoints why a trajectory becomes unproductive and how it could be corrected, going beyond a simple success/failure signal [@Yang2024; @Shinn2023].",
+      "content_hash": "1b3479f1b0cf33ccd592785fa07ac78b7fbd2374f0d796abd6ba85db8b39421b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_16843::claim_rich_feedback",
+      "label": "claim_rich_feedback",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Shinn2023",
+              "Yang2024"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Well-established characterization of contemporary interactive agentic environments (compiler errors, state observations, invalid action signals). Cited to existing literature [@Yang2024; @Shinn2023] and treated as background fact, not a contested claim of this paper."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Environments emit rich diagnostic feedback",
+      "type": "claim"
+    },
+    {
+      "content": "Outcome-driven RLVR (e.g. GRPO) compresses an entire trajectory into a single terminal scalar reward. Across many rollouts only a small fraction is rewarded, so updates concentrate on a handful of already-successful trajectories while most partially-correct failures contribute little direct signal. The rich step-level diagnostic content of the feedback is therefore not used to update the policy.",
+      "content_hash": "22569ac53b60668946c8ac17bb73feda386f9aa49e5d076c734b2c6d4bfe2d9c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_16843::claim_rlvr_underuses_feedback",
+      "label": "claim_rlvr_underuses_feedback",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "A descriptive claim about how outcome-based RLVR uses signal: a trajectory is reduced to one scalar reward and partially-correct failures contribute little. This follows almost directly from the definition of RLVR; the only uncertainty is around 'rich feedback is not used' since RLVR pipelines do consume token-level credit via policy gradient on the action distribution."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR underutilizes step-level environment feedback",
+      "type": "claim"
+    },
+    {
+      "content": "RLVR with terminal scalar rewards behaves as **distribution sharpening**: it concentrates probability mass on a small set of behaviors already latent in the base model's long tail, boosting Pass@1 but yielding limited or even negative gains at large $K$ (e.g. Pass@1024) — precisely the regime that reflects the model's true capability ceiling [@Yue2025; @Zhao2025b].",
+      "content_hash": "99bf5041ed8d6750a6b1aaed5f4fe6c3aad88642a3e72445a9b7ad5c50dad68a",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2603_16843::claim_distribution_sharpening",
+      "label": "claim_distribution_sharpening",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yue2025",
+              "Zhao2025b"
+            ],
+            "referenced_claims": [
+              "claim_rlvr_underuses_feedback"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "RLVR causes distribution sharpening (Pass@1 up, Pass@K flat)",
+      "type": "claim"
+    },
+    {
+      "content": "Robust agentic capability requires **agency internalization**: training the model to interpret structured environment feedback, identify the critical decision points that induced failure, and revise those decisions in a feedback-conditioned, targeted manner — rather than relying on blind retries or external test-time search (e.g. Tree of Thoughts).",
+      "content_hash": "bdfe908ec3d3f1a316f1f45f8459cd06309f78888de1c58a61ab2c1465b058f7",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2603_16843::claim_agency_internalization",
+      "label": "claim_agency_internalization",
+      "metadata": {
+        "prior": 0.7,
+        "prior_justification": "A definitional / programmatic claim — the paper *defines* what it means by agency internalization. The 0.70 prior reflects that this is the paper's own conceptual framing rather than a measured fact: competing definitions (e.g. step-wise process reward, dense reward shaping) could equally well be called 'internalization'."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Agency internalization vs distribution sharpening",
+      "type": "claim"
+    },
+    {
+      "content": "Because outcome-driven training fails to internalize recovery, practitioners rely on expensive test-time computation (multiple retries, sampling-and-voting, explicit tree search) to escape early mistakes, increasing both inference latency and deployment complexity [@Wang2022b; @YaoToT2023; @Fu2025b].",
+      "content_hash": "1f893d7723c82c387f70be3e83b72b28e1a12788bd514dafe554af3e209a35e7",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_16843::claim_test_time_cost",
+      "label": "claim_test_time_cost",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Fu2025b",
+              "Wang2022b",
+              "YaoToT2023"
+            ],
+            "referenced_claims": [
+              "claim_distribution_sharpening"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Test-time sampling cost from missing internalized recovery",
+      "type": "claim"
+    },
+    {
+      "content": "How can an agentic LLM be trained so that feedback-grounded recovery (detecting when a trajectory is failing and revising decisions accordingly) becomes an intrinsic capability of the model — improving Pass@K rather than merely sharpening the existing distribution?",
+      "content_hash": "9c8b5d2c5674472db52081286ad8d2e286ecb7bd4bebe9ff05a0b5fa118f583f",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_16843::q_internalize_recovery",
+      "label": "q_internalize_recovery",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "Environment dynamics are defined by $\\mathrm{Step}(\\cdot)$: $E_{t+1}, o_{t+1} \\leftarrow \\mathrm{Step}(E_t, a_t)$. Executing action $a_t$ in environment state $E_t$ transitions to $E_{t+1}$ and yields observation $o_{t+1}$. Rollouts terminate at horizon $T$ or upon a terminal condition (success or irreversible failure).",
+      "content_hash": "5ec6f1b803ef3cdda81c52e47296d6ca9a22404b66b9dabebcbe9f3d59330222",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_16843::setup_step_dynamics",
+      "label": "setup_step_dynamics",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Environment transition dynamics",
+      "type": "setting"
+    },
+    {
+      "content": "Every $K$ steps or upon failure, the policy is invoked with the interaction history $h_t$ and a reflection prompt $p_{\\mathrm{refl}}$ to produce a rollback target $\\tau \\in \\{1, \\dots, t\\}$ and a natural-language experience summary $e$: $(\\tau, e) \\sim \\pi_\\theta(\\cdot | h_t, p_{\\mathrm{refl}})$. $\\tau$ marks the step where the trajectory deviated; $e$ is a brief diagnosis-and-fix instruction.",
+      "content_hash": "d709396550d5857aab1277cac69ddbb25f50c6c6d773660f8e98de330c9f97aa",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_16843::setup_reflection",
+      "label": "setup_reflection",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Periodic reflection procedure",
+      "type": "setting"
+    },
+    {
+      "content": "**Branching via rollback:** Given $(\\tau, e)$, the environment is reset and the original action prefix $a_{1:\\tau-1}$ is replayed to reach state $E_\\tau$ and history $h_\\tau$. The policy then samples a revised action $a'_\\tau \\sim \\pi_\\theta(\\cdot | h_\\tau, q, e)$ conditioned on the experience summary, and the new branch continues from $E'_{\\tau+1} \\leftarrow \\mathrm{Step}(E_\\tau, a'_\\tau)$. Branch requests are managed with a queue-based BFS strategy until a maximum tree depth or attempt budget is reached.",
+      "content_hash": "ca1b47f14ba339718134410d66d65c4919e60ad3a95e4ded0692f23c19dd6b5a",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_16843::setup_branching",
+      "label": "setup_branching",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Rollback + BFS branching",
+      "type": "setting"
+    },
+    {
+      "content": "**Behavior rehearsal loss.** For each successful trajectory in the rehearsal dataset $\\mathcal{D}_{\\mathrm{reh}}$ (rejection-sampled from successful rollouts including branched ones), state-action pairs $(h_t, a_t)$ are extracted and the loss $\\mathcal{L}_{\\mathrm{reh}}(\\theta') = -\\mathbb{E}_{(h,a) \\sim \\mathcal{D}_{\\mathrm{reh}}}[\\log \\pi_{\\theta'}(a | h, q)]$ is minimized. This preserves the agent's baseline competence.",
+      "content_hash": "726319ad9522c9454998943a2e9b835bcb8fbcf32b8fddea1002adeb28ea3cc5",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_16843::setup_rehearsal_loss",
+      "label": "setup_rehearsal_loss",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Rehearsal loss (Lreh)",
+      "type": "setting"
+    },
+    {
+      "content": "**Counterfactual (experience-to-policy) distillation loss.** For each branching event in $\\mathcal{D}_{\\mathrm{refl}}$ at round $\\tau$ with experience-improved action $a'_\\tau$, the model is trained to produce $a'_\\tau$ from the **original** experience-free history $h_\\tau$: $\\mathcal{L}_{\\mathrm{cf}}(\\theta') = -\\mathbb{E}_{(h_\\tau, a'_\\tau) \\sim \\mathcal{D}_{\\mathrm{refl}}}[\\log \\pi_{\\theta'}(a'_\\tau | h_\\tau, q)]$. The natural-language experience $e$ is dropped at training time so that recovery becomes intrinsic at test time.",
+      "content_hash": "288470a3fb74f75b3a46ba52a5850a9cab05c97d73e12547223370208ee6c4cf",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_16843::setup_cf_loss",
+      "label": "setup_cf_loss",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Counterfactual loss (Lcf)",
+      "type": "setting"
+    },
+    {
+      "content": "The LEAFE training objective is the sum $\\mathcal{L}(\\theta') = \\mathcal{L}_{\\mathrm{cf}}(\\theta') + \\beta \\mathcal{L}_{\\mathrm{reh}}(\\theta')$, where $\\beta$ is a hyperparameter scaling rehearsal strength.",
+      "content_hash": "cb4522ea76728304166810d93ae4c2690716e6ef5267e8a6d2f63bfbe99990ba",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_16843::setup_total_loss",
+      "label": "setup_total_loss",
+      "module": "s3_method",
+      "parameters": [],
+      "title": "LEAFE total objective",
+      "type": "setting"
+    },
+    {
+      "content": "Linguistic feedback is qualitative and unstructured, making it hard to internalize via standard token-level optimization. LEAFE addresses this by treating experience as a **contextual intervention**: the experience summary $e$ is concatenated to the prompt and induces a policy shift via the input context, rather than entering the loss directly during exploration.",
+      "content_hash": "428635eaf477cce8b3f4be8a77856a5ad3afba18da632cc48970a5a232bb1c53",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_16843::claim_experience_as_intervention",
+      "label": "claim_experience_as_intervention",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "A design principle of LEAFE: experience is concatenated as context, not used as a token-level training target during exploration. This is well-defined and consistent with similar in-context-learning / rollback approaches [@LiGARollback2025; @WangHOPE]."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Experience as a contextual intervention",
+      "type": "claim"
+    },
+    {
+      "content": "Stage 1 branching produces trajectories with the structure **failure → rollback → fix → success**, explicitly targeting the critical decision points where the original rollout went wrong. Successful branches supply paired $(h_\\tau, a_\\tau)$ vs. $(h_\\tau, a'_\\tau)$ examples that are unavailable to outcome-driven RL [@LiGARollback2025; @WangHOPE].",
+      "content_hash": "1d8b02707acf75a65187792a01bb101207ad8df64a11eeec1def8898bf59cf69",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2603_16843::claim_branching_targets_failures",
+      "label": "claim_branching_targets_failures",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "LiGARollback2025",
+              "WangHOPE"
+            ],
+            "referenced_claims": [
+              "claim_experience_as_intervention",
+              "claim_rich_feedback"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Branching produces failure → fix → success traces",
+      "type": "claim"
+    },
+    {
+      "content": "By training $\\pi_{\\theta'}$ to produce the corrected action $a'_\\tau$ from the **experience-free** history $h_\\tau$, the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ maps the experience-augmented decision back into the original context. This expands the policy's intrinsic action distribution with experience-induced alternatives, making corrected actions more probable without requiring an explicit reflection step at inference.",
+      "content_hash": "386f7c6b4f36faf937c3422aafaa83651435e6154549c0b872342a932b34b586",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2603_16843::claim_cf_internalizes_recovery",
+      "label": "claim_cf_internalizes_recovery",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_branching_targets_failures",
+              "claim_experience_as_intervention",
+              "setup_cf_loss"
+            ]
+          }
+        }
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Lcf internalizes corrective revisions into model weights",
+      "type": "claim"
+    },
+    {
+      "content": "The rehearsal loss $\\mathcal{L}_{\\mathrm{reh}}$ acts as an anti-forgetting regularizer: by maximizing the likelihood of action sequences from successful trajectories, it preserves baseline task competence while $\\mathcal{L}_{\\mathrm{cf}}$ adapts the model toward corrective behaviors [@Ahn2024].",
+      "content_hash": "5ed8faaf4dd551b5abde44423e96c2cf88014ae0330b0351e47e2aeaa815fbe1",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2603_16843::claim_lreh_stabilizes",
+      "label": "claim_lreh_stabilizes",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Ahn2024"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Standard property of an imitation-learning loss on demonstrated successful trajectories — preserves baseline competence by anchoring the policy to demonstrated behavior. Textbook regularizing interpretation [@Ahn2024]."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "Lreh preserves baseline competence",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE is initialized from a GRPO-trained checkpoint and further optimized with $\\mathcal{L}_{\\mathrm{cf}} + \\beta \\mathcal{L}_{\\mathrm{reh}}$. It therefore composes with — rather than replaces — outcome-driven RL.",
+      "content_hash": "3659516d01afa68818375bf9906a5a9a91e0d30a5b37ce9b4ac6fcd26f42896d",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2603_16843::claim_initialization_grpo",
+      "label": "claim_initialization_grpo",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Reported directly in §4 (Implementation Details): 'LEAFE is also initialized from the GRPO-trained model'. This is a procedural fact about the experimental pipeline, not a contested claim."
+      },
+      "module": "s3_method",
+      "parameters": [],
+      "title": "LEAFE composes on top of GRPO checkpoints",
+      "type": "claim"
+    },
+    {
+      "content": "**Evaluation protocol.** LEAFE is compared against four baselines: Base (instruction-tuned model, no task fine-tuning), GRPO-RLVR (outcome-supervised RL with verifiable final rewards [@DeepSeekR1]), EarlyExp (reward-free agent learning that converts early interaction experience into supervision via Implicit World Modeling [@Zhang2025a]), and ACE (training-free prompt-based playbook evolution [@Zhang2025b]). Pass@1 and Pass@128 are reported on WebShop, ALFWorld, ScienceWorld, Sokoban (Qwen2.5-7B and Llama3.1-8B backbones); CodeContests (Qwen2.5-72B and Llama3-70B) reports Pass@1 and Pass@128 only against Base and GRPO. All Pass@128 numbers are computed from independent inference-time samples of the trained policy (no Stage-1 rollback at test time).",
+      "content_hash": "a9cf18467a9950c43d8a443b75c375d7da3f179208b4ed2e71275b98659d0939",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2603_16843::setup_eval_protocol",
+      "label": "setup_eval_protocol",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "DeepSeekR1",
+              "Zhang2025a",
+              "Zhang2025b"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Evaluation protocol and baselines",
+      "type": "setting"
+    },
+    {
+      "content": "**Benchmarks.** WebShop [@Yao2022a] (web navigation across >1M products), ALFWorld [@Shridhar2020] (text-based embodied household tasks), ScienceWorld [@Wang2022a] (text-based scientific experimentation), Sokoban [@Schrader2018] (planning puzzle), and CodeContests [@Li2022] (competitive programming with execution-based test feedback).",
+      "content_hash": "71c1aaeb71903dc2dc922e7534b6a4cb704346fb16f37a795b8cf55b2efef2d3",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2603_16843::setup_benchmarks",
+      "label": "setup_benchmarks",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2022",
+              "Schrader2018",
+              "Shridhar2020",
+              "Wang2022a",
+              "Yao2022a"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Agentic benchmarks",
+      "type": "setting"
+    },
+    {
+      "content": "Main Pass@1 / Pass@128 results across four interactive benchmarks (% success rate). LEAFE attains the highest Pass@128 in every benchmark / model cell shown:\n\n**WebShop**\n\n| Method     | Qwen2.5-7B P@1 | Qwen2.5-7B P@128 | Llama3.1-8B P@1 | Llama3.1-8B P@128 |\n|------------|----------------|------------------|-----------------|-------------------|\n| Base       | 0.05           | 5.20             | 0.00            | 1.80              |\n| EarlyExp   | 61.55          | 84.60            | 51.13           | 77.80             |\n| GRPO-RLVR  | 67.45          | 85.40            | 54.95           | 79.40             |\n| ACE        | 68.65          | 86.80            | 54.35           | 79.80             |\n| **LEAFE**  | 66.50          | **87.80**        | **56.25**       | **81.00**         |\n\n**ALFWorld**\n\n| Method     | Qwen2.5-7B P@1 | Qwen2.5-7B P@128 | Llama3.1-8B P@1 | Llama3.1-8B P@128 |\n|------------|----------------|------------------|-----------------|-------------------|\n| Base       | 26.07          | 78.57            | 29.82           | 74.29             |\n| EarlyExp   | 72.23          | 92.86            | 74.15           | 95.71             |\n| GRPO-RLVR  | 69.46          | 91.43            | 72.50           | 94.29             |\n| ACE        | 66.34          | 89.63            | 70.32           | 92.50             |\n| **LEAFE**  | 67.50          | **94.29**        | 71.79           | **96.43**         |\n\n**ScienceWorld**\n\n| Method     | Qwen2.5-7B P@1 | Qwen2.5-7B P@128 | Llama3.1-8B P@1 | Llama3.1-8B P@128 |\n|------------|----------------|------------------|-----------------|-------------------|\n| Base       | 7.00           | 47.33            | 7.17            | 48.67             |\n| EarlyExp   | 26.17          | 54.67            | 24.04           | 56.00             |\n| GRPO-RLVR  | 27.17          | 57.33            | 24.25           | 56.00             |\n| ACE        | 29.45          | 59.67            | 25.28           | 57.33             |\n| **LEAFE**  | 27.88          | **62.00**        | 22.70           | **59.33**         |\n\n**Sokoban**\n\n| Method     | Qwen2.5-7B P@1 | Qwen2.5-7B P@128 | Llama3.1-8B P@1 | Llama3.1-8B P@128 |\n|------------|----------------|------------------|-----------------|-------------------|\n| Base       | 6.90           | 43.80            | 17.70           | 61.40             |\n| EarlyExp   | 60.15          | 71.60            | 57.32           | 68.20             |\n| GRPO-RLVR  | 58.15          | 68.00            | 60.43           | 73.40             |\n| ACE        | 61.30          | 70.80            | 60.79           | 73.20             |\n| **LEAFE**  | **64.60**      | **78.40**        | **62.00**       | **77.20**         |",
+      "content_hash": "f33a6a458f94d5d336a3968fec704e4871834c66010b7c54d8a4f15eae30c378",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2603_16843::obs_main_results",
+      "label": "obs_main_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_leafe_beats_alternatives",
+              "claim_leafe_beats_grpo_passk",
+              "obs_main_results"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Directly transcribed from Table 1 of the paper (artifacts/2603.16843.pdf). Well-defined Pass@1 / Pass@128 percentages on four standardized benchmarks with two model families — direct empirical measurement, high confidence.",
+        "source_table": "artifacts/2603.16843.pdf, Table 1"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Main Pass@1 / Pass@128 results across four interactive benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "Pass@1 / Pass@128 on CodeContests with larger backbones (% success rate). LEAFE improves Pass@128 by up to **+14%** over the base model:\n\n| Method     | Qwen2.5-72B P@1 | Qwen2.5-72B P@128 | Llama3-70B P@1 | Llama3-70B P@128 |\n|------------|------------------|---------------------|----------------|---------------------|\n| Base       | 10.00            | 33.94               | 7.35           | 24.85               |\n| GRPO-RLVR  | 20.45            | 36.97               | 13.64          | 27.88               |\n| **LEAFE**  | 17.12            | **47.88**           | 14.09          | **33.94**           |\n\nNote: EarlyExp and ACE are not reported on CodeContests because the benchmark uses execution feedback rather than the interactive-environment interface those methods target.",
+      "content_hash": "e7b6807e9511c954dc7f2691385f59b610deb7a74aedb3a33ca20f409a7cd130",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2603_16843::obs_codecontests_results",
+      "label": "obs_codecontests_results",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_leafe_beats_grpo_passk",
+              "obs_codecontests_results"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Directly transcribed from Table 2 (CodeContests with Qwen2.5-72B and Llama3-70B). Direct empirical measurement.",
+        "source_table": "artifacts/2603.16843.pdf, Table 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "CodeContests Pass@1 / Pass@128 (large backbones)",
+      "type": "claim"
+    },
+    {
+      "content": "Across the eight (benchmark, backbone) cells in Table 1 plus the two CodeContests cells, GRPO sometimes wins Pass@1 (e.g. WebShop / Qwen2.5-7B: GRPO 67.45 vs. LEAFE 66.50; CodeContests / Qwen2.5-72B: GRPO 20.45 vs. LEAFE 17.12) but LEAFE wins or ties **every** Pass@128 comparison. Most strikingly, on CodeContests / Qwen2.5-72B GRPO improves Pass@128 by only +3 points over Base (33.94 → 36.97) while LEAFE improves by +14 points (33.94 → 47.88).",
+      "content_hash": "1f36530f30ff3a2c18bdba99d4368fe9b836da9608dbda2232a104b892d858a5",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2603_16843::obs_grpo_passk_pattern",
+      "label": "obs_grpo_passk_pattern",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Direct cross-comparison of cells in Tables 1 and 2 — a factual summary of the numerical pattern, not a derived inference. The +14 point Pass@128 gap on CodeContests / Qwen2.5-72B and the WebShop / Qwen2.5-7B Pass@1 reversal are read off directly.",
+        "source_table": "artifacts/2603.16843.pdf, Tables 1 and 2"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "GRPO sometimes wins P@1 but LEAFE consistently wins P@128",
+      "type": "claim"
+    },
+    {
+      "content": "On CodeContests, holding the execution budget fixed, LEAFE Stage-1 tree-based experience-guided rollback branching attains higher Pass@128 than either independent sampling (IS) or iterative refinement (IR):\n\n| Model         | IS Pass@128 | IR Pass@128 | LEAFE Stage-1 Pass@128 |\n|---------------|-------------|-------------|------------------------|\n| Qwen2.5-32B   | 48.92       | 51.48       | **55.52**              |\n| Qwen2.5-72B   | 48.65       | 49.52       | **54.30**              |\n| Llama3-70B    | 30.20       | 38.10       | **42.50**              |",
+      "content_hash": "2a05ae543479f0008428b3fcb71f1546061ecf0525a5ec276c298533e5f63a56",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2603_16843::obs_stage1_sampling",
+      "label": "obs_stage1_sampling",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly transcribed from Table 3 (Pass@128 under IS / IR / Stage-1 sampling on CodeContests, three backbones). Empirical measurement, high confidence.",
+        "source_table": "artifacts/2603.16843.pdf, Table 3"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Stage-1 branching beats IS and IR under equal budget",
+      "type": "claim"
+    },
+    {
+      "content": "On ScienceWorld, adding the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ on top of the rehearsal loss $\\mathcal{L}_{\\mathrm{reh}}$ raises Pass@128 substantially while leaving Pass@1 nearly unchanged:\n\n| Model         | Lreh P@1 | Lcf+Lreh P@1 | Lreh P@128 | Lcf+Lreh P@128 |\n|---------------|----------|---------------|------------|------------------|\n| Qwen2.5-7B    | 27.67    | 27.88         | 59.33      | **62.00**        |\n| Llama3.1-8B   | 22.54    | 22.70         | 57.33      | **59.33**        |\n| Qwen2.5-14B   | 37.17    | 36.50         | 67.33      | **72.00**        |\n\nThe Pass@128 gain (e.g. +4.67 points on Qwen2.5-14B) isolates the contribution of experience-to-policy distillation from the rehearsal regularizer.",
+      "content_hash": "012931e3b56f1c1c1fc30b31038e54db4c10812424012964eba6959119012751",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2603_16843::obs_lcf_ablation",
+      "label": "obs_lcf_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_cf_internalizes_recovery",
+              "claim_internalization_supported",
+              "obs_lcf_ablation"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Directly transcribed from Table 4 (Pass@1 / Pass@128 with Lreh vs. Lcf+Lreh on ScienceWorld for three model sizes). Direct empirical measurement.",
+        "source_table": "artifacts/2603.16843.pdf, Table 4"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Lcf is the key driver of Pass@128 gains (ablation)",
+      "type": "claim"
+    },
+    {
+      "content": "Out-of-distribution generalization on MBPP (models trained on CodeContests). Values are Pass@128 (%); deltas vs. the corresponding base model in parentheses:\n\n| Method | Qwen2.5-32B   | Qwen2.5-72B   | Llama3-70B   |\n|--------|----------------|----------------|----------------|\n| Base   | 85.45          | 83.33          | 78.31          |\n| GRPO   | 81.22 (−4.23)  | 81.22 (−2.11)  | 74.07 (−4.24)  |\n| LEAFE  | 85.45 (+0.00)  | **85.13 (+1.80)** | **79.63 (+1.32)** |\n\nGRPO degrades on every backbone; LEAFE matches or beats Base on every backbone.",
+      "content_hash": "4e9d98ee4bdefd27d91f40a3f59b48ab3902b57aa8e475e3767c1ee30dce8cb8",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2603_16843::obs_ood_mbpp",
+      "label": "obs_ood_mbpp",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Directly transcribed from Table 5 (MBPP Pass@128 for Base / GRPO / LEAFE on three large backbones). Empirical measurement, but with a slightly lower prior because OOD evaluation is a single test benchmark and could be sensitive to prompt template choices.",
+        "source_table": "artifacts/2603.16843.pdf, Table 5"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "OOD MBPP Pass@128 — GRPO degrades, LEAFE preserves or improves",
+      "type": "claim"
+    },
+    {
+      "content": "Pass@1 / Pass@128 (%) for LEAFE alone vs. LEAFE plus an auxiliary training target (EarlyExp = EE for ALFWorld, GRPO-RLVR = RL for CodeContests). Auxiliary targets consistently raise Pass@1 but can lower Pass@128:\n\n| Task         | Model         | LEAFE alone (P@1 / P@128) | LEAFE + Aux (P@1 / P@128)         |\n|--------------|---------------|----------------------------|-------------------------------------|\n| ALFWorld     | Qwen2.5-7B    | 67.50 / 94.29              | 67.86 / 95.71 (w/ EE)               |\n| ALFWorld     | Llama3.1-8B   | 71.79 / 96.43              | 74.46 / 93.57 (w/ EE) — P@128 drops |\n| CodeContests | Qwen2.5-32B   | 9.34 / 34.35               | 14.09 / 33.94 (w/ RL) — P@128 drops |\n| CodeContests | Qwen2.5-72B   | 11.15 / 40.00              | 17.12 / 47.88 (w/ RL)               |\n| CodeContests | Llama3-70B    | 9.33 / 30.30               | 14.09 / 33.94 (w/ RL)               |",
+      "content_hash": "99030cf7fcadb2993c9f8a31f43ff774461e4002c7a534de7517d7895ccc9ff2",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2603_16843::obs_synergy_ablation",
+      "label": "obs_synergy_ablation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_synergy_ablation"
+            ]
+          }
+        },
+        "prior": 0.9,
+        "prior_justification": "Directly transcribed from Table 6 (LEAFE alone vs. LEAFE + EE / RL). Empirical measurement; prior set slightly below the main tables because the LEAFE-alone CodeContests numbers in Table 6 (e.g. 9.34 / 34.35 on Qwen2.5-32B) appear to use different LEAFE-alone configurations than Table 2's headline numbers, introducing some interpretive ambiguity.",
+        "source_table": "artifacts/2603.16843.pdf, Table 6"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Auxiliary RL/EE raise P@1 but can constrain P@128",
+      "type": "claim"
+    },
+    {
+      "content": "**LEAFE consistently outperforms GRPO at large $K$ (Pass@128) across interactive and code-generation benchmarks.** The advantage is most pronounced on CodeContests / Qwen2.5-72B (LEAFE 47.88 vs. GRPO 36.97, a +10.9 point gap) and on Sokoban / Qwen2.5-7B (LEAFE 78.40 vs. GRPO 68.00, a +10.4 point gap), and holds in every cell of Tables 1 and 2.",
+      "content_hash": "032b34420811a5ebc5590bed4339153c970e319e8fd6e02611e71cc724f08309",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2603_16843::claim_leafe_beats_grpo_passk",
+      "label": "claim_leafe_beats_grpo_passk",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "LEAFE > GRPO at Pass@128 (consistently)",
+      "type": "claim"
+    },
+    {
+      "content": "**LEAFE attains the highest Pass@128 across all interactive benchmarks compared to EarlyExp, GRPO-RLVR, and ACE** under the same fixed interaction budget — ten of ten cells in Table 1 (four benchmarks × Qwen2.5-7B and Llama3.1-8B, plus the two CodeContests / large-backbone rows).",
+      "content_hash": "205ca327b659ee9c3cdc71cd3a89526e40480c4739cacada93f180c973f2bbe7",
+      "declaration_index": 10,
+      "exported": true,
+      "id": "github:2603_16843::claim_leafe_beats_alternatives",
+      "label": "claim_leafe_beats_alternatives",
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "LEAFE > EarlyExp / GRPO / ACE at Pass@128",
+      "type": "claim"
+    },
+    {
+      "content": "The combined evidence from main results, the Lcf ablation, and the OOD generalization experiment supports LEAFE's central thesis that **reflective-experience distillation internalizes feedback-grounded agency** into the model weights, rather than merely sharpening the existing trajectory distribution.",
+      "content_hash": "93f6512c371c87a03ef77ef68accee962c2440b1e36bf5c3b9879585a151310b",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2603_16843::claim_internalization_supported",
+      "label": "claim_internalization_supported",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_internalization_supported",
+              "obs_ood_mbpp"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Internalization thesis is empirically supported",
+      "type": "claim"
+    },
+    {
+      "content": "The pattern of GRPO sometimes winning Pass@1 while plateauing or regressing at Pass@128 (and on OOD MBPP) is the empirical signature of distribution sharpening: the policy concentrates probability on the narrow set of behaviors GRPO already rewards, at the cost of behavioral coverage and generalization.",
+      "content_hash": "0f0b2775db0a9686ea9b96a99307d3b9bfe470428b4d79f3760c6b05e1fcb29b",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2603_16843::claim_grpo_sharpens_evidence",
+      "label": "claim_grpo_sharpens_evidence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_distribution_sharpening",
+              "obs_grpo_passk_pattern",
+              "obs_ood_mbpp"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Empirical evidence that GRPO induces distribution sharpening",
+      "type": "claim"
+    },
+    {
+      "content": "Adding an auxiliary outcome-driven objective (EarlyExp or GRPO-RLVR) on top of LEAFE consistently lifts Pass@1 but can suppress Pass@128 (e.g. ALFWorld / Llama3.1-8B 96.43 → 93.57; CodeContests / Qwen2.5-32B 34.35 → 33.94). This trade-off is consistent with the auxiliary target re-aligning the policy with terminal rewards and thereby narrowing the exploration ceiling that LEAFE alone preserves.",
+      "content_hash": "080eb942565d521ade56b9478dc8d5a43daa581352960124a2bf575783a32ef1",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2603_16843::claim_aux_pass1_pass128_tradeoff",
+      "label": "claim_aux_pass1_pass128_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_synergy_ablation"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Auxiliary target → Pass@1 ↑, Pass@128 sometimes ↓",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE is most effective when the environment provides clear, diagnostic feedback. Its benefits may diminish when feedback is weak, delayed, or hard to attribute to specific decision points.",
+      "content_hash": "f7f1f65bb1d7da5df1dfdc3f5ddc1a4c2e341c25213750b93838c44d1bd46136",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2603_16843::claim_lim_feedback_quality",
+      "label": "claim_lim_feedback_quality",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "Self-acknowledged limitation in §4.5; consistent with the method's structural reliance on diagnostic feedback to identify rollback targets. High prior because the authors directly assert it and the mechanism makes it almost definitional."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Limitation: requires diagnostic feedback",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE assumes the environment can be reliably reset to a rollback point $\\tau$ and that the prefix $a_{1:\\tau-1}$ can be replayed deterministically. This assumption can be violated in non-deterministic or stateful real-world environments.",
+      "content_hash": "d46b78ff99217ae2178d43cbea8d2159773f6ad5ee94cb56bef8c9b068056a80",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2603_16843::claim_lim_resettable_env",
+      "label": "claim_lim_resettable_env",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Self-acknowledged limitation in §4.5; structurally true because Stage-1 branching reconstructs $E_\\tau$ by replaying the action prefix — non-deterministic environments break this contract by definition. High prior."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Limitation: requires resettable / replayable environments",
+      "type": "claim"
+    },
+    {
+      "content": "An alternative explanation for LEAFE's Pass@128 gains is that it is simply a more effective form of distribution sharpening — concentrating mass on a different (perhaps larger) set of pre-existing successful trajectories rather than internalizing a genuinely new recovery skill.",
+      "content_hash": "3bb8506c6e33a52e089f01351d9f109ccfb59fe57359feeb010d5b1dc02cd238",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2603_16843::alt_leafe_just_sharpening",
+      "label": "alt_leafe_just_sharpening",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "Alternative explanation that LEAFE is merely a different sharpening recipe. Low prior reflecting the explanatory-power semantics: sharpening alone cannot account for (a) the asymmetric Lcf-vs-Lreh Pass@128 gain, (b) preserved OOD MBPP performance, or (c) the absence of test-time rollback at inference — three observations a pure sharpening view struggles to reconcile."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Alternative: LEAFE is just a different sharpening recipe",
+      "type": "claim"
+    },
+    {
+      "content": "If LEAFE genuinely internalizes recovery (@claim_internalization_supported), then the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ should selectively raise Pass@128 (the coverage metric) while leaving Pass@1 essentially unchanged: the rehearsal loss already captures Pass@1 competence, and only $\\mathcal{L}_{\\mathrm{cf}}$ supplies the corrective alternatives that expand coverage.",
+      "content_hash": "3979fe462e8d12a63ebb74bb493a2a21e50051f443411167915062a1f8a73f68",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2603_16843::pred_internalization",
+      "label": "pred_internalization",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_internalization_supported"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Prediction of the internalization hypothesis: Lcf raises Pass@128 selectively while Lreh anchors Pass@1. This prediction follows directly from the design semantics of the two losses — Lreh imitates successful trajectories (Pass@1 anchor), Lcf supplies corrective alternatives (Pass@K coverage). High prior conditional on the internalization framing."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Prediction (internalization): Lcf raises P@128 selectively",
+      "type": "claim"
+    },
+    {
+      "content": "If LEAFE were merely an alternative sharpening recipe (@alt_leafe_just_sharpening), $\\mathcal{L}_{\\mathrm{cf}}$ and $\\mathcal{L}_{\\mathrm{reh}}$ would be near-substitutes that together redistribute probability over the same successful-mode set — so removing $\\mathcal{L}_{\\mathrm{cf}}$ should hurt Pass@1 and Pass@128 in roughly the same proportion, not produce a selective Pass@128 drop.",
+      "content_hash": "e6d85ab8aafee1936fa3f5af8c9278d4652b8a9c9495b71789ebd198f6e9eda9",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2603_16843::pred_just_sharpening",
+      "label": "pred_just_sharpening",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_leafe_just_sharpening"
+            ]
+          }
+        },
+        "prior": 0.25,
+        "prior_justification": "Prediction under the 'LEAFE is just better sharpening' alternative: the two losses should be near-substitutes that affect Pass@1 and Pass@128 in roughly the same proportion. Low prior because a sharpening view of LEAFE has no principled reason to predict loss substitutability — the two losses operate on different data distributions (successful rollouts vs. branching events) and therefore should not behave as substitutes even under that view."
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Prediction (sharpening alt): Lcf and Lreh affect P@1 and P@128 similarly",
+      "type": "claim"
+    },
+    {
+      "content": "compare(If LEAFE genuinely internalizes recovery (@claim_internalization_supported), then the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ should selectively raise Pass@128 (the coverage metric) while leaving Pass@1 essentially unchanged: the rehearsal loss already captures Pass@1 competence, and only $\\mathcal{L}_{\\mathrm{cf}}$ supplies the corrective alternatives that expand coverage., If LEAFE were merely an alternative sharpening recipe (@alt_leafe_just_sharpening), $\\mathcal{L}_{\\mathrm{cf}}$ and $\\mathcal{L}_{\\mathrm{reh}}$ would be near-substitutes that together redistribute probability over the same successful-mode set — so removing $\\mathcal{L}_{\\mathrm{cf}}$ should hurt Pass@1 and Pass@128 in roughly the same proportion, not produce a selective Pass@128 drop., On ScienceWorld, adding the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ on top of the rehearsal loss $\\mathcal{L}_{\\mathrm{reh}}$ raises Pass@128 substantially while leaving Pass@1 nearly unchanged:\n\n| Model         | Lreh P@1 | Lcf+Lreh P@1 | Lreh P@128 | Lcf+Lreh P@128 |\n|---------------|----------|---------------|------------|------------------|\n| Qwen2.5-7B    | 27.67    | 27.88         | 59.33      | **62.00**        |\n| Llama3.1-8B   | 22.54    | 22.70         | 57.33      | **59.33**        |\n| Qwen2.5-14B   | 37.17    | 36.50         | 67.33      | **72.00**        |\n\nThe Pass@128 gain (e.g. +4.67 points on Qwen2.5-14B) isolates the contribution of experience-to-policy distillation from the rehearsal regularizer.)",
+      "content_hash": "8c4859490d22857c7983bf303fb6db6e146bbab1b95004b8d4f2ef696085bdb8",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2603_16843::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_leafe_just_sharpening",
+              "claim_internalization_supported",
+              "obs_lcf_ablation"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "Tree-based experience-guided rollback branching (LEAFE Stage 1) is a more effective use of a fixed execution budget on CodeContests than either independent sampling or iterative refinement. It dominates both baselines for every backbone in Table 3.",
+      "content_hash": "520501cdb3bbb28ae9b70b60de90e53fc4e74f9c5a5ab5ac3bce9794d4d0910f",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2603_16843::claim_stage1_branching_better",
+      "label": "claim_stage1_branching_better",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_stage1_sampling"
+            ]
+          }
+        }
+      },
+      "module": "s4_experiments",
+      "parameters": [],
+      "title": "Stage-1 branching > IS / IR under fixed budget",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE is a practical recipe for developing LLM agents that continue to improve through deployment-time interaction: it accepts any RLVR-trained checkpoint as input, requires only that the environment provides diagnostic feedback and supports rollback, and produces a single-rollout policy with broader behavioral coverage than the outcome-driven baseline.",
+      "content_hash": "7fc50945eac15d4a5ea161cc29d5eb2ddb4c943678b415ec80da20408e4b0567",
+      "declaration_index": 0,
+      "exported": true,
+      "id": "github:2603_16843::claim_leafe_practical",
+      "label": "claim_leafe_practical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_internalization_supported",
+              "claim_leafe_beats_grpo_passk",
+              "claim_stage1_branching_better"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusion",
+      "parameters": [],
+      "title": "LEAFE is a deployment-ready recipe",
+      "type": "claim"
+    },
+    {
+      "content": "By internalizing reflective experience into model weights, LEAFE shifts the burden of competence from heavy test-time sampling toward the trained policy itself, reducing reliance on best-of-$K$ and explicit search at inference time.",
+      "content_hash": "1e6d3014bdae51a2abdf70bd6f302b8fc50c470551015ef1a1e8dd4043d81a52",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2603_16843::claim_pass_burden_shift",
+      "label": "claim_pass_burden_shift",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_cf_internalizes_recovery",
+              "claim_internalization_supported"
+            ]
+          }
+        }
+      },
+      "module": "s6_conclusion",
+      "parameters": [],
+      "title": "LEAFE shifts competence from test-time sampling to weights",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_rlvr_underuses_feedback,github:2603_16843::claim_distribution_sharpening)",
+      "content_hash": "271b3b918da9ecfa775354deffb7a33ff8849ca935032cbfd96abec5ca96a8bf",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_3052181d",
+      "label": "__implication_result_3052181d",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_rlvr_underuses_feedback,github:2603_16843::claim_distribution_sharpening)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fecc127da83f5653",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_distribution_sharpening,github:2603_16843::claim_test_time_cost)",
+      "content_hash": "098ededbdd2017dd9ae0483e500df853463a9525df84f26edee29ba539da9568",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_697bb250",
+      "label": "__implication_result_697bb250",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_distribution_sharpening,github:2603_16843::claim_test_time_cost)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d1b82ccc8b64dab6",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_16843::claim_rich_feedback,github:2603_16843::claim_experience_as_intervention)",
+      "content_hash": "edc88645d2dfb1848793ae5705c68c0a449160b720790381acaa12c2b706c38f",
+      "exported": false,
+      "id": "github:2603_16843::__conjunction_result_ca7e13b1",
+      "label": "__conjunction_result_ca7e13b1",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_16843::claim_rich_feedback,github:2603_16843::claim_experience_as_intervention)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7533bbf6b09c2c75",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::__conjunction_result_ca7e13b1,github:2603_16843::claim_branching_targets_failures)",
+      "content_hash": "95481bb2659593562dfa6b75053d0348cd384eb81e17cc56b1750cd77384c54b",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_a2620dc9",
+      "label": "__implication_result_a2620dc9",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::__conjunction_result_ca7e13b1,github:2603_16843::claim_branching_targets_failures)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7533bbf6b09c2c75",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_16843::claim_branching_targets_failures,github:2603_16843::claim_experience_as_intervention)",
+      "content_hash": "82a8412780868616927e3933aea570d1acfab8d163cfacb71e6986d99bf37ee2",
+      "exported": false,
+      "id": "github:2603_16843::__conjunction_result_596fc545",
+      "label": "__conjunction_result_596fc545",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_16843::claim_branching_targets_failures,github:2603_16843::claim_experience_as_intervention)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bc6b95b743377556",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::__conjunction_result_596fc545,github:2603_16843::claim_cf_internalizes_recovery)",
+      "content_hash": "94e69208da0897e942e7023d03f32392feb62f2d45c2c662f283fba0df8fe411",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_bb1c0796",
+      "label": "__implication_result_bb1c0796",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::__conjunction_result_596fc545,github:2603_16843::claim_cf_internalizes_recovery)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bc6b95b743377556",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::obs_main_results)",
+      "content_hash": "214e980f66347907f295f9f24e96bbc2f06b4ee96ef0d8c16266d692a133e43b",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_ebdfa1d5",
+      "label": "__implication_result_ebdfa1d5",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::obs_main_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_258fed2cd1c63a81",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::obs_codecontests_results)",
+      "content_hash": "1023b3258c709d653ff4eff40aedd249bb95d2de8ed6b14b8daf6413afb677f3",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_8a9eb447",
+      "label": "__implication_result_8a9eb447",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::obs_codecontests_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5d120ed77399a53f",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_leafe_beats_alternatives,github:2603_16843::obs_main_results)",
+      "content_hash": "c1750ba456bf8cda593558c798bd44ec20ad23a39aef2e5df37e8ff315365943",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_d32cef20",
+      "label": "__implication_result_d32cef20",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_leafe_beats_alternatives,github:2603_16843::obs_main_results)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_13dbf56390e83af9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_leafe_beats_alternatives,github:2603_16843::obs_synergy_ablation)",
+      "content_hash": "3c455625c0fb72e13130a0fbbbb32e2f14d65ceca1c1757553a5cfb498e3fbb1",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_3740f658",
+      "label": "__implication_result_3740f658",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_leafe_beats_alternatives,github:2603_16843::obs_synergy_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_440c8fa76b087af2",
+        "owning_strategy_type": "support",
+        "prior": 0.7,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_16843::obs_grpo_passk_pattern,github:2603_16843::obs_ood_mbpp)",
+      "content_hash": "0bcdcbd52c7942287367d410d256682664211e65a4c7b698cc4ebfbe0bc428f2",
+      "exported": false,
+      "id": "github:2603_16843::__conjunction_result_a510e32d",
+      "label": "__conjunction_result_a510e32d",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_16843::obs_grpo_passk_pattern,github:2603_16843::obs_ood_mbpp)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_72b0fc4360c9fcdf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::__conjunction_result_a510e32d,github:2603_16843::claim_grpo_sharpens_evidence)",
+      "content_hash": "66bf4f2524c2c61f6c83255f955cf265e65d5b4e79fcde39aecd51883af258f4",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_c3f6defd",
+      "label": "__implication_result_c3f6defd",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::__conjunction_result_a510e32d,github:2603_16843::claim_grpo_sharpens_evidence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_72b0fc4360c9fcdf",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::obs_synergy_ablation,github:2603_16843::claim_aux_pass1_pass128_tradeoff)",
+      "content_hash": "781bd71fe3f665b4bead24a10086e0632e8dbcbbf51fa99d042dc18e9d6e928a",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_6e0b798f",
+      "label": "__implication_result_6e0b798f",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::obs_synergy_ablation,github:2603_16843::claim_aux_pass1_pass128_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_eb0c68e9b1503208",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_16843::pred_internalization,github:2603_16843::obs_lcf_ablation)",
+      "content_hash": "98aeed46fc19cb06f91b246d3eb96f1461ae93da0fa4523ab49028d111686d1b",
+      "exported": false,
+      "id": "github:2603_16843::__equivalence_result_e198841f",
+      "label": "__equivalence_result_e198841f",
+      "metadata": {
+        "canonical_name": "matches(github:2603_16843::pred_internalization,github:2603_16843::obs_lcf_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_0b38bb9fc6761620",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2603_16843::pred_just_sharpening,github:2603_16843::obs_lcf_ablation)",
+      "content_hash": "10e184559ef04d518a9a924f28ec89267b839db39c5bbb1038ed2fc2cf11fc50",
+      "exported": false,
+      "id": "github:2603_16843::__equivalence_result_34da6626",
+      "label": "__equivalence_result_34da6626",
+      "metadata": {
+        "canonical_name": "matches(github:2603_16843::pred_just_sharpening,github:2603_16843::obs_lcf_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_0b38bb9fc6761620",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::claim_internalization_supported,github:2603_16843::obs_lcf_ablation)",
+      "content_hash": "5ce51bc45c15e1fdfa86e498521de503102a096115bab986103274eb92734ef7",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_6e7f2555",
+      "label": "__implication_result_6e7f2555",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::claim_internalization_supported,github:2603_16843::obs_lcf_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0165c01227ead97d",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::alt_leafe_just_sharpening,github:2603_16843::obs_lcf_ablation)",
+      "content_hash": "a370d6e856ffa707a84cfaa03f8605f7a54cfa9d0cbcdb23e5ee038bfd1600cc",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_c3057c51",
+      "label": "__implication_result_c3057c51",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::alt_leafe_just_sharpening,github:2603_16843::obs_lcf_ablation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2db7032bd036249d",
+        "owning_strategy_type": "support",
+        "prior": 0.18,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::obs_ood_mbpp,github:2603_16843::claim_internalization_supported)",
+      "content_hash": "9947ac132391188d3265cf9f78ca7ec1471ee189e7762e2fb48a16f83ac309fd",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_cc7fb9b7",
+      "label": "__implication_result_cc7fb9b7",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::obs_ood_mbpp,github:2603_16843::claim_internalization_supported)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4df56752ae91e68e",
+        "owning_strategy_type": "support",
+        "prior": 0.78,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::obs_stage1_sampling,github:2603_16843::claim_stage1_branching_better)",
+      "content_hash": "567d0535e3288a73f3f8b44efee82c8b78674e9f1be27f325d31b3b8a0196fa2",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_999d41a0",
+      "label": "__implication_result_999d41a0",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::obs_stage1_sampling,github:2603_16843::claim_stage1_branching_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b3bd02e33792c5e0",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_16843::claim_internalization_supported,github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::claim_stage1_branching_better)",
+      "content_hash": "135983a81d3b57648757f9e21a237efb90a4fcf0f4048ec7d34d0c3865091740",
+      "exported": false,
+      "id": "github:2603_16843::__conjunction_result_f18c0de5",
+      "label": "__conjunction_result_f18c0de5",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_16843::claim_internalization_supported,github:2603_16843::claim_leafe_beats_grpo_passk,github:2603_16843::claim_stage1_branching_better)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1bb83b7d4b62e256",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::__conjunction_result_f18c0de5,github:2603_16843::claim_leafe_practical)",
+      "content_hash": "6425dd76467617288e474eef92ce395f14399abcdc19390c5385651ca777f73c",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_59abf4d0",
+      "label": "__implication_result_59abf4d0",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::__conjunction_result_f18c0de5,github:2603_16843::claim_leafe_practical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1bb83b7d4b62e256",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2603_16843::claim_cf_internalizes_recovery,github:2603_16843::claim_internalization_supported)",
+      "content_hash": "e5798734686b60997fc78a25f3a5993b8760e4e302e14197f8bae0a60c3bf011",
+      "exported": false,
+      "id": "github:2603_16843::__conjunction_result_ef095e86",
+      "label": "__conjunction_result_ef095e86",
+      "metadata": {
+        "canonical_name": "all_true(github:2603_16843::claim_cf_internalizes_recovery,github:2603_16843::claim_internalization_supported)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_248ff69c74eb84c0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2603_16843::__conjunction_result_ef095e86,github:2603_16843::claim_pass_burden_shift)",
+      "content_hash": "03ee3ccc43f1cc3cc75dacd9494b37baf36e9acd93a2d7bfd7527cad9c92dffb",
+      "exported": false,
+      "id": "github:2603_16843::__implication_result_a32f9ef5",
+      "label": "__implication_result_a32f9ef5",
+      "metadata": {
+        "canonical_name": "implies(github:2603_16843::__conjunction_result_ef095e86,github:2603_16843::claim_pass_burden_shift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_248ff69c74eb84c0",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s3_method",
+    "s4_experiments",
+    "s6_conclusion"
+  ],
+  "module_titles": {
+    "motivation": "Section 1: Introduction — Motivation and Problem Statement.",
+    "s3_method": "Section 3: LEAFE — Tree-Based Experience Generation + Experience Distillation.",
+    "s4_experiments": "Section 4: Experiments — main results, ablations, OOD generalization.",
+    "s6_conclusion": "Section 6: Conclusion — synthesis of the paper's contributions."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2603_16843",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2603_16843::setup_rlvr",
+        "github:2603_16843::setup_passk"
+      ],
+      "conclusion": "github:2603_16843::claim_distribution_sharpening",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_3052181d",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_rlvr_underuses_feedback",
+              "github:2603_16843::claim_distribution_sharpening"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because RLVR only updates on terminal scalar rewards and the rewarded fraction is small (@claim_rlvr_underuses_feedback), gradient updates are dominated by the few rewarded trajectories that lie within the base model's existing solution support. The policy reweights toward this narrow set rather than discovering new behaviors, manifesting as the Pass@1-up / Pass@K-flat distribution-sharpening pattern [@Yue2025; @Zhao2025b]."
+      },
+      "premises": [
+        "github:2603_16843::claim_rlvr_underuses_feedback"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fecc127da83f5653",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_test_time_cost",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_697bb250",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_distribution_sharpening",
+              "github:2603_16843::claim_test_time_cost"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "If RLVR only sharpens the existing distribution (@claim_distribution_sharpening), the trained policy still cannot recover from early mistakes within a single rollout. Practitioners must therefore deploy expensive test-time branching (best-of-$K$ sampling, MCTS, ToT) to escape failure modes [@Wang2022b; @YaoToT2023]."
+      },
+      "premises": [
+        "github:2603_16843::claim_distribution_sharpening"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d1b82ccc8b64dab6",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_reflection",
+        "github:2603_16843::setup_branching",
+        "github:2603_16843::setup_step_dynamics"
+      ],
+      "conclusion": "github:2603_16843::claim_branching_targets_failures",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__conjunction_result_ca7e13b1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_16843::claim_rich_feedback",
+              "github:2603_16843::claim_experience_as_intervention"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__implication_result_a2620dc9",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__conjunction_result_ca7e13b1",
+              "github:2603_16843::claim_branching_targets_failures"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Because environments emit diagnostic feedback that pinpoints failure causes (@claim_rich_feedback), the reflection step can identify a specific failure point $\\tau$ and synthesize a targeted fix $e$. Treating $e$ as a context intervention (@claim_experience_as_intervention) lets the policy explore the alternative branch $a'_\\tau$ directly from $h_\\tau$, producing the failure → rollback → fix → success structure that outcome-only methods cannot generate."
+      },
+      "premises": [
+        "github:2603_16843::claim_rich_feedback",
+        "github:2603_16843::claim_experience_as_intervention"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7533bbf6b09c2c75",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_cf_loss"
+      ],
+      "conclusion": "github:2603_16843::claim_cf_internalizes_recovery",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__conjunction_result_596fc545",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_16843::claim_branching_targets_failures",
+              "github:2603_16843::claim_experience_as_intervention"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__implication_result_bb1c0796",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__conjunction_result_596fc545",
+              "github:2603_16843::claim_cf_internalizes_recovery"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "The branching procedure (@claim_branching_targets_failures) yields $(h_\\tau, a'_\\tau)$ pairs in which the corrected action was elicited by the experience $e$. Training the model to reproduce $a'_\\tau$ from $h_\\tau$ alone (with $e$ removed, see @setup_cf_loss) is exactly the operation of distilling the contextual intervention (@claim_experience_as_intervention) into the parameters of $\\pi_{\\theta'}$. After distillation the corrected action carries intrinsic probability under the experience-free policy, so recovery no longer requires an explicit reflection turn at inference."
+      },
+      "premises": [
+        "github:2603_16843::claim_branching_targets_failures",
+        "github:2603_16843::claim_experience_as_intervention"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bc6b95b743377556",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_passk",
+        "github:2603_16843::setup_eval_protocol",
+        "github:2603_16843::setup_benchmarks"
+      ],
+      "conclusion": "github:2603_16843::obs_main_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_ebdfa1d5",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_leafe_beats_grpo_passk",
+              "github:2603_16843::obs_main_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If LEAFE consistently beats GRPO at Pass@128 (@claim_leafe_beats_grpo_passk), the main interactive-benchmark table (@obs_main_results) should show LEAFE numerically ≥ GRPO in every Pass@128 cell — which it does (eight of eight cells)."
+      },
+      "premises": [
+        "github:2603_16843::claim_leafe_beats_grpo_passk"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_258fed2cd1c63a81",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_passk"
+      ],
+      "conclusion": "github:2603_16843::obs_codecontests_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_8a9eb447",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_leafe_beats_grpo_passk",
+              "github:2603_16843::obs_codecontests_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "On CodeContests with large backbones (@obs_codecontests_results), the same pattern holds: LEAFE Pass@128 = 47.88 / 33.94 vs. GRPO 36.97 / 27.88 on Qwen2.5-72B and Llama3-70B respectively, the very regime where the LEAFE > GRPO claim (@claim_leafe_beats_grpo_passk) is most strongly stated."
+      },
+      "premises": [
+        "github:2603_16843::claim_leafe_beats_grpo_passk"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5d120ed77399a53f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_leafe_beats_grpo_passk",
+      "metadata": {
+        "reason": "Two independent observation tables (interactive benchmarks vs. execution-feedback CodeContests) on different model families both confirm the same Pass@128 ordering; this is the canonical induction from heterogeneous evidence to a general empirical regularity."
+      },
+      "premises": [
+        "github:2603_16843::obs_main_results",
+        "github:2603_16843::obs_codecontests_results"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_86e9b6e2afdbc5b6",
+      "sub_strategies": [
+        "lcs_258fed2cd1c63a81",
+        "lcs_5d120ed77399a53f"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_eval_protocol"
+      ],
+      "conclusion": "github:2603_16843::obs_main_results",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_d32cef20",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_leafe_beats_alternatives",
+              "github:2603_16843::obs_main_results"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Table 1 (@obs_main_results) shows LEAFE Pass@128 ≥ every baseline (EarlyExp, GRPO, ACE) on every cell — direct confirmation of the general statement (@claim_leafe_beats_alternatives)."
+      },
+      "premises": [
+        "github:2603_16843::claim_leafe_beats_alternatives"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_13dbf56390e83af9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_eval_protocol"
+      ],
+      "conclusion": "github:2603_16843::obs_synergy_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_3740f658",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_leafe_beats_alternatives",
+              "github:2603_16843::obs_synergy_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.7,
+        "reason": "The synergy table (@obs_synergy_ablation) shows that even when auxiliary objectives lift Pass@1, LEAFE-derived models remain competitive at Pass@128, consistent with LEAFE supplying the exploration-coverage component absent from the baselines."
+      },
+      "premises": [
+        "github:2603_16843::claim_leafe_beats_alternatives"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_440c8fa76b087af2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_leafe_beats_alternatives",
+      "metadata": {
+        "reason": "The main table is the headline confirmation; the synergy table extends the comparison to LEAFE + auxiliary-objective configurations, providing a second independent observation site for the same general claim."
+      },
+      "premises": [
+        "github:2603_16843::obs_main_results",
+        "github:2603_16843::obs_synergy_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fb947508219200cd",
+      "sub_strategies": [
+        "lcs_13dbf56390e83af9",
+        "lcs_440c8fa76b087af2"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_passk",
+        "github:2603_16843::setup_rlvr"
+      ],
+      "conclusion": "github:2603_16843::claim_grpo_sharpens_evidence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__conjunction_result_a510e32d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_16843::obs_grpo_passk_pattern",
+              "github:2603_16843::obs_ood_mbpp"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__implication_result_c3f6defd",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__conjunction_result_a510e32d",
+              "github:2603_16843::claim_grpo_sharpens_evidence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "GRPO's Pass@1-up / Pass@128-flat pattern (@obs_grpo_passk_pattern) combined with its negative deltas on OOD MBPP (@obs_ood_mbpp, e.g. −4.24 on Llama3-70B) is the empirical signature of distribution sharpening: the policy is concentrating mass on rewarded modes at the cost of exploration coverage and generalization, exactly what Section 1 predicts (@claim_distribution_sharpening)."
+      },
+      "premises": [
+        "github:2603_16843::obs_grpo_passk_pattern",
+        "github:2603_16843::obs_ood_mbpp"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_72b0fc4360c9fcdf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_aux_pass1_pass128_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_6e0b798f",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::obs_synergy_ablation",
+              "github:2603_16843::claim_aux_pass1_pass128_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Reading off the Synergy & Trade-offs table (@obs_synergy_ablation) directly: ALFWorld / Llama3.1-8B Pass@128 falls 96.43 → 93.57 with EE; CodeContests / Qwen2.5-32B falls 34.35 → 33.94 with RL — both while Pass@1 rises. This is the trade-off the claim asserts."
+      },
+      "premises": [
+        "github:2603_16843::obs_synergy_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_eb0c68e9b1503208",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__equivalence_result_e198841f",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_16843::pred_internalization",
+              "github:2603_16843::obs_lcf_ablation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__equivalence_result_34da6626",
+            "operator": "equivalence",
+            "variables": [
+              "github:2603_16843::pred_just_sharpening",
+              "github:2603_16843::obs_lcf_ablation"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__equivalence_result_34da6626",
+              "github:2603_16843::__equivalence_result_e198841f"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Table 4 (@obs_lcf_ablation) shows the predicted asymmetric pattern exactly: across all three model sizes, Pass@1 changes by ≤ 0.7 points when $\\mathcal{L}_{\\mathrm{cf}}$ is removed, while Pass@128 drops by 2–4.7 points. This matches the internalization prediction and is incompatible with the substitutability prediction of the sharpening alternative."
+      },
+      "premises": [
+        "github:2603_16843::pred_internalization",
+        "github:2603_16843::pred_just_sharpening",
+        "github:2603_16843::obs_lcf_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0b38bb9fc6761620",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_cf_loss",
+        "github:2603_16843::setup_rehearsal_loss"
+      ],
+      "conclusion": "github:2603_16843::obs_lcf_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_6e7f2555",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::claim_internalization_supported",
+              "github:2603_16843::obs_lcf_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Under the internalization hypothesis (@claim_internalization_supported), $\\mathcal{L}_{\\mathrm{cf}}$ is the loss that distills corrective alternatives (@claim_cf_internalizes_recovery), so its removal should selectively erode the coverage measured by Pass@128 — exactly the asymmetric pattern observed in @obs_lcf_ablation."
+      },
+      "premises": [
+        "github:2603_16843::claim_internalization_supported"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0165c01227ead97d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::obs_lcf_ablation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_c3057c51",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::alt_leafe_just_sharpening",
+              "github:2603_16843::obs_lcf_ablation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.18,
+        "reason": "If LEAFE were merely a sharpening recipe, $\\mathcal{L}_{\\mathrm{cf}}$ and $\\mathcal{L}_{\\mathrm{reh}}$ would be redundant probabilistic reweighting losses — removing either should affect both metrics proportionally. The observed selective Pass@128 collapse in @obs_lcf_ablation is hard to reconcile with this view."
+      },
+      "premises": [
+        "github:2603_16843::alt_leafe_just_sharpening"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2db7032bd036249d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::_anon_000",
+      "metadata": {
+        "reason": "The internalization thesis and the 'LEAFE is just a better sharpener' alternative make different predictions about how Pass@1 and Pass@128 should co-vary with $\\mathcal{L}_{\\mathrm{cf}}$. Table 4's asymmetric pattern preferentially supports internalization."
+      },
+      "premises": [
+        "github:2603_16843::claim_internalization_supported",
+        "github:2603_16843::alt_leafe_just_sharpening",
+        "github:2603_16843::pred_internalization",
+        "github:2603_16843::pred_just_sharpening",
+        "github:2603_16843::obs_lcf_ablation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2cca818147374b9b",
+      "sub_strategies": [
+        "lcs_0165c01227ead97d",
+        "lcs_2db7032bd036249d",
+        "lcs_0b38bb9fc6761620"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_internalization_supported",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_cc7fb9b7",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::obs_ood_mbpp",
+              "github:2603_16843::claim_internalization_supported"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.78,
+        "reason": "Internalized agency should generalize across distributions; OOD MBPP (@obs_ood_mbpp) shows LEAFE preserving or exceeding base-model Pass@128 on every backbone while GRPO degrades. This generalization behavior is consistent with the internalization hypothesis (@claim_internalization_supported) and inconsistent with mere in-distribution distribution sharpening."
+      },
+      "premises": [
+        "github:2603_16843::obs_ood_mbpp"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4df56752ae91e68e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2603_16843::setup_passk"
+      ],
+      "conclusion": "github:2603_16843::claim_stage1_branching_better",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__implication_result_999d41a0",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::obs_stage1_sampling",
+              "github:2603_16843::claim_stage1_branching_better"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Direct reading of @obs_stage1_sampling: LEAFE Stage-1 Pass@128 (55.52 / 54.30 / 42.50) exceeds IR (51.48 / 49.52 / 38.10) which in turn exceeds IS (48.92 / 48.65 / 30.20) on Qwen2.5-32B / Qwen2.5-72B / Llama3-70B. The dominance is uniform across all three models."
+      },
+      "premises": [
+        "github:2603_16843::obs_stage1_sampling"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b3bd02e33792c5e0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_leafe_practical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__conjunction_result_f18c0de5",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_16843::claim_internalization_supported",
+              "github:2603_16843::claim_leafe_beats_grpo_passk",
+              "github:2603_16843::claim_stage1_branching_better"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__implication_result_59abf4d0",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__conjunction_result_f18c0de5",
+              "github:2603_16843::claim_leafe_practical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Three pieces of evidence jointly justify the practical claim: (i) the internalization thesis is empirically supported (@claim_internalization_supported); (ii) LEAFE consistently beats GRPO at Pass@128 across diverse benchmarks (@claim_leafe_beats_grpo_passk); (iii) Stage-1 branching is the most effective use of a fixed exploration budget (@claim_stage1_branching_better). Together they make LEAFE a viable post-RLVR recipe."
+      },
+      "premises": [
+        "github:2603_16843::claim_internalization_supported",
+        "github:2603_16843::claim_leafe_beats_grpo_passk",
+        "github:2603_16843::claim_stage1_branching_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1bb83b7d4b62e256",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2603_16843::claim_pass_burden_shift",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2603_16843::__conjunction_result_ef095e86",
+            "operator": "conjunction",
+            "variables": [
+              "github:2603_16843::claim_cf_internalizes_recovery",
+              "github:2603_16843::claim_internalization_supported"
+            ]
+          },
+          {
+            "conclusion": "github:2603_16843::__implication_result_a32f9ef5",
+            "operator": "implication",
+            "variables": [
+              "github:2603_16843::__conjunction_result_ef095e86",
+              "github:2603_16843::claim_pass_burden_shift"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The counterfactual loss internalizes the corrective alternative into the policy weights (@claim_cf_internalizes_recovery), and the Pass@128 improvements without test-time rollback (@claim_internalization_supported) confirm that the resulting policy no longer needs the Stage-1 reflection loop at inference. This is the shift the conclusion claim asserts."
+      },
+      "premises": [
+        "github:2603_16843::claim_cf_internalizes_recovery",
+        "github:2603_16843::claim_internalization_supported"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_248ff69c74eb84c0",
+      "type": "support"
+    }
+  ]
+}

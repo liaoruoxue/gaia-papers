@@ -1,0 +1,82 @@
+{
+  "ir_hash": "sha256:d42f364b63973f4b4199438c193ccc5d37e6195e10953379480076a32eddcefc",
+  "manifest_schema_version": 1,
+  "package": "2603-16843",
+  "premises": [
+    {
+      "content": "Linguistic feedback is qualitative and unstructured, making it hard to internalize via standard token-level optimization. LEAFE addresses this by treating experience as a **contextual intervention**: the experience summary $e$ is concatenated to the prompt and induces a policy shift via the input context, rather than entering the loss directly during exploration.",
+      "content_hash": "428635eaf477cce8b3f4be8a77856a5ad3afba18da632cc48970a5a232bb1c53",
+      "exported": false,
+      "interface_hash": "sha256:553f37f68ad5672416fe76b3228bf936c58f696a18440a5d4a4e05bcad1f89b1",
+      "label": "claim_experience_as_intervention",
+      "qid": "github:2603_16843::claim_experience_as_intervention",
+      "required_by": [
+        "github:2603_16843::claim_branching_targets_failures",
+        "github:2603_16843::claim_cf_internalizes_recovery"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Long-horizon interactive environments (web navigation, program synthesis, embodied tasks) emit rich and structured feedback — invalid actions, state transitions, compiler/runtime errors — that pinpoints why a trajectory becomes unproductive and how it could be corrected, going beyond a simple success/failure signal [@Yang2024; @Shinn2023].",
+      "content_hash": "1b3479f1b0cf33ccd592785fa07ac78b7fbd2374f0d796abd6ba85db8b39421b",
+      "exported": false,
+      "interface_hash": "sha256:1679000f798a59a5652806a7bb4d13db39cb87169c3e69c1a8aada1db34403ee",
+      "label": "claim_rich_feedback",
+      "qid": "github:2603_16843::claim_rich_feedback",
+      "required_by": [
+        "github:2603_16843::claim_branching_targets_failures"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Outcome-driven RLVR (e.g. GRPO) compresses an entire trajectory into a single terminal scalar reward. Across many rollouts only a small fraction is rewarded, so updates concentrate on a handful of already-successful trajectories while most partially-correct failures contribute little direct signal. The rich step-level diagnostic content of the feedback is therefore not used to update the policy.",
+      "content_hash": "22569ac53b60668946c8ac17bb73feda386f9aa49e5d076c734b2c6d4bfe2d9c",
+      "exported": false,
+      "interface_hash": "sha256:eb3bea2b5a6023ba3d942beb7520bf49cde57f6368c9a8a6aee912782bf2e2fd",
+      "label": "claim_rlvr_underuses_feedback",
+      "qid": "github:2603_16843::claim_rlvr_underuses_feedback",
+      "required_by": [
+        "github:2603_16843::claim_distribution_sharpening"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Across the eight (benchmark, backbone) cells in Table 1 plus the two CodeContests cells, GRPO sometimes wins Pass@1 (e.g. WebShop / Qwen2.5-7B: GRPO 67.45 vs. LEAFE 66.50; CodeContests / Qwen2.5-72B: GRPO 20.45 vs. LEAFE 17.12) but LEAFE wins or ties **every** Pass@128 comparison. Most strikingly, on CodeContests / Qwen2.5-72B GRPO improves Pass@128 by only +3 points over Base (33.94 → 36.97) while LEAFE improves by +14 points (33.94 → 47.88).",
+      "content_hash": "1f36530f30ff3a2c18bdba99d4368fe9b836da9608dbda2232a104b892d858a5",
+      "exported": false,
+      "interface_hash": "sha256:1b436087e0e681128b0497593eab49da6cf604fde4df67e9999bd916cb5b0672",
+      "label": "obs_grpo_passk_pattern",
+      "qid": "github:2603_16843::obs_grpo_passk_pattern",
+      "required_by": [
+        "github:2603_16843::claim_grpo_sharpens_evidence"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Out-of-distribution generalization on MBPP (models trained on CodeContests). Values are Pass@128 (%); deltas vs. the corresponding base model in parentheses:\n\n| Method | Qwen2.5-32B   | Qwen2.5-72B   | Llama3-70B   |\n|--------|----------------|----------------|----------------|\n| Base   | 85.45          | 83.33          | 78.31          |\n| GRPO   | 81.22 (−4.23)  | 81.22 (−2.11)  | 74.07 (−4.24)  |\n| LEAFE  | 85.45 (+0.00)  | **85.13 (+1.80)** | **79.63 (+1.32)** |\n\nGRPO degrades on every backbone; LEAFE matches or beats Base on every backbone.",
+      "content_hash": "4e9d98ee4bdefd27d91f40a3f59b48ab3902b57aa8e475e3767c1ee30dce8cb8",
+      "exported": false,
+      "interface_hash": "sha256:95b0f86ec16ed17f7a378ec2bc3068d26f6c31f6f22450b59a14b3a9064a98ef",
+      "label": "obs_ood_mbpp",
+      "qid": "github:2603_16843::obs_ood_mbpp",
+      "required_by": [
+        "github:2603_16843::claim_grpo_sharpens_evidence",
+        "github:2603_16843::claim_internalization_supported"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "On CodeContests, holding the execution budget fixed, LEAFE Stage-1 tree-based experience-guided rollback branching attains higher Pass@128 than either independent sampling (IS) or iterative refinement (IR):\n\n| Model         | IS Pass@128 | IR Pass@128 | LEAFE Stage-1 Pass@128 |\n|---------------|-------------|-------------|------------------------|\n| Qwen2.5-32B   | 48.92       | 51.48       | **55.52**              |\n| Qwen2.5-72B   | 48.65       | 49.52       | **54.30**              |\n| Llama3-70B    | 30.20       | 38.10       | **42.50**              |",
+      "content_hash": "2a05ae543479f0008428b3fcb71f1546061ecf0525a5ec276c298533e5f63a56",
+      "exported": false,
+      "interface_hash": "sha256:7cd25cc021dc259d33341a6e5a335d8a416be43074e8833b58f5297d3fbeb7dd",
+      "label": "obs_stage1_sampling",
+      "qid": "github:2603_16843::obs_stage1_sampling",
+      "required_by": [
+        "github:2603_16843::claim_stage1_branching_better"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

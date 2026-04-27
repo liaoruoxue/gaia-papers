@@ -1,0 +1,120 @@
+{
+  "exports": [
+    {
+      "content": "Robust agentic capability requires **agency internalization**: training the model to interpret structured environment feedback, identify the critical decision points that induced failure, and revise those decisions in a feedback-conditioned, targeted manner — rather than relying on blind retries or external test-time search (e.g. Tree of Thoughts).",
+      "content_hash": "bdfe908ec3d3f1a316f1f45f8459cd06309f78888de1c58a61ab2c1465b058f7",
+      "label": "claim_agency_internalization",
+      "qid": "github:2603_16843::claim_agency_internalization",
+      "type": "claim"
+    },
+    {
+      "content": "Adding an auxiliary outcome-driven objective (EarlyExp or GRPO-RLVR) on top of LEAFE consistently lifts Pass@1 but can suppress Pass@128 (e.g. ALFWorld / Llama3.1-8B 96.43 → 93.57; CodeContests / Qwen2.5-32B 34.35 → 33.94). This trade-off is consistent with the auxiliary target re-aligning the policy with terminal rewards and thereby narrowing the exploration ceiling that LEAFE alone preserves.",
+      "content_hash": "080eb942565d521ade56b9478dc8d5a43daa581352960124a2bf575783a32ef1",
+      "label": "claim_aux_pass1_pass128_tradeoff",
+      "qid": "github:2603_16843::claim_aux_pass1_pass128_tradeoff",
+      "type": "claim"
+    },
+    {
+      "content": "Stage 1 branching produces trajectories with the structure **failure → rollback → fix → success**, explicitly targeting the critical decision points where the original rollout went wrong. Successful branches supply paired $(h_\\tau, a_\\tau)$ vs. $(h_\\tau, a'_\\tau)$ examples that are unavailable to outcome-driven RL [@LiGARollback2025; @WangHOPE].",
+      "content_hash": "1d8b02707acf75a65187792a01bb101207ad8df64a11eeec1def8898bf59cf69",
+      "label": "claim_branching_targets_failures",
+      "qid": "github:2603_16843::claim_branching_targets_failures",
+      "type": "claim"
+    },
+    {
+      "content": "By training $\\pi_{\\theta'}$ to produce the corrected action $a'_\\tau$ from the **experience-free** history $h_\\tau$, the counterfactual loss $\\mathcal{L}_{\\mathrm{cf}}$ maps the experience-augmented decision back into the original context. This expands the policy's intrinsic action distribution with experience-induced alternatives, making corrected actions more probable without requiring an explicit reflection step at inference.",
+      "content_hash": "386f7c6b4f36faf937c3422aafaa83651435e6154549c0b872342a932b34b586",
+      "label": "claim_cf_internalizes_recovery",
+      "qid": "github:2603_16843::claim_cf_internalizes_recovery",
+      "type": "claim"
+    },
+    {
+      "content": "RLVR with terminal scalar rewards behaves as **distribution sharpening**: it concentrates probability mass on a small set of behaviors already latent in the base model's long tail, boosting Pass@1 but yielding limited or even negative gains at large $K$ (e.g. Pass@1024) — precisely the regime that reflects the model's true capability ceiling [@Yue2025; @Zhao2025b].",
+      "content_hash": "99bf5041ed8d6750a6b1aaed5f4fe6c3aad88642a3e72445a9b7ad5c50dad68a",
+      "label": "claim_distribution_sharpening",
+      "qid": "github:2603_16843::claim_distribution_sharpening",
+      "type": "claim"
+    },
+    {
+      "content": "The pattern of GRPO sometimes winning Pass@1 while plateauing or regressing at Pass@128 (and on OOD MBPP) is the empirical signature of distribution sharpening: the policy concentrates probability on the narrow set of behaviors GRPO already rewards, at the cost of behavioral coverage and generalization.",
+      "content_hash": "0f0b2775db0a9686ea9b96a99307d3b9bfe470428b4d79f3760c6b05e1fcb29b",
+      "label": "claim_grpo_sharpens_evidence",
+      "qid": "github:2603_16843::claim_grpo_sharpens_evidence",
+      "type": "claim"
+    },
+    {
+      "content": "The combined evidence from main results, the Lcf ablation, and the OOD generalization experiment supports LEAFE's central thesis that **reflective-experience distillation internalizes feedback-grounded agency** into the model weights, rather than merely sharpening the existing trajectory distribution.",
+      "content_hash": "93f6512c371c87a03ef77ef68accee962c2440b1e36bf5c3b9879585a151310b",
+      "label": "claim_internalization_supported",
+      "qid": "github:2603_16843::claim_internalization_supported",
+      "type": "claim"
+    },
+    {
+      "content": "**LEAFE attains the highest Pass@128 across all interactive benchmarks compared to EarlyExp, GRPO-RLVR, and ACE** under the same fixed interaction budget — ten of ten cells in Table 1 (four benchmarks × Qwen2.5-7B and Llama3.1-8B, plus the two CodeContests / large-backbone rows).",
+      "content_hash": "205ca327b659ee9c3cdc71cd3a89526e40480c4739cacada93f180c973f2bbe7",
+      "label": "claim_leafe_beats_alternatives",
+      "qid": "github:2603_16843::claim_leafe_beats_alternatives",
+      "type": "claim"
+    },
+    {
+      "content": "**LEAFE consistently outperforms GRPO at large $K$ (Pass@128) across interactive and code-generation benchmarks.** The advantage is most pronounced on CodeContests / Qwen2.5-72B (LEAFE 47.88 vs. GRPO 36.97, a +10.9 point gap) and on Sokoban / Qwen2.5-7B (LEAFE 78.40 vs. GRPO 68.00, a +10.4 point gap), and holds in every cell of Tables 1 and 2.",
+      "content_hash": "032b34420811a5ebc5590bed4339153c970e319e8fd6e02611e71cc724f08309",
+      "label": "claim_leafe_beats_grpo_passk",
+      "qid": "github:2603_16843::claim_leafe_beats_grpo_passk",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE is a practical recipe for developing LLM agents that continue to improve through deployment-time interaction: it accepts any RLVR-trained checkpoint as input, requires only that the environment provides diagnostic feedback and supports rollback, and produces a single-rollout policy with broader behavioral coverage than the outcome-driven baseline.",
+      "content_hash": "7fc50945eac15d4a5ea161cc29d5eb2ddb4c943678b415ec80da20408e4b0567",
+      "label": "claim_leafe_practical",
+      "qid": "github:2603_16843::claim_leafe_practical",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE is most effective when the environment provides clear, diagnostic feedback. Its benefits may diminish when feedback is weak, delayed, or hard to attribute to specific decision points.",
+      "content_hash": "f7f1f65bb1d7da5df1dfdc3f5ddc1a4c2e341c25213750b93838c44d1bd46136",
+      "label": "claim_lim_feedback_quality",
+      "qid": "github:2603_16843::claim_lim_feedback_quality",
+      "type": "claim"
+    },
+    {
+      "content": "LEAFE assumes the environment can be reliably reset to a rollback point $\\tau$ and that the prefix $a_{1:\\tau-1}$ can be replayed deterministically. This assumption can be violated in non-deterministic or stateful real-world environments.",
+      "content_hash": "d46b78ff99217ae2178d43cbea8d2159773f6ad5ee94cb56bef8c9b068056a80",
+      "label": "claim_lim_resettable_env",
+      "qid": "github:2603_16843::claim_lim_resettable_env",
+      "type": "claim"
+    },
+    {
+      "content": "The rehearsal loss $\\mathcal{L}_{\\mathrm{reh}}$ acts as an anti-forgetting regularizer: by maximizing the likelihood of action sequences from successful trajectories, it preserves baseline task competence while $\\mathcal{L}_{\\mathrm{cf}}$ adapts the model toward corrective behaviors [@Ahn2024].",
+      "content_hash": "5ed8faaf4dd551b5abde44423e96c2cf88014ae0330b0351e47e2aeaa815fbe1",
+      "label": "claim_lreh_stabilizes",
+      "qid": "github:2603_16843::claim_lreh_stabilizes",
+      "type": "claim"
+    },
+    {
+      "content": "By internalizing reflective experience into model weights, LEAFE shifts the burden of competence from heavy test-time sampling toward the trained policy itself, reducing reliance on best-of-$K$ and explicit search at inference time.",
+      "content_hash": "1e6d3014bdae51a2abdf70bd6f302b8fc50c470551015ef1a1e8dd4043d81a52",
+      "label": "claim_pass_burden_shift",
+      "qid": "github:2603_16843::claim_pass_burden_shift",
+      "type": "claim"
+    },
+    {
+      "content": "Tree-based experience-guided rollback branching (LEAFE Stage 1) is a more effective use of a fixed execution budget on CodeContests than either independent sampling or iterative refinement. It dominates both baselines for every backbone in Table 3.",
+      "content_hash": "520501cdb3bbb28ae9b70b60de90e53fc4e74f9c5a5ab5ac3bce9794d4d0910f",
+      "label": "claim_stage1_branching_better",
+      "qid": "github:2603_16843::claim_stage1_branching_better",
+      "type": "claim"
+    },
+    {
+      "content": "Because outcome-driven training fails to internalize recovery, practitioners rely on expensive test-time computation (multiple retries, sampling-and-voting, explicit tree search) to escape early mistakes, increasing both inference latency and deployment complexity [@Wang2022b; @YaoToT2023; @Fu2025b].",
+      "content_hash": "1f893d7723c82c387f70be3e83b72b28e1a12788bd514dafe554af3e209a35e7",
+      "label": "claim_test_time_cost",
+      "qid": "github:2603_16843::claim_test_time_cost",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:d42f364b63973f4b4199438c193ccc5d37e6195e10953379480076a32eddcefc",
+  "manifest_schema_version": 1,
+  "package": "2603-16843",
+  "version": "0.1.0"
+}
