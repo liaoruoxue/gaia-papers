@@ -1,0 +1,269 @@
+{
+  "holes": [
+    {
+      "content": "In multi-agent LLM systems, agents can fail in at least three qualitatively different ways: (i) producing no result, (ii) producing output in the wrong format that breaks downstream consumption, and (iii) producing results that look reasonable but diverge from what the planner or downstream agents expect (e.g., a 'section extractor' returning raw text rather than the expected JSON, or misinterpreting 'summarize key claim' as 'summarize all paragraphs').",
+      "content_hash": "20d9c89e437675fc3075002743fb8928395219839ecaac440563a43337c904b7",
+      "interface_hash": "sha256:e49b4bb955550d0c39ead2e8d84549eae061dfb1fc0faafb0db311c14e2c31df",
+      "label": "agent_failure_modes",
+      "qid": "github:2510_17109::agent_failure_modes",
+      "required_by": [
+        "github:2510_17109::failures_context_dependent",
+        "github:2510_17109::multi_agent_planning_central"
+      ]
+    },
+    {
+      "content": "Alternative explanation: VeriMAP's gains come from the planner LLM (`gpt-4.1`) being inherently strong; any multi-agent scaffolding with the same planner would do equally well.",
+      "content_hash": "67cedd248bd645aaf6bccba7c5479e7bfd3deba11cfaeddac32c18440c1b64a0",
+      "interface_hash": "sha256:1cf5c4e50bb7669d1ff4f1fbf800946203472233bc50c2331b7553ac97b02bdf",
+      "label": "alt_better_planner_alone",
+      "qid": "github:2510_17109::alt_better_planner_alone",
+      "required_by": [
+        "github:2510_17109::vf_count_adapts_to_domain"
+      ]
+    },
+    {
+      "content": "Alternative explanation: the replanning uplift simply reflects extra attempts (more chances to get a correct answer), with no specific role for VF informativeness.",
+      "content_hash": "5292c83c32ecc44888f4a82514e5cdde00c2c1c5e53cf5855149742efa76d95e",
+      "interface_hash": "sha256:f1a0bc2f8829805c865af2b10a3400f0f8ad86d44fb8b93a26ea6cb3bd3281b0",
+      "label": "alt_replan_explained_by_more_attempts",
+      "qid": "github:2510_17109::alt_replan_explained_by_more_attempts",
+      "required_by": [
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv"
+      ]
+    },
+    {
+      "content": "Alternative explanation: VeriMAP's gains come simply from spending more compute (more iterations, retries, planner calls) rather than from the *informativeness* of planner-generated VFs.",
+      "content_hash": "8ab68eddea570cca530383392792450b7b97e9a87aba0622554e0371a8b0e39f",
+      "interface_hash": "sha256:0c17163198e2cd4eb1419c54bd72547a08a5d49e15006d409a6b5516054cad15",
+      "label": "alt_strong_executor",
+      "qid": "github:2510_17109::alt_strong_executor",
+      "required_by": [
+        "github:2510_17109::centralized_planner_dependence",
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv",
+        "github:2510_17109::verimap_beats_mapv",
+        "github:2510_17109::verimap_beats_react_bigcode",
+        "github:2510_17109::verimap_beats_react_olympiads",
+        "github:2510_17109::verimap_best_overall",
+        "github:2510_17109::verimap_higher_fn_in_code",
+        "github:2510_17109::verimap_lower_fp_than_mapv"
+      ]
+    },
+    {
+      "content": "VeriMAP — a multi-agent LLM framework whose **planner generates subtask-level verification functions** (Python and natural-language VFs), enforces Structured I/O with Named Variables, and pairs executors with paired verifiers under a coordinator that handles retries and replanning — improves the robustness, interpretability, and accuracy of multi-agent LLM systems on diverse complex tasks [@Xu2025VeriMAP].",
+      "content_hash": "d623197790bb3aa4931127bc055c67edec04e86118062b0b3202f648d0e427ba",
+      "interface_hash": "sha256:e296eb9322005db07c094ecd22fb28e829930d2aaa701dc73443284ab8a20b36",
+      "label": "contribution_verimap",
+      "qid": "github:2510_17109::contribution_verimap",
+      "required_by": [
+        "github:2510_17109::centralized_planner_dependence",
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv",
+        "github:2510_17109::verimap_beats_mapv",
+        "github:2510_17109::verimap_beats_react_bigcode",
+        "github:2510_17109::verimap_beats_react_olympiads",
+        "github:2510_17109::verimap_best_overall"
+      ]
+    },
+    {
+      "content": "On a failed verification, the Coordinator retries the same node up to $R_{\\max}$ times (default 3), each time augmenting the context with the previous output and the verifier's feedback. This local retry loop converts informative VF failure feedback into corrective guidance for the executor.",
+      "content_hash": "e73da9a15ec2c37b1b8320eaa43a1c96f757de00e5f956a7be0dc7a8885e1d31",
+      "interface_hash": "sha256:d56e5eba0edd3ab99108bc4fc17f8d39fefcbe97bf103e29e8e07508f1d5a7fc",
+      "label": "coordinator_retry",
+      "qid": "github:2510_17109::coordinator_retry",
+      "required_by": [
+        "github:2510_17109::coordinator_replanning"
+      ]
+    },
+    {
+      "content": "A natural-language verification function is judged by a verifier LLM (a ReAct-style agent with the same tools as the executor) and returns a binary success/fail label together with a constructive textual feedback that explains what was wrong and how to amend it. NL VFs handle semantic and open-ended criteria that Python VFs cannot encode.",
+      "content_hash": "9a3ddde01f3658bfd71d88728b94f9e2692f2a405aa114be2a71df6c8f1415be",
+      "interface_hash": "sha256:1a5960bd57e647561442d23271dadd6648c9cc71efd8267f9984b72fe86cce1b",
+      "label": "nl_vf_definition",
+      "qid": "github:2510_17109::nl_vf_definition",
+      "required_by": [
+        "github:2510_17109::planner_generated_vfs"
+      ]
+    },
+    {
+      "content": "With `o3` and `claude-sonnet-4` as alternative planners (executor still `gpt-4o-mini`), VeriMAP again attains the best result on three datasets each:\n\n| Method | MultiHopRAG | HumanEval | BigCodeBench-Hard | GSM8K | Olympiads |\n|--------|------------:|----------:|------------------:|------:|----------:|\n| ReAct (o3)              | 31.80% | **95.45%** | 39.19% | **95.60%** | 58.60% |\n| ReAct (claude-sonnet-4) | **84.40%** | 95.68% | 27.84% | 61.40% | 34.20% |\n| MAP (o3)                | 52.00% | 88.41% | 24.32% | 57.80% | 47.80% |\n| MAP-V (o3)              | 65.80% | 87.80% | 28.38% | 89.60% | 56.90% |\n| **VeriMAP (o3)**        | 55.80% | 89.04% | **40.54%** | **95.60%** | **68.40%** |\n| MAP (claude-sonnet-4)   | 74.20% | 84.00% | 20.27% | 50.40% | 26.05% |\n| MAP-V (claude-sonnet-4) | 79.00% | 86.40% | 22.22% | 84.60% | 38.07% |\n| **VeriMAP (claude-sonnet-4)** | 64.60% | 87.60% | 32.39% | **95.60%** | 47.69% |",
+      "content_hash": "b290438d04b1ad202bc62b5e748af85bc26b1bc3f2d3b8ea81e9cfa9ce636bd7",
+      "interface_hash": "sha256:c6cc2898323eb86ffa72d18e5e98022c9c0d8db25e48c53a60ad5c4db602f291",
+      "label": "obs_accuracy_table_other",
+      "qid": "github:2510_17109::obs_accuracy_table_other",
+      "required_by": [
+        "github:2510_17109::centralized_planner_dependence",
+        "github:2510_17109::other_planners_consistent",
+        "github:2510_17109::verimap_best_overall"
+      ]
+    },
+    {
+      "content": "Olympiads case study (Figure 3): for the question 'Given $(1+a)x^4 + x^3 - (3a+2)x^2 - 4a = 0$, does there exist $x_0 \\in \\mathbb{R}$ that has no solution for any $a$?', both MAP-V and VeriMAP initially produce the wrong answer $\\{-2, 2\\}$ at step 2. MAP-V's NL verifier wrongly passes the answer; VeriMAP's planner-generated Python VF inspects `free_symbols` and the substituted expression, detects that $x = -2$ is identically a root regardless of $a$, fails the VF, and drives a retry that converges on the correct answer $\\{2\\}$.",
+      "content_hash": "01b88dd4aaac98f8d162367e92b946946f6ac4e43eb647ea2149e63d524d6e55",
+      "interface_hash": "sha256:2a4759f01518ac90827dfa23427498c79e649681546e3c6875fb95ecf2d799cc",
+      "label": "obs_case_study_resolution",
+      "qid": "github:2510_17109::obs_case_study_resolution",
+      "required_by": [
+        "github:2510_17109::case_study_resolves_error"
+      ]
+    },
+    {
+      "content": "The per-task cost distribution across modules is consistent across all multi-agent variants: the **Executor** is the most expensive component, followed by the **Verifier**, followed by the **Planner**. VeriMAP's per-task cost is on the order of \\$0.001 above MAP-V/MAP, with the gap narrowing on harder benchmarks (Olympiads) and widening on easier ones (GSM8K).",
+      "content_hash": "8a06a1708f821b976f18985093969c77798890a0161edd72f75a54146b2a0c65",
+      "interface_hash": "sha256:4f64505360f34f525f4941a4edbf3d516c56a8963961f5570876ceaaa4b1bfe0",
+      "label": "obs_cost_pattern",
+      "qid": "github:2510_17109::obs_cost_pattern",
+      "required_by": [
+        "github:2510_17109::cost_overhead_modest"
+      ]
+    },
+    {
+      "content": "Average iterations / retries per task (VeriMAP vs MAP-V):\n\n| Dataset | VeriMAP iter | VeriMAP retry | MAP-V iter | MAP-V retry |\n|---------|-------------:|--------------:|-----------:|------------:|\n| MultiHopRAG       | 1.48 | 1.57 | 1.60 | 1.78 |\n| HumanEval         | 1.33 | 1.71 | 1.05 | 1.09 |\n| BigCodeBench-Hard | 1.85 | 2.28 | 1.07 | 1.11 |\n| GSM8K             | 1.17 | 1.14 | 1.09 | 1.35 |\n| Olympiads         | 1.84 | 2.29 | 1.46 | 1.54 |",
+      "content_hash": "8fe8d118128a461fd63c8b0fde6b709fca61d4fbc1c0011459927049a536c4ae",
+      "interface_hash": "sha256:752822099486737bd40c3b08f9933f4b98492a1145acd25ae801566d20909723",
+      "label": "obs_iter_table",
+      "qid": "github:2510_17109::obs_iter_table",
+      "required_by": [
+        "github:2510_17109::cost_overhead_modest"
+      ]
+    },
+    {
+      "content": "On Olympiads with claude-sonnet-4 as planner, VeriMAP attains 47.69% versus ReAct (claude-sonnet-4) at 34.20%, a gap of +13.49 percentage points (paper text rounds to +34.2 over the multi-agent claude baselines).",
+      "content_hash": "9fa91788fff3f2fe92da7bd7dc162f93a69e560e4483dbb9ab1d4f0a86974251",
+      "interface_hash": "sha256:09f0145ddbf438064b3af304f0b138288b1515d788470649b6e99b1a2669551b",
+      "label": "obs_react_claude_olympiads",
+      "qid": "github:2510_17109::obs_react_claude_olympiads",
+      "required_by": [
+        "github:2510_17109::other_planners_consistent"
+      ]
+    },
+    {
+      "content": "On Olympiads with o3 as planner, VeriMAP attains 68.40% versus ReAct (o3) at 58.60%, a gap of +9.80 percentage points.",
+      "content_hash": "a2d5098f2759807f4fb56379a13d43bc449826977ddce004715dbb0bd7ca55ec",
+      "interface_hash": "sha256:f693244754d6b4bcce73e8d40ee5fab5d914e1108520c894cef7763636cba923",
+      "label": "obs_react_o3_olympiads",
+      "qid": "github:2510_17109::obs_react_o3_olympiads",
+      "required_by": [
+        "github:2510_17109::other_planners_consistent"
+      ]
+    },
+    {
+      "content": "On BigCodeBench-Hard (gpt-4.1 planner), VeriMAP scores **40.54%**, which is +4.05 above ReAct (gpt-4.1) at 36.49% and +12.16 above MAP-V at 28.38%.",
+      "content_hash": "3a64480ae0968a886227fbe846b11015721680b25ed75d9f74f0c5b5de011cbc",
+      "interface_hash": "sha256:31cc77551e30dd0fdc0a5caf77c3f5f4c9894ee6a1e0593f188fac4c6f0448bc",
+      "label": "obs_verimap_bigcode",
+      "qid": "github:2510_17109::obs_verimap_bigcode",
+      "required_by": [
+        "github:2510_17109::verimap_beats_react_bigcode"
+      ]
+    },
+    {
+      "content": "On Olympiads (gpt-4.1 planner), VeriMAP scores **41.20%**, which is +9.8 percentage points above ReAct (gpt-4o-mini) at 25.00% — but only +0.40 above ReAct (gpt-4.1) at 40.80% — and is +12.20 above MAP-V at 29.00%.",
+      "content_hash": "375e1e3601a8427def691d5e1d66676635b2ca2a451e767102861ab1f8df51d4",
+      "interface_hash": "sha256:53e1f66b89cd1aea213138f170cd26bf10a4d2c2998fcaad4e1c9d3cff8fd2ed",
+      "label": "obs_verimap_olympiads",
+      "qid": "github:2510_17109::obs_verimap_olympiads",
+      "required_by": [
+        "github:2510_17109::verimap_beats_react_olympiads"
+      ]
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): structured Python VFs are stricter than generic NL verifiers, so VeriMAP should typically show a lower false-positive rate (rejecting fewer wrong outputs as correct) than MAP-V, possibly at the cost of higher false negatives in domains with strict execution semantics (programming).",
+      "content_hash": "879e0f9b75c5a32847fd93c7a816de821d5fac49b614635f84a7fed98fcd8c05",
+      "interface_hash": "sha256:8034c3858ebf7dc296a2f3c63f4849d0b21e151b72758ddacef520cd8ba6d686",
+      "label": "pred_lower_fp",
+      "qid": "github:2510_17109::pred_lower_fp",
+      "required_by": [
+        "github:2510_17109::verimap_higher_fn_in_code",
+        "github:2510_17109::verimap_lower_fp_than_mapv"
+      ]
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): planner-generated VFs produce more actionable failure signals than generic verifiers, so enabling replanning should yield a substantially larger accuracy uplift for VeriMAP than for MAP-V on hard benchmarks.",
+      "content_hash": "0739b06ca1f7604ad4170b8c8d91a9687c352660a95afcc9f9300c9ada2ae976",
+      "interface_hash": "sha256:ff15a003fff01b71070bbbd2bc02105a5ab3a2394b350c433f03b086b52f289a",
+      "label": "pred_replan_uplift",
+      "qid": "github:2510_17109::pred_replan_uplift",
+      "required_by": [
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv"
+      ]
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): if planner-generated VFs deliver more informative runtime signals than generic LLM verifiers, VeriMAP should outperform both single-agent (ReAct) and multi-agent (MAP, MAP-V) baselines across diverse domains (QA, programming, math).",
+      "content_hash": "ea121162bf35fa80b63cd721800d8635b3da75c0095254d9e21d37d5823c0d5e",
+      "interface_hash": "sha256:eeb2da31b6582064f47214ca1515e7483f5d542b30e5850d2a30a473b8fd07a8",
+      "label": "pred_verimap_best",
+      "qid": "github:2510_17109::pred_verimap_best",
+      "required_by": [
+        "github:2510_17109::centralized_planner_dependence",
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv",
+        "github:2510_17109::verimap_beats_mapv",
+        "github:2510_17109::verimap_beats_react_bigcode",
+        "github:2510_17109::verimap_beats_react_olympiads",
+        "github:2510_17109::verimap_best_overall"
+      ]
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): if the planner adapts verification to subtask requirements, then code-heavy benchmarks should elicit more (and longer) Python VFs while open-ended QA benchmarks should elicit more NL VFs.",
+      "content_hash": "ce36cac4ffee9bc15df3eb74510c656cd141d8729c543fffa3ea78ef99f1b3b4",
+      "interface_hash": "sha256:11b0fde61f1cefa27b271cddf90b961947c7f6e67bab0f7863826a347bf15798",
+      "label": "pred_vf_adapts",
+      "qid": "github:2510_17109::pred_vf_adapts",
+      "required_by": [
+        "github:2510_17109::vf_count_adapts_to_domain"
+      ]
+    },
+    {
+      "content": "A Python verification function is a self-contained Python snippet of assertions over the structured output. Being executed by a Python interpreter, it provides deterministic, reproducible pass/fail guarantees and returns a complete traceback as feedback when an assertion fails.",
+      "content_hash": "c50f80fae9320231e1bf01066c8df8395f00f78adc95290a5f94386066258fe9",
+      "interface_hash": "sha256:b6ccaa038a883e5e5dc189696cb5376296017166b36dda72f96f75e2bc20f884",
+      "label": "python_vf_definition",
+      "qid": "github:2510_17109::python_vf_definition",
+      "required_by": [
+        "github:2510_17109::case_study_resolves_error",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::verimap_higher_fn_in_code",
+        "github:2510_17109::verimap_lower_fp_than_mapv",
+        "github:2510_17109::vf_count_adapts_to_domain"
+      ]
+    },
+    {
+      "content": "VeriMAP's verifier marks a subtask as failed whenever any single VF fails (strict logical AND). This makes verification conservative — false positives are reduced at the cost of potentially higher false negatives.",
+      "content_hash": "dc84773dd2f8cac633df0ee7e422d07aacfbcc5386f084df3d63dd595f8dc21e",
+      "interface_hash": "sha256:dbce4aac41a9055233dc838165a7eaf2f7cc3587743993d11255d7020f02fc1c",
+      "label": "strict_and_aggregation",
+      "qid": "github:2510_17109::strict_and_aggregation",
+      "required_by": [
+        "github:2510_17109::fn_overconservative_tradeoff",
+        "github:2510_17109::verimap_higher_fn_in_code",
+        "github:2510_17109::verimap_lower_fp_than_mapv"
+      ]
+    },
+    {
+      "content": "VeriMAP enforces two interface invariants on agent-to-agent message passing: (i) **Structured I/O**, where every agent input/output is a well-defined object such as a JSON dictionary; and (ii) **Named Variables**, where each I/O object has a unique, plan-wide consistent name. Each node thus receives an input as `(name: value)` pairs and declares its expected output names, so downstream agents can reliably reference upstream outputs and execution ambiguity is reduced.",
+      "content_hash": "362b3bc4b3359b7a75a05860dfe8c137dc02b497bde811bbe21048acedd56c31",
+      "interface_hash": "sha256:80569174e03424c027e3cf687bc5b4030b4b2fbaf7fb18622715e1094cd04fda",
+      "label": "structured_io_named_vars",
+      "qid": "github:2510_17109::structured_io_named_vars",
+      "required_by": [
+        "github:2510_17109::centralized_planner_dependence",
+        "github:2510_17109::cost_overhead_modest",
+        "github:2510_17109::existing_verification_misses_context",
+        "github:2510_17109::replanning_helps_verimap",
+        "github:2510_17109::replanning_limited_for_mapv",
+        "github:2510_17109::verimap_beats_mapv",
+        "github:2510_17109::verimap_beats_react_bigcode",
+        "github:2510_17109::verimap_beats_react_olympiads",
+        "github:2510_17109::verimap_best_overall",
+        "github:2510_17109::verimap_modules"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:d2ad20cdb68ac1a430a676bd862eecbbee14a94561b2509ee0380f1a9afd1993",
+  "manifest_schema_version": 1,
+  "package": "2510-17109",
+  "version": "0.1.0"
+}

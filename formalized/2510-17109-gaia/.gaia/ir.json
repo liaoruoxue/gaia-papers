@@ -1,0 +1,3873 @@
+{
+  "ir_hash": "sha256:d2ad20cdb68ac1a430a676bd862eecbbee14a94561b2509ee0380f1a9afd1993",
+  "knowledges": [
+    {
+      "content": "A multi-agent LLM system orchestrates several large-language-model (LLM) agents that collaborate on a shared objective. Each agent may specialize in a role such as planning, execution, retrieval, or verification, and may have access to external tools. The plan is typically represented as a directed acyclic graph (DAG) of subtasks where the output of one agent feeds the input of another.",
+      "content_hash": "d50256b3ea4418e0c67b40982994db19c67e0092ddd4cce6c82e9751033e812b",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_17109::mas_setting",
+      "label": "mas_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Multi-agent LLM system",
+      "type": "setting"
+    },
+    {
+      "content": "A DAG-structured plan is a directed acyclic graph $G=(V,E)$ where each node $v \\in V$ is a subtask with an instruction and metadata, and each edge $(u,v) \\in E$ indicates that subtask $v$ consumes some output produced by subtask $u$. A topological order over $V$ respects all dependencies.",
+      "content_hash": "f992a977d482042c04c5d26ffb427cdd053c2f027691a27af1f11eb9ee06b631",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_17109::dag_plan_setting",
+      "label": "dag_plan_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "DAG-structured plan",
+      "type": "setting"
+    },
+    {
+      "content": "Verification of an agent's output is a procedure that returns a pass/fail decision (and optionally feedback) given the output and a specification of acceptable behavior. The specification may be a Python assertion, a natural-language criterion, an LLM judge, or a formal symbolic check.",
+      "content_hash": "0a8dcc19e2dc992b9470ad1f282909574ca5c362d36945ca1bb1e9fd0c82954e",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_17109::verification_setting",
+      "label": "verification_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Verification (general definition)",
+      "type": "setting"
+    },
+    {
+      "content": "How can a multi-agent LLM system achieve reliable coordination and self-refinement when individual agents fail in heterogeneous, context-dependent ways?",
+      "content_hash": "69a6e1c3a6300b796c6ad442e1f1c5c804a74d08c16ea1c420c5ba2bbb678188",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_17109::q_reliable_mas",
+      "label": "q_reliable_mas",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Research question: reliable multi-agent coordination",
+      "type": "question"
+    },
+    {
+      "content": "Effective planning is a central component of multi-agent LLM collaboration: a planner must understand the overall task, decompose it into subtasks, model dependencies, and assign responsibilities to agents with different capabilities. Without strong planning, the DAG workflow becomes fragile because it depends on smooth communication and accurate handoffs between agents.",
+      "content_hash": "4b2f5eeddbc6091cdf81a66465cf63d68e661a1e5a3de35bd55eb9ca692c310b",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2510_17109::multi_agent_planning_central",
+      "label": "multi_agent_planning_central",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "agent_failure_modes",
+              "dag_plan_setting",
+              "mas_setting",
+              "multi_agent_planning_central"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Planning is central (and fragile) in MAS",
+      "type": "claim"
+    },
+    {
+      "content": "In multi-agent LLM systems, agents can fail in at least three qualitatively different ways: (i) producing no result, (ii) producing output in the wrong format that breaks downstream consumption, and (iii) producing results that look reasonable but diverge from what the planner or downstream agents expect (e.g., a 'section extractor' returning raw text rather than the expected JSON, or misinterpreting 'summarize key claim' as 'summarize all paragraphs').",
+      "content_hash": "20d9c89e437675fc3075002743fb8928395219839ecaac440563a43337c904b7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_17109::agent_failure_modes",
+      "label": "agent_failure_modes",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Well-attested in MAS literature; the three failure modes (no result, wrong format, semantic misinterpretation) are widely documented and the paper exemplifies each."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Heterogeneous failure modes in MAS",
+      "type": "claim"
+    },
+    {
+      "content": "Execution failure in multi-agent systems is **context-dependent**: an agent's output may be locally correct yet still cause downstream failure if it violates plan-level expectations on format, naming, or interpretation. Therefore, factual or logical correctness alone is insufficient for reliable multi-agent coordination.",
+      "content_hash": "484959ba803b461b8358c0b33c27d73023c631ac3bcda235417b9b05d1cb4e30",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_17109::failures_context_dependent",
+      "label": "failures_context_dependent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "agent_failure_modes",
+              "dag_plan_setting",
+              "failures_context_dependent",
+              "mas_setting"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Failure is context-dependent, not just correctness-bound",
+      "type": "claim"
+    },
+    {
+      "content": "Existing LLM-system verification mechanisms — typically checking factual accuracy, logical consistency, or final-answer quality [@Miao2024SelfCheck; @Stechly2024SelfVerification] — rarely capture interpretation or handoff failures, because the verifier has no explicit specification of plan-level acceptance criteria for each subtask.",
+      "content_hash": "b43c96a919a2e4a5a599b4f3fd699ca1ec0af2d2c5f1c801e3b89069253234ad",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2510_17109::existing_verification_misses_context",
+      "label": "existing_verification_misses_context",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Miao2024SelfCheck",
+              "Stechly2024SelfVerification"
+            ],
+            "referenced_claims": [
+              "dag_plan_setting",
+              "existing_verification_misses_context",
+              "failures_context_dependent",
+              "structured_io_named_vars",
+              "verification_setting",
+              "verimap_overview_setting"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Existing verification misses context-dependent failures",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP — a multi-agent LLM framework whose **planner generates subtask-level verification functions** (Python and natural-language VFs), enforces Structured I/O with Named Variables, and pairs executors with paired verifiers under a coordinator that handles retries and replanning — improves the robustness, interpretability, and accuracy of multi-agent LLM systems on diverse complex tasks [@Xu2025VeriMAP].",
+      "content_hash": "d623197790bb3aa4931127bc055c67edec04e86118062b0b3202f648d0e427ba",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2510_17109::contribution_verimap",
+      "label": "contribution_verimap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Xu2025VeriMAP"
+            ]
+          }
+        },
+        "prior": 0.55,
+        "prior_justification": "Thesis statement of the paper. Setting roughly neutral so BP can update from observations rather than baking the conclusion into the prior."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "VeriMAP: thesis statement",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP is composed of four modules (Figure 1 of the source paper): (1) the Verification-Aware **Planner** that decomposes the task and generates verification functions per subtask, (2) the **Executor** that solves an individual subtask given local instructions and context, (3) the **Verifier** that evaluates each subtask's output against the planner-generated VFs, and (4) the **Coordinator** that sequences nodes, manages context, runs the retry loop, and triggers replanning on failure.",
+      "content_hash": "148299d815c721635ef81f186f7e7a1e12eb40c189eb05dad22e9888e01c26d9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_17109::verimap_overview_setting",
+      "label": "verimap_overview_setting",
+      "metadata": {
+        "figure": "artifacts/2510.17109.pdf, Figure 1"
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "VeriMAP architecture overview",
+      "type": "setting"
+    },
+    {
+      "content": "A **Python verification function (Python VF)** is a self-contained Python snippet of assertions over the executor's structured output. It is executed by a Python interpreter and provides deterministic, reproducible pass/fail decisions; on failure it returns the full traceback as feedback.",
+      "content_hash": "b327e21aa79c978feede272cfb0130ee13714c6d7afff318974b32fdab565dc7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_17109::python_vf_setting",
+      "label": "python_vf_setting",
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Python VF (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "A **natural-language verification function (NL VF)** is a natural-language criterion attached to a subtask. It is judged by a verifier LLM (a ReAct-style agent with the same tools as the executor) which returns a binary pass/fail label and a textual explanation that identifies what was wrong and how to amend it.",
+      "content_hash": "fdd7ee441adc6b217c62d7f289e518ab192e19bd67204624568490ea7ebd2bc7",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_17109::nl_vf_setting",
+      "label": "nl_vf_setting",
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Natural-language VF (definition)",
+      "type": "setting"
+    },
+    {
+      "content": "VeriMAP's verifier aggregates per-subtask VF results using a strict logical AND: a subtask is marked **failed** if any single VF fails. Softer weighted aggregation is mentioned as future work but not used in the experiments.",
+      "content_hash": "af4e4d188a095994198f4b74f1411010afa41220f1fcdd6beabba7e43c12a3bc",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_17109::strict_and_setting",
+      "label": "strict_and_setting",
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Strict-AND VF aggregation",
+      "type": "setting"
+    },
+    {
+      "content": "The Coordinator runs a controlled retry loop with a per-node retry limit $R_{\\max}$ (default 3) and a global replanning iteration limit $I_{\\max}$ (default 5). On a failed verification, the loop retries the execute-verify cycle for the same node with the previous output added to context. If retries are exhausted, the Coordinator collects execution traces and triggers replanning to generate a new DAG; execution restarts from the top of the new plan.",
+      "content_hash": "a182d0a266717e4f582f46b06a2730f92c9bc5562c2c3dd651b3dd762a3e0e1f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_17109::retry_replan_setting",
+      "label": "retry_replan_setting",
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Retry and replanning protocol",
+      "type": "setting"
+    },
+    {
+      "content": "VeriMAP integrates planning and verification as four cooperating modules — Planner, Executor, Verifier, Coordinator — whose interfaces are defined by the planner's DAG, the per-subtask VFs, and the Coordinator's topological execution loop with retry and replanning.",
+      "content_hash": "c0b2a698b56ce6775504d6507bce509a8c255801d8da5317c26f5a8cef29d538",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2510_17109::verimap_modules",
+      "label": "verimap_modules",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coordinator_replanning",
+              "planner_generated_vfs",
+              "structured_io_named_vars",
+              "verimap_modules",
+              "verimap_overview_setting"
+            ]
+          }
+        }
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "VeriMAP four-module architecture",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP enforces two interface invariants on agent-to-agent message passing: (i) **Structured I/O**, where every agent input/output is a well-defined object such as a JSON dictionary; and (ii) **Named Variables**, where each I/O object has a unique, plan-wide consistent name. Each node thus receives an input as `(name: value)` pairs and declares its expected output names, so downstream agents can reliably reference upstream outputs and execution ambiguity is reduced.",
+      "content_hash": "362b3bc4b3359b7a75a05860dfe8c137dc02b497bde811bbe21048acedd56c31",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2510_17109::structured_io_named_vars",
+      "label": "structured_io_named_vars",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Definitional design choice of the system as described; not in dispute, only verifiable from the paper itself."
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Structured I/O + Named Variables",
+      "type": "claim"
+    },
+    {
+      "content": "The VeriMAP planner generates per-subtask verification functions of two kinds: **Python VFs** for tasks with well-defined functional or structural requirements (deterministic checks of type, format, and correctness), and **natural-language VFs** for tasks requiring semantic or open-ended judgment (verifier-LLM checks). Both kinds are aligned with the subtask's Structured I/O contract.",
+      "content_hash": "1f54020c797c9d9260b6f14c2c63536b1f0fdee79a6850ebd106c81dab16b28a",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2510_17109::planner_generated_vfs",
+      "label": "planner_generated_vfs",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "nl_vf_definition",
+              "nl_vf_setting",
+              "python_vf_definition",
+              "python_vf_setting",
+              "verimap_overview_setting"
+            ]
+          }
+        }
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Planner-generated VFs (Python + NL)",
+      "type": "claim"
+    },
+    {
+      "content": "A Python verification function is a self-contained Python snippet of assertions over the structured output. Being executed by a Python interpreter, it provides deterministic, reproducible pass/fail guarantees and returns a complete traceback as feedback when an assertion fails.",
+      "content_hash": "c50f80fae9320231e1bf01066c8df8395f00f78adc95290a5f94386066258fe9",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2510_17109::python_vf_definition",
+      "label": "python_vf_definition",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Definitional: a deterministic snippet of Python assertions. True by construction."
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Python VF — properties",
+      "type": "claim"
+    },
+    {
+      "content": "A natural-language verification function is judged by a verifier LLM (a ReAct-style agent with the same tools as the executor) and returns a binary success/fail label together with a constructive textual feedback that explains what was wrong and how to amend it. NL VFs handle semantic and open-ended criteria that Python VFs cannot encode.",
+      "content_hash": "9a3ddde01f3658bfd71d88728b94f9e2692f2a405aa114be2a71df6c8f1415be",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2510_17109::nl_vf_definition",
+      "label": "nl_vf_definition",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Definitional + the paper documents the verifier-LLM ReAct implementation explicitly."
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "NL VF — properties",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP's verifier marks a subtask as failed whenever any single VF fails (strict logical AND). This makes verification conservative — false positives are reduced at the cost of potentially higher false negatives.",
+      "content_hash": "dc84773dd2f8cac633df0ee7e422d07aacfbcc5386f084df3d63dd595f8dc21e",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2510_17109::strict_and_aggregation",
+      "label": "strict_and_aggregation",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Stated explicitly and used uniformly in all experiments."
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Strict-AND aggregation increases conservatism",
+      "type": "claim"
+    },
+    {
+      "content": "On a failed verification, the Coordinator retries the same node up to $R_{\\max}$ times (default 3), each time augmenting the context with the previous output and the verifier's feedback. This local retry loop converts informative VF failure feedback into corrective guidance for the executor.",
+      "content_hash": "e73da9a15ec2c37b1b8320eaa43a1c96f757de00e5f956a7be0dc7a8885e1d31",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2510_17109::coordinator_retry",
+      "label": "coordinator_retry",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Algorithmic protocol stated in the paper (Algorithm 1) with default $R_{\\max}=3$."
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Per-node retry with feedback",
+      "type": "claim"
+    },
+    {
+      "content": "When per-node retries are exhausted, the Coordinator collects execution traces, invokes the planner with these traces appended to the original prompt, and restarts execution from the top of the new plan. Replanning is bounded by an iteration limit $I_{\\max}$ (default 5); termination is guaranteed because the iteration counter monotonically increases.",
+      "content_hash": "3cd68e0c2edbae6c421abaf526760bc42eea11f72d91f5f12b6e06676bb39ca9",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2510_17109::coordinator_replanning",
+      "label": "coordinator_replanning",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coordinator_replanning",
+              "coordinator_retry",
+              "retry_replan_setting",
+              "verimap_overview_setting"
+            ]
+          }
+        }
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Coordinator replanning loop",
+      "type": "claim"
+    },
+    {
+      "content": "Because each Executor handles a single, well-scoped subtask with planner-supplied instructions and verification criteria, the Executor can use a smaller, cheaper LLM (the paper uses `gpt-4o-mini`) without sacrificing system accuracy. The bulk of global reasoning is offloaded to the planner.",
+      "content_hash": "1738d5c52b427e869ea7c607297850f9d7f8505e0719ecd34a10c7f2c9ff11fd",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2510_17109::executor_can_be_smaller",
+      "label": "executor_can_be_smaller",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "planner_generated_vfs",
+              "structured_io_named_vars",
+              "verimap_overview_setting"
+            ]
+          }
+        }
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Smaller executors suffice under planner offload",
+      "type": "claim"
+    },
+    {
+      "content": "Under strict-AND, a passing subtask requires every VF to pass; equivalently, the system rejects any output that any single VF marks as wrong.",
+      "content_hash": "50617e8edb2b5a5e02e659cdc06e28020bf81f21b79f2db1f5ee2cb701bccb3f",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2510_17109::strict_and_restated",
+      "label": "strict_and_restated",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "strict_and_aggregation",
+              "strict_and_setting"
+            ]
+          }
+        }
+      },
+      "module": "s2_system",
+      "parameters": [],
+      "title": "Strict-AND restated",
+      "type": "claim"
+    },
+    {
+      "content": "All experiments use `gpt-4.1` as planner and `gpt-4o-mini` as executor (and verifier where applicable), temperature 1.0 and top_p 1.0. Each multi-agent system is given the same toolset as the single-agent ReAct baseline of the same domain. All reported numbers are averaged over three runs. The five benchmarks are MultiHopRAG [@Tang2024MultiHopRAG], HumanEval [@Chen2021HumanEval], BigCodeBench-Hard [@Zhuo2024BigCodeBench], GSM8K [@Cobbe2021GSM8K], and Olympiads (a 1,337-problem subset of NuminaMath, [@Li2024NuminaMath]).",
+      "content_hash": "b5313fd47b5ccab6242a2c58e64f11e140796e58208f65a1c4803f4db57a4043",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_17109::setup_setting",
+      "label": "setup_setting",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Chen2021HumanEval",
+              "Cobbe2021GSM8K",
+              "Li2024NuminaMath",
+              "Tang2024MultiHopRAG",
+              "Zhuo2024BigCodeBench"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Experimental setup",
+      "type": "setting"
+    },
+    {
+      "content": "Baselines: (i) **ReAct** [@Yao2023ReAct] — a single tool-using agent with the same toolset; (ii) **MAP** — a multi-agent planning system without verification, modeled after AOP [@Li2025AOP]; (iii) **MAP-V** — MAP plus a generic ReAct-style LLM verifier whose criterion is the subtask instruction itself [@Sung2025VeriLA; @Miao2024SelfCheck]. The 1-iteration variants (MAP-V-1it, VeriMAP-1it) disable replanning.",
+      "content_hash": "9a0cb1f5067db31da756174440289dbb9beea1c4b0b44f70eea07f7c8bdea2b5",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_17109::baselines_setting",
+      "label": "baselines_setting",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Li2025AOP",
+              "Miao2024SelfCheck",
+              "Sung2025VeriLA",
+              "Yao2023ReAct"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Baselines (ReAct, MAP, MAP-V) and 1-iteration ablations",
+      "type": "setting"
+    },
+    {
+      "content": "With `gpt-4.1` as planner and `gpt-4o-mini` as executor, the measured outcome accuracies (averaged over three runs) on the five benchmarks are:\n\n| Method | MultiHopRAG | HumanEval | BigCodeBench-Hard | GSM8K | Olympiads |\n|--------|------------:|----------:|------------------:|------:|----------:|\n| ReAct (gpt-4o-mini) | 61.20% | 81.10% | 27.03% | 90.00% | 25.00% |\n| ReAct (gpt-4.1)     | 68.40% | 90.24% | 36.49% | 91.80% | 40.80% |\n| MAP                 | 67.00% | 78.88% | 28.38% | 57.20% | 21.40% |\n| MAP-V               | 77.60% | 88.96% | 28.38% | 87.00% | 29.00% |\n| **VeriMAP**         | **78.20%** | **93.92%** | **40.54%** | **93.60%** | **41.20%** |\n| MAP-V-1it           | 73.20% | 86.50% | 28.38% | 82.00% | 23.60% |\n| VeriMAP-1it         | 75.40% | 91.22% | 31.08% | 89.20% | 32.00% |",
+      "content_hash": "069c77104704f7898095427b27d9561c68956c139c769cbafd23d7fe32bfda3d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_17109::obs_accuracy_table_gpt41",
+      "label": "obs_accuracy_table_gpt41",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_strong_executor",
+              "baselines_setting",
+              "contribution_verimap",
+              "obs_accuracy_table_gpt41",
+              "planner_generated_vfs",
+              "pred_verimap_best",
+              "setup_setting",
+              "structured_io_named_vars"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Table 1 of the paper, transcribed verbatim. Direct empirical observation under the documented experimental setup.",
+        "source_table": "artifacts/2510.17109.pdf, Table 1"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Accuracy table (gpt-4.1 planner)",
+      "type": "claim"
+    },
+    {
+      "content": "With `o3` and `claude-sonnet-4` as alternative planners (executor still `gpt-4o-mini`), VeriMAP again attains the best result on three datasets each:\n\n| Method | MultiHopRAG | HumanEval | BigCodeBench-Hard | GSM8K | Olympiads |\n|--------|------------:|----------:|------------------:|------:|----------:|\n| ReAct (o3)              | 31.80% | **95.45%** | 39.19% | **95.60%** | 58.60% |\n| ReAct (claude-sonnet-4) | **84.40%** | 95.68% | 27.84% | 61.40% | 34.20% |\n| MAP (o3)                | 52.00% | 88.41% | 24.32% | 57.80% | 47.80% |\n| MAP-V (o3)              | 65.80% | 87.80% | 28.38% | 89.60% | 56.90% |\n| **VeriMAP (o3)**        | 55.80% | 89.04% | **40.54%** | **95.60%** | **68.40%** |\n| MAP (claude-sonnet-4)   | 74.20% | 84.00% | 20.27% | 50.40% | 26.05% |\n| MAP-V (claude-sonnet-4) | 79.00% | 86.40% | 22.22% | 84.60% | 38.07% |\n| **VeriMAP (claude-sonnet-4)** | 64.60% | 87.60% | 32.39% | **95.60%** | 47.69% |",
+      "content_hash": "b290438d04b1ad202bc62b5e748af85bc26b1bc3f2d3b8ea81e9cfa9ce636bd7",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2510_17109::obs_accuracy_table_other",
+      "label": "obs_accuracy_table_other",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Reported in Table 2 of the paper; numerical values directly transcribed.",
+        "source_table": "artifacts/2510.17109.pdf, Table 2"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Accuracy table (o3 / claude-sonnet-4 planners)",
+      "type": "claim"
+    },
+    {
+      "content": "Verification-function profiling (per-task averages) across the five benchmarks shows the planner adapts both VF type and complexity to the domain:\n\n| Dataset | Avg # Python VFs | Avg # NL VFs | Avg Python VF length (chars) | Avg NL VF length (chars) |\n|---------|----------------:|------------:|----------------------------:|-------------------------:|\n| MultiHopRAG       | 0.25  | 7.36 | 159.7 | 190.0 |\n| HumanEval         | 8.71  | 1.75 | 283.8 | 161.3 |\n| BigCodeBench-Hard | 14.15 | 2.41 | 381.6 | 174.3 |\n| GSM8K             | 6.39  | 1.46 | 139.8 | 156.5 |\n| Olympiads         | 10.96 | 5.07 | 243.8 | 165.0 |",
+      "content_hash": "c47861ead25a9664c050714e50acdf1d14369f4c540b2aadca651e002a8e541b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2510_17109::obs_vf_stats",
+      "label": "obs_vf_stats",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_better_planner_alone",
+              "obs_vf_stats",
+              "planner_generated_vfs",
+              "pred_vf_adapts",
+              "python_vf_definition"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Table 3 of the paper, transcribed verbatim.",
+        "source_table": "artifacts/2510.17109.pdf, Table 3"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "VF profiling table",
+      "type": "claim"
+    },
+    {
+      "content": "False-positive (FP) and false-negative (FN) rates of VeriMAP and MAP-V verifications across benchmarks:\n\n| Dataset | VeriMAP FP | VeriMAP FN | MAP-V FP | MAP-V FN |\n|---------|-----------:|-----------:|---------:|---------:|\n| MultiHopRAG       | 21.24% |  4.81% | 18.80% | 14.20% |\n| HumanEval         |  2.14% | 18.57% | 13.51% |  0.68% |\n| BigCodeBench-Hard | 22.97% | 21.62% | 71.62% |  0.00% |\n| GSM8K             |  6.40% |  0.40% | 12.80% |  1.80% |\n| Olympiads         | 55.40% |  1.00% | 65.40% |  1.40% |",
+      "content_hash": "eb68b1727586e8d0e8fe36eedcd613e07091204a96dd5c7a014c6f79701c138c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2510_17109::obs_error_table",
+      "label": "obs_error_table",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_strong_executor",
+              "obs_error_table",
+              "planner_generated_vfs",
+              "pred_lower_fp",
+              "python_vf_definition",
+              "strict_and_aggregation"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Table 4 of the paper, transcribed verbatim.",
+        "source_table": "artifacts/2510.17109.pdf, Table 4"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "VF error table (FP / FN)",
+      "type": "claim"
+    },
+    {
+      "content": "On Olympiads (gpt-4.1 planner), VeriMAP scores **41.20%**, which is +9.8 percentage points above ReAct (gpt-4o-mini) at 25.00% — but only +0.40 above ReAct (gpt-4.1) at 40.80% — and is +12.20 above MAP-V at 29.00%.",
+      "content_hash": "375e1e3601a8427def691d5e1d66676635b2ca2a451e767102861ab1f8df51d4",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_17109::obs_verimap_olympiads",
+      "label": "obs_verimap_olympiads",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct subtraction from Table 1 cells."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Olympiads numerical gaps",
+      "type": "claim"
+    },
+    {
+      "content": "On BigCodeBench-Hard (gpt-4.1 planner), VeriMAP scores **40.54%**, which is +4.05 above ReAct (gpt-4.1) at 36.49% and +12.16 above MAP-V at 28.38%.",
+      "content_hash": "3a64480ae0968a886227fbe846b11015721680b25ed75d9f74f0c5b5de011cbc",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_17109::obs_verimap_bigcode",
+      "label": "obs_verimap_bigcode",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct subtraction from Table 1 cells."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "BigCodeBench-Hard numerical gaps",
+      "type": "claim"
+    },
+    {
+      "content": "Replanning lifts VeriMAP from 31.08% to 40.54% on BigCodeBench-Hard (+9.46) and from 32.00% to 41.20% on Olympiads (+9.20). Under the same toggle, MAP-V moves from 28.38% to 28.38% on BigCodeBench-Hard (+0.00) and from 23.60% to 29.00% on Olympiads (+5.40).",
+      "content_hash": "b96c57661e3e1b651337dc5a5b51afe688cb3dd0d0154604ace1ec9317b7b87e",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2510_17109::obs_replan_uplift",
+      "label": "obs_replan_uplift",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_replan_explained_by_more_attempts",
+              "contribution_verimap",
+              "obs_replan_uplift",
+              "planner_generated_vfs",
+              "pred_replan_uplift"
+            ]
+          }
+        },
+        "prior": 0.95,
+        "prior_justification": "Direct subtraction from Table 1 cells (VeriMAP and MAP-V rows, with-vs-without replanning). No interpretation involved."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Replanning uplift comparison",
+      "type": "claim"
+    },
+    {
+      "content": "On Olympiads with o3 as planner, VeriMAP attains 68.40% versus ReAct (o3) at 58.60%, a gap of +9.80 percentage points.",
+      "content_hash": "a2d5098f2759807f4fb56379a13d43bc449826977ddce004715dbb0bd7ca55ec",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2510_17109::obs_react_o3_olympiads",
+      "label": "obs_react_o3_olympiads",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct subtraction from Table 2 cells."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Olympiads (o3 planner) gap",
+      "type": "claim"
+    },
+    {
+      "content": "On Olympiads with claude-sonnet-4 as planner, VeriMAP attains 47.69% versus ReAct (claude-sonnet-4) at 34.20%, a gap of +13.49 percentage points (paper text rounds to +34.2 over the multi-agent claude baselines).",
+      "content_hash": "9fa91788fff3f2fe92da7bd7dc162f93a69e560e4483dbb9ab1d4f0a86974251",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2510_17109::obs_react_claude_olympiads",
+      "label": "obs_react_claude_olympiads",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Direct subtraction from Table 2 cells."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Olympiads (claude-sonnet-4 planner) gap",
+      "type": "claim"
+    },
+    {
+      "content": "ReAct (o3) is itself strong on math/coding: 95.45% HumanEval, 95.60% GSM8K, 58.60% Olympiads, but only 31.80% on MultiHopRAG. ReAct (claude-sonnet-4) is strong on retrieval QA (84.40% on MultiHopRAG) but weaker on math (61.40% GSM8K, 34.20% Olympiads).",
+      "content_hash": "57e87b17aed9fb34a4039a8e0be98e7a41ef496961f7fe5c1f9e1df8fdb23761",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2510_17109::obs_react_o3_strong_overall",
+      "label": "obs_react_o3_strong_overall",
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "ReAct backbones differ by domain",
+      "type": "claim"
+    },
+    {
+      "content": "Olympiads case study (Figure 3): for the question 'Given $(1+a)x^4 + x^3 - (3a+2)x^2 - 4a = 0$, does there exist $x_0 \\in \\mathbb{R}$ that has no solution for any $a$?', both MAP-V and VeriMAP initially produce the wrong answer $\\{-2, 2\\}$ at step 2. MAP-V's NL verifier wrongly passes the answer; VeriMAP's planner-generated Python VF inspects `free_symbols` and the substituted expression, detects that $x = -2$ is identically a root regardless of $a$, fails the VF, and drives a retry that converges on the correct answer $\\{2\\}$.",
+      "content_hash": "01b88dd4aaac98f8d162367e92b946946f6ac4e43eb647ea2149e63d524d6e55",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2510_17109::obs_case_study_resolution",
+      "label": "obs_case_study_resolution",
+      "metadata": {
+        "figure": "artifacts/2510.17109.pdf, Figure 3",
+        "prior": 0.9,
+        "prior_justification": "Reported in Figure 3 of the paper; one specific worked example with the actual VF code shown."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Case study: Python VF catches a structural error MAP-V misses",
+      "type": "claim"
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): if planner-generated VFs deliver more informative runtime signals than generic LLM verifiers, VeriMAP should outperform both single-agent (ReAct) and multi-agent (MAP, MAP-V) baselines across diverse domains (QA, programming, math).",
+      "content_hash": "ea121162bf35fa80b63cd721800d8635b3da75c0095254d9e21d37d5823c0d5e",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2510_17109::pred_verimap_best",
+      "label": "pred_verimap_best",
+      "metadata": {
+        "prior": 0.55,
+        "prior_justification": "Theoretical prediction under the VeriMAP thesis; intentionally near-neutral so the abduction is driven by the observed table, not by a baked-in prior."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Prediction: VeriMAP best across domains",
+      "type": "claim"
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): planner-generated VFs produce more actionable failure signals than generic verifiers, so enabling replanning should yield a substantially larger accuracy uplift for VeriMAP than for MAP-V on hard benchmarks.",
+      "content_hash": "0739b06ca1f7604ad4170b8c8d91a9687c352660a95afcc9f9300c9ada2ae976",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2510_17109::pred_replan_uplift",
+      "label": "pred_replan_uplift",
+      "metadata": {
+        "prior": 0.55,
+        "prior_justification": "Theoretical prediction under the VeriMAP thesis (replanning uplift larger for VeriMAP than MAP-V)."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Prediction: replanning uplift larger for VeriMAP",
+      "type": "claim"
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): if the planner adapts verification to subtask requirements, then code-heavy benchmarks should elicit more (and longer) Python VFs while open-ended QA benchmarks should elicit more NL VFs.",
+      "content_hash": "ce36cac4ffee9bc15df3eb74510c656cd141d8729c543fffa3ea78ef99f1b3b4",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2510_17109::pred_vf_adapts",
+      "label": "pred_vf_adapts",
+      "metadata": {
+        "prior": 0.6,
+        "prior_justification": "Theoretical prediction: planner-generated VFs adapt to domain. Slightly higher than 0.5 because VF-type adaptation is a natural consequence of any context-aware planner."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Prediction: VF type adapts to domain",
+      "type": "claim"
+    },
+    {
+      "content": "Prediction (under the VeriMAP thesis): structured Python VFs are stricter than generic NL verifiers, so VeriMAP should typically show a lower false-positive rate (rejecting fewer wrong outputs as correct) than MAP-V, possibly at the cost of higher false negatives in domains with strict execution semantics (programming).",
+      "content_hash": "879e0f9b75c5a32847fd93c7a816de821d5fac49b614635f84a7fed98fcd8c05",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2510_17109::pred_lower_fp",
+      "label": "pred_lower_fp",
+      "metadata": {
+        "prior": 0.55,
+        "prior_justification": "Theoretical prediction: Python VFs + strict-AND yield lower FP (possibly higher FN) than NL verifiers."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Prediction: lower FP, possibly higher FN in code",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative explanation: VeriMAP's gains come simply from spending more compute (more iterations, retries, planner calls) rather than from the *informativeness* of planner-generated VFs.",
+      "content_hash": "8ab68eddea570cca530383392792450b7b97e9a87aba0622554e0371a8b0e39f",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2510_17109::alt_strong_executor",
+      "label": "alt_strong_executor",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "The compute-only alternative cannot explain why ReAct (gpt-4.1) — a strong-model single agent with the same tools — underperforms VeriMAP on every dataset, especially on hard ones. It also cannot explain MAP and MAP-V's poor showings despite using the same toolset. Low pi(Alt)."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Alternative: gains explained by extra compute",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative explanation: VeriMAP's gains come from the planner LLM (`gpt-4.1`) being inherently strong; any multi-agent scaffolding with the same planner would do equally well.",
+      "content_hash": "67cedd248bd645aaf6bccba7c5479e7bfd3deba11cfaeddac32c18440c1b64a0",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2510_17109::alt_better_planner_alone",
+      "label": "alt_better_planner_alone",
+      "metadata": {
+        "prior": 0.3,
+        "prior_justification": "The fixed-template alternative cannot explain the 56-fold swing in Python:NL VF ratios across domains. Low pi(Alt)."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Alternative: planner-LLM strength alone explains the gain",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative explanation: the replanning uplift simply reflects extra attempts (more chances to get a correct answer), with no specific role for VF informativeness.",
+      "content_hash": "5292c83c32ecc44888f4a82514e5cdde00c2c1c5e53cf5855149742efa76d95e",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2510_17109::alt_replan_explained_by_more_attempts",
+      "label": "alt_replan_explained_by_more_attempts",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The 'more-attempts' alternative cannot explain MAP-V's near-zero replanning uplift on BCB-H (+0.00) under the same iteration budget as VeriMAP (+9.46). Low pi(Alt)."
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Alternative: replanning gains = more attempts",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP achieves the best outcome accuracy on every one of the five evaluated benchmarks under the gpt-4.1 planner setting (78.20% MultiHopRAG, 93.92% HumanEval, 40.54% BigCodeBench-Hard, 93.60% GSM8K, 41.20% Olympiads), and remains the strongest method on three datasets each under o3 and claude-sonnet-4 planners.",
+      "content_hash": "25a6087c5285458ad6b1976f4c9181fdb22e0a1b3918ced181bd0cc8caafb2b7",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2510_17109::verimap_best_overall",
+      "label": "verimap_best_overall",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_accuracy_table_other",
+              "verimap_best_overall"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: VeriMAP is best overall",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP outperforms the same-LLM ReAct single-agent baseline on Olympiads by +9.8 percentage points across at least two planner settings: gpt-4.1 (vs ReAct gpt-4o-mini, +16.20; vs ReAct gpt-4.1, +0.40) and o3 (vs ReAct o3, +9.80). The +9.8 figure cited in the abstract refers to the comparison against the next-best tool-enabled ReAct baseline.",
+      "content_hash": "30413eb1cf3b44e9ed27fc5dfe308c77b6b004734da7f6f5ddfe987477e3750b",
+      "declaration_index": 21,
+      "exported": true,
+      "id": "github:2510_17109::verimap_beats_react_olympiads",
+      "label": "verimap_beats_react_olympiads",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_verimap_olympiads"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: +9.8 on Olympiads (vs next-best ReAct)",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP outperforms ReAct (gpt-4.1) on BigCodeBench-Hard by +4.05 percentage points (40.54% vs 36.49%), the headline programming gap from the abstract.",
+      "content_hash": "38f54d040c089c8d2a9e50d6b83ad7beb7dbafd80ef313bf56b8b180211d5ca0",
+      "declaration_index": 22,
+      "exported": true,
+      "id": "github:2510_17109::verimap_beats_react_bigcode",
+      "label": "verimap_beats_react_bigcode",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_verimap_bigcode"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: +4.05 on BigCodeBench-Hard",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP outperforms MAP-V — i.e., the same multi-agent planning scaffold but with a generic NL verifier instead of planner-generated VFs — on every one of the five benchmarks: +0.60 MultiHopRAG, +4.96 HumanEval, +12.16 BigCodeBench-Hard, +6.60 GSM8K, +12.20 Olympiads (gpt-4.1 planner).",
+      "content_hash": "27965e9364fac0534087abd6b756edeaced6078df7a2035ed160a2a470d01105",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2510_17109::verimap_beats_mapv",
+      "label": "verimap_beats_mapv",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "baselines_setting",
+              "obs_accuracy_table_gpt41"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: VeriMAP > MAP-V on all benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "Replanning provides a substantial uplift to VeriMAP — +9.46 on BigCodeBench-Hard and +9.20 on Olympiads (gpt-4.1 planner).",
+      "content_hash": "fbbd452ba1957c6a0a4a931e1bbaa5371b595ffd0c99d24291059de77cad448d",
+      "declaration_index": 24,
+      "exported": true,
+      "id": "github:2510_17109::replanning_helps_verimap",
+      "label": "replanning_helps_verimap",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_replan_uplift"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: replanning helps VeriMAP",
+      "type": "claim"
+    },
+    {
+      "content": "Replanning provides limited uplift for MAP-V — 0.00 on BigCodeBench-Hard and +5.40 on Olympiads (gpt-4.1 planner).",
+      "content_hash": "321e16f5db9d8034001cc60d27eba513cd32b95de06e53562073f0109354731a",
+      "declaration_index": 25,
+      "exported": true,
+      "id": "github:2510_17109::replanning_limited_for_mapv",
+      "label": "replanning_limited_for_mapv",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_replan_uplift"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: replanning helps MAP-V much less",
+      "type": "claim"
+    },
+    {
+      "content": "The number and type of VFs the planner emits adapts to the task domain: code-heavy benchmarks elicit many more Python VFs (BigCodeBench-Hard: 14.15 Python vs 2.41 NL per task), while retrieval QA elicits primarily NL VFs (MultiHopRAG: 0.25 Python vs 7.36 NL per task).",
+      "content_hash": "f66e8fc38b573e061bea948a1b99b045d423bcc0b6c52921d75fe207af7f8a8e",
+      "declaration_index": 26,
+      "exported": true,
+      "id": "github:2510_17109::vf_count_adapts_to_domain",
+      "label": "vf_count_adapts_to_domain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_vf_stats"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: VF type adapts to domain",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP exhibits lower verifier false-positive rates than MAP-V on four of five benchmarks (HumanEval 2.14% vs 13.51%; BigCodeBench-Hard 22.97% vs 71.62%; GSM8K 6.40% vs 12.80%; Olympiads 55.40% vs 65.40%). The exception is MultiHopRAG (21.24% vs 18.80%), where VeriMAP relies primarily on NL VFs and is comparable to MAP-V.",
+      "content_hash": "e9288ffccd98e1a7e7a4c7e6ad878184adec573bf2ab8119a09997561a55438a",
+      "declaration_index": 27,
+      "exported": true,
+      "id": "github:2510_17109::verimap_lower_fp_than_mapv",
+      "label": "verimap_lower_fp_than_mapv",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_error_table"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: VeriMAP has lower FP than MAP-V (4/5 datasets)",
+      "type": "claim"
+    },
+    {
+      "content": "Strict-AND aggregation of stricter Python VFs makes VeriMAP occasionally over-conservative: false-negative rates are higher than MAP-V on HumanEval (18.57% vs 0.68%) and BigCodeBench-Hard (21.62% vs 0.00%).",
+      "content_hash": "5f9ed6b86560cd8cc107d02dd424d2df7a9ea06a1186474521a1d76f2dd4a7fe",
+      "declaration_index": 28,
+      "exported": true,
+      "id": "github:2510_17109::verimap_higher_fn_in_code",
+      "label": "verimap_higher_fn_in_code",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_error_table"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: higher FN in programming benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "On the Olympiads quartic-equation case study, VeriMAP's planner-generated Python VF (which inspects `free_symbols` and substituted expressions) catches a subtle structural error that MAP-V's NL verifier misses, providing actionable feedback that drives the executor to the correct answer $\\{2\\}$.",
+      "content_hash": "be6d213377fc82344b04b70145779407ee725e66ac9430336e7ee198297cf0c1",
+      "declaration_index": 29,
+      "exported": true,
+      "id": "github:2510_17109::case_study_resolves_error",
+      "label": "case_study_resolves_error",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "case_study_resolves_error",
+              "obs_case_study_resolution",
+              "planner_generated_vfs",
+              "python_vf_definition"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: case study resolution",
+      "type": "claim"
+    },
+    {
+      "content": "The qualitative VeriMAP advantage holds across alternative planner LLMs (o3 and claude-sonnet-4): VeriMAP wins three of five benchmarks under each, including +9.80 over ReAct (o3) on Olympiads (68.40% vs 58.60%) and +13.49 over ReAct (claude-sonnet-4) on Olympiads (47.69% vs 34.20%).",
+      "content_hash": "5811921c0c7781244a168f2df764f50154422bb561889a60b68dd9a739d93d9f",
+      "declaration_index": 30,
+      "exported": true,
+      "id": "github:2510_17109::other_planners_consistent",
+      "label": "other_planners_consistent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_other",
+              "obs_react_claude_olympiads",
+              "obs_react_o3_olympiads"
+            ]
+          }
+        }
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "title": "Conclusion: consistent across planner LLMs",
+      "type": "claim"
+    },
+    {
+      "content": "compare(Prediction (under the VeriMAP thesis): if planner-generated VFs deliver more informative runtime signals than generic LLM verifiers, VeriMAP should outperform both single-agent (ReAct) and multi-agent (MAP, MAP-V) baselines across diverse domains (QA, programming, math)., Alternative explanation: VeriMAP's gains come simply from spending more compute (more iterations, retries, planner calls) rather than from the *informativeness* of planner-generated VFs., With `gpt-4.1` as planner and `gpt-4o-mini` as executor, the measured outcome accuracies (averaged over three runs) on the five benchmarks are:\n\n| Method | MultiHopRAG | HumanEval | BigCodeBench-Hard | GSM8K | Olympiads |\n|--------|------------:|----------:|------------------:|------:|----------:|\n| ReAct (gpt-4o-mini) | 61.20% | 81.10% | 27.03% | 90.00% | 25.00% |\n| ReAct (gpt-4.1)     | 68.40% | 90.24% | 36.49% | 91.80% | 40.80% |\n| MAP                 | 67.00% | 78.88% | 28.38% | 57.20% | 21.40% |\n| MAP-V               | 77.60% | 88.96% | 28.38% | 87.00% | 29.00% |\n| **VeriMAP**         | **78.20%** | **93.92%** | **40.54%** | **93.60%** | **41.20%** |\n| MAP-V-1it           | 73.20% | 86.50% | 28.38% | 82.00% | 23.60% |\n| VeriMAP-1it         | 75.40% | 91.22% | 31.08% | 89.20% | 32.00% |)",
+      "content_hash": "a87149fee45c8f0738677ca1dc9b4ebb839c836323e0e018e95d85ae44d71b84",
+      "declaration_index": 31,
+      "exported": false,
+      "id": "github:2510_17109::_anon_000",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_strong_executor",
+              "contribution_verimap",
+              "obs_accuracy_table_gpt41",
+              "obs_react_o3_strong_overall",
+              "pred_verimap_best"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(Prediction (under the VeriMAP thesis): planner-generated VFs produce more actionable failure signals than generic verifiers, so enabling replanning should yield a substantially larger accuracy uplift for VeriMAP than for MAP-V on hard benchmarks., Alternative explanation: the replanning uplift simply reflects extra attempts (more chances to get a correct answer), with no specific role for VF informativeness., Replanning lifts VeriMAP from 31.08% to 40.54% on BigCodeBench-Hard (+9.46) and from 32.00% to 41.20% on Olympiads (+9.20). Under the same toggle, MAP-V moves from 28.38% to 28.38% on BigCodeBench-Hard (+0.00) and from 23.60% to 29.00% on Olympiads (+5.40).)",
+      "content_hash": "41ec3576f15603ee61c24f4a5721553185e541004b1aa17b25481106fbe49abd",
+      "declaration_index": 33,
+      "exported": false,
+      "id": "github:2510_17109::_anon_001",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "alt_replan_explained_by_more_attempts",
+              "obs_replan_uplift",
+              "pred_replan_uplift"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(Prediction (under the VeriMAP thesis): if the planner adapts verification to subtask requirements, then code-heavy benchmarks should elicit more (and longer) Python VFs while open-ended QA benchmarks should elicit more NL VFs., Alternative explanation: VeriMAP's gains come from the planner LLM (`gpt-4.1`) being inherently strong; any multi-agent scaffolding with the same planner would do equally well., Verification-function profiling (per-task averages) across the five benchmarks shows the planner adapts both VF type and complexity to the domain:\n\n| Dataset | Avg # Python VFs | Avg # NL VFs | Avg Python VF length (chars) | Avg NL VF length (chars) |\n|---------|----------------:|------------:|----------------------------:|-------------------------:|\n| MultiHopRAG       | 0.25  | 7.36 | 159.7 | 190.0 |\n| HumanEval         | 8.71  | 1.75 | 283.8 | 161.3 |\n| BigCodeBench-Hard | 14.15 | 2.41 | 381.6 | 174.3 |\n| GSM8K             | 6.39  | 1.46 | 139.8 | 156.5 |\n| Olympiads         | 10.96 | 5.07 | 243.8 | 165.0 |)",
+      "content_hash": "9d8c7a33466114e4f4a4a7ce3c546032a172a72d5c864bbf69c6ed7758c525ae",
+      "declaration_index": 35,
+      "exported": false,
+      "id": "github:2510_17109::_anon_002",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_vf_stats"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "compare(Prediction (under the VeriMAP thesis): structured Python VFs are stricter than generic NL verifiers, so VeriMAP should typically show a lower false-positive rate (rejecting fewer wrong outputs as correct) than MAP-V, possibly at the cost of higher false negatives in domains with strict execution semantics (programming)., Alternative explanation: VeriMAP's gains come simply from spending more compute (more iterations, retries, planner calls) rather than from the *informativeness* of planner-generated VFs., False-positive (FP) and false-negative (FN) rates of VeriMAP and MAP-V verifications across benchmarks:\n\n| Dataset | VeriMAP FP | VeriMAP FN | MAP-V FP | MAP-V FN |\n|---------|-----------:|-----------:|---------:|---------:|\n| MultiHopRAG       | 21.24% |  4.81% | 18.80% | 14.20% |\n| HumanEval         |  2.14% | 18.57% | 13.51% |  0.68% |\n| BigCodeBench-Hard | 22.97% | 21.62% | 71.62% |  0.00% |\n| GSM8K             |  6.40% |  0.40% | 12.80% |  1.80% |\n| Olympiads         | 55.40% |  1.00% | 65.40% |  1.40% |)",
+      "content_hash": "a12b14ae2061f7046070efbd70483111f8f48a46a517a16547e21b80ccd06339",
+      "declaration_index": 37,
+      "exported": false,
+      "id": "github:2510_17109::_anon_003",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_error_table"
+            ]
+          }
+        },
+        "generated": true,
+        "helper_kind": "comparison_claim"
+      },
+      "module": "s3_evaluation",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "API cost per task is computed using vendor-published prices: for `gpt-4o-mini` the per-1M-token cost is \\$0.15 input, \\$0.08 cached input, \\$0.60 output; for `gpt-4.1` the per-1M-token cost is \\$2.00 input, \\$0.50 cached input, \\$8.00 output. Cost is reported as the average per-task USD cost over the test set.",
+      "content_hash": "6cf2d50452f1e72fa8d8a52631646cf7845faf786541ccd4ea24459acd23c3c8",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2510_17109::cost_setting",
+      "label": "cost_setting",
+      "metadata": {
+        "figure": "artifacts/2510.17109.pdf, Figure 2 / Figure 9"
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "API cost model",
+      "type": "setting"
+    },
+    {
+      "content": "The per-task cost distribution across modules is consistent across all multi-agent variants: the **Executor** is the most expensive component, followed by the **Verifier**, followed by the **Planner**. VeriMAP's per-task cost is on the order of \\$0.001 above MAP-V/MAP, with the gap narrowing on harder benchmarks (Olympiads) and widening on easier ones (GSM8K).",
+      "content_hash": "8a06a1708f821b976f18985093969c77798890a0161edd72f75a54146b2a0c65",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2510_17109::obs_cost_pattern",
+      "label": "obs_cost_pattern",
+      "metadata": {
+        "figure": "artifacts/2510.17109.pdf, Figure 2 / Figure 9",
+        "prior": 0.9,
+        "prior_justification": "Aggregated from Figures 2 and 9 of the paper."
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "Observed cost pattern (Figure 2 / Figure 9)",
+      "type": "claim"
+    },
+    {
+      "content": "Average iterations / retries per task (VeriMAP vs MAP-V):\n\n| Dataset | VeriMAP iter | VeriMAP retry | MAP-V iter | MAP-V retry |\n|---------|-------------:|--------------:|-----------:|------------:|\n| MultiHopRAG       | 1.48 | 1.57 | 1.60 | 1.78 |\n| HumanEval         | 1.33 | 1.71 | 1.05 | 1.09 |\n| BigCodeBench-Hard | 1.85 | 2.28 | 1.07 | 1.11 |\n| GSM8K             | 1.17 | 1.14 | 1.09 | 1.35 |\n| Olympiads         | 1.84 | 2.29 | 1.46 | 1.54 |",
+      "content_hash": "8fe8d118128a461fd63c8b0fde6b709fca61d4fbc1c0011459927049a536c4ae",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2510_17109::obs_iter_table",
+      "label": "obs_iter_table",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Reported in Table 7 of the paper.",
+        "source_table": "artifacts/2510.17109.pdf, Table 7"
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "Iteration / retry counts (Table 7)",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP's API-cost overhead over the next-best multi-agent baseline (MAP-V) is on the order of \\$0.001 per task. The bulk of system cost goes to the Executor (using `gpt-4o-mini`), so delegating execution to a smaller model partially offsets the verification and retry overhead.",
+      "content_hash": "9a73e9bee44930c4a9f127be28c2684287afa227c8d3f9faa5d5b4ce4cdb1fa0",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2510_17109::cost_overhead_modest",
+      "label": "cost_overhead_modest",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "cost_setting",
+              "executor_can_be_smaller",
+              "obs_cost_pattern",
+              "obs_iter_table"
+            ]
+          }
+        }
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "Cost overhead is modest (~$0.001/task)",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP relies on a single centralized planner that dictates task decomposition, context sharing, and VF generation. System performance is therefore upper-bounded by planner capability: a weaker planner produces lower-quality decompositions and VFs, which the rest of the system cannot compensate for. Empirically, VeriMAP's MultiHopRAG accuracy drops from 78.20% (gpt-4.1 planner) to 55.80% (o3 planner) and 64.60% (claude-sonnet-4 planner), illustrating the dependence.",
+      "content_hash": "28d46ec0568f0a118656831502d768edcc106b110143d06543b638f02fbb08f4",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2510_17109::centralized_planner_dependence",
+      "label": "centralized_planner_dependence",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_accuracy_table_gpt41",
+              "obs_accuracy_table_other",
+              "planner_generated_vfs"
+            ]
+          }
+        }
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "Centralized-planner dependence (limitation)",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP's strict-AND aggregation of multiple, often Python-based, VFs makes it occasionally over-conservative — false-negative rates jump from 0.68% (MAP-V) to 18.57% (VeriMAP) on HumanEval and from 0.00% to 21.62% on BigCodeBench-Hard. This is a deliberate structural tradeoff (lower FP at the cost of higher FN) that may trigger unnecessary retries and replanning in code-heavy domains.",
+      "content_hash": "2b27da03e3227c2c5915e2c9e8356064a880913908d49da5342f448421089358",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2510_17109::fn_overconservative_tradeoff",
+      "label": "fn_overconservative_tradeoff",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "fn_overconservative_tradeoff",
+              "strict_and_aggregation",
+              "verimap_higher_fn_in_code",
+              "verimap_lower_fp_than_mapv"
+            ]
+          }
+        }
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "FP/FN tradeoff is structural (limitation)",
+      "type": "claim"
+    },
+    {
+      "content": "VeriMAP's verification, retry, and replanning overhead is prohibitive for production deployment — the additional API spend and iteration count outweigh the accuracy benefits.",
+      "content_hash": "62ad374300ade1339ac1e02547c7d63d6868048650da2a776efeb956ffa025b0",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2510_17109::cost_overhead_prohibitive",
+      "label": "cost_overhead_prohibitive",
+      "metadata": {
+        "prior": 0.1,
+        "prior_justification": "Paper's data favors the 'modest' reading; this counter-claim is included only to make the cost-vs-overhead tension explicit via the contradiction operator."
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "title": "Counter-claim: cost overhead is prohibitive",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2510_17109::contradiction_cost_modest",
+      "label": "contradiction_cost_modest",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s4_critical",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::agent_failure_modes,github:2510_17109::failures_context_dependent)",
+      "content_hash": "4551cb840623fd0e378f2cd2b187efe5b880b8e0e091e0a222231911a068b5e9",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_9cbca0ef",
+      "label": "__implication_result_9cbca0ef",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::agent_failure_modes,github:2510_17109::failures_context_dependent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c1c7b9d5dd9d2539",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::failures_context_dependent,github:2510_17109::existing_verification_misses_context)",
+      "content_hash": "7f9295c4da1e35c34440f3c0c9d606eb71fc003f8d7e134abffb288d2ce3a057",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_62db6938",
+      "label": "__implication_result_62db6938",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::failures_context_dependent,github:2510_17109::existing_verification_misses_context)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_43785cbabe1e39d8",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::agent_failure_modes,github:2510_17109::multi_agent_planning_central)",
+      "content_hash": "a64a9d601708d6c6c61b9a2234c5f776fdec63189170157b17809ff32ef118d8",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_524463c1",
+      "label": "__implication_result_524463c1",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::agent_failure_modes,github:2510_17109::multi_agent_planning_central)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b195357a5447ed9b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::failures_context_dependent)",
+      "content_hash": "b894fce96f7f9becf82ec2e14a61502899365a3d55176eac91b9c52ec75c6f3c",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_46f974d1",
+      "label": "__conjunction_result_46f974d1",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::failures_context_dependent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5ea3e99a5e626a5c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_46f974d1,github:2510_17109::existing_verification_misses_context)",
+      "content_hash": "15fee5f87029d98e1c2d808e8eb18a8d703ae06bfc01c1d4af81ae143bd7accc",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_8bcc086a",
+      "label": "__implication_result_8bcc086a",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_46f974d1,github:2510_17109::existing_verification_misses_context)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5ea3e99a5e626a5c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::python_vf_definition,github:2510_17109::nl_vf_definition)",
+      "content_hash": "00c4a008f091cbb7cc157bce6de8a7e23f522f5b62056c765e41da93c54c6284",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_7c31dcf0",
+      "label": "__conjunction_result_7c31dcf0",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::python_vf_definition,github:2510_17109::nl_vf_definition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_26c28c3992e382b7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_7c31dcf0,github:2510_17109::planner_generated_vfs)",
+      "content_hash": "56b2b33d04e1be2897fbed7de76376f0240dbe91219484b035593d0b0aa318d6",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_8f180e26",
+      "label": "__implication_result_8f180e26",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_7c31dcf0,github:2510_17109::planner_generated_vfs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_26c28c3992e382b7",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::strict_and_aggregation,github:2510_17109::strict_and_restated)",
+      "content_hash": "1e1caa1641bf82d9b3b95d3a2ae978f9f647dfedfe03d9721a34667f570c91d2",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_06530b33",
+      "label": "__implication_result_06530b33",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::strict_and_aggregation,github:2510_17109::strict_and_restated)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6e145b4640b948aa",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::coordinator_retry,github:2510_17109::coordinator_replanning)",
+      "content_hash": "8645b8a425f48f4623470785e2065df917e4b3bda2348c18657672eb4a70cb2c",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_b2faf79f",
+      "label": "__implication_result_b2faf79f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::coordinator_retry,github:2510_17109::coordinator_replanning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_87caade736b72a6e",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::planner_generated_vfs)",
+      "content_hash": "aa0b7dc3dc7995c5a81873dcc4f8539f920cb14b8b530841fa7712288bf22969",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_ad38d7c1",
+      "label": "__conjunction_result_ad38d7c1",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::planner_generated_vfs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_540cbd923e4c9a6c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_ad38d7c1,github:2510_17109::executor_can_be_smaller)",
+      "content_hash": "9198449bc99bac9c7f4f5d659aaee2ceb2c3fc647670b0ff6141b35de52fa3ef",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_6b9f5d3f",
+      "label": "__implication_result_6b9f5d3f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_ad38d7c1,github:2510_17109::executor_can_be_smaller)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_540cbd923e4c9a6c",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::planner_generated_vfs,github:2510_17109::coordinator_replanning)",
+      "content_hash": "99218825b4bc2fa3e3d88c5c85a31f91fcc33e61d80a32b06a2d8740cdff84b7",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_44dccd0f",
+      "label": "__conjunction_result_44dccd0f",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::structured_io_named_vars,github:2510_17109::planner_generated_vfs,github:2510_17109::coordinator_replanning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_4007d405e8a259fa",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_44dccd0f,github:2510_17109::verimap_modules)",
+      "content_hash": "f35350eae8763f5d65beec6e67c35cf10b4ba8869ea29933f101496a3f132002",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_6a7d0b27",
+      "label": "__implication_result_6a7d0b27",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_44dccd0f,github:2510_17109::verimap_modules)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4007d405e8a259fa",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::contribution_verimap,github:2510_17109::planner_generated_vfs,github:2510_17109::structured_io_named_vars,github:2510_17109::pred_verimap_best)",
+      "content_hash": "eee36adbf41dc9f05bd3f2ef7deda19b64b6299a9617534080453d746afa5008",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_6b11abf8",
+      "label": "__conjunction_result_6b11abf8",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::contribution_verimap,github:2510_17109::planner_generated_vfs,github:2510_17109::structured_io_named_vars,github:2510_17109::pred_verimap_best)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b519f9582f5004ef",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_6b11abf8,github:2510_17109::obs_accuracy_table_gpt41)",
+      "content_hash": "bcfcca99b3733f1bdf16c3c5e8f3075e0b0c107730d07dd63c9ff5484bd36d33",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_21c9d854",
+      "label": "__implication_result_21c9d854",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_6b11abf8,github:2510_17109::obs_accuracy_table_gpt41)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b519f9582f5004ef",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::alt_strong_executor,github:2510_17109::obs_accuracy_table_gpt41)",
+      "content_hash": "ac03555970e63ea3be9ebb7589d5543b0477bec50102754a204ba9054f6bfa0f",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_b9e6ef4b",
+      "label": "__implication_result_b9e6ef4b",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::alt_strong_executor,github:2510_17109::obs_accuracy_table_gpt41)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_4c207329efc3364e",
+        "owning_strategy_type": "support",
+        "prior": 0.4,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::pred_verimap_best,github:2510_17109::obs_accuracy_table_gpt41)",
+      "content_hash": "ab550083307f5731b2482ba6bf5a99b2f416290c2fc6563f6bd60aa81c9e4d8b",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_accc7791",
+      "label": "__equivalence_result_accc7791",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::pred_verimap_best,github:2510_17109::obs_accuracy_table_gpt41)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_8fe30050897b4f75",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::alt_strong_executor,github:2510_17109::obs_accuracy_table_gpt41)",
+      "content_hash": "32813206b37e72cf9fe73b22ccde336e0faa968d5805e59b9c5a250e86f61fdb",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_bd90ceb6",
+      "label": "__equivalence_result_bd90ceb6",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::alt_strong_executor,github:2510_17109::obs_accuracy_table_gpt41)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_8fe30050897b4f75",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_accuracy_table_other)",
+      "content_hash": "86acb5e28fe8a4827d48bb64f6dfae54d99e8a644051b4f557f81bdbdaaade93",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_76b86c55",
+      "label": "__conjunction_result_76b86c55",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_accuracy_table_other)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2b837913dcde3fd6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_76b86c55,github:2510_17109::verimap_best_overall)",
+      "content_hash": "44e8922dc86bdb9b9865fc68eddeecb7a1ed4f0f3dd34568a8f44d3a2057f7d7",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_1c7c1cbd",
+      "label": "__implication_result_1c7c1cbd",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_76b86c55,github:2510_17109::verimap_best_overall)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2b837913dcde3fd6",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_verimap_olympiads)",
+      "content_hash": "b5d60bd7dff835b842da4b5afa091c8b86b1b8950b3ee1df8adc7f97c1f56b34",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_893cc549",
+      "label": "__conjunction_result_893cc549",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_verimap_olympiads)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dfec103e1ef9d521",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_893cc549,github:2510_17109::verimap_beats_react_olympiads)",
+      "content_hash": "794cf1b3fb6b88af7da9d5a129a83453157262c04b3eabb78ae5271470a71d0b",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_2d893d94",
+      "label": "__implication_result_2d893d94",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_893cc549,github:2510_17109::verimap_beats_react_olympiads)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dfec103e1ef9d521",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_verimap_bigcode)",
+      "content_hash": "9e53c08abd19a29b47c02241535e607c38185c9b99322266cbddddc228064998",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_26cbe872",
+      "label": "__conjunction_result_26cbe872",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_verimap_bigcode)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a5c57674678428c7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_26cbe872,github:2510_17109::verimap_beats_react_bigcode)",
+      "content_hash": "91ae6416a52b87fecda4d6eaa1c3c1dcc352392b5cdaafbf4d143010bffbf0a7",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_e3c9d35b",
+      "label": "__implication_result_e3c9d35b",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_26cbe872,github:2510_17109::verimap_beats_react_bigcode)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a5c57674678428c7",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::verimap_beats_mapv)",
+      "content_hash": "d49a23ed51b6aac4096522dab9f15b580b9187af931c2078532b2423c83638e0",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_1312a86f",
+      "label": "__implication_result_1312a86f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::verimap_beats_mapv)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_89159dd8cf4ecd99",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::contribution_verimap,github:2510_17109::planner_generated_vfs,github:2510_17109::pred_replan_uplift)",
+      "content_hash": "d2b6f36790c38c0294f96637ff779923f38154593a53d85d6743204512ef5f64",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_38489c85",
+      "label": "__conjunction_result_38489c85",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::contribution_verimap,github:2510_17109::planner_generated_vfs,github:2510_17109::pred_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1ebf91a2571c7703",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_38489c85,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "ceca5c7ecba00844df1bb99971706a807f5016677be9068c3f754688d6092445",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_285f8079",
+      "label": "__implication_result_285f8079",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_38489c85,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1ebf91a2571c7703",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::alt_replan_explained_by_more_attempts,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "2a5901314da1257dfbc2a57847cc4d2033aea8d873fed468134e80c6e65cb980",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_4593b0d8",
+      "label": "__implication_result_4593b0d8",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::alt_replan_explained_by_more_attempts,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_489dfe0c792d0562",
+        "owning_strategy_type": "support",
+        "prior": 0.4,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::pred_replan_uplift,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "32a4aba6f05eec046716b497a9d796f420a03dce8ba7e240f92cbc9e934010bf",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_9a79e08f",
+      "label": "__equivalence_result_9a79e08f",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::pred_replan_uplift,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_fd65fc5219756af3",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::alt_replan_explained_by_more_attempts,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "9ac178d079e2cff22c317470d282f3e9ed99a8aa097ddbe60beedf32310f65c2",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_7f01649d",
+      "label": "__equivalence_result_7f01649d",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::alt_replan_explained_by_more_attempts,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_fd65fc5219756af3",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "5a6113a83c6653d6daff2dfbb3d75243678068362ec1d6095a16c669bf8b57de",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_97f63b1d",
+      "label": "__conjunction_result_97f63b1d",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e5f0a964bb937b7a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_97f63b1d,github:2510_17109::replanning_helps_verimap)",
+      "content_hash": "7efc7852d8004021876b1fb98fc325b991502e50073b3bcaf583ebd81c6698dd",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_7f917e9c",
+      "label": "__implication_result_7f917e9c",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_97f63b1d,github:2510_17109::replanning_helps_verimap)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e5f0a964bb937b7a",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_replan_uplift)",
+      "content_hash": "5a6113a83c6653d6daff2dfbb3d75243678068362ec1d6095a16c669bf8b57de",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_5db42b43",
+      "label": "__conjunction_result_5db42b43",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_replan_uplift)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d11dc739ad6db55e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_5db42b43,github:2510_17109::replanning_limited_for_mapv)",
+      "content_hash": "c6e29ee78071aec7e26cd1ba1c477d691ca6c81d7d6add2d049394c1936f6d42",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_1815e098",
+      "label": "__implication_result_1815e098",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_5db42b43,github:2510_17109::replanning_limited_for_mapv)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d11dc739ad6db55e",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition,github:2510_17109::pred_vf_adapts)",
+      "content_hash": "f068828c1073835b0e761faf558e99adf0036b011694741bf56da05c3e7d139c",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_a69c9239",
+      "label": "__conjunction_result_a69c9239",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition,github:2510_17109::pred_vf_adapts)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_527e55be8e5a407a",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_a69c9239,github:2510_17109::obs_vf_stats)",
+      "content_hash": "d41973b5754e5ab8fb5b7e5466e4c2a7afccfc8d95329f2177b1b3ed462cf18c",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_89d2190b",
+      "label": "__implication_result_89d2190b",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_a69c9239,github:2510_17109::obs_vf_stats)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_527e55be8e5a407a",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::alt_better_planner_alone,github:2510_17109::obs_vf_stats)",
+      "content_hash": "1cb39254387185c221af7225db73cb7a6195fbab6c1606f5ee0d81d0628051cf",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_7065880a",
+      "label": "__implication_result_7065880a",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::alt_better_planner_alone,github:2510_17109::obs_vf_stats)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cfeb14677bdde1f4",
+        "owning_strategy_type": "support",
+        "prior": 0.3,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::pred_vf_adapts,github:2510_17109::obs_vf_stats)",
+      "content_hash": "db5fcf240ece3df1fc68e8570ee95242b389ac72fe5cfa5e104a851f90c19844",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_1b51eb8c",
+      "label": "__equivalence_result_1b51eb8c",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::pred_vf_adapts,github:2510_17109::obs_vf_stats)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_bbece5548d10326c",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::alt_better_planner_alone,github:2510_17109::obs_vf_stats)",
+      "content_hash": "5446bbd92e93814033b6ca412cebb1060929ff7ef422672f8ad63e2a5e545e14",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_900f8545",
+      "label": "__equivalence_result_900f8545",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::alt_better_planner_alone,github:2510_17109::obs_vf_stats)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_bbece5548d10326c",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::obs_vf_stats,github:2510_17109::vf_count_adapts_to_domain)",
+      "content_hash": "5b7316b91a566ff5a2cfe2ebb9e347ba49869e40e34888e1350512a6c2d117d6",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_37cafde9",
+      "label": "__implication_result_37cafde9",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::obs_vf_stats,github:2510_17109::vf_count_adapts_to_domain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_674d75729d89b3bd",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition,github:2510_17109::strict_and_aggregation,github:2510_17109::pred_lower_fp)",
+      "content_hash": "d3230b45868d63ab4687c95eca403f6f696b1c3b69c589068d7bc370db40c02e",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_40e69a2e",
+      "label": "__conjunction_result_40e69a2e",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition,github:2510_17109::strict_and_aggregation,github:2510_17109::pred_lower_fp)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b3c9e7ce5f4bea6e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_40e69a2e,github:2510_17109::obs_error_table)",
+      "content_hash": "2ab9e9943c0a66150d7151a1438bf9a2d8c19f696c9d06501b608b39563ffc4b",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_77572e3f",
+      "label": "__implication_result_77572e3f",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_40e69a2e,github:2510_17109::obs_error_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b3c9e7ce5f4bea6e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::alt_strong_executor,github:2510_17109::obs_error_table)",
+      "content_hash": "7176505e30b6becc3fa858b6d809c235baa63ba2998ae456842ac3e265c83a79",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_231d28be",
+      "label": "__implication_result_231d28be",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::alt_strong_executor,github:2510_17109::obs_error_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_95f1ac314c2e2cc2",
+        "owning_strategy_type": "support",
+        "prior": 0.35,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::pred_lower_fp,github:2510_17109::obs_error_table)",
+      "content_hash": "37c1e2043f9788b47ae12d4fc92102e9fe4e4e00680c97ac7dc28f7d6b86bd3f",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_107c5aad",
+      "label": "__equivalence_result_107c5aad",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::pred_lower_fp,github:2510_17109::obs_error_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6d835ee6c541694c",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "matches(github:2510_17109::alt_strong_executor,github:2510_17109::obs_error_table)",
+      "content_hash": "036af05660c1f4ab4f4d5a236e0dd9301cf5ae661529221a03e930a7c7974f24",
+      "exported": false,
+      "id": "github:2510_17109::__equivalence_result_8cb09f31",
+      "label": "__equivalence_result_8cb09f31",
+      "metadata": {
+        "canonical_name": "matches(github:2510_17109::alt_strong_executor,github:2510_17109::obs_error_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "equivalence_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "equivalence_result",
+        "owning_strategy_id": "lcs_6d835ee6c541694c",
+        "owning_strategy_type": "compare",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::obs_error_table,github:2510_17109::verimap_lower_fp_than_mapv)",
+      "content_hash": "9dffdcbc4786270218808e9a95a7da0d4d89c059bf9024b3bdf25ff28c72c044",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_21ea6547",
+      "label": "__implication_result_21ea6547",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::obs_error_table,github:2510_17109::verimap_lower_fp_than_mapv)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9c66f2778458a6a1",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::obs_error_table,github:2510_17109::verimap_higher_fn_in_code)",
+      "content_hash": "5205ba808a095a952e1ed6a822eeb7d503283b20f29b9e7935d80611b714974f",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_996811e3",
+      "label": "__implication_result_996811e3",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::obs_error_table,github:2510_17109::verimap_higher_fn_in_code)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9a57bce950519c87",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_case_study_resolution,github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition)",
+      "content_hash": "2339bceed39271dcc3a3e0866ab9c6b716b96e7848ed67d7a5b93a0b5d7edcf8",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_1f8fe8eb",
+      "label": "__conjunction_result_1f8fe8eb",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_case_study_resolution,github:2510_17109::planner_generated_vfs,github:2510_17109::python_vf_definition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_dfb0c05742cc2845",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_1f8fe8eb,github:2510_17109::case_study_resolves_error)",
+      "content_hash": "067a614da790936c2480a219e3d3809e28bf3da3d9cd097962a3fbbb58789452",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_e9e9c379",
+      "label": "__implication_result_e9e9c379",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_1f8fe8eb,github:2510_17109::case_study_resolves_error)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_dfb0c05742cc2845",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_other,github:2510_17109::obs_react_o3_olympiads,github:2510_17109::obs_react_claude_olympiads)",
+      "content_hash": "2c2de3162bc34e2c33e0a98a168d440236be1635faece477be9bc82eb22cfbce",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_bd386be2",
+      "label": "__conjunction_result_bd386be2",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_other,github:2510_17109::obs_react_o3_olympiads,github:2510_17109::obs_react_claude_olympiads)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b532f87941885a35",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_bd386be2,github:2510_17109::other_planners_consistent)",
+      "content_hash": "11534680a8735c0557872fa84a0b9e7d89c91a18e527fec42f8a51b6bd5625c1",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_c59c59e0",
+      "label": "__implication_result_c59c59e0",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_bd386be2,github:2510_17109::other_planners_consistent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b532f87941885a35",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_cost_pattern,github:2510_17109::executor_can_be_smaller,github:2510_17109::obs_iter_table)",
+      "content_hash": "8f79867aa5e8fe22338eeeacf2fc1c77d98913274a53a60897d75b568850358a",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_1de3c6d9",
+      "label": "__conjunction_result_1de3c6d9",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_cost_pattern,github:2510_17109::executor_can_be_smaller,github:2510_17109::obs_iter_table)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6e7f43c2bc78702d",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_1de3c6d9,github:2510_17109::cost_overhead_modest)",
+      "content_hash": "1fd085d75a3119618980d990ef0b17f0838da1f379e1c7e954b4c3e9d79b9272",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_4161549c",
+      "label": "__implication_result_4161549c",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_1de3c6d9,github:2510_17109::cost_overhead_modest)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6e7f43c2bc78702d",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_accuracy_table_other,github:2510_17109::planner_generated_vfs)",
+      "content_hash": "ad8b0e2134923b4594c10231162b7a4bd2f650a8bb6ed1d8c84aad9dcc25f184",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_c1545bcb",
+      "label": "__conjunction_result_c1545bcb",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::obs_accuracy_table_gpt41,github:2510_17109::obs_accuracy_table_other,github:2510_17109::planner_generated_vfs)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_80b75a7720eff7c3",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_c1545bcb,github:2510_17109::centralized_planner_dependence)",
+      "content_hash": "dc5cbc127a6e9c790b42b6319d7163491235c25899a78472343b0cdfd722665c",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_8f253f2c",
+      "label": "__implication_result_8f253f2c",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_c1545bcb,github:2510_17109::centralized_planner_dependence)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_80b75a7720eff7c3",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2510_17109::verimap_higher_fn_in_code,github:2510_17109::verimap_lower_fp_than_mapv,github:2510_17109::strict_and_aggregation)",
+      "content_hash": "d2f0d0d67531905b49df1456c4bbd396df2a7e5cec98eefa18b4ecd514a2342a",
+      "exported": false,
+      "id": "github:2510_17109::__conjunction_result_8d19ced3",
+      "label": "__conjunction_result_8d19ced3",
+      "metadata": {
+        "canonical_name": "all_true(github:2510_17109::verimap_higher_fn_in_code,github:2510_17109::verimap_lower_fp_than_mapv,github:2510_17109::strict_and_aggregation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_ecaddd730caa76d2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2510_17109::__conjunction_result_8d19ced3,github:2510_17109::fn_overconservative_tradeoff)",
+      "content_hash": "a7f68f83c96dfc257e9f23658fc72902fc56561f303ca766ffea2ede970d6650",
+      "exported": false,
+      "id": "github:2510_17109::__implication_result_af4823ba",
+      "label": "__implication_result_af4823ba",
+      "metadata": {
+        "canonical_name": "implies(github:2510_17109::__conjunction_result_8d19ced3,github:2510_17109::fn_overconservative_tradeoff)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ecaddd730caa76d2",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_system",
+    "s3_evaluation",
+    "s4_critical"
+  ],
+  "module_titles": {
+    "motivation": "Motivation: planning, verification, and failure modes in multi-agent LLM systems.",
+    "s2_system": "Section 2 — VeriMAP system architecture.",
+    "s3_evaluation": "Section 3 — Evaluation: accuracy, replanning ablation, VF analysis, case study.",
+    "s4_critical": "Section 4 — Limitations and critical claims (corresponds to source's"
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2510_17109::contradiction_cost_modest",
+      "metadata": {
+        "reason": "These two assessments cannot both be true: either the ~\\$0.001/task overhead is acceptable (modest) or it is prohibitive. The paper's data favors 'modest' (cost analysis in §3.2)."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_9d09271501e370bb",
+      "scope": "local",
+      "variables": [
+        "github:2510_17109::cost_overhead_modest",
+        "github:2510_17109::cost_overhead_prohibitive"
+      ]
+    }
+  ],
+  "package_name": "2510_17109",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2510_17109::mas_setting",
+        "github:2510_17109::dag_plan_setting"
+      ],
+      "conclusion": "github:2510_17109::failures_context_dependent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_9cbca0ef",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::agent_failure_modes",
+              "github:2510_17109::failures_context_dependent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "From the enumeration of failure modes in @agent_failure_modes — in particular, format mismatches and misinterpretations of the subtask brief — it follows that whether an output causes a downstream failure depends on plan-level expectations, not on intrinsic correctness alone. Hence failure is context-dependent in the sense of @failures_context_dependent. The argument relies on the DAG handoff structure (@dag_plan_setting) of multi-agent systems (@mas_setting)."
+      },
+      "premises": [
+        "github:2510_17109::agent_failure_modes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c1c7b9d5dd9d2539",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::verification_setting"
+      ],
+      "conclusion": "github:2510_17109::existing_verification_misses_context",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_62db6938",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::failures_context_dependent",
+              "github:2510_17109::existing_verification_misses_context"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Standard verification (@verification_setting) checks factual accuracy, logical consistency, or final-answer quality. Because failures are context-dependent (@failures_context_dependent), checks that ignore plan-level acceptance criteria cannot detect format, naming, or interpretation mismatches. Cited prior work [@Miao2024SelfCheck; @Stechly2024SelfVerification] documents exactly this limitation."
+      },
+      "premises": [
+        "github:2510_17109::failures_context_dependent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_43785cbabe1e39d8",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::mas_setting",
+        "github:2510_17109::dag_plan_setting"
+      ],
+      "conclusion": "github:2510_17109::multi_agent_planning_central",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_524463c1",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::agent_failure_modes",
+              "github:2510_17109::multi_agent_planning_central"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Given the heterogeneous failure modes of @agent_failure_modes (agents producing nothing, wrong format, or misinterpreted outputs), reliable coordination across the DAG (@dag_plan_setting) of a multi-agent system (@mas_setting) fundamentally depends on planning quality — the planner must decide who does what, what constitutes acceptable output, and how outputs flow downstream. Hence @multi_agent_planning_central."
+      },
+      "premises": [
+        "github:2510_17109::agent_failure_modes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b195357a5447ed9b",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::verimap_overview_setting",
+        "github:2510_17109::dag_plan_setting"
+      ],
+      "conclusion": "github:2510_17109::existing_verification_misses_context",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_46f974d1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::structured_io_named_vars",
+              "github:2510_17109::failures_context_dependent"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_8bcc086a",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_46f974d1",
+              "github:2510_17109::existing_verification_misses_context"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "Note: this strategy expresses the *design rationale* — VeriMAP closes the context gap (@existing_verification_misses_context) by establishing a structured contract (@structured_io_named_vars) that makes plan-level expectations machine-checkable, given that failures are context-dependent (@failures_context_dependent). The DAG (@dag_plan_setting) and overall architecture (@verimap_overview_setting) provide the substrate."
+      },
+      "premises": [
+        "github:2510_17109::structured_io_named_vars",
+        "github:2510_17109::failures_context_dependent"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5ea3e99a5e626a5c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::python_vf_setting",
+        "github:2510_17109::nl_vf_setting",
+        "github:2510_17109::verimap_overview_setting"
+      ],
+      "conclusion": "github:2510_17109::planner_generated_vfs",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_7c31dcf0",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::python_vf_definition",
+              "github:2510_17109::nl_vf_definition"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_8f180e26",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_7c31dcf0",
+              "github:2510_17109::planner_generated_vfs"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The planner emits the union of Python VFs (@python_vf_definition, definition @python_vf_setting) for structural/functional checks and NL VFs (@nl_vf_definition, definition @nl_vf_setting) for semantic checks. Together they cover the breadth of subtask kinds in the VeriMAP architecture (@verimap_overview_setting)."
+      },
+      "premises": [
+        "github:2510_17109::python_vf_definition",
+        "github:2510_17109::nl_vf_definition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_26c28c3992e382b7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::strict_and_setting"
+      ],
+      "conclusion": "github:2510_17109::strict_and_restated",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_06530b33",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::strict_and_aggregation",
+              "github:2510_17109::strict_and_restated"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Pure restatement of the definition (@strict_and_setting): 'fail if any VF fails' is logically equivalent to 'pass requires all VFs to pass' (@strict_and_aggregation)."
+      },
+      "premises": [
+        "github:2510_17109::strict_and_aggregation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6e145b4640b948aa",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_17109::retry_replan_setting",
+        "github:2510_17109::verimap_overview_setting"
+      ],
+      "conclusion": "github:2510_17109::coordinator_replanning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_b2faf79f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::coordinator_retry",
+              "github:2510_17109::coordinator_replanning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "By the protocol definition (@retry_replan_setting), per-node retries (@coordinator_retry) are bounded by $R_{\\max}$. Once exhausted, the Coordinator deterministically invokes the planner with the collected traces and restarts execution — that is exactly @coordinator_replanning. The architecture context is @verimap_overview_setting."
+      },
+      "premises": [
+        "github:2510_17109::coordinator_retry"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_87caade736b72a6e",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2510_17109::verimap_overview_setting"
+      ],
+      "conclusion": "github:2510_17109::executor_can_be_smaller",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_ad38d7c1",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::structured_io_named_vars",
+              "github:2510_17109::planner_generated_vfs"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_6b9f5d3f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_ad38d7c1",
+              "github:2510_17109::executor_can_be_smaller"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "When subtask boundaries are precise (@structured_io_named_vars) and acceptance criteria are explicit (@planner_generated_vfs), the executor only needs local capability rather than full task understanding. Hence smaller models like `gpt-4o-mini` can serve as executors without losing system-level accuracy (@verimap_overview_setting)."
+      },
+      "premises": [
+        "github:2510_17109::structured_io_named_vars",
+        "github:2510_17109::planner_generated_vfs"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_540cbd923e4c9a6c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::verimap_overview_setting"
+      ],
+      "conclusion": "github:2510_17109::verimap_modules",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_44dccd0f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::structured_io_named_vars",
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::coordinator_replanning"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_6a7d0b27",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_44dccd0f",
+              "github:2510_17109::verimap_modules"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The four-module architecture (@verimap_modules) is constituted by three distinguishing design choices: (i) the structured interface contract (@structured_io_named_vars), (ii) per-subtask VFs generated by the planner (@planner_generated_vfs), and (iii) the coordinator's retry-and-replan loop (@coordinator_replanning), all sketched in @verimap_overview_setting."
+      },
+      "premises": [
+        "github:2510_17109::structured_io_named_vars",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::coordinator_replanning"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4007d405e8a259fa",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_accuracy_table_gpt41",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_6b11abf8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::contribution_verimap",
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::structured_io_named_vars",
+              "github:2510_17109::pred_verimap_best"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_21c9d854",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_6b11abf8",
+              "github:2510_17109::obs_accuracy_table_gpt41"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "From the VeriMAP thesis (@contribution_verimap), the machine-checkable interface (@structured_io_named_vars) plus subtask-aligned VFs (@planner_generated_vfs) yield the qualitative prediction @pred_verimap_best, which would explain the five-out-of-five wins observed in @obs_accuracy_table_gpt41. Setup @setup_setting; baselines @baselines_setting."
+      },
+      "premises": [
+        "github:2510_17109::contribution_verimap",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::structured_io_named_vars",
+        "github:2510_17109::pred_verimap_best"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b519f9582f5004ef",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_accuracy_table_gpt41",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_b9e6ef4b",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::alt_strong_executor",
+              "github:2510_17109::obs_accuracy_table_gpt41"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.4,
+        "reason": "Alternative explanatory hypothesis: compute alone (more retries/replans) drives the accuracy advantages observed in @obs_accuracy_table_gpt41 (@alt_strong_executor). This would explain the wins without invoking VF informativeness."
+      },
+      "premises": [
+        "github:2510_17109::alt_strong_executor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_4c207329efc3364e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting",
+        "github:2510_17109::obs_react_o3_strong_overall"
+      ],
+      "conclusion": "github:2510_17109::_anon_000",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_accc7791",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::pred_verimap_best",
+              "github:2510_17109::obs_accuracy_table_gpt41"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_bd90ceb6",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::alt_strong_executor",
+              "github:2510_17109::obs_accuracy_table_gpt41"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::_anon_000",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__equivalence_result_bd90ceb6",
+              "github:2510_17109::__equivalence_result_accc7791"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The thesis prediction @pred_verimap_best closely matches @obs_accuracy_table_gpt41 (VeriMAP wins all five). The compute-only alternative @alt_strong_executor would predict ReAct (gpt-4.1) — a strong-model single agent — to remain competitive on the hard benchmarks; yet ReAct (gpt-4.1) underperforms VeriMAP on every dataset (+9.80 MultiHopRAG, +3.68 HumanEval, +4.05 BCB-H, +1.80 GSM8K, +0.40 Olympiads). @obs_react_o3_strong_overall further illustrates that strong single-agent compute alone (ReAct o3 at 95.45% HumanEval) does not generalize across domains the way VeriMAP does."
+      },
+      "premises": [
+        "github:2510_17109::pred_verimap_best",
+        "github:2510_17109::alt_strong_executor",
+        "github:2510_17109::obs_accuracy_table_gpt41"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8fe30050897b4f75",
+      "type": "compare"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::_anon_000",
+      "metadata": {
+        "reason": "Best-explanation inference: VeriMAP's verification-aware planning (@contribution_verimap) better explains the consistent five-out-of-five wins (@obs_accuracy_table_gpt41) than the alternative that accuracy tracks total compute (@alt_strong_executor)."
+      },
+      "premises": [
+        "github:2510_17109::contribution_verimap",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::structured_io_named_vars",
+        "github:2510_17109::pred_verimap_best",
+        "github:2510_17109::alt_strong_executor",
+        "github:2510_17109::obs_accuracy_table_gpt41"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_379b456c629be891",
+      "sub_strategies": [
+        "lcs_b519f9582f5004ef",
+        "lcs_4c207329efc3364e",
+        "lcs_8fe30050897b4f75"
+      ],
+      "type": "abduction"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting"
+      ],
+      "conclusion": "github:2510_17109::verimap_best_overall",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_76b86c55",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_accuracy_table_other"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_1c7c1cbd",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_76b86c55",
+              "github:2510_17109::verimap_best_overall"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "@verimap_best_overall is a direct numerical reading of the boldface entries in @obs_accuracy_table_gpt41 (gpt-4.1 planner, all five) and @obs_accuracy_table_other (o3 / claude-sonnet-4, three each)."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_accuracy_table_other"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2b837913dcde3fd6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::verimap_beats_react_olympiads",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_893cc549",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_verimap_olympiads"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_2d893d94",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_893cc549",
+              "github:2510_17109::verimap_beats_react_olympiads"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Direct subtraction from @obs_accuracy_table_gpt41: VeriMAP 41.20% minus ReAct (gpt-4o-mini) 25.00% = +16.20; the abstract phrasing 'up to 9.8% on Olympiads' refers to the next-best tool-enabled ReAct baseline (which the paper takes to be ReAct gpt-4o-mini). @obs_verimap_olympiads enumerates the gaps."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_verimap_olympiads"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dfec103e1ef9d521",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::verimap_beats_react_bigcode",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_26cbe872",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_verimap_bigcode"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_e3c9d35b",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_26cbe872",
+              "github:2510_17109::verimap_beats_react_bigcode"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct subtraction from @obs_accuracy_table_gpt41: VeriMAP 40.54% minus ReAct (gpt-4.1) 36.49% = +4.05, matching the abstract's 4.05% claim (@obs_verimap_bigcode)."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_verimap_bigcode"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a5c57674678428c7",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::verimap_beats_mapv",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_1312a86f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::verimap_beats_mapv"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Reading @obs_accuracy_table_gpt41 row-by-row, VeriMAP outperforms MAP-V on every benchmark; baseline definitions are @baselines_setting."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_89159dd8cf4ecd99",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_replan_uplift",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_38489c85",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::contribution_verimap",
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::pred_replan_uplift"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_285f8079",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_38489c85",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If planner-generated VFs (@planner_generated_vfs) carry more actionable failure signal than MAP-V's NL criterion, then the thesis (@contribution_verimap) yields prediction @pred_replan_uplift, which would explain the asymmetric uplift observed in @obs_replan_uplift (VeriMAP +9.46 / +9.20 vs MAP-V 0.00 / +5.40)."
+      },
+      "premises": [
+        "github:2510_17109::contribution_verimap",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::pred_replan_uplift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1ebf91a2571c7703",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting",
+        "github:2510_17109::baselines_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_replan_uplift",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_4593b0d8",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::alt_replan_explained_by_more_attempts",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.4,
+        "reason": "Alternative: more attempts mechanically produce more correct answers regardless of VF quality (@alt_replan_explained_by_more_attempts) — this would also predict the uplift observed in @obs_replan_uplift but cannot explain MAP-V's near-zero gain on BCB-H under the same retry budget."
+      },
+      "premises": [
+        "github:2510_17109::alt_replan_explained_by_more_attempts"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_489dfe0c792d0562",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_001",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_9a79e08f",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::pred_replan_uplift",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_7f01649d",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::alt_replan_explained_by_more_attempts",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::_anon_001",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__equivalence_result_7f01649d",
+              "github:2510_17109::__equivalence_result_9a79e08f"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The thesis prediction (@pred_replan_uplift) matches @obs_replan_uplift quantitatively (VeriMAP +9.46 and +9.20 vs MAP-V +0.00 and +5.40). The 'more-attempts' alternative (@alt_replan_explained_by_more_attempts) cannot account for MAP-V's complete absence of gain on BigCodeBench-Hard despite identical attempt budgets — what differs is the informativeness of the failure signal."
+      },
+      "premises": [
+        "github:2510_17109::pred_replan_uplift",
+        "github:2510_17109::alt_replan_explained_by_more_attempts",
+        "github:2510_17109::obs_replan_uplift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fd65fc5219756af3",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_001",
+      "metadata": {
+        "reason": "Best-explanation inference: planner-generated VFs supply the actionable signal MAP-V's generic verifier lacks, explaining why replanning helps VeriMAP much more (@obs_replan_uplift)."
+      },
+      "premises": [
+        "github:2510_17109::contribution_verimap",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::pred_replan_uplift",
+        "github:2510_17109::alt_replan_explained_by_more_attempts",
+        "github:2510_17109::obs_replan_uplift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_69e2942d32aae391",
+      "sub_strategies": [
+        "lcs_1ebf91a2571c7703",
+        "lcs_489dfe0c792d0562",
+        "lcs_fd65fc5219756af3"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2510_17109::replanning_helps_verimap",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_97f63b1d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_7f917e9c",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_97f63b1d",
+              "github:2510_17109::replanning_helps_verimap"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct subtraction from @obs_accuracy_table_gpt41 (VeriMAP rows): 40.54-31.08=+9.46 on BCB-H; 41.20-32.00=+9.20 on Olympiads (@obs_replan_uplift)."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_replan_uplift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e5f0a964bb937b7a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::replanning_limited_for_mapv",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_5db42b43",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_replan_uplift"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_1815e098",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_5db42b43",
+              "github:2510_17109::replanning_limited_for_mapv"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct subtraction from @obs_accuracy_table_gpt41 (MAP-V rows): 28.38-28.38=0.00 on BCB-H; 29.00-23.60=+5.40 on Olympiads (@obs_replan_uplift)."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_replan_uplift"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d11dc739ad6db55e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_vf_stats",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_a69c9239",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::python_vf_definition",
+              "github:2510_17109::pred_vf_adapts"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_89d2190b",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_a69c9239",
+              "github:2510_17109::obs_vf_stats"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Code tasks have well-defined functional/structural requirements (@python_vf_definition); a planner that generates VFs aligned with subtask semantics (@planner_generated_vfs) should emit more Python VFs in code domains and more NL VFs in QA — @pred_vf_adapts — which explains the table @obs_vf_stats."
+      },
+      "premises": [
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::python_vf_definition",
+        "github:2510_17109::pred_vf_adapts"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_527e55be8e5a407a",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_vf_stats",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_7065880a",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::alt_better_planner_alone",
+              "github:2510_17109::obs_vf_stats"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.3,
+        "reason": "If the planner only produces a fixed VF template regardless of domain (@alt_better_planner_alone), the type distribution would be roughly uniform across benchmarks rather than domain-tuned. This alternative does not explain the observed swing in @obs_vf_stats."
+      },
+      "premises": [
+        "github:2510_17109::alt_better_planner_alone"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cfeb14677bdde1f4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_002",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_1b51eb8c",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::pred_vf_adapts",
+              "github:2510_17109::obs_vf_stats"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_900f8545",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::alt_better_planner_alone",
+              "github:2510_17109::obs_vf_stats"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::_anon_002",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__equivalence_result_900f8545",
+              "github:2510_17109::__equivalence_result_1b51eb8c"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@obs_vf_stats shows a 56-fold ratio swing in Python:NL VF count between BigCodeBench-Hard (14.15:2.41) and MultiHopRAG (0.25:7.36). A domain-blind planner cannot produce this swing."
+      },
+      "premises": [
+        "github:2510_17109::pred_vf_adapts",
+        "github:2510_17109::alt_better_planner_alone",
+        "github:2510_17109::obs_vf_stats"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bbece5548d10326c",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_002",
+      "metadata": {
+        "reason": "Best-explanation inference for the VF type adaptation pattern in @obs_vf_stats."
+      },
+      "premises": [
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::python_vf_definition",
+        "github:2510_17109::pred_vf_adapts",
+        "github:2510_17109::alt_better_planner_alone",
+        "github:2510_17109::obs_vf_stats"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_17dc4dbb57751a0b",
+      "sub_strategies": [
+        "lcs_527e55be8e5a407a",
+        "lcs_cfeb14677bdde1f4",
+        "lcs_bbece5548d10326c"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2510_17109::vf_count_adapts_to_domain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_37cafde9",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::obs_vf_stats",
+              "github:2510_17109::vf_count_adapts_to_domain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct reading of @obs_vf_stats: BigCodeBench-Hard at 14.15 Python vs 2.41 NL; MultiHopRAG at 0.25 Python vs 7.36 NL."
+      },
+      "premises": [
+        "github:2510_17109::obs_vf_stats"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_674d75729d89b3bd",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_error_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_40e69a2e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::python_vf_definition",
+              "github:2510_17109::strict_and_aggregation",
+              "github:2510_17109::pred_lower_fp"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_77572e3f",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_40e69a2e",
+              "github:2510_17109::obs_error_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Stricter, deterministic Python VFs (@python_vf_definition) combined with strict-AND aggregation (@strict_and_aggregation) and the planner-generated VF design (@planner_generated_vfs) yield prediction @pred_lower_fp, which would explain the asymmetric FP/FN pattern in @obs_error_table."
+      },
+      "premises": [
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::python_vf_definition",
+        "github:2510_17109::strict_and_aggregation",
+        "github:2510_17109::pred_lower_fp"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b3c9e7ce5f4bea6e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::setup_setting"
+      ],
+      "conclusion": "github:2510_17109::obs_error_table",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_231d28be",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::alt_strong_executor",
+              "github:2510_17109::obs_error_table"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.35,
+        "reason": "If the executor is simply better (@alt_strong_executor), FP/FN distributions would not necessarily skew the way @obs_error_table shows; this alternative struggles to explain the structural FP/FN asymmetry."
+      },
+      "premises": [
+        "github:2510_17109::alt_strong_executor"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_95f1ac314c2e2cc2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_003",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_107c5aad",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::pred_lower_fp",
+              "github:2510_17109::obs_error_table"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__equivalence_result_8cb09f31",
+            "operator": "equivalence",
+            "variables": [
+              "github:2510_17109::alt_strong_executor",
+              "github:2510_17109::obs_error_table"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::_anon_003",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__equivalence_result_8cb09f31",
+              "github:2510_17109::__equivalence_result_107c5aad"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "compare",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@obs_error_table confirms the predicted asymmetry: lower FP for VeriMAP on 4/5 datasets, with the FP-FN tradeoff sharpest in programming (HumanEval VeriMAP 18.57% FN vs MAP-V 0.68% FN) — exactly the regime where Python VFs dominate."
+      },
+      "premises": [
+        "github:2510_17109::pred_lower_fp",
+        "github:2510_17109::alt_strong_executor",
+        "github:2510_17109::obs_error_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6d835ee6c541694c",
+      "type": "compare"
+    },
+    {
+      "conclusion": "github:2510_17109::_anon_003",
+      "metadata": {
+        "reason": "Best-explanation inference: stricter Python VFs explain both the reduced FP and the elevated FN in code-heavy benchmarks."
+      },
+      "premises": [
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::python_vf_definition",
+        "github:2510_17109::strict_and_aggregation",
+        "github:2510_17109::pred_lower_fp",
+        "github:2510_17109::alt_strong_executor",
+        "github:2510_17109::obs_error_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7b6a7a6882be314d",
+      "sub_strategies": [
+        "lcs_b3c9e7ce5f4bea6e",
+        "lcs_95f1ac314c2e2cc2",
+        "lcs_6d835ee6c541694c"
+      ],
+      "type": "abduction"
+    },
+    {
+      "conclusion": "github:2510_17109::verimap_lower_fp_than_mapv",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_21ea6547",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::obs_error_table",
+              "github:2510_17109::verimap_lower_fp_than_mapv"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct cell-by-cell comparison of FP columns in @obs_error_table."
+      },
+      "premises": [
+        "github:2510_17109::obs_error_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9c66f2778458a6a1",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::verimap_higher_fn_in_code",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__implication_result_996811e3",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::obs_error_table",
+              "github:2510_17109::verimap_higher_fn_in_code"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Direct cell-by-cell comparison of FN columns in @obs_error_table."
+      },
+      "premises": [
+        "github:2510_17109::obs_error_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9a57bce950519c87",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::case_study_resolves_error",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_1f8fe8eb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_case_study_resolution",
+              "github:2510_17109::planner_generated_vfs",
+              "github:2510_17109::python_vf_definition"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_e9e9c379",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_1f8fe8eb",
+              "github:2510_17109::case_study_resolves_error"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@case_study_resolves_error is a one-instance restatement of @obs_case_study_resolution, with the mechanism (Python VF inspecting symbolic structure) explained by @python_vf_definition and the planner generating it per @planner_generated_vfs."
+      },
+      "premises": [
+        "github:2510_17109::obs_case_study_resolution",
+        "github:2510_17109::planner_generated_vfs",
+        "github:2510_17109::python_vf_definition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_dfb0c05742cc2845",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::other_planners_consistent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_bd386be2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_other",
+              "github:2510_17109::obs_react_o3_olympiads",
+              "github:2510_17109::obs_react_claude_olympiads"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_c59c59e0",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_bd386be2",
+              "github:2510_17109::other_planners_consistent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Direct reading of @obs_accuracy_table_other; the Olympiads gap derivations are itemized in @obs_react_o3_olympiads and @obs_react_claude_olympiads."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_other",
+        "github:2510_17109::obs_react_o3_olympiads",
+        "github:2510_17109::obs_react_claude_olympiads"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b532f87941885a35",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2510_17109::cost_setting"
+      ],
+      "conclusion": "github:2510_17109::cost_overhead_modest",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_1de3c6d9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_cost_pattern",
+              "github:2510_17109::executor_can_be_smaller",
+              "github:2510_17109::obs_iter_table"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_4161549c",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_1de3c6d9",
+              "github:2510_17109::cost_overhead_modest"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@obs_cost_pattern reports the ~\\$0.001 per-task gap and the Executor-dominated cost decomposition; @obs_iter_table shows VeriMAP only modestly inflates per-task iteration counts (e.g., 1.85 vs 1.07 on BCB-H, 1.84 vs 1.46 on Olympiads). Because VeriMAP can use smaller executors (@executor_can_be_smaller), the absolute overhead remains modest. The cost model is @cost_setting."
+      },
+      "premises": [
+        "github:2510_17109::obs_cost_pattern",
+        "github:2510_17109::executor_can_be_smaller",
+        "github:2510_17109::obs_iter_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6e7f43c2bc78702d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::centralized_planner_dependence",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_c1545bcb",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::obs_accuracy_table_gpt41",
+              "github:2510_17109::obs_accuracy_table_other",
+              "github:2510_17109::planner_generated_vfs"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_8f253f2c",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_c1545bcb",
+              "github:2510_17109::centralized_planner_dependence"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "VeriMAP's MultiHopRAG accuracy varies from 78.20% to 55.80% to 64.60% as the planner LLM changes (@obs_accuracy_table_gpt41, @obs_accuracy_table_other). Since the planner is responsible for VF generation (@planner_generated_vfs), this variability evidences strong dependence on planner capability."
+      },
+      "premises": [
+        "github:2510_17109::obs_accuracy_table_gpt41",
+        "github:2510_17109::obs_accuracy_table_other",
+        "github:2510_17109::planner_generated_vfs"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_80b75a7720eff7c3",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2510_17109::fn_overconservative_tradeoff",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2510_17109::__conjunction_result_8d19ced3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2510_17109::verimap_higher_fn_in_code",
+              "github:2510_17109::verimap_lower_fp_than_mapv",
+              "github:2510_17109::strict_and_aggregation"
+            ]
+          },
+          {
+            "conclusion": "github:2510_17109::__implication_result_af4823ba",
+            "operator": "implication",
+            "variables": [
+              "github:2510_17109::__conjunction_result_8d19ced3",
+              "github:2510_17109::fn_overconservative_tradeoff"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The lower-FP / higher-FN pattern (@verimap_lower_fp_than_mapv, @verimap_higher_fn_in_code) is the predicted consequence of strict-AND aggregation (@strict_and_aggregation), yielding the structural tradeoff described in @fn_overconservative_tradeoff."
+      },
+      "premises": [
+        "github:2510_17109::verimap_higher_fn_in_code",
+        "github:2510_17109::verimap_lower_fp_than_mapv",
+        "github:2510_17109::strict_and_aggregation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ecaddd730caa76d2",
+      "type": "support"
+    }
+  ]
+}
