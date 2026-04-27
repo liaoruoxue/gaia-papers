@@ -1,0 +1,2735 @@
+{
+  "ir_hash": "sha256:13a186a1757933ed94b4515783ef1c1f62295403601a2e752f5ee1502998118d",
+  "knowledges": [
+    {
+      "content": "How can an LLM agent maintain an effective context for long-horizon sequential decision-making tasks without keeping the entire interaction history (which exceeds practical context limits)?",
+      "content_hash": "8add86bf3553d899f3d7aad777a2ecf046c633dd8517774353a7f1d052786c23",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20111::q_long_context",
+      "label": "q_long_context",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Long-horizon context management question",
+      "type": "question"
+    },
+    {
+      "content": "Modern AI agents performing tasks like software development or scientific research take hundreds or thousands of interaction steps with their environment, often exceeding the practical context limits of even frontier language models. This necessitates compressing interaction histories while preserving information needed for effective decision-making.",
+      "content_hash": "40c001dd8c6a6043c85463a92e3c0c627472c3b7bd29316cded518aa381cd5e7",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20111::problem_long_horizon_context",
+      "label": "problem_long_horizon_context",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Empirically well-established: long-horizon agents (SWE-Agent, OpenHands, AutoGPT, AgentBench) routinely exceed practical context limits. Documented across multiple recent papers and standard industry experience."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Long interaction histories exceed practical LLM context limits",
+      "type": "claim"
+    },
+    {
+      "content": "Work on minimal sufficient statistics for sequential decision-making dates back to Aastrom (1965) [@Astrom1965], which used probability distributions over unknown variables (recursive Bayesian estimation) to compress histories.",
+      "content_hash": "30770f470bad671b139432595dca950c25df098746904da02a529114954552c1",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20111::bg_minimal_sufficient_statistics",
+      "label": "bg_minimal_sufficient_statistics",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Astrom1965"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Recursive Bayesian estimation as minimal sufficient statistic",
+      "type": "setting"
+    },
+    {
+      "content": "Recent work shows that large language models can accurately update natural language descriptions of beliefs when given new observations [@Arumugam2025], demonstrating that LLMs can serve as inexact-but-flexible belief updaters where exact probability distributions are unavailable.",
+      "content_hash": "995283978940db1f597e3e50805e7b0388007318cc46eb95095ce66d9e12d79d",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20111::natural_language_belief_capability",
+      "label": "natural_language_belief_capability",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Arumugam2025"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Established by Arumugam and Griffiths (2025) for environments with hand-crafted priors. Mild discount because the cited demonstration was on tailored bandit-like settings rather than the diverse environments evaluated here."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LLMs can update natural-language belief states",
+      "type": "claim"
+    },
+    {
+      "content": "Prompting language agents to explicitly generate a belief about the current state before acting has been shown to enhance their performance on multi-step decision tasks [@Kim2025].",
+      "content_hash": "e800f772871ebedddfa0d677f77d0d8f3246ba9fb97878644345a6c448d80390",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20111::belief_prompting_helps",
+      "label": "belief_prompting_helps",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Kim2025"
+            ]
+          }
+        },
+        "prior": 0.8,
+        "prior_justification": "Established by Kim et al. (2025) ReflAct in goal-state reflection settings. Mild discount because the present paper actually finds in Section 4 that BELIEF PROMPTING rarely outperforms VANILLA on its six environments (so the prior literature claim does not universally generalize)."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Explicit belief prompting improves agent performance",
+      "type": "claim"
+    },
+    {
+      "content": "Compressing an interaction history into a posterior belief over task-relevant variables could, in principle, limit the growth of context length without harming performance, because such a belief is a sufficient statistic for decision-making in partially observable settings.",
+      "content_hash": "eaf5f82114a864ef4dbbee842ffdb2b6a62476f3521baae7567819e7d1f1f2c0",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20111::opportunity_belief_compression",
+      "label": "opportunity_belief_compression",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "belief_prompting_helps",
+              "natural_language_belief_capability",
+              "problem_long_horizon_context"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Belief-state compression is a viable context-management strategy",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL (Acting through Belief Bottlenecks Expressed in Language) is a framework where an LLM agent (i) updates a natural-language belief state given the latest observation and (ii) selects the next action conditioned *only* on that belief, with the full interaction history excluded from the action-selection context. This creates an information bottleneck designed to preserve sufficient task-relevant information while keeping context compact and human-interpretable.",
+      "content_hash": "04992e55695d9e7108a6a8e7d7e41cd4c25c69e67cd1152a539323a25ef25fcf",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_20111::abbel_proposal",
+      "label": "abbel_proposal",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "belief_prompting_definition",
+              "obs_belief_prompting_rarely_helps",
+              "obs_gemini_abbel_competitive"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ABBEL framework definition",
+      "type": "claim"
+    },
+    {
+      "content": "Across the six evaluated multi-step environments, ABBEL-generated belief states are human-understandable and grow much more slowly than the full interaction history, even decreasing in some environments as possibilities are ruled out, while interaction history grows linearly with the number of steps.",
+      "content_hash": "3c78868a7b157b3fa833cac2863321e44ed03fb1907a1936f9032b2554bd8bed",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_20111::finding_belief_grows_slower",
+      "label": "finding_belief_grows_slower",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "context_compression_property",
+              "obs_belief_lengths_short"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ABBEL beliefs grow much slower than full history",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL agents (without RL fine-tuning) exhibit characteristic failure modes: (a) propagating erroneous beliefs across steps, (b) hallucinating false memories of previous steps, and (c) repeating uninformative actions because the belief does not change without new information. These failures cause ABBEL to underperform the full-context (VANILLA) baseline in some environments for some models.",
+      "content_hash": "710dbee9438e20f4355e0984e7802fe43ae0ef183e09b7cd987babdd0189b724",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2512_20111::finding_failure_modes",
+      "label": "finding_failure_modes",
+      "module": "motivation",
+      "parameters": [],
+      "title": "ABBEL prompting-only failure modes",
+      "type": "claim"
+    },
+    {
+      "content": "Reinforcement-learning fine-tuning of an LLM agent under the ABBEL framework (with belief grading or belief length penalty rewards) lets ABBEL match or exceed full-context baselines while using significantly less memory, across Combination Lock, multi-objective question answering, and ColBench.",
+      "content_hash": "3abcb4f415c11f18fc986e6e7fd77eeb9dad5ffbed4b60215352a9d7ccac8691",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2512_20111::finding_rl_helps",
+      "label": "finding_rl_helps",
+      "module": "motivation",
+      "parameters": [],
+      "title": "RL fine-tuning closes/exceeds the ABBEL gap",
+      "type": "claim"
+    },
+    {
+      "content": "Each environment is modeled as a Partially Observable Markov Decision Process (POMDP). At each step $t$ the hidden state $s_t$ is updated to $s_{t+1}$ by the action $a_t$ via the transition function $T$, and the agent receives reward $r_t$ and observation $o_t$ both conditioned on $a_t$ and $s_t$. The agent does not observe $s_t$ directly.",
+      "content_hash": "62c1db026922c1876788a770ab10a64146e202a1799e51674da9380e07922766",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20111::bg_pomdp",
+      "label": "bg_pomdp",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "POMDP problem setup",
+      "type": "setting"
+    },
+    {
+      "content": "Wordle is the running example: the secret 5-letter word is the hidden initial state $s_0$, the action $a_t$ is a 5-letter English word guess, the observation $o_t$ is per-letter feedback (absent / present elsewhere / correct position), reward is 1 if the word was guessed within 6 turns and 0 otherwise, and the horizon is $H = 6$.",
+      "content_hash": "581a888f28255f88c3caff3f01bab5d8d5e2d65cf17137bf38fa9f5b0b98ff85",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20111::bg_wordle_example",
+      "label": "bg_wordle_example",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "Wordle as concrete POMDP instance",
+      "type": "setting"
+    },
+    {
+      "content": "A context-conditioned LLM policy $\\pi(\\cdot \\mid c_t)$ samples the next token sequence (an action or a belief update) from a fixed pretrained language model conditioned on context $c_t$.",
+      "content_hash": "8f1c2bc4ddc5c899782b20731e1732a48c48f43465c942de5493d6373bd677ed",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2512_20111::bg_lm_policy",
+      "label": "bg_lm_policy",
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "LLM policy notation",
+      "type": "setting"
+    },
+    {
+      "content": "The standard multi-step paradigm (VANILLA) selects actions conditioned on the full interaction history: $a_t \\sim \\pi(\\cdot \\mid p_I, h_t, p_a)$, where $p_I$ is the instructions prompt, $h_t = \\langle a_1, o_2, a_2, o_3, \\ldots, a_{t-1}, o_{t-1}\\rangle$ is the full history, and $p_a$ is the action-selection prompt. The context length therefore grows linearly with the number of interaction steps.",
+      "content_hash": "4bbce54c3bdd80123f539a557afc539085913b114f693bd5105a748ff1792268",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20111::vanilla_definition",
+      "label": "vanilla_definition",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "Operational definition of the standard multi-step paradigm. Standard and well-established framing of full-history multi-step LLM agents."
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "VANILLA: full-history baseline",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL calls the LLM twice per step: (1) Belief update — sample a new belief $b_t \\sim \\pi(\\cdot \\mid p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$ from the previous belief, action, observation, and a belief-update prompt $p_b$; (2) Action selection — sample an action $a_t \\sim \\pi(\\cdot \\mid p_I, b_t, p_a)$ conditioned only on the new belief and the action prompt $p_a$. The full interaction history $h_t$ is *not* in the action-selection context.",
+      "content_hash": "5ee0f662fe779f1ed8a6c27e1da960e9fcd63e7f3cc058a68406fb8c91e3cd50",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2512_20111::abbel_two_call_loop",
+      "label": "abbel_two_call_loop",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "This is the operational definition of the ABBEL framework as proposed by the authors. As a definition rather than an empirical claim, it is true by construction within the paper."
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "ABBEL alternates belief update and action selection",
+      "type": "claim"
+    },
+    {
+      "content": "BELIEF PROMPTING is an ablation of ABBEL that performs the belief-update call as in ABBEL but conditions action selection on *both* the belief and the full interaction history $h_t$. This isolates the effect of the history-removing bottleneck from the effect of belief generation.",
+      "content_hash": "24c0b28a71dcd551355413eb498c34569f55e35e695b94bbc554ef896d666120",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20111::belief_prompting_definition",
+      "label": "belief_prompting_definition",
+      "metadata": {
+        "prior": 0.99,
+        "prior_justification": "Operational definition of the BELIEF PROMPTING ablation. As a definition, holds by construction."
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "BELIEF PROMPTING ablation",
+      "type": "claim"
+    },
+    {
+      "content": "When the belief-state length $|b_t|$ is significantly shorter than the history length $|h_t|$, ABBEL successfully reduces the context length the agent must process at action-selection time, and the per-step context cost becomes near-constant rather than linear in $t$.",
+      "content_hash": "f45dae6096b00c1233a74a2973a411a27b20eca5f1bd91dd9e07f7da9c503e84",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2512_20111::context_compression_property",
+      "label": "context_compression_property",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abbel_two_call_loop",
+              "context_compression_property",
+              "finding_belief_grows_slower",
+              "vanilla_definition"
+            ]
+          }
+        }
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "ABBEL context-length reduction property",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL's correctness depends on the LLM's ability to propagate sufficient task-relevant information from $b_{t-1}, a_{t-1}, o_{t-1}$ into $b_t$ while discarding superfluous details. If the model fails to maintain sufficient information, action quality at step $t$ degrades because the lost information is irrecoverable from the bottlenecked context.",
+      "content_hash": "f66cb7a21070e86348257a40de981f85f21aa7a38d8e4c60604d350837b8dc64",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_20111::abbel_relies_on_sufficiency",
+      "label": "abbel_relies_on_sufficiency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abbel_two_call_loop"
+            ]
+          }
+        }
+      },
+      "module": "s2_framework",
+      "parameters": [],
+      "title": "ABBEL relies on sufficient belief updating",
+      "type": "claim"
+    },
+    {
+      "content": "Six multi-step environments from Tajwar et al. (2025) [@Tajwar2025] are used: Wordle (5-letter word, $H=6$, complex reasoning, structured feedback), Mastermind (4-digit code, $H=12$, complex reasoning, structured feedback), Twenty Questions ($H=20$, ~$10^3$ topics), Guess My City ($H=20$, ~$10^3$ cities), Murder Mystery ($H=20$, 3 suspects, free-form observations), and Customer Service ($H=20$, ~$10^2$ faulty parts, free-form observations).",
+      "content_hash": "1c171633510b30414fd5db1aef9ceb2a5231dc12b6c33d4d27f8f7abec4e6411",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20111::bg_six_environments",
+      "label": "bg_six_environments",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Tajwar2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Six evaluation environments (Table 3)",
+      "type": "setting"
+    },
+    {
+      "content": "Three frontier models are evaluated zero-shot: Gemini 2.5 Pro, DeepSeek R1, and DeepSeek V3. For each model, three frameworks are compared: VANILLA (full history), BELIEF PROMPTING (history + belief), and ABBEL (belief only). Forty task instances are sampled per environment and success rate is reported with standard error of the mean.",
+      "content_hash": "244b46e0c080aaf3b46d785d686c8c45659aab7c160a6de1c961a37c64b8b7ae",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2512_20111::bg_three_models",
+      "label": "bg_three_models",
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Models and evaluation protocol",
+      "type": "setting"
+    },
+    {
+      "content": "On Gemini 2.5 Pro, ABBEL maintains or exceeds the success rate of both VANILLA and BELIEF PROMPTING in most of the six environments, despite feeding the model only the belief at action time. Notably, on Murder Mystery, Gemini 2.5 Pro under ABBEL outperforms VANILLA — the authors attribute this to VANILLA being biased to keep gathering clues and run out of steps before making an accusation.",
+      "content_hash": "1c6654db890bccff30c5ebf071f3222c4ca7c2d258939b22cca5208546f42f1c",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_20111::obs_gemini_abbel_competitive",
+      "label": "obs_gemini_abbel_competitive",
+      "metadata": {
+        "caption": "Performance of frontier models across 6 environments under VANILLA, BELIEF PROMPTING, and ABBEL.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 2a",
+        "prior": 0.92,
+        "prior_justification": "Direct empirical result from Fig. 2a, 40 instances per environment with reported standard error. The 'competitive or better in most tasks' phrasing leaves room for environment-specific exceptions, consistent with typical empirical robustness."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Gemini 2.5 Pro: ABBEL competitive or better (Fig. 2a)",
+      "type": "claim"
+    },
+    {
+      "content": "On DeepSeek V3 and DeepSeek R1, ABBEL generally performs worse than both VANILLA and BELIEF PROMPTING, with the exception of Twenty Questions. The drop is most pronounced in environments with long, unstructured observations (Customer Service and Murder Mystery), where it is more ambiguous what information should be maintained in the belief.",
+      "content_hash": "892d304ca86ea70b964fb64272c1c0b6195cff231f52f69bab56415ca3ae8f95",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2512_20111::obs_deepseek_abbel_worse",
+      "label": "obs_deepseek_abbel_worse",
+      "metadata": {
+        "caption": "Performance of frontier models across 6 environments under VANILLA, BELIEF PROMPTING, and ABBEL.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 2a",
+        "prior": 0.92,
+        "prior_justification": "Direct empirical result from Fig. 2a. DeepSeek V3 and R1 ABBEL bars are visibly lower than VANILLA across most environments. Standard errors reported, n = 40 per env."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "DeepSeek models: ABBEL underperforms (Fig. 2a)",
+      "type": "claim"
+    },
+    {
+      "content": "BELIEF PROMPTING (history + belief) rarely outperforms VANILLA and sometimes substantially decreases performance. Adding a belief on top of the full history does not, in their experiments, reliably improve action quality.",
+      "content_hash": "2cd02241bf224dbde05b133eeb3017d033d0b9937f2a9e56f27456c68ffd183c",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20111::obs_belief_prompting_rarely_helps",
+      "label": "obs_belief_prompting_rarely_helps",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Direct empirical observation across Fig. 2a. The qualifier 'rarely outperforms VANILLA and sometimes substantially decreases performance' is consistent with the chart and conservative; small discount for the qualitative summary."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "BELIEF PROMPTING does not reliably improve over VANILLA",
+      "type": "claim"
+    },
+    {
+      "content": "Beyond the first few steps, ABBEL belief lengths are significantly shorter than the corresponding interaction history across all six environments and all three frontier models, with belief lengths often plateauing or decreasing. The exception is Gemini 2.5 Pro on Twenty Questions and Guess My City, where Gemini concatenates all observations into the belief, causing linear growth.",
+      "content_hash": "675a912a639506c55f44106e44d05d72884d11d40e304e2d675c69267961d080",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2512_20111::obs_belief_lengths_short",
+      "label": "obs_belief_lengths_short",
+      "metadata": {
+        "caption": "Average length of beliefs generated under ABBEL compared to full histories across 6 environments and 3 models.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 2b",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_belief_grows_slower",
+              "obs_belief_lengths_short"
+            ]
+          }
+        },
+        "prior": 0.93,
+        "prior_justification": "Direct token-count plot from Fig. 2b across 3 frontier models and 6 environments. The qualitative summary (significantly shorter beyond first few steps, with one Gemini exception in two envs) is well-supported by the figure. Slight discount for the qualitative framing."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "ABBEL belief lengths grow much slower than histories (Fig. 2b)",
+      "type": "claim"
+    },
+    {
+      "content": "When the agent receives an uninformative observation (e.g., Customer Service: customer says 'I'm not sure'), ABBEL often does not update the belief, and at the next step the action prompt produces the same action again because the belief input is unchanged. VANILLA, which sees the previous action in $h_t$, is much less likely to repeat an uninformative action.",
+      "content_hash": "c2c1b4e57db1417915c79f2166ea39b74c0aa5156c53a24f9a054d7795d30a21",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2512_20111::fm_uninformative_repeats",
+      "label": "fm_uninformative_repeats",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_failure_modes",
+              "fm_uninformative_repeats"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct trace-inspection observation reported in Section 4.3: Customer Service traces where the customer says 'I'm not sure' lead to repeated actions under ABBEL. Behavior is causally explainable by the framework (no past-action info in belief). High prior; small discount because trace inspection is qualitative."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Failure mode: repeated actions after uninformative observations",
+      "type": "claim"
+    },
+    {
+      "content": "In environments requiring complex reasoning (Wordle, Mastermind), errors in the belief introduced at step $t$ (e.g., falsely assuming the secret code cannot contain repeated characters) propagate to subsequent steps because the action context contains only the current belief. Self-correction is possible only after a contradicting observation, and the wasted turns may be irrecoverable. With access to the full history, error detection and exact posterior reconstruction are easier.",
+      "content_hash": "112269f452e691b89ad3fb5a201d18e0f33fe39fc8f534c2edaafaf81f514eba",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_20111::fm_belief_error_propagation",
+      "label": "fm_belief_error_propagation",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_failure_modes",
+              "fm_belief_error_propagation"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct trace-inspection observation in Wordle/Mastermind (Section 4.3 and Appendix C.2.1): early belief errors (e.g., 'no repeated characters in code') persist across steps. High prior; well-grounded by both the architectural argument and the qualitative trace."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Failure mode: belief error propagation",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL agents sometimes hallucinate false memories of past interactions into the belief — recalling actions or observations that never occurred — which then misdirect subsequent action selection.",
+      "content_hash": "a8d6e778a04115d47dd9a5e7912276bed83e2f74274f2a5f622547a4ab5fa57b",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_20111::fm_hallucinated_memories",
+      "label": "fm_hallucinated_memories",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_failure_modes",
+              "fm_hallucinated_memories"
+            ]
+          }
+        },
+        "prior": 0.88,
+        "prior_justification": "Trace-inspection observation in Appendix C.2.1: agents sometimes fabricate past actions/observations in the belief. Slightly lower than the other two failure modes because hallucination prevalence is harder to quantify and the appendix shows fewer concrete examples."
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Failure mode: hallucinated past interactions",
+      "type": "claim"
+    },
+    {
+      "content": "Conditioning on belief states (under ABBEL or BELIEF PROMPTING) rather than on full histories significantly reduces the chain-of-thought reasoning length used at action selection, with ABBEL using even less reasoning than BELIEF PROMPTING while achieving similar success rates in several environments.",
+      "content_hash": "5f53bf6cf5f2d1b961a6ddc66b1fecf4b352836739a929d32a9e73bdc9d0a4c2",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2512_20111::obs_reasoning_reduction",
+      "label": "obs_reasoning_reduction",
+      "metadata": {
+        "caption": "Reasoning length reduction with belief conditioning.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 6 (Appendix C)",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abbel_two_call_loop"
+            ]
+          }
+        }
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Belief bottleneck reduces unnecessary CoT reasoning",
+      "type": "claim"
+    },
+    {
+      "content": "Prompting-only ABBEL is inadequate for several model–environment pairs: for each frontier model evaluated, there exists at least one environment where ABBEL underperforms full-context baselines, motivating the need for RL fine-tuning to fix belief-update errors.",
+      "content_hash": "7a64df6613a9afdf7fcc93d571ae33397b9eeabd18cf813f0559c514945f3db4",
+      "declaration_index": 13,
+      "exported": true,
+      "id": "github:2512_20111::prompting_only_inadequate",
+      "label": "prompting_only_inadequate",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abbel_relies_on_sufficiency",
+              "finding_failure_modes",
+              "obs_deepseek_abbel_worse"
+            ]
+          }
+        }
+      },
+      "module": "s4_eval_frontier",
+      "parameters": [],
+      "title": "Prompting-only ABBEL is insufficient (motivates RL)",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO (Group Relative Policy Optimization) is the RL algorithm used. Training is performed in VeRL-agent (Feng et al., 2025) [@Feng2025], a multi-context synchronous rollout framework. The base model is Qwen2.5-7B-Instruct with chain-of-thought prompting for both belief generation and action selection.",
+      "content_hash": "a6fd9d5949da523cd573dbe822fb38e5d858542b486c484e88109f6cd4ddb9d3",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2512_20111::bg_grpo",
+      "label": "bg_grpo",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Feng2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "RL training stack (GRPO in VeRL-agent on Qwen2.5-7B-Instruct)",
+      "type": "setting"
+    },
+    {
+      "content": "The belief length penalty (LP) is a small negative reward proportional to the longest belief state in the trajectory. Following Arora and Zanette [@AroraZanette2025], it is applied after advantage normalization so its impact diminishes as beliefs get shorter, avoiding over-compression. Because ABBEL's belief is isolated from chain-of-thought reasoning, the penalty does not penalize reasoning tokens.",
+      "content_hash": "eead3c848e027f7642348fe03128eddd822cc986678314529041385f41c3fac6",
+      "declaration_index": 1,
+      "exported": true,
+      "id": "github:2512_20111::method_belief_length_penalty",
+      "label": "method_belief_length_penalty",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "AroraZanette2025"
+            ]
+          }
+        },
+        "prior": 0.97,
+        "prior_justification": "Operational definition of the belief length penalty. The post-advantage-normalization detail is from Arora and Zanette (2025), a well-cited approach."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Belief Length Penalty (LP) reward",
+      "type": "claim"
+    },
+    {
+      "content": "Belief grading creates a separate size-2 GRPO group per step: the original belief $b_t$ and a regenerated belief $b_t'$ from the same context $(p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$. Each is assigned a grading reward (problem-specific or general). Treating each belief as its own single-step trajectory (rather than adding the reward to the outcome reward) avoids the reward-hacking failure of agents solving tasks slowly to collect more step-wise rewards [@Lidayan2025]. Policy gradient steps on belief groups and trajectory groups are applied concurrently.",
+      "content_hash": "0129cb2282dbd0a2fd1ee6b3163cdcea5bdb820c292edb5ffd6c86ea5c135ddc",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2512_20111::method_belief_grading",
+      "label": "method_belief_grading",
+      "metadata": {
+        "caption": "Overview of belief grading: regenerate b' from same context, grade both, apply GRPO to size-2 group.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 3",
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Lidayan2025"
+            ]
+          }
+        },
+        "prior": 0.97,
+        "prior_justification": "Operational definition of the belief-grading reward procedure (Fig. 3). Definition is precise and the size-2 GRPO trick is standard."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Belief Grading procedure",
+      "type": "claim"
+    },
+    {
+      "content": "Combination Lock is a 3-character version of Wordle proposed by Arumugam and Griffiths [@Arumugam2025]: training uses a vocabulary of 10 digits and a 12-step horizon; testing uses a disjoint vocabulary of 16 letters and a 16-step horizon (compositional/horizon generalization). Each episode ends with reward $(H+1-\\text{steps to find code})/H$ on success, $-1$ on failure. Cumulative Regret = number of steps until the code is identified.",
+      "content_hash": "5cdd8ef8ad1db67745086258c558216805fde24757f9bcc2d80e0e5474dd1514",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2512_20111::bg_combo_lock",
+      "label": "bg_combo_lock",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Arumugam2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Combination Lock environment",
+      "type": "setting"
+    },
+    {
+      "content": "The Combination Lock belief grader uses Grok-4-Fast-Free as an LLM parser to extract a list of possible numbers per position from each belief, compares to the ground-truth posterior computed from prior actions and observations, and assigns reward 1 if identical, 0 otherwise. Grading stops at the first incorrect belief in a trajectory to avoid penalizing purely-propagated errors.",
+      "content_hash": "2ccb14b7dc9528545964bef4c5f08802051627ebde61f9dba644f2cb2870b34e",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2512_20111::cl_belief_grader",
+      "label": "cl_belief_grader",
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Combination Lock belief grader",
+      "type": "setting"
+    },
+    {
+      "content": "On Combination Lock, the initial (zero-shot) performance of all ABBEL agents is significantly lower than VANILLA and BELIEF PROMPTING, consistent with the prompting-only findings from Section 4.",
+      "content_hash": "a57efd986aa82defb1fa4ec00cbb8fccc7e88d1a5339f464747b662567bb629c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2512_20111::obs_cl_initial_abbel_worse",
+      "label": "obs_cl_initial_abbel_worse",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_cl_initial_abbel_worse",
+              "prompting_only_inadequate"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Combination Lock: initial ABBEL gap (Fig. 4a, train step 0)",
+      "type": "claim"
+    },
+    {
+      "content": "If belief grading is an effective RL shaping reward in environments requiring complex belief-update reasoning, ABBEL trained with belief grading should match or exceed VANILLA and BELIEF PROMPTING success rates on Combination Lock, with belief lengths remaining significantly shorter than the interaction history.",
+      "content_hash": "71244e0047a4170e2bcd999c600f67433d2bc73fd3881f6e2179b6648a2c36d8",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2512_20111::pred_cl_belief_grading_wins",
+      "label": "pred_cl_belief_grading_wins",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "This is the authors' working hypothesis going into the Combination Lock experiment. The reasoning (dense shaping needed for complex belief-update reasoning) is plausible and is the standard intuition for shaping rewards. Confirmed by Fig. 4."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Prediction: belief grading lets ABBEL surpass full-context baselines",
+      "type": "claim"
+    },
+    {
+      "content": "After ~120 training steps, ABBEL with belief grading reaches a test success rate that exceeds both VANILLA (full-history baseline) and BELIEF PROMPTING on Combination Lock. Belief lengths first increase early in training but then decrease, remaining significantly shorter than the history beyond the first 2 environment steps.",
+      "content_hash": "aba3a66cc15e6504e1a98f61b5c8dabd662d8e08b02ce42dda2e53e575fb745c",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2512_20111::obs_cl_bg_outperforms",
+      "label": "obs_cl_bg_outperforms",
+      "metadata": {
+        "caption": "ABBEL-BG surpasses VANILLA on Combination Lock; belief length first grows then shrinks while staying shorter than history.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 4",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_rl_helps",
+              "obs_cl_abbel_no_bg_catches_up",
+              "obs_cl_bg_outperforms",
+              "pred_cl_belief_grading_wins"
+            ]
+          }
+        },
+        "prior": 0.92,
+        "prior_justification": "Direct training-curve observation from Fig. 4a: at ~120 training steps, ABBEL-BG's test success rate is visibly above VANILLA and BELIEF PROMPTING. Belief-length plot in Fig. 4b confirms beliefs remain shorter than history past step 2. Reproducible from the open-sourced code per the Reproducibility Statement."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Combination Lock: ABBEL-BG surpasses VANILLA (Fig. 4)",
+      "type": "claim"
+    },
+    {
+      "content": "Without belief grading, RL-trained ABBEL would close the gap with the full-context baselines (because RL is generally effective for ABBEL) but would not surpass them, because complex belief-update reasoning needs the dense shaping signal that belief grading provides.",
+      "content_hash": "46875c55a5f01f2b7e7bbcfbf1e8ab9d60b004f856872612eb5784814509164d",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2512_20111::pred_cl_abbel_no_bg",
+      "label": "pred_cl_abbel_no_bg",
+      "metadata": {
+        "prior": 0.4,
+        "prior_justification": "The competing prediction that 'plain RL is sufficient on Combination Lock without belief grading'. The Fig. 10a ablation falsifies it: without BG, ABBEL only catches up rather than surpassing. Set as a below-50% prior reflecting that the alternative does not match the ablation outcome."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Prediction: ABBEL without belief grading only catches up",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL trained without belief grading does close the success-rate gap with the full-context baselines on Combination Lock, but its Cumulative Regret and final success rate are notably worse than ABBEL-BG, with longer belief states learned over training (still significantly shorter than the full history past the first two steps).",
+      "content_hash": "d4247eb1adf4e7668cadf014c2abc9badee05e9dd6e44b3cc5b0f838dd3bc91e",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2512_20111::obs_cl_abbel_no_bg_catches_up",
+      "label": "obs_cl_abbel_no_bg_catches_up",
+      "metadata": {
+        "caption": "Ablation: ABBEL without belief grading on Combination Lock.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 10 (Appendix D)",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "pred_cl_abbel_no_bg"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Combination Lock: ABBEL without BG catches up but trails BG (Fig. 4a, ablation)",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2512_20111::contradiction_cl_alt",
+      "label": "contradiction_cl_alt",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "The multi-objective QA environment introduced by Zhou et al. (2025b) [@ZhouMEM12025]: each task asks the agent a set of questions (objectives), the agent iteratively queries an external knowledge base (each query returns the first 100 words of the 3 most relevant documents), and finally outputs semicolon-delimited answers. Training: 2 questions, 6 steps. Testing: up to 16 objectives, 20 steps (extreme horizon generalization). Reward = Exact Match (EM) count.",
+      "content_hash": "ead5bd6b3c2338f2d8408f7e07acc3fcc8b686b16faabbcaec0cdd4f7122874b",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2512_20111::bg_qa",
+      "label": "bg_qa",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ZhouMEM12025"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Multi-objective QA environment",
+      "type": "setting"
+    },
+    {
+      "content": "MEM1 [@ZhouMEM12025] is a contemporaneous memory-management RL approach where the entire chain-of-thought reasoning trace at each step is reused as the next step's memory (no separation between belief and reasoning). A length penalty cannot be applied to MEM1 without also penalizing reasoning.",
+      "content_hash": "0d739acf0b10a9c805806f74a454bdd080455278dcc15cafe0c3d42816433ec1",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2512_20111::bg_mem1",
+      "label": "bg_mem1",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ZhouMEM12025"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "MEM1 baseline (no belief/reasoning isolation)",
+      "type": "setting"
+    },
+    {
+      "content": "Multi-objective QA results, peak token usage per trajectory ($\\times 10^2$ tokens) and Exact Match score (mean over the test set):\n\n| Model | 2-Obj EM | 2-Obj Tokens | 8-Obj EM | 8-Obj Tokens | 16-Obj EM | 16-Obj Tokens |\n|-------|----------|--------------|----------|--------------|-----------|---------------|\n| VANILLA Zero | 0.30 | 11.25 | 0.37 | 16.06 | 0.40 | 15.40 |\n| VANILLA 14B Zero | 0.73 | 15.60 | 1.55 | 44.70 | 0.57 | 38.40 |\n| VANILLA (trained) | 0.79 | 17.87 | 2.54 | 64.07 | 3.06 | 96.08 |\n| MEM1 Base | 0.71 | 6.40 | 1.87 | 8.01 | 1.97 | 10.40 |\n| MEM1 Instruct | 0.79 | 6.69 | 1.88 | 9.13 | 2.50 | 10.58 |\n| ABBEL Zero | 0.53 | 6.85 | 1.28 | 8.67 | 1.62 | 9.46 |\n| ABBEL | 0.73 | 6.78 | 2.40 | 8.95 | **3.57** | 10.12 |\n| ABBEL LP | 0.70 | 6.56 | 2.19 | **7.61** | 3.43 | **7.64** |",
+      "content_hash": "f10853e5a1073e68b6a8ef3ce1d6242a2f90f8ee6e16361a44f8161536de11b5",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2512_20111::obs_qa_peak_tokens_table",
+      "label": "obs_qa_peak_tokens_table",
+      "metadata": {
+        "caption": "Multi-objective QA results. Lower tokens, higher EM.",
+        "prior": 0.95,
+        "prior_justification": "Table 1 reports concrete numerical EM scores and peak-token usage with standard errors. Internally consistent (LP < ABBEL on tokens, ABBEL > MEM1 Instruct on EM at 4+ objectives). External numbers for MEM1 Base and VANILLA 14B Zero come from Zhou et al. (2025b); the rest are the authors' own measurements.",
+        "source_table": "artifacts/2512.20111.pdf, Table 1"
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Multi-objective QA: EM and peak tokens (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "On multi-objective QA with 4 or more objectives, ABBEL achieves significantly higher EM than MEM1 (Base and Instruct) and substantially higher than the zero-shot VANILLA models. At 16 objectives, ABBEL reaches EM = 3.57 vs MEM1 Instruct = 2.50 (43% higher) while using only ~10.12 ($\\times 10^2$) peak tokens vs MEM1's 10.58.",
+      "content_hash": "6f2cfea489ea0f2a4210b9f6d4349e31168d2e94601e553825a21e87f405d1e5",
+      "declaration_index": 14,
+      "exported": true,
+      "id": "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+      "label": "obs_qa_abbel_outperforms_mem1",
+      "metadata": {
+        "caption": "EM vs. # objectives. ABBEL closest to full-context VANILLA for 4+ objectives.",
+        "figure": "artifacts/2512.20111.pdf, Fig. 5a",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "bg_mem1",
+              "finding_rl_helps",
+              "obs_qa_abbel_lp_memory",
+              "obs_qa_abbel_outperforms_mem1",
+              "obs_qa_peak_tokens_table",
+              "pred_qa_isolation_helps"
+            ]
+          }
+        },
+        "prior": 0.94,
+        "prior_justification": "Tabulated EM scores in Table 1 directly show ABBEL > MEM1 Instruct at 4+ objectives (e.g., 16-obj: 3.57 vs 2.50, ~43% higher). Reported with SEM and grounded in 16-objective benchmark. Comparison is apples-to-apples (both Qwen2.5-7B-Instruct base)."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ABBEL > MEM1 on multi-objective QA (Fig. 5a, Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL LP (with belief length penalty) further reduces peak token usage compared to ABBEL while only slightly reducing EM. At 16 objectives, ABBEL LP uses 7.64 ($\\times 10^2$) peak tokens vs ABBEL's 10.12 — a 24% reduction — and EM = 3.43 vs ABBEL's 3.57. ABBEL LP still significantly outperforms MEM1 in EM at 16 objectives (3.43 vs 2.50).",
+      "content_hash": "7de3b43b736221041e3ed6ffbaed6b45f7b75d60dee87298b1b7a2ccf2af60ca",
+      "declaration_index": 15,
+      "exported": true,
+      "id": "github:2512_20111::obs_qa_abbel_lp_memory",
+      "label": "obs_qa_abbel_lp_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "method_belief_length_penalty",
+              "obs_qa_peak_tokens_table"
+            ]
+          }
+        },
+        "source_table": "artifacts/2512.20111.pdf, Table 1"
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ABBEL LP trades small EM for large memory savings (Table 1)",
+      "type": "claim"
+    },
+    {
+      "content": "The trained full-context VANILLA model only slightly outperforms ABBEL on multi-objective QA, with no advantage at 16 objectives despite using ~9.5x more memory (96.08 vs 10.12 $\\times 10^2$ peak tokens). Zero-shot VANILLA models cannot handle 16 objectives at all (~3.5x lower EM than ABBEL Zero), suggesting 16 objectives approaches the limit of long-context models.",
+      "content_hash": "7287ef3e90e71e68d118135d3e4d36023b87da59c6f296332ef3c3d2c6ae28f8",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2512_20111::obs_qa_vanilla_close",
+      "label": "obs_qa_vanilla_close",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_qa_peak_tokens_table"
+            ]
+          }
+        },
+        "source_table": "artifacts/2512.20111.pdf, Table 1"
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Trained VANILLA only marginally better, uses 9.5x more memory",
+      "type": "claim"
+    },
+    {
+      "content": "If isolating the belief state from reasoning (the key architectural difference between ABBEL and MEM1) is what enables better memory–performance trade-offs, then ABBEL should outperform MEM1 in EM at the same memory budget, and ABBEL LP should be applicable (penalize belief without penalizing reasoning) while MEM1 cannot apply a length penalty without harming reasoning.",
+      "content_hash": "2758ad2b59a113bedbd592d67f95c3203ffd7df3623182f799fbb8e025439e17",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2512_20111::pred_qa_isolation_helps",
+      "label": "pred_qa_isolation_helps",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The architectural-isolation hypothesis is well-motivated: keeping belief separate from reasoning is what enables the LP to operate on belief alone. Confirmed by both the EM gap vs MEM1 Instruct and by the LP being applicable."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Prediction: belief–reasoning isolation drives the QA advantage",
+      "type": "claim"
+    },
+    {
+      "content": "Alternative explanation: ABBEL's QA advantage comes from incidental RL training details (hyperparameters, prompt design) rather than from the architectural isolation of belief from reasoning. Under this alternative, MEM1 with the same training tweaks would match ABBEL.",
+      "content_hash": "e87e25af883d98a0d256a4e897de45801a11d8879ba858bfbaa4aa37433f4c00",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2512_20111::alt_qa_just_better_rl",
+      "label": "alt_qa_just_better_rl",
+      "metadata": {
+        "prior": 0.25,
+        "prior_justification": "The 'incidental training details' alternative for the QA result. The authors run MEM1 Instruct (apples-to-apples re-implementation) and the gap remains, weakening this alternative. Additionally, the alternative cannot explain the LP-specific result. Low prior — but non-trivial because hyperparameter sensitivity is real."
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Alternative: incidental training details drive the QA advantage",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2512_20111::contradiction_qa_alt",
+      "label": "contradiction_qa_alt",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.92
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "ColBench [@ZhouSweet2025] is a collaborative back-end programming environment: the agent is given an under-specified high-level task description and a function signature, can ask the user up to 10 questions to gather information, and finally submits Python code (up to 50 lines). The user is simulated by Gemma 3 27B-it with access to the hidden tests and a reference solution. Outcome reward = fraction of 10 hidden unit tests passed. Test Pass Rate is the mean across episodes; Success Rate is the fraction of tasks with all 10 tests passing.",
+      "content_hash": "e5a126bc44fa650faffbd5bc12ab6fd299165b5aac54d2cf5af1f9723706a34e",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2512_20111::bg_colbench",
+      "label": "bg_colbench",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "ZhouSweet2025"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ColBench environment",
+      "type": "setting"
+    },
+    {
+      "content": "The ColBench belief grader is domain-general (no ground-truth posterior needed): how useful $b_{t+1}$ is for reconstructing $o_t$ given $b_t$ and $a_t$, defined as the agent model's log probability $f_{BG}(b_{t+1}) = \\log p(o_t \\mid b_t, a_t, b_{t+1})$. This is proportional to $\\log p(b_{t+1} \\mid b_t, a_t, o_t) - \\log p(b_{t+1} \\mid b_t, a_t)$ plus a constant: the second term encourages $b_{t+1}$ to contain new information relative to the prior, the first encourages that new information to be explainable by $o_t$.",
+      "content_hash": "c9f6b6ce6a6818bf622951319adbc657adb5f0e78e4cb8a79859e412535b4b17",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2512_20111::cb_general_belief_grader",
+      "label": "cb_general_belief_grader",
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "Domain-general belief grader (log-probability of last observation)",
+      "type": "setting"
+    },
+    {
+      "content": "ColBench results across training steps (mean ± SEM over 2 seeds for ABBEL/ABBEL-BG; over 1 seed test set for VANILLA):\n\n| Step | Model | Test Pass Rate | Success Rate | Peak Tokens ($\\times 10^2$) |\n|------|-------|----------------|--------------|------------------------------|\n| 0 | VANILLA | 0.2827 ± 0.0125 | 0.1748 ± 0.0119 | 4.5938 ± 0.1532 |\n| 0 | ABBEL | 0.2642 ± 0.0125 | 0.1709 ± 0.0118 | 3.2953 ± 0.0525 |\n| 50 | VANILLA | 0.4456 ± 0.0139 | 0.3047 ± 0.0144 | 8.9805 ± 0.1396 |\n| 50 | ABBEL | 0.3844 ± 0.0140 | 0.2651 ± 0.0093 | 3.4078 ± 0.0499 |\n| 50 | ABBEL-BG | 0.4560 ± 0.0132 | 0.3228 ± 0.0079 | 3.9693 ± 0.2542 |\n| 100 | VANILLA | 0.5260 ± 0.0141 | 0.3936 ± 0.0153 | 7.8845 ± 0.1084 |\n| 100 | ABBEL | 0.4655 ± 0.0112 | 0.3286 ± 0.0121 | 3.8614 ± 0.0711 |\n| 100 | ABBEL-BG | 0.4577 ± 0.0004 | 0.3262 ± 0.0021 | 3.4149 ± 0.3210 |",
+      "content_hash": "1d7157737b1abb043cfc92bb3a18fea182dd5fd3df232fe543d38e3ce571a2be",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2512_20111::obs_cb_table",
+      "label": "obs_cb_table",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Table 2 reports test pass rate, success rate, and peak tokens at training steps 0/50/100, with SEM over 2 ABBEL/ABBEL-BG seeds and over the test set for 1 VANILLA seed. The 1-seed VANILLA SEM means the trained-VANILLA numbers carry slightly more uncertainty, but the ABBEL/BG figures are reliable.",
+        "source_table": "artifacts/2512.20111.pdf, Table 2"
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ColBench: ABBEL vs VANILLA over training (Table 2)",
+      "type": "claim"
+    },
+    {
+      "content": "On ColBench at training step 100, ABBEL achieves 88.5% of VANILLA's Test Pass Rate (0.4655 vs 0.5260) while using only 49% as much peak memory (3.86 vs 7.88, $\\times 10^2$ tokens). ABBEL-BG at step 100 has similar Test Pass Rate (0.4577) with even less memory (3.41).",
+      "content_hash": "5cf8474a7466cf20477ae3c0b9102d300107a497b224c01c1f0ccdda897b5d4d",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2512_20111::obs_cb_abbel_memory_efficient",
+      "label": "obs_cb_abbel_memory_efficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_rl_helps",
+              "obs_cb_abbel_memory_efficient",
+              "obs_cb_table"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ColBench: ABBEL ~half memory at ~88% of VANILLA's pass rate",
+      "type": "claim"
+    },
+    {
+      "content": "At step 50, ABBEL-BG reaches Test Pass Rate 0.4560 — on par with VANILLA (0.4456) and significantly better than ABBEL without belief grading (0.3844). This indicates that the domain-general belief grader makes ABBEL more data-efficient: ABBEL without BG only catches up at step 100.",
+      "content_hash": "ebf9d74f980c96e378be2375563d3ec3145c794eddb7d74c9fec9cddd7a91e70",
+      "declaration_index": 24,
+      "exported": true,
+      "id": "github:2512_20111::obs_cb_bg_data_efficient",
+      "label": "obs_cb_bg_data_efficient",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "method_belief_grading",
+              "obs_cb_table"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ColBench: belief grading makes ABBEL data-efficient",
+      "type": "claim"
+    },
+    {
+      "content": "Zero-shot (training step 0), ABBEL and VANILLA perform on par on ColBench (Test Pass Rate 0.2642 vs 0.2827) because ABBEL biases the agent to ask more questions before submitting (~6 vs VANILLA's ~2.8), making it more likely to gather necessary clarifications. This question-asking bias also explains why zero-shot VANILLA has the lowest Peak Tokens (it submits earlier).",
+      "content_hash": "946c3d4cdd181299e5f589462dbf2735b2cc11c14822e72f17e6e72090c9237e",
+      "declaration_index": 25,
+      "exported": false,
+      "id": "github:2512_20111::obs_cb_zero_shot_parity",
+      "label": "obs_cb_zero_shot_parity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "abbel_two_call_loop",
+              "obs_cb_table"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ColBench: ABBEL biases agent to ask more questions (zero-shot parity)",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL is a useful framework for studying the trade-off between context length and task performance in long-horizon LLM agents: it produces interpretable beliefs, supports interpretable RL shaping (belief grading and length penalty), and across diverse environments either matches or exceeds full-context baselines after RL while using significantly less memory.",
+      "content_hash": "10b75893fcb6405183327f42500b90582ea1bbbc9dda188c81d874a2512b3565",
+      "declaration_index": 28,
+      "exported": true,
+      "id": "github:2512_20111::abbel_useful_testbed",
+      "label": "abbel_useful_testbed",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "finding_rl_helps",
+              "prompting_only_inadequate"
+            ]
+          }
+        }
+      },
+      "module": "s5_rl_training",
+      "parameters": [],
+      "title": "ABBEL is a viable framework for long-horizon LLM agents (Discussion)",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::problem_long_horizon_context,github:2512_20111::natural_language_belief_capability,github:2512_20111::belief_prompting_helps)",
+      "content_hash": "9ec4394ef3ab6af6f40a3711d76f30ca789ebe7b7f138d6131fa56a65064c136",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_35fef55f",
+      "label": "__conjunction_result_35fef55f",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::problem_long_horizon_context,github:2512_20111::natural_language_belief_capability,github:2512_20111::belief_prompting_helps)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_544ad06363dc997e",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_35fef55f,github:2512_20111::opportunity_belief_compression)",
+      "content_hash": "3e2c2b465912404c9558a4b6c2d360f8419d04576e56a9af1b53b60529927d6a",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_e5ef9741",
+      "label": "__implication_result_e5ef9741",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_35fef55f,github:2512_20111::opportunity_belief_compression)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_544ad06363dc997e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::vanilla_definition,github:2512_20111::abbel_two_call_loop)",
+      "content_hash": "aea0ea6893421d29be76d5f6f5358c8d5ffac46fab25009fd11840d26c9644ce",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_436ab2ec",
+      "label": "__conjunction_result_436ab2ec",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::vanilla_definition,github:2512_20111::abbel_two_call_loop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_cbf0f6688c0636a4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_436ab2ec,github:2512_20111::context_compression_property)",
+      "content_hash": "24055701d9cd5af7b479ce5c5079f988eeea499b004a23d73d296b44b4b9105e",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_e7f5dab2",
+      "label": "__implication_result_e7f5dab2",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_436ab2ec,github:2512_20111::context_compression_property)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cbf0f6688c0636a4",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::abbel_two_call_loop,github:2512_20111::abbel_relies_on_sufficiency)",
+      "content_hash": "dae569b6d4edcd7e5d62931b81e8e2044a65091711ef4a96a777a9e278f63458",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_0688f391",
+      "label": "__implication_result_0688f391",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::abbel_two_call_loop,github:2512_20111::abbel_relies_on_sufficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fdf84d6f357835bc",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_belief_grows_slower,github:2512_20111::obs_belief_lengths_short)",
+      "content_hash": "a2a73ca7ce0cc9b4feb4318e473bda5178fce2f1d8b52e00bb575ddf38a1fde1",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_33246cb2",
+      "label": "__implication_result_33246cb2",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_belief_grows_slower,github:2512_20111::obs_belief_lengths_short)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_760bb155f17ae087",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_belief_grows_slower,github:2512_20111::context_compression_property)",
+      "content_hash": "d377f89d74671058db2229364aef02abcacffb9956efc67a5ac44f4df04442d3",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_77c1950a",
+      "label": "__implication_result_77c1950a",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_belief_grows_slower,github:2512_20111::context_compression_property)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_df5c6f1f4d69a704",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_uninformative_repeats)",
+      "content_hash": "171c31649e90ae33776977ec4d9acaf6a19fca7d9c665d20b0fe7cf5b8ef3100",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_3e849812",
+      "label": "__implication_result_3e849812",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_uninformative_repeats)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_9e466dd1c3f60b63",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_belief_error_propagation)",
+      "content_hash": "a2757eb50408a9483763a3d1ec7b571b6f03934f546394504fe01f054537a030",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_0e6617e9",
+      "label": "__implication_result_0e6617e9",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_belief_error_propagation)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_56cede13ad8e95ff",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_hallucinated_memories)",
+      "content_hash": "56710050d945f2e88ff02481ceab297dd761290004778b4c13e09a22e8f6a0b3",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_e5ac6655",
+      "label": "__implication_result_e5ac6655",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_failure_modes,github:2512_20111::fm_hallucinated_memories)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_93f21b595f7bc65e",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::obs_deepseek_abbel_worse,github:2512_20111::finding_failure_modes,github:2512_20111::abbel_relies_on_sufficiency)",
+      "content_hash": "42e50cb9fd7b11e1f71d7ca0dec1d536bf14bcb071cdc35eb4c571f294f03dd0",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_37ec4fbe",
+      "label": "__conjunction_result_37ec4fbe",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::obs_deepseek_abbel_worse,github:2512_20111::finding_failure_modes,github:2512_20111::abbel_relies_on_sufficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_3d8bd80889f554b6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_37ec4fbe,github:2512_20111::prompting_only_inadequate)",
+      "content_hash": "c8cb74ad7a37c5d8be52a40a1abb1330647eb76864a46e64532b4b5357f25598",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_818910c5",
+      "label": "__implication_result_818910c5",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_37ec4fbe,github:2512_20111::prompting_only_inadequate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3d8bd80889f554b6",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::obs_gemini_abbel_competitive,github:2512_20111::obs_belief_prompting_rarely_helps,github:2512_20111::belief_prompting_definition)",
+      "content_hash": "cd5782ae01be98b4a39a8a108bf171649b0631a28f8c2c086df694ee391c7dab",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_e0cba59d",
+      "label": "__conjunction_result_e0cba59d",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::obs_gemini_abbel_competitive,github:2512_20111::obs_belief_prompting_rarely_helps,github:2512_20111::belief_prompting_definition)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e9ab309575cea4c7",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_e0cba59d,github:2512_20111::abbel_proposal)",
+      "content_hash": "bba2f6238b202a5fcf35b24ffb2abef49bfac79b2b0176b265818101dba40dfb",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_35af0428",
+      "label": "__implication_result_35af0428",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_e0cba59d,github:2512_20111::abbel_proposal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e9ab309575cea4c7",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::abbel_two_call_loop,github:2512_20111::obs_reasoning_reduction)",
+      "content_hash": "cb3b4030c4bdaa27d02a5b4ee6ad37a84e8a5bb68e0b02ac2b082f424dc2a346",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_545724e8",
+      "label": "__implication_result_545724e8",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::abbel_two_call_loop,github:2512_20111::obs_reasoning_reduction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e5b83c9a7641a3ea",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::pred_cl_belief_grading_wins,github:2512_20111::obs_cl_abbel_no_bg_catches_up)",
+      "content_hash": "fbc78bf26ec404ef9a2d695586da2b9361ab5e2bf602c7b0511605ed54e26f08",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_080976cf",
+      "label": "__conjunction_result_080976cf",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::pred_cl_belief_grading_wins,github:2512_20111::obs_cl_abbel_no_bg_catches_up)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_553e50440736e297",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_080976cf,github:2512_20111::obs_cl_bg_outperforms)",
+      "content_hash": "61ffc76d241c0eb77b9bb8ec3aff6808c4608dcd09d165e0e58b279b9b652bd9",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_a6d22bd1",
+      "label": "__implication_result_a6d22bd1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_080976cf,github:2512_20111::obs_cl_bg_outperforms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_553e50440736e297",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::pred_qa_isolation_helps,github:2512_20111::obs_qa_abbel_lp_memory)",
+      "content_hash": "53e52c153c73e34156e4c05c56b4d5c4b87b7f1120bf885f622eaf88877962f0",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_917a5344",
+      "label": "__conjunction_result_917a5344",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::pred_qa_isolation_helps,github:2512_20111::obs_qa_abbel_lp_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_0df1f0b390ce65d8",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_917a5344,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+      "content_hash": "b8cbc789bfd76514b3bcf147904d2eb7129c328e584547eb14cf0b7a92355d02",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_7791faea",
+      "label": "__implication_result_7791faea",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_917a5344,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0df1f0b390ce65d8",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_cl_bg_outperforms)",
+      "content_hash": "4d31b7957f7aa33cc13ab5fd8cfa3ba0754f89d335ff1fbad87e844a17237321",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_6882dc56",
+      "label": "__implication_result_6882dc56",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_cl_bg_outperforms)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1e9cb79f59207536",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+      "content_hash": "69468f2beec1521b0a583fe60fc06abfa9248309ed8cd818ceeefdd3bd91a434",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_b61e8859",
+      "label": "__implication_result_b61e8859",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_370602cc8a865875",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_cb_abbel_memory_efficient)",
+      "content_hash": "84829b08e72a5df71f631d27218763ed48caddcbe3a74f393509f5a2e161cc0a",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_9b86f7ee",
+      "label": "__implication_result_9b86f7ee",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::finding_rl_helps,github:2512_20111::obs_cb_abbel_memory_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_817f0d6a7044b639",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::finding_rl_helps,github:2512_20111::prompting_only_inadequate)",
+      "content_hash": "c4cfa56249bb989e2a6c4c2c027a342c2ccabb636f72d9c341d253aa43572bc4",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_e868b115",
+      "label": "__conjunction_result_e868b115",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::finding_rl_helps,github:2512_20111::prompting_only_inadequate)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b0d5197bb8c532cf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_e868b115,github:2512_20111::abbel_useful_testbed)",
+      "content_hash": "f5d69cc9f5fee95b00ef26f1fbd2ff33d3b9118d1b5a468c66d8ce55811502c1",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_bd417c39",
+      "label": "__implication_result_bd417c39",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_e868b115,github:2512_20111::abbel_useful_testbed)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b0d5197bb8c532cf",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::prompting_only_inadequate,github:2512_20111::obs_cl_initial_abbel_worse)",
+      "content_hash": "58772047c1c6d3adcd8cc031f4e13424a5e28b602dca36ddd268dfd151406077",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_0473ebd1",
+      "label": "__implication_result_0473ebd1",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::prompting_only_inadequate,github:2512_20111::obs_cl_initial_abbel_worse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2e6fa9d2bae1b37c",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::pred_cl_abbel_no_bg,github:2512_20111::obs_cl_abbel_no_bg_catches_up)",
+      "content_hash": "fd9ccc943d7a7d9801d7caff3f1f58cec97b9dc25b7bc9aa4e59ed90c0e0747c",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_a1f88ab8",
+      "label": "__implication_result_a1f88ab8",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::pred_cl_abbel_no_bg,github:2512_20111::obs_cl_abbel_no_bg_catches_up)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a565ee1f638c3130",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+      "content_hash": "e3738377c3d66714a4a7410cc4fd1d86a54bb1ca5b62c3026707ee8fda895f5a",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_18d37f0e",
+      "label": "__implication_result_18d37f0e",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::obs_qa_abbel_outperforms_mem1)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_ae9c81fa27262ef7",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::method_belief_length_penalty)",
+      "content_hash": "bc1b358fbe2517859883f01d54d6c6ec259af9328abbb1782225028517d38cda",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_941cbf25",
+      "label": "__conjunction_result_941cbf25",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::method_belief_length_penalty)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_14714b8cc6df977f",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_941cbf25,github:2512_20111::obs_qa_abbel_lp_memory)",
+      "content_hash": "5b1b8ddd659554025fdc62eb7e2f9e1746bd3fd816ceace159433ef8b18d05ac",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_1503a229",
+      "label": "__implication_result_1503a229",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_941cbf25,github:2512_20111::obs_qa_abbel_lp_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14714b8cc6df977f",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::obs_qa_vanilla_close)",
+      "content_hash": "d6388a58d2f4d3d1845f0041d76cbf1739ec7a5dd8ab8ea3845cccbb9d6ba274",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_f9b04e7b",
+      "label": "__implication_result_f9b04e7b",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::obs_qa_peak_tokens_table,github:2512_20111::obs_qa_vanilla_close)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f0e1555d92803058",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::obs_cb_table,github:2512_20111::obs_cb_abbel_memory_efficient)",
+      "content_hash": "86fd8604531841f0d0113ebc84687af55a7bba87a248897d1fb5cb10b2c5fa1b",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_fbae10fb",
+      "label": "__implication_result_fbae10fb",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::obs_cb_table,github:2512_20111::obs_cb_abbel_memory_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2d9bf9b750713ab8",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::obs_cb_table,github:2512_20111::method_belief_grading)",
+      "content_hash": "4befd3ca625d5b288d0b2d4ecce3a151e921e5176a7e351ff3e1c5c00b189642",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_cd461179",
+      "label": "__conjunction_result_cd461179",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::obs_cb_table,github:2512_20111::method_belief_grading)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_bc2acb35cebd89c2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_cd461179,github:2512_20111::obs_cb_bg_data_efficient)",
+      "content_hash": "dfab1178455683c8982fabfe6c62dc3b0396e7ddc54d59f43c69b730fe2b73a3",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_b7b7f410",
+      "label": "__implication_result_b7b7f410",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_cd461179,github:2512_20111::obs_cb_bg_data_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_bc2acb35cebd89c2",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_20111::obs_cb_table,github:2512_20111::abbel_two_call_loop)",
+      "content_hash": "5d70b00f59ee96a341c0c833e2cf518d1c9cdf371046f824b24d4b4078d23949",
+      "exported": false,
+      "id": "github:2512_20111::__conjunction_result_f6aacb86",
+      "label": "__conjunction_result_f6aacb86",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_20111::obs_cb_table,github:2512_20111::abbel_two_call_loop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7627b182729561db",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_20111::__conjunction_result_f6aacb86,github:2512_20111::obs_cb_zero_shot_parity)",
+      "content_hash": "677b10770bd3062e4b0dc78f8cfd99f47f664f33f06c211d0480dfd66c1982b0",
+      "exported": false,
+      "id": "github:2512_20111::__implication_result_4aa5b89a",
+      "label": "__implication_result_4aa5b89a",
+      "metadata": {
+        "canonical_name": "implies(github:2512_20111::__conjunction_result_f6aacb86,github:2512_20111::obs_cb_zero_shot_parity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7627b182729561db",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_framework",
+    "s4_eval_frontier",
+    "s5_rl_training"
+  ],
+  "module_titles": {
+    "motivation": "Introduction and Motivation for ABBEL: belief-bottleneck framework for LLM agents.",
+    "s2_framework": "Section 2: Technical Overview — POMDP setup and the Belief Bottleneck Interaction Framework.",
+    "s4_eval_frontier": "Section 4: Evaluating Frontier Models with Belief Bottlenecks (prompting-only experiments).",
+    "s5_rl_training": "Section 5: Reinforcement Learning to Act through Belief Bottlenecks."
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2512_20111::contradiction_cl_alt",
+      "metadata": {
+        "reason": "The 'belief grading is load-bearing' prediction (@pred_cl_belief_grading_wins, which forecasts BG specifically surpasses baselines) and the 'RL alone is enough' alternative (@pred_cl_abbel_no_bg, which forecasts ABBEL without BG also surpasses) make incompatible predictions about the ablation outcome. The Fig. 10a result that without BG, ABBEL only catches up forces these two hypotheses apart."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_6f737e2e70d2473a",
+      "scope": "local",
+      "variables": [
+        "github:2512_20111::pred_cl_belief_grading_wins",
+        "github:2512_20111::pred_cl_abbel_no_bg"
+      ]
+    },
+    {
+      "conclusion": "github:2512_20111::contradiction_qa_alt",
+      "metadata": {
+        "reason": "The 'incidental training details' alternative (@alt_qa_just_better_rl) predicts that re-implementing MEM1 with the same training tweaks (the MEM1 Instruct ablation reported in the paper) would close the gap, and that a length-penalty advantage would not exist. Both predictions fail in the data. These two hypotheses make incompatible claims about what would happen under apples-to-apples retraining and under LP application."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_9655c9b0195959f7",
+      "scope": "local",
+      "variables": [
+        "github:2512_20111::pred_qa_isolation_helps",
+        "github:2512_20111::alt_qa_just_better_rl"
+      ]
+    }
+  ],
+  "package_name": "2512_20111",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2512_20111::bg_minimal_sufficient_statistics"
+      ],
+      "conclusion": "github:2512_20111::opportunity_belief_compression",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_35fef55f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::problem_long_horizon_context",
+              "github:2512_20111::natural_language_belief_capability",
+              "github:2512_20111::belief_prompting_helps"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_e5ef9741",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_35fef55f",
+              "github:2512_20111::opportunity_belief_compression"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The combination of (i) the practical context-length pressure created by long-horizon tasks (@problem_long_horizon_context), (ii) prior evidence that LLMs can update natural-language beliefs (@natural_language_belief_capability), and (iii) prior evidence that explicit belief prompting helps action selection (@belief_prompting_helps) jointly motivate compressing the interaction history into a natural-language belief state as a viable bottleneck."
+      },
+      "premises": [
+        "github:2512_20111::problem_long_horizon_context",
+        "github:2512_20111::natural_language_belief_capability",
+        "github:2512_20111::belief_prompting_helps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_544ad06363dc997e",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_20111::bg_pomdp",
+        "github:2512_20111::bg_lm_policy"
+      ],
+      "conclusion": "github:2512_20111::context_compression_property",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_436ab2ec",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::vanilla_definition",
+              "github:2512_20111::abbel_two_call_loop"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_e7f5dab2",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_436ab2ec",
+              "github:2512_20111::context_compression_property"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "By construction, VANILLA's action-selection context contains $h_t$ (@vanilla_definition), whose length grows linearly in $t$. ABBEL's action-selection context contains only $b_t$ (@abbel_two_call_loop). If $|b_t| \\ll |h_t|$, ABBEL's per-step action-selection context is much smaller, making the property a direct consequence of the framework definitions (modulo the empirical question of whether belief lengths actually stay short, addressed in Section 4)."
+      },
+      "premises": [
+        "github:2512_20111::vanilla_definition",
+        "github:2512_20111::abbel_two_call_loop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cbf0f6688c0636a4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::abbel_relies_on_sufficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_0688f391",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::abbel_two_call_loop",
+              "github:2512_20111::abbel_relies_on_sufficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "By @abbel_two_call_loop, the action-selection step $t$ has access only to the most recent belief $b_t$, not to prior actions, observations, or beliefs. Therefore any task-relevant information that did not get carried into $b_t$ is irrecoverable at action time. Whether the LLM succeeds in propagating sufficient information is an empirical question — the architectural risk is implied directly by the framework definition."
+      },
+      "premises": [
+        "github:2512_20111::abbel_two_call_loop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fdf84d6f357835bc",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_belief_lengths_short",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_33246cb2",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_belief_grows_slower",
+              "github:2512_20111::obs_belief_lengths_short"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@finding_belief_grows_slower is the general law that ABBEL beliefs grow slower than the history; @obs_belief_lengths_short is the specific Fig. 2b realization across the six environments. The law predicts the observation."
+      },
+      "premises": [
+        "github:2512_20111::finding_belief_grows_slower"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_760bb155f17ae087",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::context_compression_property",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_77c1950a",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_belief_grows_slower",
+              "github:2512_20111::context_compression_property"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@finding_belief_grows_slower predicts that the structural property @context_compression_property holds in practice — when belief lengths grow slower than histories, ABBEL achieves the context compression the framework promises."
+      },
+      "premises": [
+        "github:2512_20111::finding_belief_grows_slower"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_df5c6f1f4d69a704",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::finding_belief_grows_slower",
+      "metadata": {
+        "reason": "Two distinct measurements support the law that ABBEL beliefs are compact: (i) direct token-count plots in Fig. 2b across 6 envs (@obs_belief_lengths_short), and (ii) the structural compression property realized in practice (@context_compression_property)."
+      },
+      "premises": [
+        "github:2512_20111::obs_belief_lengths_short",
+        "github:2512_20111::context_compression_property"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3bc703b018df02ac",
+      "sub_strategies": [
+        "lcs_760bb155f17ae087",
+        "lcs_df5c6f1f4d69a704"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20111::fm_uninformative_repeats",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_3e849812",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_failure_modes",
+              "github:2512_20111::fm_uninformative_repeats"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_failure_modes (general law of ABBEL prompting failures) predicts the specific @fm_uninformative_repeats observation."
+      },
+      "premises": [
+        "github:2512_20111::finding_failure_modes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_9e466dd1c3f60b63",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::fm_belief_error_propagation",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_0e6617e9",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_failure_modes",
+              "github:2512_20111::fm_belief_error_propagation"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_failure_modes predicts the specific belief-error-propagation failure mode @fm_belief_error_propagation observed in Wordle/Mastermind traces."
+      },
+      "premises": [
+        "github:2512_20111::finding_failure_modes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_56cede13ad8e95ff",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::fm_hallucinated_memories",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_e5ac6655",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_failure_modes",
+              "github:2512_20111::fm_hallucinated_memories"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_failure_modes predicts the specific hallucinated-memory failure mode @fm_hallucinated_memories observed in trace inspection."
+      },
+      "premises": [
+        "github:2512_20111::finding_failure_modes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_93f21b595f7bc65e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::finding_failure_modes",
+      "metadata": {
+        "reason": "Two independent observations of distinct failure modes (uninformative-action repetition and belief-error propagation) support the general law."
+      },
+      "premises": [
+        "github:2512_20111::fm_uninformative_repeats",
+        "github:2512_20111::fm_belief_error_propagation"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e0a61fcaf0dd6ec5",
+      "sub_strategies": [
+        "lcs_9e466dd1c3f60b63",
+        "lcs_56cede13ad8e95ff"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20111::finding_failure_modes",
+      "metadata": {
+        "reason": "A third independent failure-mode observation (hallucinated past interactions) further supports the general law that ABBEL prompting-only has characteristic failure modes."
+      },
+      "premises": [
+        "github:2512_20111::fm_uninformative_repeats",
+        "github:2512_20111::fm_belief_error_propagation",
+        "github:2512_20111::fm_hallucinated_memories"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_81dfe8d487859635",
+      "sub_strategies": [
+        "lcs_e0a61fcaf0dd6ec5",
+        "lcs_93f21b595f7bc65e"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20111::prompting_only_inadequate",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_37ec4fbe",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::obs_deepseek_abbel_worse",
+              "github:2512_20111::finding_failure_modes",
+              "github:2512_20111::abbel_relies_on_sufficiency"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_818910c5",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_37ec4fbe",
+              "github:2512_20111::prompting_only_inadequate"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@obs_deepseek_abbel_worse documents that ABBEL underperforms on DeepSeek models, and even Gemini fails on Mastermind. The failure-mode law @finding_failure_modes (belief errors propagate, uninformative observations cause action repetition, false memories occur) explains the underperformance, given the framework's reliance on sufficient belief updating @abbel_relies_on_sufficiency. Together these establish that prompting alone is not enough and motivate the RL methods of Section 5."
+      },
+      "premises": [
+        "github:2512_20111::obs_deepseek_abbel_worse",
+        "github:2512_20111::finding_failure_modes",
+        "github:2512_20111::abbel_relies_on_sufficiency"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3d8bd80889f554b6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::abbel_proposal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_e0cba59d",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::obs_gemini_abbel_competitive",
+              "github:2512_20111::obs_belief_prompting_rarely_helps",
+              "github:2512_20111::belief_prompting_definition"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_35af0428",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_e0cba59d",
+              "github:2512_20111::abbel_proposal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Gemini 2.5 Pro maintaining competitive performance under ABBEL (@obs_gemini_abbel_competitive) and BELIEF PROMPTING failing to reliably improve over VANILLA (@obs_belief_prompting_rarely_helps) — where BELIEF PROMPTING is the ablation that retains both belief and full history (@belief_prompting_definition) — together support the framing of ABBEL as a meaningful design: the history-removing bottleneck is the load-bearing element, not the addition of a belief on top of full history."
+      },
+      "premises": [
+        "github:2512_20111::obs_gemini_abbel_competitive",
+        "github:2512_20111::obs_belief_prompting_rarely_helps",
+        "github:2512_20111::belief_prompting_definition"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e9ab309575cea4c7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_reasoning_reduction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_545724e8",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::abbel_two_call_loop",
+              "github:2512_20111::obs_reasoning_reduction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@abbel_two_call_loop conditions action selection on a compact belief rather than full history, which empirically reduces the chain-of-thought reasoning length the model produces (Fig. 6, Appendix C) — fewer history tokens to reason over means less unnecessary CoT."
+      },
+      "premises": [
+        "github:2512_20111::abbel_two_call_loop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e5b83c9a7641a3ea",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cl_bg_outperforms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_080976cf",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::pred_cl_belief_grading_wins",
+              "github:2512_20111::obs_cl_abbel_no_bg_catches_up"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_a6d22bd1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_080976cf",
+              "github:2512_20111::obs_cl_bg_outperforms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@pred_cl_belief_grading_wins predicts that BG-trained ABBEL surpasses the baselines while keeping beliefs concise. The ablation @obs_cl_abbel_no_bg_catches_up shows that without BG, ABBEL only catches up rather than surpassing — isolating BG as the load-bearing ingredient. Together these support the observation @obs_cl_bg_outperforms that ABBEL-BG specifically exceeds VANILLA and BELIEF PROMPTING on Combination Lock."
+      },
+      "premises": [
+        "github:2512_20111::pred_cl_belief_grading_wins",
+        "github:2512_20111::obs_cl_abbel_no_bg_catches_up"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_553e50440736e297",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2512_20111::bg_mem1"
+      ],
+      "conclusion": "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_917a5344",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::pred_qa_isolation_helps",
+              "github:2512_20111::obs_qa_abbel_lp_memory"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_7791faea",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_917a5344",
+              "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@pred_qa_isolation_helps (belief–reasoning isolation drives the advantage) predicts that ABBEL beats MEM1 in EM at comparable memory, and additionally predicts that a length penalty applied to the isolated belief (@obs_qa_abbel_lp_memory) further trades EM for memory — something MEM1 cannot do because its 'memory' includes reasoning (@bg_mem1). Together these directly support the headline observation @obs_qa_abbel_outperforms_mem1 that ABBEL outperforms MEM1 on multi-objective QA."
+      },
+      "premises": [
+        "github:2512_20111::pred_qa_isolation_helps",
+        "github:2512_20111::obs_qa_abbel_lp_memory"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0df1f0b390ce65d8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cl_bg_outperforms",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_6882dc56",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_rl_helps",
+              "github:2512_20111::obs_cl_bg_outperforms"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_rl_helps (RL fine-tuning lets ABBEL match/exceed full-context baselines while using less memory) predicts the Combination Lock result @obs_cl_bg_outperforms."
+      },
+      "premises": [
+        "github:2512_20111::finding_rl_helps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1e9cb79f59207536",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_b61e8859",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_rl_helps",
+              "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_rl_helps predicts the multi-objective QA result @obs_qa_abbel_outperforms_mem1 (RL-trained ABBEL beats MEM1 with comparable or less memory)."
+      },
+      "premises": [
+        "github:2512_20111::finding_rl_helps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_370602cc8a865875",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cb_abbel_memory_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_9b86f7ee",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::finding_rl_helps",
+              "github:2512_20111::obs_cb_abbel_memory_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@finding_rl_helps predicts the ColBench result @obs_cb_abbel_memory_efficient (RL-trained ABBEL achieves close to VANILLA performance with about half the memory)."
+      },
+      "premises": [
+        "github:2512_20111::finding_rl_helps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_817f0d6a7044b639",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::finding_rl_helps",
+      "metadata": {
+        "reason": "Combination Lock (highly structured) and multi-objective QA (lengthy unstructured observations) are independent environments providing distinct evidence for the law that RL closes/exceeds the ABBEL gap."
+      },
+      "premises": [
+        "github:2512_20111::obs_cl_bg_outperforms",
+        "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8e405b0d2d2ec6bb",
+      "sub_strategies": [
+        "lcs_1e9cb79f59207536",
+        "lcs_370602cc8a865875"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2512_20111::finding_rl_helps",
+      "metadata": {
+        "reason": "ColBench (collaborative coding, long-form generation) is a third independent setting confirming the law across yet another regime."
+      },
+      "premises": [
+        "github:2512_20111::obs_cl_bg_outperforms",
+        "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+        "github:2512_20111::obs_cb_abbel_memory_efficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cf032b70d52d56f3",
+      "sub_strategies": [
+        "lcs_8e405b0d2d2ec6bb",
+        "lcs_817f0d6a7044b639"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2512_20111::abbel_proposal",
+        "github:2512_20111::abbel_two_call_loop"
+      ],
+      "conclusion": "github:2512_20111::abbel_useful_testbed",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_e868b115",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::finding_rl_helps",
+              "github:2512_20111::prompting_only_inadequate"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_bd417c39",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_e868b115",
+              "github:2512_20111::abbel_useful_testbed"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Even though prompting-only ABBEL has clear failure modes (@prompting_only_inadequate), the cross-environment RL evidence (@finding_rl_helps) — Combination Lock (BG surpasses), multi-objective QA (beats MEM1, ~10x less memory than VANILLA), ColBench (49% memory at 88% performance) — establishes ABBEL as a useful framework deserving further study, including for context management beyond multi-step interaction."
+      },
+      "premises": [
+        "github:2512_20111::finding_rl_helps",
+        "github:2512_20111::prompting_only_inadequate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b0d5197bb8c532cf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cl_initial_abbel_worse",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_0473ebd1",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::prompting_only_inadequate",
+              "github:2512_20111::obs_cl_initial_abbel_worse"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@prompting_only_inadequate (prompting-only ABBEL underperforms full-context baselines) directly predicts the Combination Lock step-0 gap @obs_cl_initial_abbel_worse — Combination Lock requires complex belief-update reasoning, exactly the regime where prompting-only ABBEL is weakest."
+      },
+      "premises": [
+        "github:2512_20111::prompting_only_inadequate"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2e6fa9d2bae1b37c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cl_abbel_no_bg_catches_up",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_a1f88ab8",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::pred_cl_abbel_no_bg",
+              "github:2512_20111::obs_cl_abbel_no_bg_catches_up"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "@pred_cl_abbel_no_bg predicts that without belief grading, RL-trained ABBEL closes the gap with full-context baselines but does not surpass them. The ablation in Fig. 10a shows exactly this: ABBEL without BG catches up in success rate but trails ABBEL-BG in Cumulative Regret and final success rate."
+      },
+      "premises": [
+        "github:2512_20111::pred_cl_abbel_no_bg"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a565ee1f638c3130",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_18d37f0e",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::obs_qa_peak_tokens_table",
+              "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "The Table 1 row-by-row figures (@obs_qa_peak_tokens_table) directly give the EM and peak-token comparisons that establish @obs_qa_abbel_outperforms_mem1: ABBEL EM beats MEM1 EM at 4+ objectives with comparable peak-token counts."
+      },
+      "premises": [
+        "github:2512_20111::obs_qa_peak_tokens_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_ae9c81fa27262ef7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_qa_abbel_lp_memory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_941cbf25",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::obs_qa_peak_tokens_table",
+              "github:2512_20111::method_belief_length_penalty"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_1503a229",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_941cbf25",
+              "github:2512_20111::obs_qa_abbel_lp_memory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "@obs_qa_peak_tokens_table provides the LP-row peak-token figures, and @method_belief_length_penalty defines the mechanism. Together they establish that ABBEL LP achieves ~24% memory savings at 16 objectives with only a small EM drop."
+      },
+      "premises": [
+        "github:2512_20111::obs_qa_peak_tokens_table",
+        "github:2512_20111::method_belief_length_penalty"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14714b8cc6df977f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_qa_vanilla_close",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_f9b04e7b",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::obs_qa_peak_tokens_table",
+              "github:2512_20111::obs_qa_vanilla_close"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "@obs_qa_peak_tokens_table shows VANILLA (trained) vs ABBEL EM at 16 objectives is essentially tied (3.06 vs 3.57) while VANILLA uses 9.5x more peak tokens (96.08 vs 10.12), and zero-shot VANILLA fails at 16 objectives."
+      },
+      "premises": [
+        "github:2512_20111::obs_qa_peak_tokens_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f0e1555d92803058",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cb_abbel_memory_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__implication_result_fbae10fb",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::obs_cb_table",
+              "github:2512_20111::obs_cb_abbel_memory_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "@obs_cb_table provides the step-100 figures: ABBEL Test Pass Rate 0.4655 vs VANILLA 0.5260 (88.5%), peak tokens 3.86 vs 7.88 (49%). These directly establish @obs_cb_abbel_memory_efficient."
+      },
+      "premises": [
+        "github:2512_20111::obs_cb_table"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2d9bf9b750713ab8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cb_bg_data_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_cd461179",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::obs_cb_table",
+              "github:2512_20111::method_belief_grading"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_b7b7f410",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_cd461179",
+              "github:2512_20111::obs_cb_bg_data_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "@obs_cb_table shows step-50 ABBEL-BG = 0.4560 (matching VANILLA's 0.4456) versus ABBEL = 0.3844. @method_belief_grading is the mechanism. Together they establish that BG accelerates ABBEL learning on ColBench."
+      },
+      "premises": [
+        "github:2512_20111::obs_cb_table",
+        "github:2512_20111::method_belief_grading"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_bc2acb35cebd89c2",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_20111::obs_cb_zero_shot_parity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_20111::__conjunction_result_f6aacb86",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_20111::obs_cb_table",
+              "github:2512_20111::abbel_two_call_loop"
+            ]
+          },
+          {
+            "conclusion": "github:2512_20111::__implication_result_4aa5b89a",
+            "operator": "implication",
+            "variables": [
+              "github:2512_20111::__conjunction_result_f6aacb86",
+              "github:2512_20111::obs_cb_zero_shot_parity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "@obs_cb_table shows step-0 ABBEL Test Pass Rate (0.2642) is on par with VANILLA (0.2827). @abbel_two_call_loop's two-call structure biases the agent toward asking more questions (no history of past answers means each turn the agent re-evaluates how much information it has), explaining the parity at step 0 and VANILLA's lower zero-shot Peak Tokens."
+      },
+      "premises": [
+        "github:2512_20111::obs_cb_table",
+        "github:2512_20111::abbel_two_call_loop"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7627b182729561db",
+      "type": "support"
+    }
+  ]
+}

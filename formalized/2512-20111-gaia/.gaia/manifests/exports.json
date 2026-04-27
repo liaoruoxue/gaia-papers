@@ -1,0 +1,134 @@
+{
+  "exports": [
+    {
+      "content": "ABBEL (Acting through Belief Bottlenecks Expressed in Language) is a framework where an LLM agent (i) updates a natural-language belief state given the latest observation and (ii) selects the next action conditioned *only* on that belief, with the full interaction history excluded from the action-selection context. This creates an information bottleneck designed to preserve sufficient task-relevant information while keeping context compact and human-interpretable.",
+      "content_hash": "04992e55695d9e7108a6a8e7d7e41cd4c25c69e67cd1152a539323a25ef25fcf",
+      "label": "abbel_proposal",
+      "qid": "github:2512_20111::abbel_proposal",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL calls the LLM twice per step: (1) Belief update — sample a new belief $b_t \\sim \\pi(\\cdot \\mid p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$ from the previous belief, action, observation, and a belief-update prompt $p_b$; (2) Action selection — sample an action $a_t \\sim \\pi(\\cdot \\mid p_I, b_t, p_a)$ conditioned only on the new belief and the action prompt $p_a$. The full interaction history $h_t$ is *not* in the action-selection context.",
+      "content_hash": "5ee0f662fe779f1ed8a6c27e1da960e9fcd63e7f3cc058a68406fb8c91e3cd50",
+      "label": "abbel_two_call_loop",
+      "qid": "github:2512_20111::abbel_two_call_loop",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL is a useful framework for studying the trade-off between context length and task performance in long-horizon LLM agents: it produces interpretable beliefs, supports interpretable RL shaping (belief grading and length penalty), and across diverse environments either matches or exceeds full-context baselines after RL while using significantly less memory.",
+      "content_hash": "10b75893fcb6405183327f42500b90582ea1bbbc9dda188c81d874a2512b3565",
+      "label": "abbel_useful_testbed",
+      "qid": "github:2512_20111::abbel_useful_testbed",
+      "type": "claim"
+    },
+    {
+      "content": "When the belief-state length $|b_t|$ is significantly shorter than the history length $|h_t|$, ABBEL successfully reduces the context length the agent must process at action-selection time, and the per-step context cost becomes near-constant rather than linear in $t$.",
+      "content_hash": "f45dae6096b00c1233a74a2973a411a27b20eca5f1bd91dd9e07f7da9c503e84",
+      "label": "context_compression_property",
+      "qid": "github:2512_20111::context_compression_property",
+      "type": "claim"
+    },
+    {
+      "content": "Across the six evaluated multi-step environments, ABBEL-generated belief states are human-understandable and grow much more slowly than the full interaction history, even decreasing in some environments as possibilities are ruled out, while interaction history grows linearly with the number of steps.",
+      "content_hash": "3c78868a7b157b3fa833cac2863321e44ed03fb1907a1936f9032b2554bd8bed",
+      "label": "finding_belief_grows_slower",
+      "qid": "github:2512_20111::finding_belief_grows_slower",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL agents (without RL fine-tuning) exhibit characteristic failure modes: (a) propagating erroneous beliefs across steps, (b) hallucinating false memories of previous steps, and (c) repeating uninformative actions because the belief does not change without new information. These failures cause ABBEL to underperform the full-context (VANILLA) baseline in some environments for some models.",
+      "content_hash": "710dbee9438e20f4355e0984e7802fe43ae0ef183e09b7cd987babdd0189b724",
+      "label": "finding_failure_modes",
+      "qid": "github:2512_20111::finding_failure_modes",
+      "type": "claim"
+    },
+    {
+      "content": "Reinforcement-learning fine-tuning of an LLM agent under the ABBEL framework (with belief grading or belief length penalty rewards) lets ABBEL match or exceed full-context baselines while using significantly less memory, across Combination Lock, multi-objective question answering, and ColBench.",
+      "content_hash": "3abcb4f415c11f18fc986e6e7fd77eeb9dad5ffbed4b60215352a9d7ccac8691",
+      "label": "finding_rl_helps",
+      "qid": "github:2512_20111::finding_rl_helps",
+      "type": "claim"
+    },
+    {
+      "content": "Belief grading creates a separate size-2 GRPO group per step: the original belief $b_t$ and a regenerated belief $b_t'$ from the same context $(p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$. Each is assigned a grading reward (problem-specific or general). Treating each belief as its own single-step trajectory (rather than adding the reward to the outcome reward) avoids the reward-hacking failure of agents solving tasks slowly to collect more step-wise rewards [@Lidayan2025]. Policy gradient steps on belief groups and trajectory groups are applied concurrently.",
+      "content_hash": "0129cb2282dbd0a2fd1ee6b3163cdcea5bdb820c292edb5ffd6c86ea5c135ddc",
+      "label": "method_belief_grading",
+      "qid": "github:2512_20111::method_belief_grading",
+      "type": "claim"
+    },
+    {
+      "content": "The belief length penalty (LP) is a small negative reward proportional to the longest belief state in the trajectory. Following Arora and Zanette [@AroraZanette2025], it is applied after advantage normalization so its impact diminishes as beliefs get shorter, avoiding over-compression. Because ABBEL's belief is isolated from chain-of-thought reasoning, the penalty does not penalize reasoning tokens.",
+      "content_hash": "eead3c848e027f7642348fe03128eddd822cc986678314529041385f41c3fac6",
+      "label": "method_belief_length_penalty",
+      "qid": "github:2512_20111::method_belief_length_penalty",
+      "type": "claim"
+    },
+    {
+      "content": "Beyond the first few steps, ABBEL belief lengths are significantly shorter than the corresponding interaction history across all six environments and all three frontier models, with belief lengths often plateauing or decreasing. The exception is Gemini 2.5 Pro on Twenty Questions and Guess My City, where Gemini concatenates all observations into the belief, causing linear growth.",
+      "content_hash": "675a912a639506c55f44106e44d05d72884d11d40e304e2d675c69267961d080",
+      "label": "obs_belief_lengths_short",
+      "qid": "github:2512_20111::obs_belief_lengths_short",
+      "type": "claim"
+    },
+    {
+      "content": "On ColBench at training step 100, ABBEL achieves 88.5% of VANILLA's Test Pass Rate (0.4655 vs 0.5260) while using only 49% as much peak memory (3.86 vs 7.88, $\\times 10^2$ tokens). ABBEL-BG at step 100 has similar Test Pass Rate (0.4577) with even less memory (3.41).",
+      "content_hash": "5cf8474a7466cf20477ae3c0b9102d300107a497b224c01c1f0ccdda897b5d4d",
+      "label": "obs_cb_abbel_memory_efficient",
+      "qid": "github:2512_20111::obs_cb_abbel_memory_efficient",
+      "type": "claim"
+    },
+    {
+      "content": "At step 50, ABBEL-BG reaches Test Pass Rate 0.4560 — on par with VANILLA (0.4456) and significantly better than ABBEL without belief grading (0.3844). This indicates that the domain-general belief grader makes ABBEL more data-efficient: ABBEL without BG only catches up at step 100.",
+      "content_hash": "ebf9d74f980c96e378be2375563d3ec3145c794eddb7d74c9fec9cddd7a91e70",
+      "label": "obs_cb_bg_data_efficient",
+      "qid": "github:2512_20111::obs_cb_bg_data_efficient",
+      "type": "claim"
+    },
+    {
+      "content": "After ~120 training steps, ABBEL with belief grading reaches a test success rate that exceeds both VANILLA (full-history baseline) and BELIEF PROMPTING on Combination Lock. Belief lengths first increase early in training but then decrease, remaining significantly shorter than the history beyond the first 2 environment steps.",
+      "content_hash": "aba3a66cc15e6504e1a98f61b5c8dabd662d8e08b02ce42dda2e53e575fb745c",
+      "label": "obs_cl_bg_outperforms",
+      "qid": "github:2512_20111::obs_cl_bg_outperforms",
+      "type": "claim"
+    },
+    {
+      "content": "On DeepSeek V3 and DeepSeek R1, ABBEL generally performs worse than both VANILLA and BELIEF PROMPTING, with the exception of Twenty Questions. The drop is most pronounced in environments with long, unstructured observations (Customer Service and Murder Mystery), where it is more ambiguous what information should be maintained in the belief.",
+      "content_hash": "892d304ca86ea70b964fb64272c1c0b6195cff231f52f69bab56415ca3ae8f95",
+      "label": "obs_deepseek_abbel_worse",
+      "qid": "github:2512_20111::obs_deepseek_abbel_worse",
+      "type": "claim"
+    },
+    {
+      "content": "On Gemini 2.5 Pro, ABBEL maintains or exceeds the success rate of both VANILLA and BELIEF PROMPTING in most of the six environments, despite feeding the model only the belief at action time. Notably, on Murder Mystery, Gemini 2.5 Pro under ABBEL outperforms VANILLA — the authors attribute this to VANILLA being biased to keep gathering clues and run out of steps before making an accusation.",
+      "content_hash": "1c6654db890bccff30c5ebf071f3222c4ca7c2d258939b22cca5208546f42f1c",
+      "label": "obs_gemini_abbel_competitive",
+      "qid": "github:2512_20111::obs_gemini_abbel_competitive",
+      "type": "claim"
+    },
+    {
+      "content": "ABBEL LP (with belief length penalty) further reduces peak token usage compared to ABBEL while only slightly reducing EM. At 16 objectives, ABBEL LP uses 7.64 ($\\times 10^2$) peak tokens vs ABBEL's 10.12 — a 24% reduction — and EM = 3.43 vs ABBEL's 3.57. ABBEL LP still significantly outperforms MEM1 in EM at 16 objectives (3.43 vs 2.50).",
+      "content_hash": "7de3b43b736221041e3ed6ffbaed6b45f7b75d60dee87298b1b7a2ccf2af60ca",
+      "label": "obs_qa_abbel_lp_memory",
+      "qid": "github:2512_20111::obs_qa_abbel_lp_memory",
+      "type": "claim"
+    },
+    {
+      "content": "On multi-objective QA with 4 or more objectives, ABBEL achieves significantly higher EM than MEM1 (Base and Instruct) and substantially higher than the zero-shot VANILLA models. At 16 objectives, ABBEL reaches EM = 3.57 vs MEM1 Instruct = 2.50 (43% higher) while using only ~10.12 ($\\times 10^2$) peak tokens vs MEM1's 10.58.",
+      "content_hash": "6f2cfea489ea0f2a4210b9f6d4349e31168d2e94601e553825a21e87f405d1e5",
+      "label": "obs_qa_abbel_outperforms_mem1",
+      "qid": "github:2512_20111::obs_qa_abbel_outperforms_mem1",
+      "type": "claim"
+    },
+    {
+      "content": "Prompting-only ABBEL is inadequate for several model–environment pairs: for each frontier model evaluated, there exists at least one environment where ABBEL underperforms full-context baselines, motivating the need for RL fine-tuning to fix belief-update errors.",
+      "content_hash": "7a64df6613a9afdf7fcc93d571ae33397b9eeabd18cf813f0559c514945f3db4",
+      "label": "prompting_only_inadequate",
+      "qid": "github:2512_20111::prompting_only_inadequate",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:13a186a1757933ed94b4515783ef1c1f62295403601a2e752f5ee1502998118d",
+  "manifest_schema_version": 1,
+  "package": "2512-20111",
+  "version": "0.1.0"
+}

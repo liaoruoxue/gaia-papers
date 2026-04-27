@@ -1,0 +1,141 @@
+{
+  "holes": [
+    {
+      "content": "ABBEL calls the LLM twice per step: (1) Belief update — sample a new belief $b_t \\sim \\pi(\\cdot \\mid p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$ from the previous belief, action, observation, and a belief-update prompt $p_b$; (2) Action selection — sample an action $a_t \\sim \\pi(\\cdot \\mid p_I, b_t, p_a)$ conditioned only on the new belief and the action prompt $p_a$. The full interaction history $h_t$ is *not* in the action-selection context.",
+      "content_hash": "5ee0f662fe779f1ed8a6c27e1da960e9fcd63e7f3cc058a68406fb8c91e3cd50",
+      "interface_hash": "sha256:6163d4f1559a7aeedb56e20ef4bb39c1f73d2c58cb3bdf8ddf558d59891cf7c3",
+      "label": "abbel_two_call_loop",
+      "qid": "github:2512_20111::abbel_two_call_loop",
+      "required_by": [
+        "github:2512_20111::context_compression_property",
+        "github:2512_20111::prompting_only_inadequate"
+      ]
+    },
+    {
+      "content": "BELIEF PROMPTING is an ablation of ABBEL that performs the belief-update call as in ABBEL but conditions action selection on *both* the belief and the full interaction history $h_t$. This isolates the effect of the history-removing bottleneck from the effect of belief generation.",
+      "content_hash": "24c0b28a71dcd551355413eb498c34569f55e35e695b94bbc554ef896d666120",
+      "interface_hash": "sha256:57f5805b6d6ce210b1dc442e76585e2f97fcc0334facd76823e05ceb32433263",
+      "label": "belief_prompting_definition",
+      "qid": "github:2512_20111::belief_prompting_definition",
+      "required_by": [
+        "github:2512_20111::abbel_proposal"
+      ]
+    },
+    {
+      "content": "Belief grading creates a separate size-2 GRPO group per step: the original belief $b_t$ and a regenerated belief $b_t'$ from the same context $(p_I, b_{t-1}, a_{t-1}, o_{t-1}, p_b)$. Each is assigned a grading reward (problem-specific or general). Treating each belief as its own single-step trajectory (rather than adding the reward to the outcome reward) avoids the reward-hacking failure of agents solving tasks slowly to collect more step-wise rewards [@Lidayan2025]. Policy gradient steps on belief groups and trajectory groups are applied concurrently.",
+      "content_hash": "0129cb2282dbd0a2fd1ee6b3163cdcea5bdb820c292edb5ffd6c86ea5c135ddc",
+      "interface_hash": "sha256:e4db813a3d93afdde39c8078959e5e83577039f90263d5fe1dd6f07461ceb95e",
+      "label": "method_belief_grading",
+      "qid": "github:2512_20111::method_belief_grading",
+      "required_by": [
+        "github:2512_20111::obs_cb_bg_data_efficient"
+      ]
+    },
+    {
+      "content": "The belief length penalty (LP) is a small negative reward proportional to the longest belief state in the trajectory. Following Arora and Zanette [@AroraZanette2025], it is applied after advantage normalization so its impact diminishes as beliefs get shorter, avoiding over-compression. Because ABBEL's belief is isolated from chain-of-thought reasoning, the penalty does not penalize reasoning tokens.",
+      "content_hash": "eead3c848e027f7642348fe03128eddd822cc986678314529041385f41c3fac6",
+      "interface_hash": "sha256:945a6624ca2653d96079a6f872e3e22e44e47728cb801dc5e8a4072b64bcb43a",
+      "label": "method_belief_length_penalty",
+      "qid": "github:2512_20111::method_belief_length_penalty",
+      "required_by": [
+        "github:2512_20111::obs_qa_abbel_lp_memory"
+      ]
+    },
+    {
+      "content": "BELIEF PROMPTING (history + belief) rarely outperforms VANILLA and sometimes substantially decreases performance. Adding a belief on top of the full history does not, in their experiments, reliably improve action quality.",
+      "content_hash": "2cd02241bf224dbde05b133eeb3017d033d0b9937f2a9e56f27456c68ffd183c",
+      "interface_hash": "sha256:dac3524755af282ba39d49dc17e78c979b546df0dce29d57ea6177bf87b82a1e",
+      "label": "obs_belief_prompting_rarely_helps",
+      "qid": "github:2512_20111::obs_belief_prompting_rarely_helps",
+      "required_by": [
+        "github:2512_20111::abbel_proposal"
+      ]
+    },
+    {
+      "content": "ColBench results across training steps (mean ± SEM over 2 seeds for ABBEL/ABBEL-BG; over 1 seed test set for VANILLA):\n\n| Step | Model | Test Pass Rate | Success Rate | Peak Tokens ($\\times 10^2$) |\n|------|-------|----------------|--------------|------------------------------|\n| 0 | VANILLA | 0.2827 ± 0.0125 | 0.1748 ± 0.0119 | 4.5938 ± 0.1532 |\n| 0 | ABBEL | 0.2642 ± 0.0125 | 0.1709 ± 0.0118 | 3.2953 ± 0.0525 |\n| 50 | VANILLA | 0.4456 ± 0.0139 | 0.3047 ± 0.0144 | 8.9805 ± 0.1396 |\n| 50 | ABBEL | 0.3844 ± 0.0140 | 0.2651 ± 0.0093 | 3.4078 ± 0.0499 |\n| 50 | ABBEL-BG | 0.4560 ± 0.0132 | 0.3228 ± 0.0079 | 3.9693 ± 0.2542 |\n| 100 | VANILLA | 0.5260 ± 0.0141 | 0.3936 ± 0.0153 | 7.8845 ± 0.1084 |\n| 100 | ABBEL | 0.4655 ± 0.0112 | 0.3286 ± 0.0121 | 3.8614 ± 0.0711 |\n| 100 | ABBEL-BG | 0.4577 ± 0.0004 | 0.3262 ± 0.0021 | 3.4149 ± 0.3210 |",
+      "content_hash": "1d7157737b1abb043cfc92bb3a18fea182dd5fd3df232fe543d38e3ce571a2be",
+      "interface_hash": "sha256:2c90ffe54787c5ff44351a2efa973ac1ccb39b0727694e90cb060aa7af84c262",
+      "label": "obs_cb_table",
+      "qid": "github:2512_20111::obs_cb_table",
+      "required_by": [
+        "github:2512_20111::obs_cb_abbel_memory_efficient",
+        "github:2512_20111::obs_cb_bg_data_efficient"
+      ]
+    },
+    {
+      "content": "On DeepSeek V3 and DeepSeek R1, ABBEL generally performs worse than both VANILLA and BELIEF PROMPTING, with the exception of Twenty Questions. The drop is most pronounced in environments with long, unstructured observations (Customer Service and Murder Mystery), where it is more ambiguous what information should be maintained in the belief.",
+      "content_hash": "892d304ca86ea70b964fb64272c1c0b6195cff231f52f69bab56415ca3ae8f95",
+      "interface_hash": "sha256:a7bf5ee984fa8d59571e0854549a504824bca27e46d57e4bb689be3a8e703471",
+      "label": "obs_deepseek_abbel_worse",
+      "qid": "github:2512_20111::obs_deepseek_abbel_worse",
+      "required_by": [
+        "github:2512_20111::prompting_only_inadequate"
+      ]
+    },
+    {
+      "content": "On Gemini 2.5 Pro, ABBEL maintains or exceeds the success rate of both VANILLA and BELIEF PROMPTING in most of the six environments, despite feeding the model only the belief at action time. Notably, on Murder Mystery, Gemini 2.5 Pro under ABBEL outperforms VANILLA — the authors attribute this to VANILLA being biased to keep gathering clues and run out of steps before making an accusation.",
+      "content_hash": "1c6654db890bccff30c5ebf071f3222c4ca7c2d258939b22cca5208546f42f1c",
+      "interface_hash": "sha256:72fecf7a121d5a27f02f063182a5655e5ebf3c222ec5675ba3bdcf25e03d0e0c",
+      "label": "obs_gemini_abbel_competitive",
+      "qid": "github:2512_20111::obs_gemini_abbel_competitive",
+      "required_by": [
+        "github:2512_20111::abbel_proposal"
+      ]
+    },
+    {
+      "content": "Multi-objective QA results, peak token usage per trajectory ($\\times 10^2$ tokens) and Exact Match score (mean over the test set):\n\n| Model | 2-Obj EM | 2-Obj Tokens | 8-Obj EM | 8-Obj Tokens | 16-Obj EM | 16-Obj Tokens |\n|-------|----------|--------------|----------|--------------|-----------|---------------|\n| VANILLA Zero | 0.30 | 11.25 | 0.37 | 16.06 | 0.40 | 15.40 |\n| VANILLA 14B Zero | 0.73 | 15.60 | 1.55 | 44.70 | 0.57 | 38.40 |\n| VANILLA (trained) | 0.79 | 17.87 | 2.54 | 64.07 | 3.06 | 96.08 |\n| MEM1 Base | 0.71 | 6.40 | 1.87 | 8.01 | 1.97 | 10.40 |\n| MEM1 Instruct | 0.79 | 6.69 | 1.88 | 9.13 | 2.50 | 10.58 |\n| ABBEL Zero | 0.53 | 6.85 | 1.28 | 8.67 | 1.62 | 9.46 |\n| ABBEL | 0.73 | 6.78 | 2.40 | 8.95 | **3.57** | 10.12 |\n| ABBEL LP | 0.70 | 6.56 | 2.19 | **7.61** | 3.43 | **7.64** |",
+      "content_hash": "f10853e5a1073e68b6a8ef3ce1d6242a2f90f8ee6e16361a44f8161536de11b5",
+      "interface_hash": "sha256:1354d23e4b6ca2aab8efd792189291cb3e05ad064a04e7073aee65a70f72ad05",
+      "label": "obs_qa_peak_tokens_table",
+      "qid": "github:2512_20111::obs_qa_peak_tokens_table",
+      "required_by": [
+        "github:2512_20111::obs_qa_abbel_lp_memory",
+        "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+      ]
+    },
+    {
+      "content": "Without belief grading, RL-trained ABBEL would close the gap with the full-context baselines (because RL is generally effective for ABBEL) but would not surpass them, because complex belief-update reasoning needs the dense shaping signal that belief grading provides.",
+      "content_hash": "46875c55a5f01f2b7e7bbcfbf1e8ab9d60b004f856872612eb5784814509164d",
+      "interface_hash": "sha256:1063cbb83731884393118abf9a61d56bfbeac95ebb490f0192a9a876242705f9",
+      "label": "pred_cl_abbel_no_bg",
+      "qid": "github:2512_20111::pred_cl_abbel_no_bg",
+      "required_by": [
+        "github:2512_20111::obs_cl_bg_outperforms"
+      ]
+    },
+    {
+      "content": "If belief grading is an effective RL shaping reward in environments requiring complex belief-update reasoning, ABBEL trained with belief grading should match or exceed VANILLA and BELIEF PROMPTING success rates on Combination Lock, with belief lengths remaining significantly shorter than the interaction history.",
+      "content_hash": "71244e0047a4170e2bcd999c600f67433d2bc73fd3881f6e2179b6648a2c36d8",
+      "interface_hash": "sha256:24ad2b4265274d8280825c78d5dcc22cc040343140fec4911e7bf5385fb017d6",
+      "label": "pred_cl_belief_grading_wins",
+      "qid": "github:2512_20111::pred_cl_belief_grading_wins",
+      "required_by": [
+        "github:2512_20111::obs_cl_bg_outperforms"
+      ]
+    },
+    {
+      "content": "If isolating the belief state from reasoning (the key architectural difference between ABBEL and MEM1) is what enables better memory–performance trade-offs, then ABBEL should outperform MEM1 in EM at the same memory budget, and ABBEL LP should be applicable (penalize belief without penalizing reasoning) while MEM1 cannot apply a length penalty without harming reasoning.",
+      "content_hash": "2758ad2b59a113bedbd592d67f95c3203ffd7df3623182f799fbb8e025439e17",
+      "interface_hash": "sha256:e96ff04613a0c583573175f90a7d48b9f6452b0a61c02982c14522c77a187894",
+      "label": "pred_qa_isolation_helps",
+      "qid": "github:2512_20111::pred_qa_isolation_helps",
+      "required_by": [
+        "github:2512_20111::obs_qa_abbel_outperforms_mem1"
+      ]
+    },
+    {
+      "content": "The standard multi-step paradigm (VANILLA) selects actions conditioned on the full interaction history: $a_t \\sim \\pi(\\cdot \\mid p_I, h_t, p_a)$, where $p_I$ is the instructions prompt, $h_t = \\langle a_1, o_2, a_2, o_3, \\ldots, a_{t-1}, o_{t-1}\\rangle$ is the full history, and $p_a$ is the action-selection prompt. The context length therefore grows linearly with the number of interaction steps.",
+      "content_hash": "4bbce54c3bdd80123f539a557afc539085913b114f693bd5105a748ff1792268",
+      "interface_hash": "sha256:b87080282dc37bbf87a202dd751ca6eead55409d13c028f0bfa8dfbac8bff6f0",
+      "label": "vanilla_definition",
+      "qid": "github:2512_20111::vanilla_definition",
+      "required_by": [
+        "github:2512_20111::context_compression_property"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:13a186a1757933ed94b4515783ef1c1f62295403601a2e752f5ee1502998118d",
+  "manifest_schema_version": 1,
+  "package": "2512-20111",
+  "version": "0.1.0"
+}
