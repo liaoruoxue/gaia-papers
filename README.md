@@ -1,6 +1,7 @@
 # gaia-papers
 
 Staging and output for automated Gaia formalization.
+https://github.com/SiliconEinstein/Gaia
 
 ## Layout
 
