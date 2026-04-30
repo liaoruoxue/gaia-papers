@@ -1,0 +1,608 @@
+{
+  "ir_hash": "sha256:4283bbc26641486a074da6198b3eedc87db2ce1fd74e0fb63195e12b24cf2b18",
+  "knowledges": [
+    {
+      "content": "A *coding agent* is an LLM-driven system whose task is to read, edit, and execute source code in pursuit of a user-specified software-engineering goal (bug fix, feature implementation, refactor, etc.). The *scaffold* of such an agent is the source-code-level harness that wraps the underlying LLM: the prompt-and-loop control flow, the set of callable tools, the memory / context-management discipline, and the agent's persistent state machine. Different open-source coding agents (Aider, OpenDevin, SWE-agent, Cline, moatless-tools, ...) instantiate this scaffold in materially different ways, and those differences are observable directly in the implementation source.",
+      "content_hash": "d14e8cfcc5623c81541c2d58556bfd9713d591905d6bcd99c927a403690ff86c",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::coding_agent_setting",
+      "label": "coding_agent_setting",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Coding-agent scaffold (formal setting)",
+      "type": "setting"
+    },
+    {
+      "content": "The study scope is a corpus of real-world open-source coding-agent implementations, examined at the source-code level. The reference implementation cited via the GitHub link is https://github.com/aorwall/moatless-tools; the taxonomy is derived by comparing scaffold designs across this and analogous projects rather than by running them on benchmarks.",
+      "content_hash": "29fa965b047ea6172c3179a7d9491febca77d59e536824cda8cedbd36cee42e3",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::study_scope",
+      "label": "study_scope",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Study population: open-source coding-agent source code",
+      "type": "setting"
+    },
+    {
+      "content": "The work delivers a **source-code taxonomy of coding-agent architectures** -- a structured classification of how coding agents are built, derived from inspection of their implementation source rather than from black-box behavioural evaluation.",
+      "content_hash": "a419af1ef28cdfa133e0a0426f104283db025c429f967149b59fc5206deff70a",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+      "label": "source_code_taxonomy_built",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Self-report of contribution in the abstract: the authors explicitly frame the work as a source-code taxonomy of coding-agent architectures. This is a methodological framing claim, not a quantitative result, and is directly verifiable by reading the paper. High prior.",
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (abstract, sentence 1)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Source-code taxonomy of coding-agent architectures",
+      "type": "claim"
+    },
+    {
+      "content": "The work **analyses real-world implementations to derive structural patterns** in how coding agents manage **context, tools, and state** -- i.e. the taxonomy categories are grounded in repeated design choices observed across multiple existing agent codebases, not synthesised top-down.",
+      "content_hash": "64d2cf7bb91ee8808a7324b3698e448d0b7ef0e333f3e1ce9351681360257bef",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::structural_patterns_derived",
+      "label": "structural_patterns_derived",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Self-report of methodology in the abstract: the authors state that the taxonomy was derived by analysing real-world implementations to extract structural patterns in context / tools / state. The cited GitHub link (aorwall/moatless-tools) anchors the claim in concrete open-source code. Small downward adjustment from 0.95 because, having only the abstract stub, we cannot verify how broad the surveyed corpus actually is.",
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (abstract, sentence 2)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Structural patterns derived from real-world implementations",
+      "type": "claim"
+    },
+    {
+      "content": "The taxonomy provides a treatment of **agentic memory** in coding agents -- how implementations represent, persist, and recall information across reasoning steps (e.g. scratchpads, episodic logs, retrieval over prior trajectories, long-term knowledge stores).",
+      "content_hash": "73e0dfa8c2443f53467856b31f58d4dd60c72701b14c492c886562ae6d418111",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::keyword_agentic_memory",
+      "label": "keyword_agentic_memory",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_agent_setting",
+              "source_code_taxonomy_built",
+              "structural_patterns_derived",
+              "study_scope"
+            ]
+          }
+        },
+        "keyword_index": 1,
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (keywords)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Keyword: agentic memory",
+      "type": "claim"
+    },
+    {
+      "content": "The taxonomy provides a treatment of **loop primitives** -- the control-flow building blocks (think/act/observe loops, plan-then-execute loops, reflexion loops, hierarchical sub-task loops) that scaffold the agent's outer reasoning cycle.",
+      "content_hash": "1e9db86ce14c77ae78c4f03a8e20c5444c983f581bd2ebb8fc49efc23b94e20d",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::keyword_loop_primitives",
+      "label": "keyword_loop_primitives",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_agent_setting",
+              "source_code_taxonomy_built",
+              "structural_patterns_derived",
+              "study_scope"
+            ]
+          }
+        },
+        "keyword_index": 2,
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (keywords)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Keyword: loop primitives",
+      "type": "claim"
+    },
+    {
+      "content": "The taxonomy provides a treatment of **context compaction** -- the techniques (summarisation, truncation, selective retention, hierarchical rollups) that coding agents use to fit their working context into the underlying model's bounded window as a session grows.",
+      "content_hash": "d0e2387de17aadc3df1a8e137a6c04f1726855c6d7097020360bcf059cd763fa",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::keyword_context_compaction",
+      "label": "keyword_context_compaction",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_agent_setting",
+              "source_code_taxonomy_built",
+              "structural_patterns_derived"
+            ]
+          }
+        },
+        "keyword_index": 3,
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (keywords)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Keyword: context compaction",
+      "type": "claim"
+    },
+    {
+      "content": "The taxonomy provides a treatment of **tool capability categories** -- the classes of capabilities that coding-agent tools expose (file I/O, code search, edit/patch application, shell execution, test running, version control, browser/web access, ...) and how scaffolds organise and expose them.",
+      "content_hash": "b47d64c7e99f1dd9c35689284a3b879754bb2c29911311fbd126e53bd9d20a5c",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::keyword_tool_capability_categories",
+      "label": "keyword_tool_capability_categories",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_agent_setting",
+              "source_code_taxonomy_built",
+              "structural_patterns_derived",
+              "study_scope"
+            ]
+          }
+        },
+        "keyword_index": 4,
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (keywords)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Keyword: tool capability categories",
+      "type": "claim"
+    },
+    {
+      "content": "The taxonomy provides a treatment of **state management** -- how coding agents track in-progress task state, edit history, open files, planning artefacts, and recovery checkpoints across the lifetime of a conversation or task.",
+      "content_hash": "6232902a1f91e52ae836e804794bbe4a3886d7b6b15b1dd6ca999fa29c8bd08a",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2604_03515_scaffold_taxonomy::keyword_state_management",
+      "label": "keyword_state_management",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "coding_agent_setting",
+              "source_code_taxonomy_built",
+              "structural_patterns_derived",
+              "study_scope"
+            ]
+          }
+        },
+        "keyword_index": 5,
+        "source": "artifacts/2604.03515-scaffold-taxonomy.md (keywords)"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Keyword: state management",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+      "content_hash": "d03fd1ba6da20292d6431dab3e8972c410e2d19006c674c0495417b49e311866",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__conjunction_result_4e7da1e3",
+      "label": "__conjunction_result_4e7da1e3",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_55635ec6e4357ec4",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_4e7da1e3,github:2604_03515_scaffold_taxonomy::keyword_agentic_memory)",
+      "content_hash": "e34862ebf744d9104a4c2daaf05edf3ba51e32c6e5898daf189de70855f55c77",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__implication_result_569f30fc",
+      "label": "__implication_result_569f30fc",
+      "metadata": {
+        "canonical_name": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_4e7da1e3,github:2604_03515_scaffold_taxonomy::keyword_agentic_memory)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_55635ec6e4357ec4",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+      "content_hash": "d03fd1ba6da20292d6431dab3e8972c410e2d19006c674c0495417b49e311866",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__conjunction_result_b9a95049",
+      "label": "__conjunction_result_b9a95049",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_da30e4931d5a0970",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_b9a95049,github:2604_03515_scaffold_taxonomy::keyword_loop_primitives)",
+      "content_hash": "bc204d32fedded40c93acc5aa246944fba45720c180eb6108ca060ad64e44165",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__implication_result_14e05861",
+      "label": "__implication_result_14e05861",
+      "metadata": {
+        "canonical_name": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_b9a95049,github:2604_03515_scaffold_taxonomy::keyword_loop_primitives)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_da30e4931d5a0970",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+      "content_hash": "d03fd1ba6da20292d6431dab3e8972c410e2d19006c674c0495417b49e311866",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__conjunction_result_4363d18a",
+      "label": "__conjunction_result_4363d18a",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b56492a800f83fd9",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_4363d18a,github:2604_03515_scaffold_taxonomy::keyword_context_compaction)",
+      "content_hash": "bfb10262e79f0afcdd3d95ed5be99d961821dab9692ff37ce6b6de0b19c7ff2f",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__implication_result_a9cc7365",
+      "label": "__implication_result_a9cc7365",
+      "metadata": {
+        "canonical_name": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_4363d18a,github:2604_03515_scaffold_taxonomy::keyword_context_compaction)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b56492a800f83fd9",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+      "content_hash": "d03fd1ba6da20292d6431dab3e8972c410e2d19006c674c0495417b49e311866",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__conjunction_result_e9be4db2",
+      "label": "__conjunction_result_e9be4db2",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_11bb8307b7475330",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_e9be4db2,github:2604_03515_scaffold_taxonomy::keyword_tool_capability_categories)",
+      "content_hash": "9b843a1e2b1ebe13803af8f3fb39df24e68d24db2967148ec38012007083e3d7",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__implication_result_c3538f75",
+      "label": "__implication_result_c3538f75",
+      "metadata": {
+        "canonical_name": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_e9be4db2,github:2604_03515_scaffold_taxonomy::keyword_tool_capability_categories)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_11bb8307b7475330",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+      "content_hash": "d03fd1ba6da20292d6431dab3e8972c410e2d19006c674c0495417b49e311866",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__conjunction_result_eea44f1e",
+      "label": "__conjunction_result_eea44f1e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built,github:2604_03515_scaffold_taxonomy::structural_patterns_derived)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_19ba2e09b100f818",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_eea44f1e,github:2604_03515_scaffold_taxonomy::keyword_state_management)",
+      "content_hash": "705aabdeb8d7f18e5758201be881b9a943ddf2bf6abb179fb7e477547271341c",
+      "exported": false,
+      "id": "github:2604_03515_scaffold_taxonomy::__implication_result_7b60fb59",
+      "label": "__implication_result_7b60fb59",
+      "metadata": {
+        "canonical_name": "implies(github:2604_03515_scaffold_taxonomy::__conjunction_result_eea44f1e,github:2604_03515_scaffold_taxonomy::keyword_state_management)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_19ba2e09b100f818",
+        "owning_strategy_type": "support",
+        "prior": 0.93,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation"
+  ],
+  "module_titles": {
+    "motivation": "Motivation: a source-code taxonomy of coding-agent architectures."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_03515_scaffold_taxonomy",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_03515_scaffold_taxonomy::coding_agent_setting",
+        "github:2604_03515_scaffold_taxonomy::study_scope"
+      ],
+      "conclusion": "github:2604_03515_scaffold_taxonomy::keyword_agentic_memory",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__conjunction_result_4e7da1e3",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+              "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+            ]
+          },
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__implication_result_569f30fc",
+            "operator": "implication",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::__conjunction_result_4e7da1e3",
+              "github:2604_03515_scaffold_taxonomy::keyword_agentic_memory"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "A source-code taxonomy (@source_code_taxonomy_built) that derives structural patterns from how real implementations manage context (@structural_patterns_derived) necessarily examines how those implementations represent and persist information across steps. Within the coding-agent scaffold (@coding_agent_setting) over the surveyed corpus (@study_scope), that subject is exactly agentic memory."
+      },
+      "premises": [
+        "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+        "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_55635ec6e4357ec4",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_03515_scaffold_taxonomy::coding_agent_setting",
+        "github:2604_03515_scaffold_taxonomy::study_scope"
+      ],
+      "conclusion": "github:2604_03515_scaffold_taxonomy::keyword_loop_primitives",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__conjunction_result_b9a95049",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+              "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+            ]
+          },
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__implication_result_14e05861",
+            "operator": "implication",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::__conjunction_result_b9a95049",
+              "github:2604_03515_scaffold_taxonomy::keyword_loop_primitives"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Classifying coding-agent architectures at the source level (@source_code_taxonomy_built) and abstracting structural patterns across implementations (@structural_patterns_derived) requires naming the recurring outer-loop control-flow primitives. Given the scaffold setting (@coding_agent_setting) and the surveyed corpus (@study_scope), loop primitives fall directly out of that exercise."
+      },
+      "premises": [
+        "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+        "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_da30e4931d5a0970",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_03515_scaffold_taxonomy::coding_agent_setting"
+      ],
+      "conclusion": "github:2604_03515_scaffold_taxonomy::keyword_context_compaction",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__conjunction_result_4363d18a",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+              "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+            ]
+          },
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__implication_result_a9cc7365",
+            "operator": "implication",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::__conjunction_result_4363d18a",
+              "github:2604_03515_scaffold_taxonomy::keyword_context_compaction"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The abstract explicitly highlights *context* as one of the three axes along which structural patterns are derived (@structural_patterns_derived). At the source-code level (@source_code_taxonomy_built), the principal differentiator across coding-agent scaffolds (@coding_agent_setting) on the context axis is how they compact long-running context into a bounded window. Hence the taxonomy materially covers context compaction."
+      },
+      "premises": [
+        "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+        "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b56492a800f83fd9",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_03515_scaffold_taxonomy::coding_agent_setting",
+        "github:2604_03515_scaffold_taxonomy::study_scope"
+      ],
+      "conclusion": "github:2604_03515_scaffold_taxonomy::keyword_tool_capability_categories",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__conjunction_result_e9be4db2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+              "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+            ]
+          },
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__implication_result_c3538f75",
+            "operator": "implication",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::__conjunction_result_e9be4db2",
+              "github:2604_03515_scaffold_taxonomy::keyword_tool_capability_categories"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "*Tools* is the second of the three axes in the abstract (@structural_patterns_derived). A source-code taxonomy (@source_code_taxonomy_built) over real coding-agent codebases (@study_scope) cannot describe tools without grouping the concrete tool calls those scaffolds (@coding_agent_setting) expose into capability categories. The keyword claim follows directly."
+      },
+      "premises": [
+        "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+        "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_11bb8307b7475330",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_03515_scaffold_taxonomy::coding_agent_setting",
+        "github:2604_03515_scaffold_taxonomy::study_scope"
+      ],
+      "conclusion": "github:2604_03515_scaffold_taxonomy::keyword_state_management",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__conjunction_result_eea44f1e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+              "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+            ]
+          },
+          {
+            "conclusion": "github:2604_03515_scaffold_taxonomy::__implication_result_7b60fb59",
+            "operator": "implication",
+            "variables": [
+              "github:2604_03515_scaffold_taxonomy::__conjunction_result_eea44f1e",
+              "github:2604_03515_scaffold_taxonomy::keyword_state_management"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.93,
+        "reason": "*State* is the third axis named in the abstract (@structural_patterns_derived). A source-code taxonomy (@source_code_taxonomy_built) of how coding-agent scaffolds (@coding_agent_setting) handle state across implementations (@study_scope) is, by construction, a treatment of state management."
+      },
+      "premises": [
+        "github:2604_03515_scaffold_taxonomy::source_code_taxonomy_built",
+        "github:2604_03515_scaffold_taxonomy::structural_patterns_derived"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_19ba2e09b100f818",
+      "type": "support"
+    }
+  ]
+}
