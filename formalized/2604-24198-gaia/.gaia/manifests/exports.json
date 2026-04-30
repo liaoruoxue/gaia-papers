@@ -1,0 +1,120 @@
+{
+  "exports": [
+    {
+      "content": "DataPRM (4B parameters) outperforms all baselines including Qwen2.5-Math-PRM-72B (72B) and GenPRM-32B (32B). On DABStep average at N=16: DataPRM achieves 40.89% vs GenPRM 34.22% and Qwen2.5-Math-PRM-72B 29.11%. DataPRM also surpasses self-rewarding with Qwen3-235B (39.77%) despite 58× parameter efficiency.",
+      "content_hash": "9ee8d97b0493dabd027356a0ee0b3f617af8682c68655028c045e9309715fc20",
+      "label": "claim_4b_beats_72b",
+      "qid": "github:2604_24198::claim_4b_beats_72b",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM achieves 58× parameter efficiency compared to self-rewarding with Qwen3-235B-A22B-Instruct: the 4B DataPRM outperforms the 235B model's self-rewarding strategy on DABStep Hard (33.86% vs 32.80% at N=16).",
+      "content_hash": "25dd9528d0fdac7c1537c21f572abb25697bbbaa94037d7d36ee813bc16f4b97",
+      "label": "claim_58x_efficiency",
+      "qid": "github:2604_24198::claim_58x_efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "The data generation pipeline produces over 7,000 high-quality step-level supervision instances from diversity-driven trajectory generation and knowledge-augmented expert annotation.",
+      "content_hash": "d358f86f2147da52ac94fd260ae3686f2caed9a4e5553b4538cebe79f13e26e7",
+      "label": "claim_7k_instances",
+      "qid": "github:2604_24198::claim_7k_instances",
+      "type": "claim"
+    },
+    {
+      "content": "Counter-intuitively, aggressive trajectory filtering does not consistently yield better reward modeling performance. Unfiltered training data achieves 40.89% at N=16 on DABStep, outperforming all filtered variants: Meta-Critic (40.00%), Outcome-Consistency (39.77%), and Process-Consistency (39.34%). Strict filtering enhances data purity but discards diverse step-wise supervision samples, making the PRM overly conservative.",
+      "content_hash": "b446de494e9ee40e054af93d877f9d2fa0de4e0cf0d5c3c5886f6071e17f58ef",
+      "label": "claim_diversity_over_purity",
+      "qid": "github:2604_24198::claim_diversity_over_purity",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM achieves effective scaling: performance consistently improves as N increases from 4 to 8 to 16 (37.11% → 39.77% → 40.89% on DABStep average). In contrast, existing PRMs exhibit negative scaling — Qwen2.5-Math-PRM-72B degrades from 33.33% (N=8) to 31.33% (N=16).",
+      "content_hash": "df179c7c162dec26bd34555c5128be15448dd75ccfc55792bb238d482d6e73d0",
+      "label": "claim_effective_scaling",
+      "qid": "github:2604_24198::claim_effective_scaling",
+      "type": "claim"
+    },
+    {
+      "content": "Environment interaction is critical for process verification in data analysis. Ablation shows that adding code execution feedback (Single-turn Code w/ Env) improves over CoT baseline from 35.71% to 36.77% on Hard tasks at N=16. Multi-turn interaction alone provides marginal gains, but combined with environment it significantly boosts performance.",
+      "content_hash": "8f3f7a2c4e4c825ef9109921095a62f5716a639cd090d1974333760985c32160",
+      "label": "claim_env_interaction_critical",
+      "qid": "github:2604_24198::claim_env_interaction_critical",
+      "type": "claim"
+    },
+    {
+      "content": "Grounding Errors: General PRMs mistake necessary trial-and-error exploration for irrecoverable failures. When a data analysis agent's prior knowledge conflicts with actual data (e.g., using key 'dataset' when the actual key is 'Dataset'), the resulting KeyError triggers environment feedback that enables correction. General PRMs penalize these exploratory steps as incorrect, suppressing necessary environment interaction.",
+      "content_hash": "83998cb0af4d298d625d97580e2356303f77f4e22d79638d51d4c3d586ad53d3",
+      "label": "claim_grounding_errors",
+      "qid": "github:2604_24198::claim_grounding_errors",
+      "type": "claim"
+    },
+    {
+      "content": "Training with outcome-only rewards causes entropy collapse: after 200 steps, entropy decreases to approximately 0.12 and reward ceases to increase. Training with process-supervised rewards avoids this: entropy remains around 0.18 and reward continues rising steadily. More fine-grained rewards enable more thorough exploration.",
+      "content_hash": "0a924ce41481af55b0c101c01489ee1f4f1c896e0a8f3d16c6286deee63abeb9",
+      "label": "claim_no_entropy_collapse",
+      "qid": "github:2604_24198::claim_no_entropy_collapse",
+      "type": "claim"
+    },
+    {
+      "content": "The model trained with process-supervised rewards shows increased pass@3 (multi-sample accuracy), while outcome-only trained model shows no growth in pass@3. Consistently high entropy maintained during process-supervised training likely contributes to this improvement.",
+      "content_hash": "a388cfb5d1ee347ffb1cc0e2e5586d17a1d67e523d95a811b37a3997703ebd5e",
+      "label": "claim_pass3_improvement",
+      "qid": "github:2604_24198::claim_pass3_improvement",
+      "type": "claim"
+    },
+    {
+      "content": "State-of-the-art general PRMs (Math-Shepherd-7B, Qwen2.5-Math-PRM-7B/72B, ReasonFlux-PRM-7B, ThinkPRM-14B, GenPRM-32B) perform poorly on data analysis tasks. On the DABStep Hard subset, Math-Shepherd achieves only 23.28% at N=4 and degrades to 19.31% at N=16, indicating that existing PRMs cannot reliably distinguish valid reasoning from hallucinations in data analysis.",
+      "content_hash": "19fbfd06b5a564305321c33dad8d0c1c1b73f2b6a8d0734326530673357ef747",
+      "label": "claim_prm_fails_on_analysis",
+      "qid": "github:2604_24198::claim_prm_fails_on_analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Effective verification in data analysis requires the PRM to have as many contextual interaction capabilities as the solution generation agent itself. This is the design principle behind DataPRM's ReAct-based architecture: the verifier mirrors the agent's capability to execute code, read documents, and inspect visualizations.",
+      "content_hash": "f1566c7848805c1c97b7e05f9b5b0c78826f035d8fb7bf5a1768371cec500880",
+      "label": "claim_prm_mirrors_agent",
+      "qid": "github:2604_24198::claim_prm_mirrors_agent",
+      "type": "claim"
+    },
+    {
+      "content": "Existing PRMs exhibit negative scaling: as the candidate pool size N increases, performance degrades rather than improves. Qwen2.5-Math-PRM-72B drops from 33.33% (N=8) to 31.33% (N=16) on DABStep, indicating that larger candidate pools introduce more confusion rather than better selection.",
+      "content_hash": "d8a8934646ebba34f15038f55fa4e7b4ae548f00bc08814b096602ed1657baf9",
+      "label": "claim_prm_scaling_failure",
+      "qid": "github:2604_24198::claim_prm_scaling_failure",
+      "type": "claim"
+    },
+    {
+      "content": "Models trained with process-supervised rewards (DataPRM) achieve 78.73% on DABench and 64.84% on TableBench, outperforming both SFT models and models trained with outcome-only rewards. Process supervision provides a more informative training signal than outcome supervision alone.",
+      "content_hash": "5768524ecf978691109ba5708c4c6e734537a2e0d8144c885a590e6a3543d233",
+      "label": "claim_process_beats_outcome",
+      "qid": "github:2604_24198::claim_process_beats_outcome",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM resists reward hacking under beam search. While Qwen2.5-Math-PRM-72B exhibits performance degradation as beam search budget increases (33.56% → 30.89% → 32.44%), DataPRM maintains consistent improvement (35.33% → 38.00% → 38.89%). This indicates robustness against exploitative search policies.",
+      "content_hash": "49fa52e57dc482dd00311cf625ba59921ad72433df8ad80c2d67b63318325d11",
+      "label": "claim_resists_reward_hacking",
+      "qid": "github:2604_24198::claim_resists_reward_hacking",
+      "type": "claim"
+    },
+    {
+      "content": "Silent Errors: General PRMs fail to identify logical flaws in data analysis that yield incorrect results without triggering interpreter exceptions. Example: an agent claims to have drawn a 5.5 km buffer zone on a map and saves the visualization, but the buffer is not actually rendered. The code interpreter reports 'Successfully saved' — no exception is raised. General PRMs judge this step as correct.",
+      "content_hash": "5d2b43146eda7835e40db116293e0e8ef684eff3e061f7bebc33f5e2edc5b43e",
+      "label": "claim_silent_errors",
+      "qid": "github:2604_24198::claim_silent_errors",
+      "type": "claim"
+    },
+    {
+      "content": "The reflection-aware ternary reward strategy provides additional improvement beyond environment interaction. Full DataPRM (Env + Multi + Refl) achieves 37.57% on Hard tasks at N=16, compared to 36.77% for Multi-turn Code w/ Env without ternary rewards. Fine-grained scoring of exploratory steps helps select correct trajectories.",
+      "content_hash": "ee96ed02d79cc3511bd74476c3c7ec18ea93ab6b5737fa674b6681acc42b1f57",
+      "label": "claim_ternary_reward_benefit",
+      "qid": "github:2604_24198::claim_ternary_reward_benefit",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:17f52cc1b36af2216bd0775f20fb5c904fb3a38e20efe010e2d06d03e39d5a06",
+  "manifest_schema_version": 1,
+  "package": "2604-24198",
+  "version": "0.1.0"
+}

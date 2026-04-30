@@ -1,0 +1,1133 @@
+{
+  "ir_hash": "sha256:17f52cc1b36af2216bd0775f20fb5c904fb3a38e20efe010e2d06d03e39d5a06",
+  "knowledges": [
+    {
+      "content": "Process Reward Models (PRMs) provide step-level supervision during both training and inference, enabling fine-grained verification of intermediate reasoning steps. PRMs have demonstrated remarkable success in mathematical reasoning and code generation [@MathShepherd2024; @QwenPRM2025].",
+      "content_hash": "e4d65a6716fe60b2ed8c52e68cd4fb1c368c3c4f920c99da267d7a3928e5bd31",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_24198::setup_prm",
+      "label": "setup_prm",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "MathShepherd2024",
+              "QwenPRM2025"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "PRM background",
+      "type": "setting"
+    },
+    {
+      "content": "Automated data analysis agents use LLMs as backbones to generate code, execute it in interpreters, and derive evidence-based insights from complex datasets. The agent follows a ReAct paradigm: at each step it generates analysis reasoning (z), code action (a), and receives execution observation (o).",
+      "content_hash": "52fdcfc300ea5927acb971ce8155360d8b685e99cb3d4a9b70f304f4c8b182f5",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_24198::setup_data_analysis",
+      "label": "setup_data_analysis",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Data analysis agent setup",
+      "type": "setting"
+    },
+    {
+      "content": "Prevailing approaches to automated data analysis focus only on outcome supervision — verifying whether the final answer is correct — while overlooking the multi-step rigor of the analysis process.",
+      "content_hash": "3efa8037ae922fe65b8c1653a2d9bec9c84ebce24129c4075e0a20f88be82c9d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_24198::setup_outcome_only",
+      "label": "setup_outcome_only",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Outcome-only supervision paradigm",
+      "type": "setting"
+    },
+    {
+      "content": "Silent Errors: General PRMs fail to identify logical flaws in data analysis that yield incorrect results without triggering interpreter exceptions. Example: an agent claims to have drawn a 5.5 km buffer zone on a map and saves the visualization, but the buffer is not actually rendered. The code interpreter reports 'Successfully saved' — no exception is raised. General PRMs judge this step as correct.",
+      "content_hash": "5d2b43146eda7835e40db116293e0e8ef684eff3e061f7bebc33f5e2edc5b43e",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_24198::claim_silent_errors",
+      "label": "claim_silent_errors",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 1 provides concrete example (5.5km buffer not rendered despite successful save). The failure mode is well-documented and reproducible.",
+        "source_table": "artifacts/2604.24198.pdf, Table 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Silent errors in data analysis",
+      "type": "claim"
+    },
+    {
+      "content": "Grounding Errors: General PRMs mistake necessary trial-and-error exploration for irrecoverable failures. When a data analysis agent's prior knowledge conflicts with actual data (e.g., using key 'dataset' when the actual key is 'Dataset'), the resulting KeyError triggers environment feedback that enables correction. General PRMs penalize these exploratory steps as incorrect, suppressing necessary environment interaction.",
+      "content_hash": "83998cb0af4d298d625d97580e2356303f77f4e22d79638d51d4c3d586ad53d3",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_24198::claim_grounding_errors",
+      "label": "claim_grounding_errors",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Table 1 provides concrete example (KeyError 'dataset' vs 'Dataset'). The error type is clearly defined and common in data analysis.",
+        "source_table": "artifacts/2604.24198.pdf, Table 1"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Grounding errors in data analysis",
+      "type": "claim"
+    },
+    {
+      "content": "State-of-the-art general PRMs (Math-Shepherd-7B, Qwen2.5-Math-PRM-7B/72B, ReasonFlux-PRM-7B, ThinkPRM-14B, GenPRM-32B) perform poorly on data analysis tasks. On the DABStep Hard subset, Math-Shepherd achieves only 23.28% at N=4 and degrades to 19.31% at N=16, indicating that existing PRMs cannot reliably distinguish valid reasoning from hallucinations in data analysis.",
+      "content_hash": "19fbfd06b5a564305321c33dad8d0c1c1b73f2b6a8d0734326530673357ef747",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_24198::claim_prm_fails_on_analysis",
+      "label": "claim_prm_fails_on_analysis",
+      "metadata": {
+        "figure": "artifacts/2604.24198.pdf, Figure 2(a)",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_grounding_errors",
+              "claim_silent_errors"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "General PRMs fail on data analysis tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Existing PRMs exhibit negative scaling: as the candidate pool size N increases, performance degrades rather than improves. Qwen2.5-Math-PRM-72B drops from 33.33% (N=8) to 31.33% (N=16) on DABStep, indicating that larger candidate pools introduce more confusion rather than better selection.",
+      "content_hash": "d8a8934646ebba34f15038f55fa4e7b4ae548f00bc08814b096602ed1657baf9",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_24198::claim_prm_scaling_failure",
+      "label": "claim_prm_scaling_failure",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Table 2 shows consistent negative scaling across multiple PRMs (Qwen2.5-Math-PRM-72B: 33.33%→31.33%, Math-Shepherd: 23.28%→19.31%).",
+        "source_table": "artifacts/2604.24198.pdf, Table 2"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "PRM negative scaling on data analysis",
+      "type": "claim"
+    },
+    {
+      "content": "How can we effectively implement step-level process supervision for automated data analysis tasks, given that existing PRMs designed for mathematical reasoning fail on this domain?",
+      "content_hash": "8bb74538edc5789ba7ddf6d1c28ec088a2d118d073a5d2fdbcdf3d72fdc2f468",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2604_24198::q_process_supervision",
+      "label": "q_process_supervision",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "How can a PRM detect silent errors — logical flaws that produce incorrect results without triggering interpreter exceptions?",
+      "content_hash": "15374fa5b1cfd6d79946d790bd0f5e61b331da44a2593426c13ef6e246b35c59",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2604_24198::q_silent_error_detection",
+      "label": "q_silent_error_detection",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "How can a PRM distinguish between irrecoverable errors and correctable exploratory steps (grounding errors) in data analysis?",
+      "content_hash": "32026ea457d23137ad6756e54d13984c6cfe0896641fda0889de49f89faccf01",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2604_24198::q_grounding_error_distinction",
+      "label": "q_grounding_error_distinction",
+      "module": "motivation",
+      "parameters": [],
+      "type": "question"
+    },
+    {
+      "content": "DataPRM adopts the same ReAct paradigm as the data analysis agent itself. Given a trajectory $h_t$ of the policy model and its current step $\\tau_t = (z_t, a_t, o_t)$ at time $t$, the input context is $h_{t,0}^{prm} = h_t \\oplus \\tau_t$. DataPRM then engages in a multi-step internal verification loop, generating verification tuples $\\kappa_{t,k} = (\\hat{z}_k, \\hat{a}_k, \\hat{o}_k)$ at each internal step $k$, producing a final score $r_t$ and rationale $c_t$.",
+      "content_hash": "4c6ee2260d484a49ab6c85795f8ef041d11b8b63e1c398b5473bf55df52e0aff",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_24198::setup_react_prm",
+      "label": "setup_react_prm",
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "DataPRM ReAct verification paradigm",
+      "type": "setting"
+    },
+    {
+      "content": "DataPRM uses a ternary reward space $r_t \\in \\{0, 0.5, 1\\}$ instead of binary $\\{0, 1\\}$: Strictly Correct ($r_t = 1.0$) = logically sound and advances solution; Irrecoverable Error ($r_t = 0.0$) = fundamental logic flaws or hallucinations steering trajectory to dead end; Correctable Error ($r_t = 0.5$) = minor error (syntax, file path) that triggers environment feedback allowing correction.",
+      "content_hash": "145c846031cb31dcd855ffa539025e0b14adc4104664aac5f8f64b66a65cf57f",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_24198::setup_ternary_reward",
+      "label": "setup_ternary_reward",
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Ternary reward strategy",
+      "type": "setting"
+    },
+    {
+      "content": "DataPRM is equipped with two tools: query_document and query_image. These allow the verifier to query related questions about data files or visualization images through function calls, bridging internal reasoning with external perception capabilities.",
+      "content_hash": "91d2f4735d1d21bf19fee1c78a0456b7c59630098cb22c250d34193d60e60dfa",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_24198::setup_tool_augmented",
+      "label": "setup_tool_augmented",
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Tool-augmented verification",
+      "type": "setting"
+    },
+    {
+      "content": "The feedback tuple $(r_t, c_t)$ generated by DataPRM is explicitly appended to the context for the next step's verification. Given historical verification results $f_t = (r_0, c_0, r_1, c_1, \\ldots, r_{t-1}, c_{t-1})$, the input redefines as $h_{t,0}^{prm} = h_t \\oplus f_t \\oplus \\tau_t$, ensuring consistency and continuity of evaluation across steps.",
+      "content_hash": "bcdfd1bb04687baf8c17cb1aca0c530f55621756842ac1e01d66287859891aa6",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_24198::setup_verification_history",
+      "label": "setup_verification_history",
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Verification history propagation",
+      "type": "setting"
+    },
+    {
+      "content": "Environment interaction is critical for process verification in data analysis. Ablation shows that adding code execution feedback (Single-turn Code w/ Env) improves over CoT baseline from 35.71% to 36.77% on Hard tasks at N=16. Multi-turn interaction alone provides marginal gains, but combined with environment it significantly boosts performance.",
+      "content_hash": "8f3f7a2c4e4c825ef9109921095a62f5716a639cd090d1974333760985c32160",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_24198::claim_env_interaction_critical",
+      "label": "claim_env_interaction_critical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_silent_errors",
+              "setup_react_prm"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.24198.pdf, Table 3"
+      },
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Environment interaction is critical for verification",
+      "type": "claim"
+    },
+    {
+      "content": "The reflection-aware ternary reward strategy provides additional improvement beyond environment interaction. Full DataPRM (Env + Multi + Refl) achieves 37.57% on Hard tasks at N=16, compared to 36.77% for Multi-turn Code w/ Env without ternary rewards. Fine-grained scoring of exploratory steps helps select correct trajectories.",
+      "content_hash": "ee96ed02d79cc3511bd74476c3c7ec18ea93ab6b5737fa674b6681acc42b1f57",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_24198::claim_ternary_reward_benefit",
+      "label": "claim_ternary_reward_benefit",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_grounding_errors",
+              "setup_ternary_reward"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.24198.pdf, Table 3"
+      },
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Ternary reward improves trajectory selection",
+      "type": "claim"
+    },
+    {
+      "content": "Effective verification in data analysis requires the PRM to have as many contextual interaction capabilities as the solution generation agent itself. This is the design principle behind DataPRM's ReAct-based architecture: the verifier mirrors the agent's capability to execute code, read documents, and inspect visualizations.",
+      "content_hash": "f1566c7848805c1c97b7e05f9b5b0c78826f035d8fb7bf5a1768371cec500880",
+      "declaration_index": 6,
+      "exported": true,
+      "id": "github:2604_24198::claim_prm_mirrors_agent",
+      "label": "claim_prm_mirrors_agent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_grounding_errors",
+              "claim_silent_errors"
+            ]
+          }
+        }
+      },
+      "module": "s2_architecture",
+      "parameters": [],
+      "title": "Verifier should mirror agent capabilities",
+      "type": "claim"
+    },
+    {
+      "content": "For each validated query x, Qwen3-235B-A22B-Instruct generates K=4 distinct trajectories. A judge model (DeepSeek-V3.2) verifies whether final answers are inconsistent. Only trajectory sets where not all answers are identical are retained — focusing on boundary cases where PRM guidance is most needed.",
+      "content_hash": "3f188be3efe4c65c04c9ef91f2853fdd6b875d057a92e5845c10b237a47619d7",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_24198::setup_diversity_driven",
+      "label": "setup_diversity_driven",
+      "module": "s3_data",
+      "parameters": [],
+      "title": "Diversity-driven trajectory generation",
+      "type": "setting"
+    },
+    {
+      "content": "Step-level annotation uses Qwen3-235B-A22B-Instruct to score steps and perform error attribution. Similar errors are merged following AutoManual methodology. Identified errors are curated into few-shots as external knowledge for expert annotation by DeepSeek-V3.2, using the ternary reward strategy.",
+      "content_hash": "cb204fd6c43a19846348a14107a80062f520ef9c30b62ea3756a92787c53bbee",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_24198::setup_knowledge_augmented",
+      "label": "setup_knowledge_augmented",
+      "module": "s3_data",
+      "parameters": [],
+      "title": "Knowledge-augmented step-level annotation",
+      "type": "setting"
+    },
+    {
+      "content": "Counter-intuitively, aggressive trajectory filtering does not consistently yield better reward modeling performance. Unfiltered training data achieves 40.89% at N=16 on DABStep, outperforming all filtered variants: Meta-Critic (40.00%), Outcome-Consistency (39.77%), and Process-Consistency (39.34%). Strict filtering enhances data purity but discards diverse step-wise supervision samples, making the PRM overly conservative.",
+      "content_hash": "b446de494e9ee40e054af93d877f9d2fa0de4e0cf0d5c3c5886f6071e17f58ef",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_24198::claim_diversity_over_purity",
+      "label": "claim_diversity_over_purity",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The paper argues diversity > purity for training data quality, supported by the pipeline design choice to include error-containing trajectories. Plausible but the ablation is implicit rather than direct.",
+        "source_table": "artifacts/2604.24198.pdf, Table 4"
+      },
+      "module": "s3_data",
+      "parameters": [],
+      "title": "Data diversity outweighs purity for PRM training",
+      "type": "claim"
+    },
+    {
+      "content": "The data generation pipeline produces over 7,000 high-quality step-level supervision instances from diversity-driven trajectory generation and knowledge-augmented expert annotation.",
+      "content_hash": "d358f86f2147da52ac94fd260ae3686f2caed9a4e5553b4538cebe79f13e26e7",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_24198::claim_7k_instances",
+      "label": "claim_7k_instances",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Directly stated in the paper as a fact of the pipeline output."
+      },
+      "module": "s3_data",
+      "parameters": [],
+      "title": "7K supervision instances generated",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM uses Group Relative Policy Optimization (GRPO) with clip-higher and token-level loss for stable optimization. The total reward combines outcome and process rewards: $r_{\\text{total}} = (1-\\beta) \\cdot r_{\\text{outcome}} + \\beta \\cdot (\\frac{1}{T}\\sum_{t=1}^{T} r_{\\text{prm}}(\\tau_t))$. A consistency check enforces that the PRM's last-step estimate aligns with the outcome reward.",
+      "content_hash": "981bcd5d9c4564b913b9c4cdf78f718a4cf53707ff838a56d1b1ef4727e9e5f2",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_24198::setup_grpo",
+      "label": "setup_grpo",
+      "module": "s4_training",
+      "parameters": [],
+      "title": "GRPO with combined outcome-process reward",
+      "type": "setting"
+    },
+    {
+      "content": "When the PRM's final-step estimate $r_{prm}(\\tau_T)$ disagrees with the outcome reward $r_{outcome}$, the PRM score is overridden by the outcome reward. This prevents the model from learning from conflicting signals at trajectory termination.",
+      "content_hash": "4563360d818c702300abe8a4462bc0089a536904da7f1b0ae3e4a2a0c27ccadb",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_24198::setup_consistency_check",
+      "label": "setup_consistency_check",
+      "module": "s4_training",
+      "parameters": [],
+      "title": "Consistency check at trajectory end",
+      "type": "setting"
+    },
+    {
+      "content": "Models trained with process-supervised rewards (DataPRM) achieve 78.73% on DABench and 64.84% on TableBench, outperforming both SFT models and models trained with outcome-only rewards. Process supervision provides a more informative training signal than outcome supervision alone.",
+      "content_hash": "5768524ecf978691109ba5708c4c6e734537a2e0d8144c885a590e6a3543d233",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_24198::claim_process_beats_outcome",
+      "label": "claim_process_beats_outcome",
+      "metadata": {
+        "figure": "artifacts/2604.24198.pdf, Figure 5(a)",
+        "prior": 0.88,
+        "prior_justification": "Figure 5(a) shows DataPRM with process reward achieves 78.73% on DABench and 64.84% on TableBench, outperforming both SFT and outcome-only models. The experimental result is clearly demonstrated."
+      },
+      "module": "s4_training",
+      "parameters": [],
+      "title": "Process reward outperforms outcome-only reward in RL",
+      "type": "claim"
+    },
+    {
+      "content": "Training with outcome-only rewards causes entropy collapse: after 200 steps, entropy decreases to approximately 0.12 and reward ceases to increase. Training with process-supervised rewards avoids this: entropy remains around 0.18 and reward continues rising steadily. More fine-grained rewards enable more thorough exploration.",
+      "content_hash": "0a924ce41481af55b0c101c01489ee1f4f1c896e0a8f3d16c6286deee63abeb9",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_24198::claim_no_entropy_collapse",
+      "label": "claim_no_entropy_collapse",
+      "metadata": {
+        "figure": "artifacts/2604.24198.pdf, Figure 5(b)(c)",
+        "prior": 0.87,
+        "prior_justification": "Figure 5(b)(c) shows outcome-only training causes entropy to drop to ~0.12 after 200 steps with reward plateauing, while process-supervised training maintains entropy at ~0.18 with steadily rising reward."
+      },
+      "module": "s4_training",
+      "parameters": [],
+      "title": "Process reward prevents entropy collapse",
+      "type": "claim"
+    },
+    {
+      "content": "The model trained with process-supervised rewards shows increased pass@3 (multi-sample accuracy), while outcome-only trained model shows no growth in pass@3. Consistently high entropy maintained during process-supervised training likely contributes to this improvement.",
+      "content_hash": "a388cfb5d1ee347ffb1cc0e2e5586d17a1d67e523d95a811b37a3997703ebd5e",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_24198::claim_pass3_improvement",
+      "label": "claim_pass3_improvement",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_no_entropy_collapse"
+            ]
+          }
+        }
+      },
+      "module": "s4_training",
+      "parameters": [],
+      "title": "Process reward improves pass@3 via sustained exploration",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM is evaluated on ScienceAgentBench (Success Rate metric, visualization assessed by Qwen3-VL-235B) and DABStep (accuracy, with Easy and Hard subsets). For RL, evaluation uses DABench and TableBench. DataPRM is trained on Qwen3-4B-Instruct with learning rate 1e-5, batch size 32, 3 epochs, on 8×H20 GPUs.",
+      "content_hash": "73f1ba315482811ce16fdf9a759a0b044abecbeebf7e4f09755bdc4261930290",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_24198::setup_benchmarks",
+      "label": "setup_benchmarks",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Experimental setup",
+      "type": "setting"
+    },
+    {
+      "content": "Baselines include: discriminative PRMs (Math-Shepherd-7B, Qwen2.5-Math-PRM-7B/72B, ReasonFlux-PRM-7B), generative PRMs (ThinkPRM-14B, GenPRM-32B), majority voting, LLM-as-a-judge (DeepSeek-V3.2), and self-rewarding (Qwen3-235B-A22B-Instruct). All use Qwen3-235B-A22B-Instruct as the base policy model for Best-of-N evaluation.",
+      "content_hash": "0436dc3f271ddac767f3a905a1053200956a341ad49c8dbc8d2192671efdde9d",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_24198::setup_baselines",
+      "label": "setup_baselines",
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "Baseline methods",
+      "type": "setting"
+    },
+    {
+      "content": "DataPRM (4B parameters) outperforms all baselines including Qwen2.5-Math-PRM-72B (72B) and GenPRM-32B (32B). On DABStep average at N=16: DataPRM achieves 40.89% vs GenPRM 34.22% and Qwen2.5-Math-PRM-72B 29.11%. DataPRM also surpasses self-rewarding with Qwen3-235B (39.77%) despite 58× parameter efficiency.",
+      "content_hash": "9ee8d97b0493dabd027356a0ee0b3f617af8682c68655028c045e9309715fc20",
+      "declaration_index": 2,
+      "exported": true,
+      "id": "github:2604_24198::claim_4b_beats_72b",
+      "label": "claim_4b_beats_72b",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_diversity_over_purity",
+              "claim_env_interaction_critical",
+              "claim_ternary_reward_benefit"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.24198.pdf, Table 2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "4B DataPRM beats 72B baselines",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM achieves effective scaling: performance consistently improves as N increases from 4 to 8 to 16 (37.11% → 39.77% → 40.89% on DABStep average). In contrast, existing PRMs exhibit negative scaling — Qwen2.5-Math-PRM-72B degrades from 33.33% (N=8) to 31.33% (N=16).",
+      "content_hash": "df179c7c162dec26bd34555c5128be15448dd75ccfc55792bb238d482d6e73d0",
+      "declaration_index": 3,
+      "exported": true,
+      "id": "github:2604_24198::claim_effective_scaling",
+      "label": "claim_effective_scaling",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_4b_beats_72b",
+              "claim_prm_fails_on_analysis"
+            ]
+          }
+        },
+        "source_table": "artifacts/2604.24198.pdf, Table 2"
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DataPRM scales effectively with candidate pool",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM resists reward hacking under beam search. While Qwen2.5-Math-PRM-72B exhibits performance degradation as beam search budget increases (33.56% → 30.89% → 32.44%), DataPRM maintains consistent improvement (35.33% → 38.00% → 38.89%). This indicates robustness against exploitative search policies.",
+      "content_hash": "49fa52e57dc482dd00311cf625ba59921ad72433df8ad80c2d67b63318325d11",
+      "declaration_index": 4,
+      "exported": true,
+      "id": "github:2604_24198::claim_resists_reward_hacking",
+      "label": "claim_resists_reward_hacking",
+      "metadata": {
+        "figure": "artifacts/2604.24198.pdf, Figure 4",
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_env_interaction_critical",
+              "claim_prm_mirrors_agent"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "DataPRM resists reward hacking",
+      "type": "claim"
+    },
+    {
+      "content": "DataPRM achieves 58× parameter efficiency compared to self-rewarding with Qwen3-235B-A22B-Instruct: the 4B DataPRM outperforms the 235B model's self-rewarding strategy on DABStep Hard (33.86% vs 32.80% at N=16).",
+      "content_hash": "25dd9528d0fdac7c1537c21f572abb25697bbbaa94037d7d36ee813bc16f4b97",
+      "declaration_index": 5,
+      "exported": true,
+      "id": "github:2604_24198::claim_58x_efficiency",
+      "label": "claim_58x_efficiency",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_4b_beats_72b"
+            ]
+          }
+        }
+      },
+      "module": "s5_experiments",
+      "parameters": [],
+      "title": "58× parameter efficiency over self-rewarding",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_24198::claim_silent_errors,github:2604_24198::claim_grounding_errors)",
+      "content_hash": "2af3df8eb13a5f33078ae1318bebed36b2edd64b10dd02b6788bc2d02db37b57",
+      "exported": false,
+      "id": "github:2604_24198::__conjunction_result_25cbb3ef",
+      "label": "__conjunction_result_25cbb3ef",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_24198::claim_silent_errors,github:2604_24198::claim_grounding_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7693448c8e0ce483",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::__conjunction_result_25cbb3ef,github:2604_24198::claim_prm_fails_on_analysis)",
+      "content_hash": "9032ac5752c801cddc2d96fe796c362486120cffdd2db6a482e3b888ea8846a6",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_c5ab0210",
+      "label": "__implication_result_c5ab0210",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::__conjunction_result_25cbb3ef,github:2604_24198::claim_prm_fails_on_analysis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7693448c8e0ce483",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::claim_silent_errors,github:2604_24198::claim_env_interaction_critical)",
+      "content_hash": "d25332bba2fc156c659e1a5b990599000431f3efd9250fbf7b343b7122184aab",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_3592b5ad",
+      "label": "__implication_result_3592b5ad",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::claim_silent_errors,github:2604_24198::claim_env_interaction_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_baaaca27a57ecb88",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::claim_grounding_errors,github:2604_24198::claim_ternary_reward_benefit)",
+      "content_hash": "2eb213187b65dcaf92bb5c39bb2d0990b21203cfd9f5768df10754fda5f23fff",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_af451674",
+      "label": "__implication_result_af451674",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::claim_grounding_errors,github:2604_24198::claim_ternary_reward_benefit)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1a257ca731719cf7",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_24198::claim_silent_errors,github:2604_24198::claim_grounding_errors)",
+      "content_hash": "2af3df8eb13a5f33078ae1318bebed36b2edd64b10dd02b6788bc2d02db37b57",
+      "exported": false,
+      "id": "github:2604_24198::__conjunction_result_b37ad37e",
+      "label": "__conjunction_result_b37ad37e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_24198::claim_silent_errors,github:2604_24198::claim_grounding_errors)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_8e03039f206014af",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::__conjunction_result_b37ad37e,github:2604_24198::claim_prm_mirrors_agent)",
+      "content_hash": "942b6f0ca0cfd9d5adf8630b80f846cf8784962f67d9fa196cea1909b3535da8",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_8b23e132",
+      "label": "__implication_result_8b23e132",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::__conjunction_result_b37ad37e,github:2604_24198::claim_prm_mirrors_agent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8e03039f206014af",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::claim_no_entropy_collapse,github:2604_24198::claim_pass3_improvement)",
+      "content_hash": "8811a939151eca2f2dfa93e521850890c9d88479941fca28bc5c9545cde267c3",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_c7110b7d",
+      "label": "__implication_result_c7110b7d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::claim_no_entropy_collapse,github:2604_24198::claim_pass3_improvement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_30cd53bf9b05a8ad",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_24198::claim_env_interaction_critical,github:2604_24198::claim_ternary_reward_benefit,github:2604_24198::claim_diversity_over_purity)",
+      "content_hash": "aba3820a2579d26637ac5d5a9e2cbebad342a756b6fd28dc8891dc9561f825ff",
+      "exported": false,
+      "id": "github:2604_24198::__conjunction_result_67fe8806",
+      "label": "__conjunction_result_67fe8806",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_24198::claim_env_interaction_critical,github:2604_24198::claim_ternary_reward_benefit,github:2604_24198::claim_diversity_over_purity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c2a891bb49138225",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::__conjunction_result_67fe8806,github:2604_24198::claim_4b_beats_72b)",
+      "content_hash": "38f17def5e145776912e2bd3bdee003fec84af92ee72c538d5e56ff11f6d3f4b",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_42ec5210",
+      "label": "__implication_result_42ec5210",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::__conjunction_result_67fe8806,github:2604_24198::claim_4b_beats_72b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c2a891bb49138225",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_24198::claim_4b_beats_72b,github:2604_24198::claim_prm_fails_on_analysis)",
+      "content_hash": "582d64a384eb6c6fe993eb24d0fcb17c18407a0cb5e37b6c14dafaaf4e0dd7b4",
+      "exported": false,
+      "id": "github:2604_24198::__conjunction_result_93e90a25",
+      "label": "__conjunction_result_93e90a25",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_24198::claim_4b_beats_72b,github:2604_24198::claim_prm_fails_on_analysis)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_76a59da687361cad",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::__conjunction_result_93e90a25,github:2604_24198::claim_effective_scaling)",
+      "content_hash": "6b09ec30bd554668d26cd31bad280df235d736cd90ffdb0a1689b8d059251688",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_b8cef870",
+      "label": "__implication_result_b8cef870",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::__conjunction_result_93e90a25,github:2604_24198::claim_effective_scaling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_76a59da687361cad",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_24198::claim_prm_mirrors_agent,github:2604_24198::claim_env_interaction_critical)",
+      "content_hash": "3576e17365b5ab2d61b6eeea405d57eb3c996d323a88fe733c27708440d2b31a",
+      "exported": false,
+      "id": "github:2604_24198::__conjunction_result_eda5159e",
+      "label": "__conjunction_result_eda5159e",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_24198::claim_prm_mirrors_agent,github:2604_24198::claim_env_interaction_critical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_600ca3e72ce1f211",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::__conjunction_result_eda5159e,github:2604_24198::claim_resists_reward_hacking)",
+      "content_hash": "a1e60b0215234a90e533ec54aa54a64f4b924d5850af2ea567b15013fc9e9203",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_e87f9b04",
+      "label": "__implication_result_e87f9b04",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::__conjunction_result_eda5159e,github:2604_24198::claim_resists_reward_hacking)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_600ca3e72ce1f211",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_24198::claim_4b_beats_72b,github:2604_24198::claim_58x_efficiency)",
+      "content_hash": "0ee72362ebc1eaa36295f5fd1bd95da0c3f7a8127c2ad8540fb7961684a8190c",
+      "exported": false,
+      "id": "github:2604_24198::__implication_result_8f8c6412",
+      "label": "__implication_result_8f8c6412",
+      "metadata": {
+        "canonical_name": "implies(github:2604_24198::claim_4b_beats_72b,github:2604_24198::claim_58x_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_36b08c06fe8f7e40",
+        "owning_strategy_type": "support",
+        "prior": 0.87,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_architecture",
+    "s3_data",
+    "s4_training",
+    "s5_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Introduction: Motivation and Problem Statement",
+    "s2_architecture": "Section 4.1: Environment-Aware Verifier Architecture",
+    "s3_data": "Section 4.2: Step-Level Data Construction Pipeline",
+    "s4_training": "Section 4.3: End-to-End RL Training with PRM",
+    "s5_experiments": "Section 5: Main Experimental Results"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_24198",
+  "scope": "local",
+  "strategies": [
+    {
+      "background": [
+        "github:2604_24198::setup_prm"
+      ],
+      "conclusion": "github:2604_24198::claim_prm_fails_on_analysis",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__conjunction_result_25cbb3ef",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_24198::claim_silent_errors",
+              "github:2604_24198::claim_grounding_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2604_24198::__implication_result_c5ab0210",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::__conjunction_result_25cbb3ef",
+              "github:2604_24198::claim_prm_fails_on_analysis"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "General PRMs cannot detect silent errors (@claim_silent_errors) and penalize grounding errors (@claim_grounding_errors). These two failure modes compound: silent errors go undetected while correctable errors are prematurely penalized, resulting in poor trajectory selection on data analysis benchmarks."
+      },
+      "premises": [
+        "github:2604_24198::claim_silent_errors",
+        "github:2604_24198::claim_grounding_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7693448c8e0ce483",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_24198::setup_react_prm"
+      ],
+      "conclusion": "github:2604_24198::claim_env_interaction_critical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__implication_result_3592b5ad",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::claim_silent_errors",
+              "github:2604_24198::claim_env_interaction_critical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Silent errors (@claim_silent_errors) cannot be detected by text-only reasoning — the PRM must execute the code and inspect outputs to verify semantic correctness. DataPRM's ReAct paradigm (@setup_react_prm) enables this by allowing the verifier to run code in the environment, directly addressing the silent error blind spot."
+      },
+      "premises": [
+        "github:2604_24198::claim_silent_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_baaaca27a57ecb88",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2604_24198::setup_ternary_reward"
+      ],
+      "conclusion": "github:2604_24198::claim_ternary_reward_benefit",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__implication_result_af451674",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::claim_grounding_errors",
+              "github:2604_24198::claim_ternary_reward_benefit"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Grounding errors (@claim_grounding_errors) are correctable — penalizing them suppresses necessary exploration. The ternary reward (@setup_ternary_reward) distinguishes these from irrecoverable errors by assigning r=0.5 to correctable steps, allowing the agent to learn 'error → continue exploring' rather than 'error → abandon trajectory'."
+      },
+      "premises": [
+        "github:2604_24198::claim_grounding_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1a257ca731719cf7",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_prm_mirrors_agent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__conjunction_result_b37ad37e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_24198::claim_silent_errors",
+              "github:2604_24198::claim_grounding_errors"
+            ]
+          },
+          {
+            "conclusion": "github:2604_24198::__implication_result_8b23e132",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::__conjunction_result_b37ad37e",
+              "github:2604_24198::claim_prm_mirrors_agent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Silent errors require execution capability to detect (@claim_silent_errors). Grounding errors require environment interaction to distinguish from irrecoverable errors (@claim_grounding_errors). Both requirements imply the verifier needs the same interaction capabilities as the agent."
+      },
+      "premises": [
+        "github:2604_24198::claim_silent_errors",
+        "github:2604_24198::claim_grounding_errors"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8e03039f206014af",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_pass3_improvement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__implication_result_c7110b7d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::claim_no_entropy_collapse",
+              "github:2604_24198::claim_pass3_improvement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Higher sustained entropy (@claim_no_entropy_collapse) means the model maintains diverse exploration strategies throughout training. This diversity directly translates to higher pass@3 — when sampling 3 trajectories, the model is more likely to include a correct one because it hasn't collapsed into a narrow strategy."
+      },
+      "premises": [
+        "github:2604_24198::claim_no_entropy_collapse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_30cd53bf9b05a8ad",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_4b_beats_72b",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__conjunction_result_67fe8806",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_24198::claim_env_interaction_critical",
+              "github:2604_24198::claim_ternary_reward_benefit",
+              "github:2604_24198::claim_diversity_over_purity"
+            ]
+          },
+          {
+            "conclusion": "github:2604_24198::__implication_result_42ec5210",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::__conjunction_result_67fe8806",
+              "github:2604_24198::claim_4b_beats_72b"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DataPRM's superiority comes from three sources: (1) environment interaction enables detection of silent errors that text-only PRMs miss (@claim_env_interaction_critical), (2) ternary rewards correctly handle exploratory steps (@claim_ternary_reward_benefit), and (3) diversity-driven training data provides richer error patterns than filtered datasets (@claim_diversity_over_purity). These architectural and data advantages overcome the parameter gap with larger general PRMs."
+      },
+      "premises": [
+        "github:2604_24198::claim_env_interaction_critical",
+        "github:2604_24198::claim_ternary_reward_benefit",
+        "github:2604_24198::claim_diversity_over_purity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c2a891bb49138225",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_effective_scaling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__conjunction_result_93e90a25",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_24198::claim_4b_beats_72b",
+              "github:2604_24198::claim_prm_fails_on_analysis"
+            ]
+          },
+          {
+            "conclusion": "github:2604_24198::__implication_result_b8cef870",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::__conjunction_result_93e90a25",
+              "github:2604_24198::claim_effective_scaling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "DataPRM's effective scaling (@claim_4b_beats_72b) demonstrates it can distinguish correct trajectories even as the pool grows. In contrast, general PRMs' negative scaling (@claim_prm_fails_on_analysis) confirms they cannot — larger pools introduce more confusable trajectories. Task-specific training enables the discrimination that general PRMs lack."
+      },
+      "premises": [
+        "github:2604_24198::claim_4b_beats_72b",
+        "github:2604_24198::claim_prm_fails_on_analysis"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_76a59da687361cad",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_resists_reward_hacking",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__conjunction_result_eda5159e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_24198::claim_prm_mirrors_agent",
+              "github:2604_24198::claim_env_interaction_critical"
+            ]
+          },
+          {
+            "conclusion": "github:2604_24198::__implication_result_e87f9b04",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::__conjunction_result_eda5159e",
+              "github:2604_24198::claim_resists_reward_hacking"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "DataPRM's robustness to reward hacking stems from environment-grounded verification (@claim_env_interaction_critical). Unlike text-only PRMs that can be fooled by superficially correct code, DataPRM executes the code and verifies outputs. The principle that verifier must mirror agent capabilities (@claim_prm_mirrors_agent) ensures the verification is as deep as the generation."
+      },
+      "premises": [
+        "github:2604_24198::claim_prm_mirrors_agent",
+        "github:2604_24198::claim_env_interaction_critical"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_600ca3e72ce1f211",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_24198::claim_58x_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_24198::__implication_result_8f8c6412",
+            "operator": "implication",
+            "variables": [
+              "github:2604_24198::claim_4b_beats_72b",
+              "github:2604_24198::claim_58x_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.87,
+        "reason": "The 4B model outperforms 235B self-rewarding (@claim_4b_beats_72b) because task-specific PRM training + environment interaction is more parameter-efficient than scaling a general-purpose model for self-evaluation. Self-rewarding inherits the same blind spots as the policy model, while a specialized PRM learns to detect errors the policy model cannot."
+      },
+      "premises": [
+        "github:2604_24198::claim_4b_beats_72b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_36b08c06fe8f7e40",
+      "type": "support"
+    }
+  ]
+}
