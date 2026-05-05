@@ -1,0 +1,240 @@
+{
+  "ir_hash": "sha256:481bd2f2fcd5630f1267d5c68c9e29c63963fd8119cf24f3462ba0d3b183b2dc",
+  "manifest_schema_version": 1,
+  "package": "2602-00994",
+  "premises": [
+    {
+      "content": "**Structural claim.** Because $\\theta_r$ and $\\theta_a$ are **disjoint** parameter sets and each token activates exactly one of them, the gradients of reasoning and tool-use tokens are applied to **different parameters**. Hence in DART's training, the LEAS interaction indicator $x_{23}$ defined in Section 4.1 satisfies $x_{23} = 0$ identically, and the corresponding interaction coefficient $\\lambda_{23}$ is effectively zero.",
+      "content_hash": "595651a3d542f546ec6202f4de3c33be1b09f2cd35acae34a7afb3c5df9edfd1",
+      "exported": false,
+      "interface_hash": "sha256:0d2a9336d527749dce74b09bb044d39e1bcd0a92e3ac2b85a81dfbe44aa4ae1d",
+      "label": "claim_dart_zero_interaction",
+      "qid": "github:2602_00994::claim_dart_zero_interaction",
+      "required_by": [
+        "github:2602_00994::claim_contribution_dart",
+        "github:2602_00994::claim_dart_solves_gradient_conflict"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "The 6 capability vectors of $\\mathcal{M}_\\text{Base}, \\mathcal{M}_\\text{Reas}, \\mathcal{M}_\\text{Tool}, \\mathcal{M}_\\text{Unified}, \\mathcal{H}_\\text{Tool}, \\mathcal{H}_\\text{Reas}$ are **linearly independent**, so the design matrix $X \\in \\{0,1\\}^{6 \\times 6}$ is invertible and $\\lambda^q = X^{-1} z^q$ is uniquely identified for every question.",
+      "content_hash": "1bd96d6526ca47e4a82aec9564ec8ae5ed6c24767a2a8e38f60724662963587b",
+      "exported": false,
+      "interface_hash": "sha256:b86c9b8db09906bfe601d029312408aa2a57c10f047cc4f70483b095cf1e0831",
+      "label": "claim_design_matrix_invertible",
+      "qid": "github:2602_00994::claim_design_matrix_invertible",
+      "required_by": [
+        "github:2602_00994::claim_contribution_leas"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Remark 5.1 (necessity of backbone freezing).** If $W$ were trainable, gradients from reasoning and tool-use tokens would both update $W$ and re-introduce the parameter-sharing that DART is designed to eliminate -- undermining the disentanglement. Therefore freezing $W$ is structurally required.",
+      "content_hash": "81f2f6d030525127fc9ec1e867664a071313790038226fadba7cc3ff3ea73c65",
+      "exported": false,
+      "interface_hash": "sha256:72c936afa5cd370f68cf1336227d103fd2b576dc3c95d493b86736251a5ae656",
+      "label": "claim_freeze_backbone_necessary",
+      "qid": "github:2602_00994::claim_freeze_backbone_necessary",
+      "required_by": [
+        "github:2602_00994::claim_contribution_dart",
+        "github:2602_00994::claim_dart_solves_gradient_conflict"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Remark 5.1 (continued).** Freezing $W$ does not sacrifice performance, supported by two prior findings: (i) RL-based tuning primarily affects sparse subnetworks of the backbone [@Mukherjee2025], and (ii) LoRA can match full-parameter fine-tuning performance [@Schulman2025]. Both suggest that the effective RL-trainable subspace is small enough to be captured by low-rank adapters.",
+      "content_hash": "cc6c3a1fbc710fd66ce6c04f6badba8bc11dfba01398726e173516e8fd243c59",
+      "exported": false,
+      "interface_hash": "sha256:6ca2e9ed498fb0a4a85f33bc267cc0e86c8f90bc0a2321a7ec1000fd706b6197",
+      "label": "claim_freeze_no_performance_loss",
+      "qid": "github:2602_00994::claim_freeze_no_performance_loss",
+      "required_by": [
+        "github:2602_00994::claim_contribution_dart"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Hybrid models ($\\mathcal{H}_\\text{Tool}, \\mathcal{H}_\\text{Reas}$) compose two **separately trained** models at inference time. Because no parameter is updated by gradients from both capabilities, no joint-parameter interaction is induced -- so all interaction indicators involving the hybridized pair are zero by construction.",
+      "content_hash": "b08cd732be922c3f1cc10fd93cac956ed4d6a3026565d59dc03f730728eb0b84",
+      "exported": false,
+      "interface_hash": "sha256:c9eda58768a4d446810a68eecc25e96dd001f2091259bd766016780d1c29b5fc",
+      "label": "claim_hybrid_no_interaction",
+      "qid": "github:2602_00994::claim_hybrid_no_interaction",
+      "required_by": [
+        "github:2602_00994::claim_contribution_leas"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Router-driven Multi-LoRA methods (MixLoRA, MoELoRA, SiRA, MoLE) perform **soft expert mixing**: at each forward pass, the active adapters' outputs are linearly combined. Because gradients still flow through *all* mixed adapters proportionally to their routing weights, different abilities cannot be cleanly disentangled into disjoint parameter subspaces, so capability-level interference is not removed.",
+      "content_hash": "e706c88c86e992a68cb92d2413f284170c3d5cfcac1122fce2c9114119c80588",
+      "exported": false,
+      "interface_hash": "sha256:f55186bceb271e4fb55774df01446b7743d8b6b2ddfb00572b897703ac184423",
+      "label": "claim_multi_lora_cannot_disentangle",
+      "qid": "github:2602_00994::claim_multi_lora_cannot_disentangle",
+      "required_by": [
+        "github:2602_00994::claim_contribution_dart"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "Task-specific Multi-LoRA methods (LoRAHub, Modula, Customizable PEFT) assign one adapter to all tokens of a given **task**. Within a single task, all token roles share one adapter, so reasoning and tool-use tokens of the same QA task still update the same low-rank subspace -- leaving the reasoning vs. tool-use interference unaddressed.",
+      "content_hash": "86ce9f1be5acfb5e851c8c4b3e269c56481173cee5daf7aebd84a7489990f274",
+      "exported": false,
+      "interface_hash": "sha256:6e2a4a640dfa533d4867076b6f4872d9bc3836cfb4fc2659283ce8ac9c1b8d3a",
+      "label": "claim_task_lora_too_coarse",
+      "qid": "github:2602_00994::claim_task_lora_too_coarse",
+      "required_by": [
+        "github:2602_00994::claim_contribution_dart"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 6).** The 2-Agent baseline achieves the **strongest or near-strongest** EM averages on all four backbones (40.6, 40.4, 41.9, 42.0). Full parameter disentanglement (two separate models) yields the highest scores -- consistent with the LEAS prediction that disentangling the capabilities removes interference.",
+      "content_hash": "bca00a4d4a5426c96caa169d064fd556ee50b087ca577284ebe0cae351454c83",
+      "exported": false,
+      "interface_hash": "sha256:06aa5e779ea7daef9f655c5fe1d868e2803ee7b43d4a455bb895af4d3fd04835",
+      "label": "obs_2agent_strongest",
+      "qid": "github:2602_00994::obs_2agent_strongest",
+      "required_by": [
+        "github:2602_00994::claim_dart_efficient_disentanglement"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 2 overlay curve).** The ARL accuracy curve overlaid on the $\\lambda_{23}^q$ histogram shows that questions in the interference region ($\\lambda_{23}^q < 0$) consistently achieve **markedly higher** average correctness than questions in the synergy region. ARL therefore predominantly succeeds on the very questions where capabilities interfere -- i.e. the model is forced to use both skills simultaneously precisely when they compete for the same shared parameters.",
+      "content_hash": "941ed8490a287a764b85f5bbd685412af2dfe07486ee388eb66c309e9154db5f",
+      "exported": false,
+      "interface_hash": "sha256:e4a5211548aeb89359eca5654469579873140b06a65e4cd091af6eec54f0030e",
+      "label": "obs_arl_succeeds_in_interference_region",
+      "qid": "github:2602_00994::obs_arl_succeeds_in_interference_region",
+      "required_by": [
+        "github:2602_00994::claim_interference_dominates"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 6).** DART's average EM (40.5 / 39.9 / 41.6 / 41.9) is **within 1 EM point** of the 2-Agent upper bound (40.6 / 40.4 / 41.9 / 42.0) on every backbone, while using only one shared backbone. DART recovers the bulk of the disentanglement benefit at single-model cost.",
+      "content_hash": "ea4fe5be26652aaba62baaa85773242014e342f390ed0c346a1968cc2cdf609b",
+      "exported": false,
+      "interface_hash": "sha256:241640f57e2a4d2237ce5da0d7070c5095569034a16d09be3f77e1e242436e96",
+      "label": "obs_dart_approaches_2agent",
+      "qid": "github:2602_00994::obs_dart_approaches_2agent",
+      "required_by": [
+        "github:2602_00994::claim_dart_efficient_disentanglement"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 5, left panel).** On Qwen2.5-3B-Base under fixed retrieval, DART achieves EM **44.0** on NQ vs Search-R1's **26.5** (+17.5 absolute), and EM **44.6** on HotpotQA vs **37.6** (+7.0 absolute). Reasoning is improved even with retrieval held identical.",
+      "content_hash": "9c7dbdd83ae48857456642719bfb52cb2ff214543d682a8a2dc3a1208cb209aa",
+      "exported": false,
+      "interface_hash": "sha256:190a9d2f7348ac9984f1beb98fa48549a1baa215ec5f3ef6746f4dd805171cd8",
+      "label": "obs_dart_better_reasoning_3b",
+      "qid": "github:2602_00994::obs_dart_better_reasoning_3b",
+      "required_by": [
+        "github:2602_00994::claim_joint_degrades_reasoning"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 5, right panel).** On Qwen2.5-7B-Base under fixed retrieval, DART achieves EM **39.5** on NQ vs Search-R1's **32.6** (+6.9 absolute), and EM **46.0** on HotpotQA vs **40.9** (+5.1 absolute).",
+      "content_hash": "d09f02d9faba7e964b8642efed0be63684b87b4a5a09e5cfcf4b8d44a6ad7139",
+      "exported": false,
+      "interface_hash": "sha256:be14b6f76eb1ad6d43adfdf6d8d88971669c8d539d6ff85eeb8960d5de29a49e",
+      "label": "obs_dart_better_reasoning_7b",
+      "qid": "github:2602_00994::obs_dart_better_reasoning_7b",
+      "required_by": [
+        "github:2602_00994::claim_joint_degrades_reasoning"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 10).** DART achieves higher retrieval accuracy than Search-R1 on both NQ and HotpotQA across both 3B and 7B backbones:\n\n| Method         | NQ    | HotpotQA |\n|----------------|------:|---------:|\n| Search-R1-3B   | 45.6  | 40.9     |\n| Search-R1-7B   | 45.0  | 45.0     |\n| **DART-3B**    | **64.1** | **52.5** |\n| **DART-7B**    | **63.3** | **47.9** |\n\nGains of +18.5 / +18.3 / +11.6 / +2.9 retrieval-accuracy points. An interesting open observation: 7B does not consistently beat 3B on retrieval accuracy under DART.",
+      "content_hash": "83bd7cce95e85b0f389f80bd2cd4f6c5414bab5588a73ec4557198880eaf58ef",
+      "exported": false,
+      "interface_hash": "sha256:f89dac0bc69712eaead7c1473e46e601745336e6064816a78a6f867a65497154",
+      "label": "obs_dart_retrieval_acc",
+      "qid": "github:2602_00994::obs_dart_retrieval_acc",
+      "required_by": [
+        "github:2602_00994::claim_dart_improves_tool_use"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 3A and Fig. 7A).** On Qwen2.5-3B (NQ + HotpotQA) and Qwen2.5-7B (NQ + HotpotQA), the *same-role* gradient angle distribution is concentrated near small angles (typically below $30^\\circ$), while the *different-role* distribution is concentrated near $90^\\circ$ -- i.e. reasoning-token gradients and tool-use-token gradients are *near-orthogonal* on average. The 7B model exhibits a more dispersed same-role distribution (more parameters, more degrees of freedom), but the inter-role orthogonality is preserved.",
+      "content_hash": "ae556ff1bf0c9e47118b44ec8e6765b273f8719d14f426bdc0130b35a83c745b",
+      "exported": false,
+      "interface_hash": "sha256:a4ab149e167df7bce131e1c67bb06765f1bc7b1d90f7ad72d05fa2136b99c4bb",
+      "label": "obs_gradient_angles",
+      "qid": "github:2602_00994::obs_gradient_angles",
+      "required_by": [
+        "github:2602_00994::claim_gradient_conflict_explains_interference"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 2).** The histogram of question-level $\\lambda_{23}^q$ across NQ and HotpotQA, for both Qwen2.5-3B and Qwen2.5-7B, shows that interference dominates synergy. Specifically:\n\n| Model      | Dataset   | % $\\lambda_{23}^q < 0$ (interference) | % $\\lambda_{23}^q > 0$ (synergy) |\n|------------|-----------|---------------------------------------:|----------------------------------:|\n| Qwen2.5-7B | NQ        | 66.10%                                 | 33.90%                            |\n| Qwen2.5-3B | NQ        | 61.84%                                 | 38.16%                            |\n| Qwen2.5-7B | HotpotQA  | 67.24%                                 | 32.76%                            |\n| Qwen2.5-3B | HotpotQA  | 42.30%                                 | 57.70%                            |\n\nOn three of the four (model, dataset) combinations the interference share is roughly two-thirds; only Qwen2.5-3B on HotpotQA is synergy-dominant.",
+      "content_hash": "bd8b67d0fe727764f2ec54775f23bf707ea91e65b2c053ae01acf3812c1ddee5",
+      "exported": false,
+      "interface_hash": "sha256:bcbc712e98bf35f20d67287c5f984ad8fe1f3b924f168b3dfe7afa379369d264",
+      "label": "obs_lambda23_distribution",
+      "qid": "github:2602_00994::obs_lambda23_distribution",
+      "required_by": [
+        "github:2602_00994::claim_interference_dominates"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Observation (Fig. 6).** Vanilla single-LoRA performs **nearly identically** to Search-R1 across all four backbones and 7 benchmarks. The difference is within noise on the radar-chart averages (e.g. 30.3 vs 31.6 on Qwen2.5-3B-Base; 33.6 vs 36.6 on Qwen2.5-3B-Instruct; 39.6 vs 38.9 on Qwen2.5-7B-Base / Instruct).",
+      "content_hash": "76e62521dc273023857abfc29e5a013751e3a05fdfa8e96b922e5dac4c71b83b",
+      "exported": false,
+      "interface_hash": "sha256:6d8a2e5ca30c8e4a3f6be94f33bbaf76456eb91d4a09ce9ba3cfaba0601c754c",
+      "label": "obs_lora_equals_searchr1",
+      "qid": "github:2602_00994::obs_lora_equals_searchr1",
+      "required_by": [
+        "github:2602_00994::claim_dart_efficient_disentanglement"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Table 1 -- Qwen2.5-3B (Base / Instruct) results.** EM scores on each of the seven QA benchmarks; in-domain marked $\\dagger$, out-of-domain marked $\\star$.\n\n| Method                        | NQ$\\dagger$ | TriviaQA$\\star$ | PopQA$\\star$ | Gen-Avg | HotpotQA$\\dagger$ | 2Wiki$\\star$ | Musique$\\star$ | Bamboogle$\\star$ | MH-Avg | Avg |\n|-------------------------------|------------:|-----------------:|--------------:|--------:|------------------:|--------------:|----------------:|-----------------:|-------:|----:|\n| Direct Inference              | 0.106 | 0.288 | 0.108 | 0.167 | 0.149 | 0.244 | 0.020 | 0.024 | 0.109 | 0.134 |\n| CoT                           | 0.023 | 0.032 | 0.005 | 0.020 | 0.021 | 0.021 | 0.002 | 0.000 | 0.011 | 0.015 |\n| IRCoT                         | 0.111 | 0.312 | 0.200 | 0.208 | 0.164 | 0.171 | 0.067 | 0.240 | 0.161 | 0.181 |\n| Search-o1                     | 0.238 | 0.472 | 0.262 | 0.324 | 0.221 | 0.218 | 0.054 | 0.320 | 0.203 | 0.255 |\n| RAG                           | 0.348 | 0.544 | 0.387 | 0.426 | 0.255 | 0.226 | 0.047 | 0.080 | 0.152 | 0.270 |\n| SFT                           | 0.249 | 0.292 | 0.104 | 0.215 | 0.186 | 0.248 | 0.044 | 0.112 | 0.147 | 0.176 |\n| R1-base                       | 0.226 | 0.455 | 0.173 | 0.285 | 0.201 | 0.268 | 0.055 | 0.224 | 0.187 | 0.229 |\n| R1-instruct                   | 0.210 | 0.449 | 0.171 | 0.277 | 0.208 | 0.275 | 0.060 | 0.192 | 0.184 | 0.224 |\n| Rejection Sampling            | 0.294 | 0.488 | 0.332 | 0.371 | 0.240 | 0.233 | 0.059 | 0.210 | 0.186 | 0.265 |\n| Search-R1-PPO-Base            | 0.406 | 0.587 | 0.435 | 0.476 | 0.284 | 0.273 | 0.049 | 0.088 | 0.174 | 0.303 |\n| Search-R1-PPO-Ins             | 0.341 | 0.545 | 0.378 | 0.421 | 0.324 | 0.319 | 0.103 | 0.264 | 0.253 | 0.325 |\n| Search-R1-GRPO (3B-Instruct)  | 0.397 | 0.565 | 0.391 | 0.451 | 0.331 | 0.310 | 0.124 | 0.232 | 0.249 | 0.336 |\n| **DART (3B-Instruct)**        | **0.451** | **0.602** | **0.476** | **0.510** | **0.392** | **0.376** | **0.143** | **0.352** | **0.316** | **0.399** |\n| Search-R1-GRPO (3B-Base)      | 0.440 | 0.582 | 0.413 | 0.478 | 0.265 | 0.244 | 0.061 | 0.113 | 0.171 | 0.303 |\n| **DART (3B-Base)**            | **0.457** | **0.605** | **0.478** | **0.513** | **0.399** | **0.389** | **0.155** | **0.352** | **0.324** | **0.405** |",
+      "content_hash": "6ae23b367e4bb0fdc1fd2fb67b77f6e5e59e27209dfb1bd11222ae839e12a12a",
+      "exported": false,
+      "interface_hash": "sha256:0822d3678c06cb4db9fa771fb2386a4d21eabf73f6bf57ae4a988e502b90b76e",
+      "label": "table1_qwen3b",
+      "qid": "github:2602_00994::table1_qwen3b",
+      "required_by": [
+        "github:2602_00994::claim_contribution_empirical",
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Table 2 -- Qwen2.5-7B (Base / Instruct) results.** EM scores on each of the seven QA benchmarks.\n\n| Method                        | NQ$\\dagger$ | TriviaQA$\\star$ | PopQA$\\star$ | Gen-Avg | HotpotQA$\\dagger$ | 2Wiki$\\star$ | Musique$\\star$ | Bamboogle$\\star$ | MH-Avg | Avg |\n|-------------------------------|------------:|-----------------:|--------------:|--------:|------------------:|--------------:|----------------:|-----------------:|-------:|----:|\n| Direct Inference              | 0.134 | 0.408 | 0.140 | 0.227 | 0.183 | 0.250 | 0.031 | 0.120 | 0.146 | 0.181 |\n| CoT                           | 0.048 | 0.185 | 0.054 | 0.096 | 0.092 | 0.111 | 0.022 | 0.232 | 0.114 | 0.106 |\n| IRCoT                         | 0.224 | 0.478 | 0.301 | 0.334 | 0.133 | 0.149 | 0.072 | 0.224 | 0.145 | 0.239 |\n| Search-o1                     | 0.151 | 0.443 | 0.131 | 0.242 | 0.187 | 0.176 | 0.062 | 0.296 | 0.180 | 0.206 |\n| RAG                           | 0.349 | 0.585 | 0.392 | 0.442 | 0.299 | 0.235 | 0.058 | 0.208 | 0.200 | 0.304 |\n| SFT                           | 0.318 | 0.354 | 0.121 | 0.264 | 0.217 | 0.259 | 0.066 | 0.112 | 0.164 | 0.207 |\n| R1-base                       | 0.297 | 0.539 | 0.199 | 0.345 | 0.242 | 0.273 | 0.083 | 0.203 | 0.200 | 0.262 |\n| R1-instruct                   | 0.270 | 0.537 | 0.199 | 0.335 | 0.237 | 0.292 | 0.072 | 0.293 | 0.224 | 0.271 |\n| Rejection Sampling            | 0.360 | 0.592 | 0.380 | 0.444 | 0.331 | 0.296 | 0.123 | 0.355 | 0.276 | 0.348 |\n| Search-R1-PPO-Base            | 0.480 | 0.638 | 0.457 | 0.525 | 0.433 | 0.382 | 0.196 | 0.432 | 0.361 | 0.431 |\n| Search-R1-PPO-Ins             | 0.393 | 0.610 | 0.397 | 0.467 | 0.370 | 0.414 | 0.146 | 0.368 | 0.325 | 0.385 |\n| Search-R1-GRPO (7B-Instruct)  | 0.429 | 0.623 | 0.427 | 0.493 | 0.386 | 0.346 | 0.162 | 0.400 | 0.324 | 0.396 |\n| **DART (7B-Instruct)**        | **0.467** | **0.642** | **0.505** | **0.538** | **0.431** | 0.349 | **0.163** | 0.386 | **0.330** | **0.420** |\n| Search-R1-GRPO (7B-Base)      | 0.395 | 0.560 | 0.388 | 0.448 | 0.326 | 0.297 | 0.125 | 0.360 | 0.277 | 0.350 |\n| **DART (7B-Base)**            | **0.472** | **0.639** | **0.507** | **0.539** | **0.425** | **0.338** | **0.155** | **0.376** | **0.323** | **0.416** |",
+      "content_hash": "90a094e5fa78a2e1489ee1ca1ae862995089f78c7964a158a033d6c0548f5c8f",
+      "exported": false,
+      "interface_hash": "sha256:0c11915967a8849e2e4625bd17edf4e055532e4f7c38800a088da1d2e74d2a62",
+      "label": "table2_qwen7b",
+      "qid": "github:2602_00994::table2_qwen7b",
+      "required_by": [
+        "github:2602_00994::claim_contribution_empirical",
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "role": "local_hole"
+    },
+    {
+      "content": "**Table 3 -- DART (single-ability) vs Hybrid Inference.** EM scores under isolated capability evaluation:\n\n| Method                            | Qwen2.5-3B NQ | Qwen2.5-3B HotpotQA | Qwen2.5-7B NQ | Qwen2.5-7B HotpotQA |\n|-----------------------------------|--------------:|--------------------:|--------------:|--------------------:|\n| $\\mathcal{H}_\\text{Reas}$       | 0.435 | 0.324 | 0.438 | 0.327 |\n| **DART$_\\text{Reas}$**           | **0.448** | **0.359** | **0.449** | **0.412** |\n| $\\mathcal{H}_\\text{Tool}$       | 0.248 | 0.212 | 0.305 | 0.255 |\n| **DART$_\\text{Tool}$**           | **0.372** | **0.283** | **0.378** | **0.332** |\n\nDART$_\\text{Reas}$ uses only the reasoning adapter; DART$_\\text{Tool}$ only the tool-use adapter. In every (model, dataset) cell, the single-ability DART variant outperforms the corresponding inference-time hybrid composition.",
+      "content_hash": "a74174aa6c0c114fb1265497cf48c49380b8e5877018b884ee322c4cd5098e3b",
+      "exported": false,
+      "interface_hash": "sha256:8dfeeb69117b462dda7ec4961385dd209b3cf86f96f32a93c23104824bcf91c4",
+      "label": "table3_hybrid",
+      "qid": "github:2602_00994::table3_hybrid",
+      "required_by": [
+        "github:2602_00994::claim_contribution_empirical"
+      ],
+      "role": "local_hole"
+    }
+  ],
+  "version": "0.1.0"
+}

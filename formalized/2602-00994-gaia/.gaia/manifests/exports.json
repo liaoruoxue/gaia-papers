@@ -1,0 +1,78 @@
+{
+  "exports": [
+    {
+      "content": "**Contribution 2 (DART).** The paper proposes **Disentangled Action-Reasoning Tuning (DART)**, a single-model framework that freezes the pretrained backbone and attaches two disjoint LoRA [@Hu2022] adapters: one updated only by reasoning-token gradients ($\\theta_r$), the other updated only by tool-use-token gradients ($\\theta_a$). A token-level rule-based router decides which adapter is active at each decoding step, ensuring tool-use and reasoning never share trainable parameters.",
+      "content_hash": "2fc83898e80cf48eff41ea679d671747352c6aeafa913666877dde0463498bcc",
+      "label": "claim_contribution_dart",
+      "qid": "github:2602_00994::claim_contribution_dart",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 3 (empirical).** Across seven tool-augmented QA benchmarks (NQ, TriviaQA, PopQA, HotpotQA, 2WikiMultiHopQA, Musique, Bamboogle) and four backbones (Qwen2.5-3B/7B Base/Instruct), DART consistently outperforms joint-training baselines by an average **EM improvement of 6.35%+**, and approaches the performance of a 2-Agent system that uses two full models -- while requiring only one backbone.",
+      "content_hash": "a6ac3e5baba8169c74f499b4eb7d4e16ececb4c32e72811a31c5782643422515",
+      "label": "claim_contribution_empirical",
+      "qid": "github:2602_00994::claim_contribution_empirical",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 1 (LEAS).** The paper introduces the **Linear Effect Attribution System (LEAS)**, a diagnostic framework inspired by variance-based attribution [@Greene2003] that decomposes a model's question-level correctness into individual capability effects ($\\lambda_1, \\lambda_2, \\lambda_3$) and pairwise interaction effects ($\\lambda_{12}, \\lambda_{13}, \\lambda_{23}$). LEAS provides a quantitative test for whether a pair of capabilities cooperates ($\\lambda_{ij}>0$) or interferes ($\\lambda_{ij}<0$) under joint training.",
+      "content_hash": "1ba20ba2c3e2b7f31f90bca59ebb69f1576c37a4b1fb7f8713e65227ad78e15c",
+      "label": "claim_contribution_leas",
+      "qid": "github:2602_00994::claim_contribution_leas",
+      "type": "claim"
+    },
+    {
+      "content": "**Universal law (induction over four backbones).** DART's average EM exceeds Search-R1-GRPO's average EM on every tested (model size, initialization) combination: Qwen2.5-3B-Instruct (+6.3), Qwen2.5-3B-Base (+10.2), Qwen2.5-7B-Instruct (+2.4), Qwen2.5-7B-Base (+6.6). The improvement is **systematic** -- not an artefact of one favourable cell.",
+      "content_hash": "cbd460e9a3586cc642efd1885ed5d3884995ce3cbf10100f9c5a6c3ad7e1a1f7",
+      "label": "claim_dart_beats_grpo_universally",
+      "qid": "github:2602_00994::claim_dart_beats_grpo_universally",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Sec. 6.3 conclusion).** DART achieves near-2-Agent performance with a single backbone and lightweight LoRA adapters, while vanilla LoRA matches only the joint Search-R1 baseline. The combination implies that DART's *gradient-isolation design*, not *adapter capacity*, drives the gain. This is consistent with prior findings of [@Schulman2025].",
+      "content_hash": "ff27ef703ae4198be1f8e28703dab0197391acd1e1be86def6896248a52f3207",
+      "label": "claim_dart_efficient_disentanglement",
+      "qid": "github:2602_00994::claim_dart_efficient_disentanglement",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Appendix H).** DART improves not only reasoning (established by Fig. 5 / @claim_joint_degrades_reasoning) but also the *tool-use* capability itself, as measured by retrieval accuracy (@obs_dart_retrieval_acc). The gradient isolation thus benefits **both** capabilities, consistent with the LEAS interference diagnosis being symmetric.",
+      "content_hash": "e597ce4fb184c6ff04cde8d7960f8f258be34d1997cebceeb43d4457d1d6dbd9",
+      "label": "claim_dart_improves_tool_use",
+      "qid": "github:2602_00994::claim_dart_improves_tool_use",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Because reasoning and tool-use gradients are routed to disjoint parameter subsets ($\\theta_r$ vs $\\theta_a$) -- which is enforced by the hard router (@setup_dart_routing_rule), the frozen backbone (@claim_freeze_backbone_necessary), and the disjoint adapter design (@setup_dart_architecture) -- the gradient compromise identified by LEAS as the cause of interference (@claim_gradient_conflict_explains_interference) cannot occur. Each capability's gradient updates only its own adapter, eliminating the mechanistic source of $\\lambda_{23} < 0$.",
+      "content_hash": "4bfde8dab6821227d2a238385d32a214459c04fd2f0074dadf8a2fd09721b81c",
+      "label": "claim_dart_solves_gradient_conflict",
+      "qid": "github:2602_00994::claim_dart_solves_gradient_conflict",
+      "type": "claim"
+    },
+    {
+      "content": "**Mechanistic synthesis.** The near-orthogonality of reasoning vs tool-use gradients (@obs_gradient_angles) means each capability has its own distinct optimal update direction. In standard ARL, the policy gradient (@setup_policy_gradient) sums these orthogonal components, so the parameter update lies on a *compromise direction* that is sub-optimal for both reasoning and tool-use. This gradient compromise is the **mechanistic cause** of the LEAS-quantified interference (@claim_interference_dominates).",
+      "content_hash": "44f18abac10c7747406d042d4b27c9b68efe73a30885c8bd7bb75efed440f4f2",
+      "label": "claim_gradient_conflict_explains_interference",
+      "qid": "github:2602_00994::claim_gradient_conflict_explains_interference",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Across NQ and HotpotQA on Qwen2.5-3B/7B, joint ARL training of reasoning and tool-use induces a *systematic negative interaction* between the two capabilities: the average sign of $\\lambda_{23}^q$ is negative on three of four (model, dataset) settings, and the interference is concentrated on the questions ARL actually solves. This is direct quantitative evidence for the seesaw phenomenon hypothesized in Section 1 (@claim_seesaw_phenomenon).",
+      "content_hash": "e1d686c49d1c4f31dbad82191c97ef7f2dc6b0f56f6472d4a0259eac459476fa",
+      "label": "claim_interference_dominates",
+      "qid": "github:2602_00994::claim_interference_dominates",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Because retrieval quality is held constant by the fixed-retrieval protocol (@setup_fixed_retrieval_protocol), the EM gap between DART and Search-R1 in Fig. 5 must come from **reasoning quality**. Therefore joint optimization in Search-R1 *degrades* the model's reasoning capability, while DART's training-time isolation preserves it.",
+      "content_hash": "91fdc0c3bd82a0f203b36b295314ec507d48f007c6068cffdf1d18f8012136ef",
+      "label": "claim_joint_degrades_reasoning",
+      "qid": "github:2602_00994::claim_joint_degrades_reasoning",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:481bd2f2fcd5630f1267d5c68c9e29c63963fd8119cf24f3462ba0d3b183b2dc",
+  "manifest_schema_version": 1,
+  "package": "2602-00994",
+  "version": "0.1.0"
+}

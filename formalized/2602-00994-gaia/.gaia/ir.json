@@ -1,0 +1,3622 @@
+{
+  "ir_hash": "sha256:481bd2f2fcd5630f1267d5c68c9e29c63963fd8119cf24f3462ba0d3b183b2dc",
+  "knowledges": [
+    {
+      "content": "Agentic Reinforcement Learning (ARL) is a post-training paradigm in which a large language model (LLM) is trained to interleave internal reasoning with external tool execution (e.g. search, code execution, retrieval) in order to solve complex tasks. The model emits a single token sequence $\\tau = (c_1, \\ldots, c_T)$ that mixes reasoning tokens (free text chains of thought) and tool-use tokens (special-format commands such as `<search> ... </search>`). Most existing ARL methods optimize a single shared parameter set $\\theta$ on a single scalar reward objective.",
+      "content_hash": "5bb9b6b452db79e5d38581320fa312ab9fdc53e9ff4c7031eadcc53d448c928a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_arl",
+      "label": "setup_arl",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Setup: Agentic RL",
+      "type": "setting"
+    },
+    {
+      "content": "The standard ARL paradigm implicitly assumes that reasoning and tool-use are **complementary** capabilities that can both be improved by sharing a single parameter space and a single training signal. This assumption underlies methods such as Toolformer [@Schick2023], DeepSeekMath [@Shao2024], and Search-R1 [@Jin2025], which apply one RL update per trajectory regardless of token role.",
+      "content_hash": "546838f6cc523e1589182950a288b1d90dca2a7f697537dd47708a0bbe2a3755",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_joint_assumption",
+      "label": "setup_joint_assumption",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025",
+              "Schick2023",
+              "Shao2024"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Setup: the joint-training assumption",
+      "type": "setting"
+    },
+    {
+      "content": "Does jointly optimizing reasoning and tool-use over a shared parameter space actually help, or does it cause the two capabilities to interfere with each other and degrade overall performance?",
+      "content_hash": "ab4370f1524ee2a1eb70477fe2605cde7f1ce5ffae682f0d861fcceb183458ee",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::q_interference",
+      "label": "q_interference",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Does joint ARL training induce capability interference?",
+      "type": "question"
+    },
+    {
+      "content": "Reasoning tokens (which articulate logical inference in free text) and tool-use tokens (which emit structured commands triggering external side-effects) are functionally heterogeneous: they differ in vocabulary distribution, syntactic constraints, and the optimal next-token distribution conditional on context. A single shared parameter set must therefore service two qualitatively different conditional distributions.",
+      "content_hash": "64105fe0d1c59e19ccf4a1367a656b38ca09933d6e25b19b3d6b91adbddef140",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::claim_capabilities_are_heterogeneous",
+      "label": "claim_capabilities_are_heterogeneous",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_capabilities_are_heterogeneous",
+              "obs_gradient_angles"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reasoning and tool-use are heterogeneous capabilities",
+      "type": "claim"
+    },
+    {
+      "content": "Despite its widespread adoption in ARL frameworks (Toolformer [@Schick2023], DeepSeekMath [@Shao2024], Search-R1 [@Jin2025], AgentTuning), the assumption that joint optimization of reasoning and tool-use over shared parameters improves overall performance has rarely been examined empirically.",
+      "content_hash": "6efb2e893c0267b2a30a112192df645567b04215d1a70f40f631fc404597d3aa",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::claim_joint_assumption_unexamined",
+      "label": "claim_joint_assumption_unexamined",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025",
+              "Schick2023",
+              "Shao2024"
+            ],
+            "referenced_claims": [
+              "claim_joint_assumption_unexamined",
+              "claim_prior_arl_no_interference_study"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "The joint-training assumption is unexamined",
+      "type": "claim"
+    },
+    {
+      "content": "**Implicit assumption underlying standard ARL.** Joint optimization of reasoning and tool-use over a single shared parameter set produces a net improvement in overall agent performance, relative to training the two capabilities separately. This is the assumption that the paper's LEAS analysis empirically tests.",
+      "content_hash": "30f9241acec5bcf1743a63f1d539a80b772a7f27a9485a7968fd45b596e0263f",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::claim_joint_training_helps_assumed",
+      "label": "claim_joint_training_helps_assumed",
+      "metadata": {
+        "prior": 0.55,
+        "prior_justification": "Set just above 0.5 to reflect that prior to LEAS the assumption *was the prevailing view* in the ARL community (every major framework adopted it). The contradiction operator with @claim_interference_dominates will pull the posterior sharply down once the LEAS evidence flows through BP. NOT set higher because by the time of this paper the assumption is already questioned in [@Wu2025a; @Su2025] and the paper's whole purpose is to falsify it."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Implicit ARL assumption: joint training improves overall performance",
+      "type": "claim"
+    },
+    {
+      "content": "Under joint ARL optimization, reasoning and tool-use exhibit a clear **seesaw phenomenon** [@Yu2020]: improving the model's tool-use capability tends to degrade its reasoning capability and vice versa. This is the qualitative observation that motivates the paper.",
+      "content_hash": "57149f4845ec45456c58db108696321171a63e2e67bf955e38e263453f5d2ff9",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_00994::claim_seesaw_phenomenon",
+      "label": "claim_seesaw_phenomenon",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Yu2020"
+            ],
+            "referenced_claims": [
+              "claim_interference_dominates",
+              "claim_seesaw_phenomenon"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Seesaw phenomenon: tool-use and reasoning trade off",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 1 (LEAS).** The paper introduces the **Linear Effect Attribution System (LEAS)**, a diagnostic framework inspired by variance-based attribution [@Greene2003] that decomposes a model's question-level correctness into individual capability effects ($\\lambda_1, \\lambda_2, \\lambda_3$) and pairwise interaction effects ($\\lambda_{12}, \\lambda_{13}, \\lambda_{23}$). LEAS provides a quantitative test for whether a pair of capabilities cooperates ($\\lambda_{ij}>0$) or interferes ($\\lambda_{ij}<0$) under joint training.",
+      "content_hash": "1ba20ba2c3e2b7f31f90bca59ebb69f1576c37a4b1fb7f8713e65227ad78e15c",
+      "declaration_index": 7,
+      "exported": true,
+      "id": "github:2602_00994::claim_contribution_leas",
+      "label": "claim_contribution_leas",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Greene2003",
+              "Li2026"
+            ],
+            "referenced_claims": [
+              "claim_contrast_isolates_lambda23",
+              "claim_design_matrix_invertible",
+              "claim_gradient_conflict_explains_interference",
+              "claim_hybrid_no_interaction",
+              "claim_interference_dominates"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 1: LEAS as quantitative interference diagnostic",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 2 (DART).** The paper proposes **Disentangled Action-Reasoning Tuning (DART)**, a single-model framework that freezes the pretrained backbone and attaches two disjoint LoRA [@Hu2022] adapters: one updated only by reasoning-token gradients ($\\theta_r$), the other updated only by tool-use-token gradients ($\\theta_a$). A token-level rule-based router decides which adapter is active at each decoding step, ensuring tool-use and reasoning never share trainable parameters.",
+      "content_hash": "2fc83898e80cf48eff41ea679d671747352c6aeafa913666877dde0463498bcc",
+      "declaration_index": 8,
+      "exported": true,
+      "id": "github:2602_00994::claim_contribution_dart",
+      "label": "claim_contribution_dart",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hu2022",
+              "Li2026",
+              "Mukherjee2025",
+              "Schulman2025"
+            ],
+            "referenced_claims": [
+              "claim_dart_distinct_from_moe",
+              "claim_dart_zero_interaction",
+              "claim_freeze_backbone_necessary",
+              "claim_freeze_no_performance_loss"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 2: DART as gradient-isolated single model",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 3 (empirical).** Across seven tool-augmented QA benchmarks (NQ, TriviaQA, PopQA, HotpotQA, 2WikiMultiHopQA, Musique, Bamboogle) and four backbones (Qwen2.5-3B/7B Base/Instruct), DART consistently outperforms joint-training baselines by an average **EM improvement of 6.35%+**, and approaches the performance of a 2-Agent system that uses two full models -- while requiring only one backbone.",
+      "content_hash": "a6ac3e5baba8169c74f499b4eb7d4e16ececb4c32e72811a31c5782643422515",
+      "declaration_index": 9,
+      "exported": true,
+      "id": "github:2602_00994::claim_contribution_empirical",
+      "label": "claim_contribution_empirical",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_beats_grpo_universally",
+              "claim_dart_efficient_disentanglement",
+              "claim_dart_improves_tool_use",
+              "claim_disentanglement_not_replicable_at_inference",
+              "obs_dart_average_gain"
+            ]
+          }
+        }
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Contribution 3: 6.35%+ average EM improvement over baselines",
+      "type": "claim"
+    },
+    {
+      "content": "Prior ARL research has focused on three complementary axes: (i) reward design that elicits emergent tool-use behaviour; (ii) policy refinement for action interleaving; (iii) large-scale trajectory synthesis for scalable training. Representative systems include Toolformer [@Schick2023], Search-R1 [@Jin2025], and DeepSeekMath [@Shao2024].",
+      "content_hash": "0962aecf89a3f353fcc69fe351a8a0e5785e2fc76ec7798b7fc01290c7014d92",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_prior_arl_focus",
+      "label": "setup_prior_arl_focus",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025",
+              "Schick2023",
+              "Shao2024"
+            ]
+          }
+        }
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "Setup: prior ARL focuses on rewards, policy, and trajectories",
+      "type": "setting"
+    },
+    {
+      "content": "The Multi-LoRA paradigm attaches several LoRA [@Hu2022] adapters to a shared frozen backbone. A *router* (learned or rule-based) decides which adapter(s) are active for a given input or token. Two main design families exist: (a) *router-driven mixtures* such as MixLoRA and MoELoRA, which softly combine adapter outputs; and (b) *task-specific selection*, such as LoRAHub and Modula, which dedicate one adapter to one task.",
+      "content_hash": "8d9c31736f916374456eb1b67ae1522e37fec53b23dc0b0fb6aa69c07e3d1c44",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_multi_lora_paradigm",
+      "label": "setup_multi_lora_paradigm",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hu2022"
+            ]
+          }
+        }
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "Setup: the Multi-LoRA paradigm",
+      "type": "setting"
+    },
+    {
+      "content": "Although prior ARL methods (Toolformer [@Schick2023], DeepSeekMath [@Shao2024], Search-R1 [@Jin2025], AgentTuning) optimize many components of the agent training pipeline, none of them empirically study whether reasoning and tool-use capabilities **interfere with each other** during joint optimization, or whether such interference could degrade overall performance. This is the gap the present paper fills with LEAS.",
+      "content_hash": "a42b0352a831ae324f297018a913f3d51e79835921e6d0c6b1e59ac35c6c388d",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::claim_prior_arl_no_interference_study",
+      "label": "claim_prior_arl_no_interference_study",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025",
+              "Schick2023",
+              "Shao2024"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "A negative-existence claim about the prior literature. The authors review the major ARL systems (Toolformer, DeepSeekMath, Search-R1, AgentTuning) and confirm none target interference. Lower than 0.95 because exhaustive negative claims about the literature are inherently subject to revision (some niche prior work might address it)."
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "Prior ARL work does not study reasoning--tool interference",
+      "type": "claim"
+    },
+    {
+      "content": "Router-driven Multi-LoRA methods (MixLoRA, MoELoRA, SiRA, MoLE) perform **soft expert mixing**: at each forward pass, the active adapters' outputs are linearly combined. Because gradients still flow through *all* mixed adapters proportionally to their routing weights, different abilities cannot be cleanly disentangled into disjoint parameter subspaces, so capability-level interference is not removed.",
+      "content_hash": "e706c88c86e992a68cb92d2413f284170c3d5cfcac1122fce2c9114119c80588",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::claim_multi_lora_cannot_disentangle",
+      "label": "claim_multi_lora_cannot_disentangle",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "The soft-mixing property of router-driven Multi-LoRA (gradients flow through every active adapter) is well-documented in the MoELoRA / MixLoRA / MoLE literature. The conclusion that this *cannot* disentangle interfering capabilities is a slightly stronger claim than the architectural fact, so prior is 0.88 rather than 0.95. The DART paper supports it indirectly via the LoRA = Search-R1 ablation in Fig. 6."
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "Soft expert mixing in Multi-LoRA does not disentangle interference",
+      "type": "claim"
+    },
+    {
+      "content": "Task-specific Multi-LoRA methods (LoRAHub, Modula, Customizable PEFT) assign one adapter to all tokens of a given **task**. Within a single task, all token roles share one adapter, so reasoning and tool-use tokens of the same QA task still update the same low-rank subspace -- leaving the reasoning vs. tool-use interference unaddressed.",
+      "content_hash": "86ce9f1be5acfb5e851c8c4b3e269c56481173cee5daf7aebd84a7489990f274",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::claim_task_lora_too_coarse",
+      "label": "claim_task_lora_too_coarse",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Architectural fact: task-specific Multi-LoRA methods (LoRAHub, Modula) by design assign one adapter per task, so within a single task all token roles share one adapter. This is definitionally true for these methods."
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "Task-level LoRA selection still mixes reasoning and tool-use",
+      "type": "claim"
+    },
+    {
+      "content": "In contrast to both prior families, DART (this work) routes adapters at the **token** level *within a single ARL task*: each token activates exactly one of two disjoint LoRA adapters depending on whether it is a reasoning or a tool-use token. This token-granularity routing is what makes the disentanglement effective.",
+      "content_hash": "3e238965c2800b4a4fc0d937785cf1651925e9e8b76937345262843de8e7ce1e",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::claim_dart_distinguishes_at_token",
+      "label": "claim_dart_distinguishes_at_token",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_distinguishes_at_token",
+              "claim_multi_lora_cannot_disentangle",
+              "claim_task_lora_too_coarse"
+            ]
+          }
+        }
+      },
+      "module": "s2_related_work",
+      "parameters": [],
+      "title": "DART's distinction: token-level routing inside one task",
+      "type": "claim"
+    },
+    {
+      "content": "An LLM agent $\\pi_\\theta(c_t \\mid c_{<t})$ generates a trajectory $\\tau = (c_1, \\ldots, c_T)$ for an input query $q$, where each $c_t$ is a token. The trajectory interleaves reasoning tokens and tool-use tokens.",
+      "content_hash": "2c1601e1adb2e58d4e663de6563f8f2c06158cc437b20f9b5cfd5584a5d6fe6a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_trajectory",
+      "label": "setup_trajectory",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Trajectory definition (Eq. 1)",
+      "type": "setting"
+    },
+    {
+      "content": "A **role-based router** is a deterministic function $\\ell : \\{1, \\ldots, T\\} \\to \\{r, a\\}$, where $\\ell(t)=r$ marks token $c_t$ as a reasoning token and $\\ell(t)=a$ marks it as a tool-use (action) token. In Search-R1 / DART, role boundaries are identified deterministically by special tokens such as `<think>`, `</think>`, `<search>`, `</search>`.",
+      "content_hash": "e48d06dd80cd3cd6a13a45a9f080bf707c3935c6686caf031cd8a0c29244fcdc",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_role_router",
+      "label": "setup_role_router",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Role-based router $\\ell$",
+      "type": "setting"
+    },
+    {
+      "content": "The policy is optimized to maximize the expected reward $J(\\theta) = \\mathbb{E}[R(\\tau)]$. Its gradient is estimated as $$\\nabla_\\theta J(\\theta) \\approx \\mathbb{E}_{\\tau \\sim \\pi_\\theta}\\Big[ A(\\tau) \\sum_{t=1}^T \\nabla_\\theta \\log \\pi_\\theta(c_t \\mid c_{<t}) \\Big]$$ (Eq. 2), where $A(\\tau)$ is the advantage derived from $R(\\tau)$. In standard ARL the same parameter set $\\theta$ is updated using gradients from **both** reasoning and tool-use tokens, ignoring the role function $\\ell$.",
+      "content_hash": "e7e1c49a9d0981b8f8ad16dd263dbc5ccc5d6631b0cac1254a7f0f20c3507334",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::setup_policy_gradient",
+      "label": "setup_policy_gradient",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Policy-gradient objective (Eq. 2)",
+      "type": "setting"
+    },
+    {
+      "content": "A **token-level mask** $m = [m_1, \\ldots, m_T] \\in \\{0,1\\}^T$ can be inserted into Eq. 2 to selectively isolate parameter updates: $$\\nabla_\\theta J(\\theta) \\approx \\mathbb{E}_{\\tau \\sim \\pi_\\theta}\\Big[ \\sum_{t=1}^T \\nabla_\\theta \\log \\pi_\\theta(c_t \\mid c_{<t}) \\cdot A(\\tau) \\cdot m_t \\Big]$$ (Eq. 8). With $m_t \\equiv 1$ this recovers Eq. 2; with $m_t = \\mathbb{1}(t \\in \\mathcal{T}_\\text{reas})$ only reasoning tokens contribute, etc. This mask is the basic primitive behind both LEAS's gradient-masked training and DART.",
+      "content_hash": "a0e6df8c8396a59206000c771c2a52b2da19889ee4b238ec71061a83d1f97e4e",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::setup_masked_objective",
+      "label": "setup_masked_objective",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Token-level masked policy gradient (Eq. 8)",
+      "type": "setting"
+    },
+    {
+      "content": "Define $\\mathcal{T}_\\text{reas} = \\{t : \\ell(t)=r\\}$ and $\\mathcal{T}_\\text{tool} = \\{t : \\ell(t)=a\\}$. These two sets form a disjoint partition of the trajectory's loss-bearing tokens.",
+      "content_hash": "b0eb2df421bb1621d7bdf69b87806dd986d32d17ca08404e33a2a7ec50110c3b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::setup_token_partition",
+      "label": "setup_token_partition",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Token-role partition $\\mathcal{T}_\\text{reas}, \\mathcal{T}_\\text{tool}$",
+      "type": "setting"
+    },
+    {
+      "content": "All experiments use the standard RLHF KL-regularized objective $J(\\theta) = \\mathbb{E}_\\tau [R(\\tau) - \\beta\\, \\mathrm{KL}(\\pi_\\theta \\Vert \\pi_\\text{ref})]$ (Eq. 11) with fixed $\\beta = 0.001$ (Appendix A, B). The KL term acts as a token-level penalty discouraging large deviations from the reference policy. It is omitted from the main-text formulas for clarity but is active in all reported experiments.",
+      "content_hash": "2e8e5ce8d0115046c714e375baaefb068e30787fd82e9d9eed39786630674d95",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::setup_kl_regularizer",
+      "label": "setup_kl_regularizer",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "KL-regularized objective (Eqs. 11-12, omitted from main text)",
+      "type": "setting"
+    },
+    {
+      "content": "**Low-Rank Adaptation (LoRA)** [@Hu2022] freezes the pretrained weight matrix $W \\in \\mathbb{R}^{d \\times k}$ and introduces a low-rank trainable update $\\Delta W = B A$ with $B \\in \\mathbb{R}^{d \\times r}$, $A \\in \\mathbb{R}^{r \\times k}$, $r \\ll \\min(d,k)$. The forward pass becomes $h'_t = W h_t + B A h_t$ (Eq. 3). Only $A, B$ are updated during training. Standard LoRA applies the same $\\Delta W$ to **all** tokens of a trajectory.",
+      "content_hash": "06a981eb80a4fa34536953d05e2083468ad0612b485e94ef29dbac3e0306e75c",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_00994::setup_lora",
+      "label": "setup_lora",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hu2022"
+            ]
+          }
+        }
+      },
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "LoRA (Eq. 3)",
+      "type": "setting"
+    },
+    {
+      "content": "All experiments use a rule-based outcome reward: $r_\\phi(x, y) = \\mathrm{EM}(a_\\text{pred}, a_\\text{gold})$ (Eq. 13), where $a_\\text{pred}$ is the answer extracted from response $y$ and $a_\\text{gold}$ is the ground-truth answer. EM is the unique training signal -- no intermediate or format-based rewards are used.",
+      "content_hash": "7953e9271f9c2a20d75ac039f7ed6cf50909252af5c5e238fd0b124b3c655a11",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_00994::setup_em_reward",
+      "label": "setup_em_reward",
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "Exact-Match reward (Eq. 13)",
+      "type": "setting"
+    },
+    {
+      "content": "RL training uses GRPO via Verl [@Sheng2025] on Qwen2.5 backbones with an E5 retriever over the 2018 Wikipedia dump. Fixed hyperparameters: 100 optimization steps, rollout batch size 256, gradient batch size 64, temperature 1.0, top-$p$ 1.0, learning rate $1\\times10^{-6}$ (LoRA variants scaled $10\\times$ per [@Schulman2025]), KL coefficient $\\beta=0.001$, clip ratio $\\epsilon=0.2$, action budget $B=4$, top-3 retrieved passages. 8x NVIDIA A800 GPUs. BF16 + FlashAttention-2 + gradient checkpointing + FSDP offload + vLLM rollouts.",
+      "content_hash": "3ea8d082e4dfb3b3ac8b3c9f828d48c339643316ceb515901a8bef073f1a679e",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_00994::setup_grpo_training",
+      "label": "setup_grpo_training",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Schulman2025",
+              "Sheng2025"
+            ]
+          }
+        }
+      },
+      "module": "s3_preliminaries",
+      "parameters": [],
+      "title": "GRPO training setup (Appendix B.1)",
+      "type": "setting"
+    },
+    {
+      "content": "**Definition 4.1 (capability indicators).** An agent's capabilities are encoded by three binary indicators: base capability $x_1$, tool-use $x_2$, and reasoning $x_3$. Each $x_i \\in \\{0,1\\}$.",
+      "content_hash": "9b58248d2eb4d9d370815bdfb1d27cee4ce7e6c5abef5616d8081f5daf57b7b5",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_capability_indicators",
+      "label": "setup_capability_indicators",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Definition 4.1: capability indicators $x_1, x_2, x_3$",
+      "type": "setting"
+    },
+    {
+      "content": "**Definition 4.2 (interaction indicators).** Pairwise interaction indicators $x_{ij} \\in \\{0,1\\}$ are set to 1 if and only if capabilities $i$ and $j$ are *jointly optimized in the same parameter subspace*, and 0 otherwise. Hybrid inference (composing separately trained models at decoding time) does **not** activate any interaction indicator.",
+      "content_hash": "363c8c41e83f8f91ef85a1c1e78f2fe83a8a3888d5c755af25f64ee7e60c1f40",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_interaction_indicators",
+      "label": "setup_interaction_indicators",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Definition 4.2: pairwise interaction indicators $x_{12}, x_{13}, x_{23}$",
+      "type": "setting"
+    },
+    {
+      "content": "**Capability indicator vector.** Each model $\\mathcal{M}$ is associated with a fixed binary vector $x_\\mathcal{M} = [x_1, x_2, x_3, x_{12}, x_{13}, x_{23}] \\in \\{0,1\\}^6$ (Eq. 4).",
+      "content_hash": "5644d518bd6bfa509e49f6422059d3c63e11b0407dedc132de13382aff2fee7f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::setup_capability_vector",
+      "label": "setup_capability_vector",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Capability vector $x_\\mathcal{M}$ (Eq. 4)",
+      "type": "setting"
+    },
+    {
+      "content": "**Assumption 4.3 (logit model).** The expected correctness of model $\\mathcal{M}$ on question $q$ is modeled as $$s^q_\\mathcal{M} = \\sigma(x_\\mathcal{M}^\\top \\lambda^q),\\qquad \\lambda^q = [\\lambda_1^q, \\lambda_2^q, \\lambda_3^q, \\lambda_{12}^q, \\lambda_{13}^q, \\lambda_{23}^q]$$ (Eq. 5), where $\\sigma$ is the sigmoid. $\\lambda_i^q$ are *main effects*, $\\lambda_{ij}^q$ are *interaction effects*. The model is used for **attribution** (sign of $\\lambda_{ij}^q$), not for prediction.",
+      "content_hash": "f4505670c27fe3b8818c4bea7044486c1f52aa9a1353184c7920862d81bfd545",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::setup_logit_model",
+      "label": "setup_logit_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Assumption 4.3: logit-additive correctness model (Eq. 5)",
+      "type": "setting"
+    },
+    {
+      "content": "Applying the logit transform to Eq. 5 gives a linear equation $z^q_\\mathcal{M} = \\log \\frac{s^q_\\mathcal{M}}{1-s^q_\\mathcal{M}} = x_\\mathcal{M}^\\top \\lambda^q$ (Eq. 6). Stacking six such equations yields the linear system $z^q = X \\lambda^q$ (Eq. 7), where $X$ is the **design matrix** whose rows are the six capability vectors.",
+      "content_hash": "eb4f92af556eac618a15149f95540f15a5b36d431d9870fef616e579215ae462",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::setup_logit_transform",
+      "label": "setup_logit_transform",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Linear system $z^q = X \\lambda^q$ (Eqs. 6-7)",
+      "type": "setting"
+    },
+    {
+      "content": "To uniquely identify $\\lambda^q \\in \\mathbb{R}^6$, the six rows of $X$ must be **linearly independent**. The six model variants in Section 4.2 are constructed to satisfy this.",
+      "content_hash": "ecac2762cc764904be7c594cd462c49afa4de31d51de9363ea9f92ddfdb3fe9c",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::setup_identifiability_condition",
+      "label": "setup_identifiability_condition",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Identifiability requires six linearly-independent capability vectors",
+      "type": "setting"
+    },
+    {
+      "content": "**Remark 4.4.** Although Eq. 5 superficially resembles logistic regression, LEAS uses it for **attribution rather than prediction**: the goal is to identify the *sign* of $\\lambda_{ij}^q$ ($\\lambda_{ij}^q > 0$ = synergy; $\\lambda_{ij}^q < 0$ = interference) -- not to model absolute correctness probabilities.",
+      "content_hash": "80200fb6e33b868dd1dcbcf6c4da9493ee0ed0a82ce451b3254d4c02057ac213",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_00994::setup_attribution_only",
+      "label": "setup_attribution_only",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Remark 4.4: LEAS does attribution, not prediction",
+      "type": "setting"
+    },
+    {
+      "content": "**Closed-form contrast (Appendix C, Eq. 19).** Plugging the four capability vectors $x_\\text{Uni}, x_\\text{Tool}, x_\\text{Reas}, x_\\text{Base}$ (defined in Section 4.2) into Eq. 5 gives $\\lambda_{23}^q = z^q_\\text{Uni} - z^q_\\text{Tool} - z^q_\\text{Reas} + z^q_\\text{Base}$. Equivalently (Eq. 20), $\\lambda_{23}^q = (z^q_\\text{Uni} - z^q_\\text{Base}) - [(z^q_\\text{Tool} - z^q_\\text{Base}) + (z^q_\\text{Reas} - z^q_\\text{Base})]$ -- the joint improvement minus the sum of the individual improvements.",
+      "content_hash": "d5a668b24180ac6285e792c7e95d4f2307456135bef1ab9972efe286dde76a5a",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_00994::setup_contrast_formula",
+      "label": "setup_contrast_formula",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Contrast: $\\lambda_{23}^q = z_\\text{Uni} - z_\\text{Tool} - z_\\text{Reas} + z_\\text{Base}$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 1 -- $\\mathcal{M}_\\text{Base}$.** The off-the-shelf pretrained Qwen2.5-Instruct model with no tool-use or reasoning post-training. Capability vector $x_\\text{Base} = [1,0,0,0,0,0]$.",
+      "content_hash": "633854cf2bb534b83c00295c4447afab9ebd53e8cd7fb0cdfc8f6f3ade89fe62",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_00994::setup_base_model",
+      "label": "setup_base_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{M}_\\text{Base}$: pretrained backbone, $x = [1,0,0,0,0,0]$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 2 -- $\\mathcal{M}_\\text{Reas}$ (reasoning-specialized).** Trained from $\\mathcal{M}_\\text{Base}$ using the gradient mask $m_t^{(\\text{Reas})} = \\mathbb{1}(t \\in \\mathcal{T}_\\text{reas})$ in Eq. 8. Only reasoning-token gradients update the parameters; tool-use is unaltered. Capability vector $x_\\text{Reas} = [1,0,1,0,1,0]$.",
+      "content_hash": "09cb24910f758de22701211957d1d35485efc2f1f64486294428662df83fb184",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_00994::setup_reas_model",
+      "label": "setup_reas_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{M}_\\text{Reas}$: reasoning-only update, $x = [1,0,1,0,1,0]$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 3 -- $\\mathcal{M}_\\text{Tool}$ (tool-specialized).** Same construction but with mask $m_t^{(\\text{Tool})} = \\mathbb{1}(t \\in \\mathcal{T}_\\text{tool})$. Only tool-use-token gradients update the parameters; reasoning behaviour is unaltered. Capability vector $x_\\text{Tool} = [1,1,0,1,0,0]$.",
+      "content_hash": "db467c78e134e83780131cbdf0bfb692078d09e6f42b601142db506d6bcba234",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_00994::setup_tool_model",
+      "label": "setup_tool_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{M}_\\text{Tool}$: tool-only update, $x = [1,1,0,1,0,0]$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 4 -- $\\mathcal{M}_\\text{Unified}$.** Standard joint ARL training: mask $m_t^{(\\text{Uni})} \\equiv 1$. Both reasoning and tool-use gradients update the same parameters. Capability vector $x_\\text{Unified} = [1,1,1,1,1,1]$ -- all individual and pairwise interaction terms active.",
+      "content_hash": "0207b4d1feefb2b47886452ac8c7185251e5f9759d2ddb22dd425daa558bd506",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2602_00994::setup_unified_model",
+      "label": "setup_unified_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{M}_\\text{Unified}$: standard ARL, $x = [1,1,1,1,1,1]$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 5 -- $\\mathcal{H}_\\text{Tool}$ (tool-hybrid inference).** Composed at inference only: $\\mathcal{M}_\\text{Base}$ produces reasoning tokens, $\\mathcal{M}_\\text{Tool}$ produces tool-use tokens. No joint optimization, so all tool-use interaction indicators are zero. Capability vector $x_{\\mathcal{H}_\\text{Tool}} = [1,1,0,0,0,0]$.",
+      "content_hash": "6ea3acd97e600b2b8bc0d6828566135d38a884e9161def0bef95321484fb662a",
+      "declaration_index": 12,
+      "exported": false,
+      "id": "github:2602_00994::setup_htool_model",
+      "label": "setup_htool_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{H}_\\text{Tool}$: hybrid inference, $x = [1,1,0,0,0,0]$",
+      "type": "setting"
+    },
+    {
+      "content": "**Model 6 -- $\\mathcal{H}_\\text{Reas}$ (reasoning-hybrid inference).** Composed at inference only: $\\mathcal{M}_\\text{Reas}$ produces reasoning tokens, $\\mathcal{M}_\\text{Base}$ produces tool-use tokens. Capability vector $x_{\\mathcal{H}_\\text{Reas}} = [1,0,1,0,0,0]$.",
+      "content_hash": "df6726a3d27a0105210fa7bead100ca80d52f9dd9ffff5b6cbd7a4ae4a3c5eb6",
+      "declaration_index": 13,
+      "exported": false,
+      "id": "github:2602_00994::setup_hreas_model",
+      "label": "setup_hreas_model",
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "$\\mathcal{H}_\\text{Reas}$: hybrid inference, $x = [1,0,1,0,0,0]$",
+      "type": "setting"
+    },
+    {
+      "content": "The 6 capability vectors of $\\mathcal{M}_\\text{Base}, \\mathcal{M}_\\text{Reas}, \\mathcal{M}_\\text{Tool}, \\mathcal{M}_\\text{Unified}, \\mathcal{H}_\\text{Tool}, \\mathcal{H}_\\text{Reas}$ are **linearly independent**, so the design matrix $X \\in \\{0,1\\}^{6 \\times 6}$ is invertible and $\\lambda^q = X^{-1} z^q$ is uniquely identified for every question.",
+      "content_hash": "1bd96d6526ca47e4a82aec9564ec8ae5ed6c24767a2a8e38f60724662963587b",
+      "declaration_index": 14,
+      "exported": false,
+      "id": "github:2602_00994::claim_design_matrix_invertible",
+      "label": "claim_design_matrix_invertible",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Direct linear-algebra check: the six 6-dim binary capability vectors of the LEAS construction are visibly independent (the design matrix can be exhibited and its determinant computed). The author asserts identifiability and the construction is explicit; very high prior."
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "The six capability vectors are linearly independent",
+      "type": "claim"
+    },
+    {
+      "content": "Hybrid models ($\\mathcal{H}_\\text{Tool}, \\mathcal{H}_\\text{Reas}$) compose two **separately trained** models at inference time. Because no parameter is updated by gradients from both capabilities, no joint-parameter interaction is induced -- so all interaction indicators involving the hybridized pair are zero by construction.",
+      "content_hash": "b08cd732be922c3f1cc10fd93cac956ed4d6a3026565d59dc03f730728eb0b84",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2602_00994::claim_hybrid_no_interaction",
+      "label": "claim_hybrid_no_interaction",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Definitional: hybrid models are constructed by composing two *separately trained* models at inference time. By the LEAS interaction-indicator definition (Def. 4.2), $x_{ij} = 1$ requires *joint optimization* in shared parameter space; inference-time composition does not satisfy this, so the indicator is 0 by construction."
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Hybrid composition induces no joint-parameter interaction",
+      "type": "claim"
+    },
+    {
+      "content": "From Appendix C: substituting the four capability vectors $x_\\text{Uni}, x_\\text{Tool}, x_\\text{Reas}, x_\\text{Base}$ into $z^q_\\mathcal{M} = x_\\mathcal{M}^\\top \\lambda^q$ and forming the alternating sum $z^q_\\text{Uni} - z^q_\\text{Tool} - z^q_\\text{Reas} + z^q_\\text{Base}$ leaves only the $\\lambda_{23}^q$ term: every main effect and every other interaction effect cancels by construction. Hence $\\lambda_{23}^q$ is identified by a 4-model contrast that does not require the hybrid models.",
+      "content_hash": "d52bd2e9929c0d58f553643bbb646c961f6521872193e244a60b3417070b8fba",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2602_00994::claim_contrast_isolates_lambda23",
+      "label": "claim_contrast_isolates_lambda23",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_design_matrix_invertible",
+              "setup_base_model",
+              "setup_capability_vector",
+              "setup_contrast_formula",
+              "setup_logit_model",
+              "setup_reas_model",
+              "setup_tool_model",
+              "setup_unified_model"
+            ]
+          }
+        }
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "The 4-model contrast identifies $\\lambda_{23}^q$ alone",
+      "type": "claim"
+    },
+    {
+      "content": "**Empirical protocol (Sec. 4.3, Appendix D).** LEAS is instantiated on Natural Questions (NQ) and HotpotQA following the splits and training protocol of Search-R1 [@Jin2025]. Each model-question pair is evaluated with $N=50$ stochastic decoding samples; $\\hat{s}_\\mathcal{M}^q = \\frac{1}{N}\\sum_n \\mathrm{EM}(a_q^{(n)}, a_\\text{gold})$. Per-question $\\hat{\\lambda}^q$ is obtained by solving $z^q = X \\hat{\\lambda}^q$ in logit space. Only questions where at least one of the six models produces at least one correct prediction are retained. Both Qwen2.5-3B and Qwen2.5-7B backbones are used.",
+      "content_hash": "cd28066c2d3f348b29ef3783f3b9209e5e031842fdf118b6daef425498ca5f3c",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2602_00994::setup_leas_protocol",
+      "label": "setup_leas_protocol",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "LEAS empirical protocol (50 samples / model-question pair)",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation (Fig. 2).** The histogram of question-level $\\lambda_{23}^q$ across NQ and HotpotQA, for both Qwen2.5-3B and Qwen2.5-7B, shows that interference dominates synergy. Specifically:\n\n| Model      | Dataset   | % $\\lambda_{23}^q < 0$ (interference) | % $\\lambda_{23}^q > 0$ (synergy) |\n|------------|-----------|---------------------------------------:|----------------------------------:|\n| Qwen2.5-7B | NQ        | 66.10%                                 | 33.90%                            |\n| Qwen2.5-3B | NQ        | 61.84%                                 | 38.16%                            |\n| Qwen2.5-7B | HotpotQA  | 67.24%                                 | 32.76%                            |\n| Qwen2.5-3B | HotpotQA  | 42.30%                                 | 57.70%                            |\n\nOn three of the four (model, dataset) combinations the interference share is roughly two-thirds; only Qwen2.5-3B on HotpotQA is synergy-dominant.",
+      "content_hash": "bd8b67d0fe727764f2ec54775f23bf707ea91e65b2c053ae01acf3812c1ddee5",
+      "declaration_index": 18,
+      "exported": false,
+      "id": "github:2602_00994::obs_lambda23_distribution",
+      "label": "obs_lambda23_distribution",
+      "metadata": {
+        "caption": "Fig. 2 | Histograms of question-level interaction coefficient lambda_23 on NQ and HotpotQA using Qwen2.5-Instruct (3B and 7B). Negative values (blue) = interference; positive (red) = synergy.",
+        "prior": 0.92,
+        "prior_justification": "The four percentages (66.10 / 61.84 / 67.24 / 42.30) are explicitly displayed in Fig. 2 [@Li2026]. The numbers depend on the 50-sample-per-question stochastic estimator and on the filtering rule (drop questions with all six models scoring 0); both sources of estimation noise leave residual uncertainty.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 2"
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Empirical $\\lambda_{23}^q$ histograms: interference dominates 3/4 settings",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Fig. 2 overlay curve).** The ARL accuracy curve overlaid on the $\\lambda_{23}^q$ histogram shows that questions in the interference region ($\\lambda_{23}^q < 0$) consistently achieve **markedly higher** average correctness than questions in the synergy region. ARL therefore predominantly succeeds on the very questions where capabilities interfere -- i.e. the model is forced to use both skills simultaneously precisely when they compete for the same shared parameters.",
+      "content_hash": "941ed8490a287a764b85f5bbd685412af2dfe07486ee388eb66c309e9154db5f",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2602_00994::obs_arl_succeeds_in_interference_region",
+      "label": "obs_arl_succeeds_in_interference_region",
+      "metadata": {
+        "prior": 0.85,
+        "prior_justification": "The overlay accuracy curve in Fig. 2 visibly rises in the $\\lambda_{23}^q < 0$ region. The qualitative claim is read from the figure, not from a numeric table; somewhat lower confidence because the per-bin accuracy values are not tabulated and the visual trend is the primary evidence.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 2 (overlaid accuracy curve)"
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "ARL succeeds in the interference region (Fig. 2 overlay)",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Across NQ and HotpotQA on Qwen2.5-3B/7B, joint ARL training of reasoning and tool-use induces a *systematic negative interaction* between the two capabilities: the average sign of $\\lambda_{23}^q$ is negative on three of four (model, dataset) settings, and the interference is concentrated on the questions ARL actually solves. This is direct quantitative evidence for the seesaw phenomenon hypothesized in Section 1 (@claim_seesaw_phenomenon).",
+      "content_hash": "e1d686c49d1c4f31dbad82191c97ef7f2dc6b0f56f6472d4a0259eac459476fa",
+      "declaration_index": 20,
+      "exported": true,
+      "id": "github:2602_00994::claim_interference_dominates",
+      "label": "claim_interference_dominates",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_seesaw_phenomenon",
+              "obs_arl_succeeds_in_interference_region",
+              "obs_lambda23_distribution"
+            ]
+          }
+        }
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "LEAS finding: joint ARL induces systematic interference",
+      "type": "claim"
+    },
+    {
+      "content": "**Gradient-conflict protocol (Sec. 4.3, Appendix E).** Following the training settings of Search-R1 [@Jin2025], for each query the policy is rolled out $N=16$ times, yielding trajectories $\\{\\tau_i\\}_{i=1}^{16}$. For each trajectory $\\tau_i$ and each token role $b \\in \\{r, a\\}$, the partial gradient $g_{\\tau_i}^{(b)}$ is computed by backpropagating only through the tokens of role $b$ (separate backward pass per role, gradients zeroed between passes). Two angle distributions are then compared: (i) **same-role across trajectories** $\\mathbb{E}_{i \\ne j}[\\angle(g^{(b)}_{\\tau_i}, g^{(b)}_{\\tau_j})]$, and (ii) **different-role within trajectory** $\\mathbb{E}_i [\\angle(g^{(r)}_{\\tau_i}, g^{(a)}_{\\tau_i})]$. Angles obtained via cosine similarity in BF16 with FlashAttention-2.",
+      "content_hash": "1866ef20ef671328f04dbf6d95efe7778ba6c8614dfb9de0d7eb8ef8d5a6a374",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2602_00994::setup_gradient_protocol",
+      "label": "setup_gradient_protocol",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025"
+            ]
+          }
+        }
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Gradient-angle protocol (16 rollouts, two angle distributions)",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation (Fig. 3A and Fig. 7A).** On Qwen2.5-3B (NQ + HotpotQA) and Qwen2.5-7B (NQ + HotpotQA), the *same-role* gradient angle distribution is concentrated near small angles (typically below $30^\\circ$), while the *different-role* distribution is concentrated near $90^\\circ$ -- i.e. reasoning-token gradients and tool-use-token gradients are *near-orthogonal* on average. The 7B model exhibits a more dispersed same-role distribution (more parameters, more degrees of freedom), but the inter-role orthogonality is preserved.",
+      "content_hash": "ae556ff1bf0c9e47118b44ec8e6765b273f8719d14f426bdc0130b35a83c745b",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2602_00994::obs_gradient_angles",
+      "label": "obs_gradient_angles",
+      "metadata": {
+        "caption": "Fig. 3A | Gradient angle distributions on NQ under Qwen2.5-3B; same-capability gradients are aligned, reasoning vs tool-use gradients are nearly orthogonal. Fig. 7A confirms across Qwen2.5-3B/7B and NQ/HotpotQA.",
+        "prior": 0.92,
+        "prior_justification": "Fig. 3A and Fig. 7A clearly show the bimodal angle distribution (same-role peaks below 30 degrees, different-role peaks near 90 degrees) across four (model, dataset) settings. The qualitative near-orthogonality conclusion is directly read off the histograms; quantitative averages are not tabulated.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 3A and Figure 7A"
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Gradient angles: same-role aligned, different-role near-orthogonal",
+      "type": "claim"
+    },
+    {
+      "content": "**Mechanistic synthesis.** The near-orthogonality of reasoning vs tool-use gradients (@obs_gradient_angles) means each capability has its own distinct optimal update direction. In standard ARL, the policy gradient (@setup_policy_gradient) sums these orthogonal components, so the parameter update lies on a *compromise direction* that is sub-optimal for both reasoning and tool-use. This gradient compromise is the **mechanistic cause** of the LEAS-quantified interference (@claim_interference_dominates).",
+      "content_hash": "44f18abac10c7747406d042d4b27c9b68efe73a30885c8bd7bb75efed440f4f2",
+      "declaration_index": 23,
+      "exported": true,
+      "id": "github:2602_00994::claim_gradient_conflict_explains_interference",
+      "label": "claim_gradient_conflict_explains_interference",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_interference_dominates",
+              "obs_gradient_angles",
+              "setup_policy_gradient"
+            ]
+          }
+        }
+      },
+      "module": "s4_leas",
+      "parameters": [],
+      "title": "Gradient compromise mechanism explains the interference",
+      "type": "claim"
+    },
+    {
+      "content": "**DART architecture (Eq. 10).** The pretrained weight matrix $W$ is **frozen**. Two disjoint LoRA [@Hu2022] adapters are attached to all linear layers: $\\theta_r = \\{B_r, A_r\\}$ for reasoning and $\\theta_a = \\{B_a, A_a\\}$ for tool-use. At each decoding step $t$, the role router $\\ell(t)$ (@setup_role_router) selects the active adapter $u_t \\in \\{r, a\\}$, and the forward pass becomes $h'_t = W h_t + B_{u_t} A_{u_t} h_t$ (Eq. 10). Token roles are identified by special markers (`<think>...</think>`, `<search>...</search>`).",
+      "content_hash": "461322c3c46a401b5dd494c3584c2cbb4c4d175fe52b54edc367c5e5cff29a6a",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_dart_architecture",
+      "label": "setup_dart_architecture",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Hu2022"
+            ],
+            "referenced_claims": [
+              "setup_role_router"
+            ]
+          }
+        }
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART forward pass (Eq. 10)",
+      "type": "setting"
+    },
+    {
+      "content": "**DART router.** The token-to-adapter mapping is **rule-based** (no learned router): structural special tokens demarcate reasoning vs tool-use vs loss-free segments. Reasoning tokens between `<think>` and `</think>` activate $\\theta_r$; tool-use tokens between `<search>` and `</search>` activate $\\theta_a$; tokens inside `<information>...</information>` blocks (tool feedback) and inside the `<answer>...</answer>` final answer are loss-free.",
+      "content_hash": "eeb48758d8b1abc2e5fe975b03a973a16d592f83f444ae692d12aa8dce1db1fa",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_dart_routing_rule",
+      "label": "setup_dart_routing_rule",
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART rule-based router (Fig. 4 / Fig. 7B)",
+      "type": "setting"
+    },
+    {
+      "content": "**Structural claim.** Because $\\theta_r$ and $\\theta_a$ are **disjoint** parameter sets and each token activates exactly one of them, the gradients of reasoning and tool-use tokens are applied to **different parameters**. Hence in DART's training, the LEAS interaction indicator $x_{23}$ defined in Section 4.1 satisfies $x_{23} = 0$ identically, and the corresponding interaction coefficient $\\lambda_{23}$ is effectively zero.",
+      "content_hash": "595651a3d542f546ec6202f4de3c33be1b09f2cd35acae34a7afb3c5df9edfd1",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::claim_dart_zero_interaction",
+      "label": "claim_dart_zero_interaction",
+      "metadata": {
+        "prior": 0.97,
+        "prior_justification": "Pure structural fact: the routing rule (each token -> exactly one of two disjoint adapters) plus backbone freezing implies that no parameter is updated by gradients of both roles. Hence $x_{23} \\equiv 0$ at every token. This is a definitional consequence of the DART architecture (Eq. 10 + Sec. 3.1's role router)."
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART structurally enforces $x_{23} = 0$ ($\\lambda_{23} \\equiv 0$)",
+      "type": "claim"
+    },
+    {
+      "content": "**Remark 5.1 (necessity of backbone freezing).** If $W$ were trainable, gradients from reasoning and tool-use tokens would both update $W$ and re-introduce the parameter-sharing that DART is designed to eliminate -- undermining the disentanglement. Therefore freezing $W$ is structurally required.",
+      "content_hash": "81f2f6d030525127fc9ec1e867664a071313790038226fadba7cc3ff3ea73c65",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::claim_freeze_backbone_necessary",
+      "label": "claim_freeze_backbone_necessary",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Necessary-condition reasoning: if $W$ were trainable, gradients of both reasoning and tool-use tokens would write to $W$ -- exactly the situation LEAS shows produces interference. So freezing $W$ is required to maintain disentanglement. This is a definitional consequence of the LEAS interaction-indicator model."
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "Backbone freezing is required for true disentanglement",
+      "type": "claim"
+    },
+    {
+      "content": "**Remark 5.1 (continued).** Freezing $W$ does not sacrifice performance, supported by two prior findings: (i) RL-based tuning primarily affects sparse subnetworks of the backbone [@Mukherjee2025], and (ii) LoRA can match full-parameter fine-tuning performance [@Schulman2025]. Both suggest that the effective RL-trainable subspace is small enough to be captured by low-rank adapters.",
+      "content_hash": "cc6c3a1fbc710fd66ce6c04f6badba8bc11dfba01398726e173516e8fd243c59",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::claim_freeze_no_performance_loss",
+      "label": "claim_freeze_no_performance_loss",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Mukherjee2025",
+              "Schulman2025"
+            ]
+          }
+        },
+        "prior": 0.85,
+        "prior_justification": "Two prior peer-reviewed findings cited [@Mukherjee2025; @Schulman2025] support that freezing the backbone with LoRA adapters does not sacrifice performance. The empirical near-2-Agent EM in Fig. 6 corroborates this. Lower than 0.9 because (i) the cited results are general and may not perfectly transfer to the ARL+QA setting; (ii) the 2-Agent gap is small but non-zero (~1 EM) in some cells."
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "Backbone freezing does not sacrifice performance",
+      "type": "claim"
+    },
+    {
+      "content": "**DART is structurally distinct from MoE / soft Multi-LoRA.** Soft expert mixing (e.g. MoELoRA, MixLoRA, MoLE) routes inputs to a *weighted combination* of adapters; gradients flow through every non-zero-weight adapter, so capability-level gradients still mix in every adapter. DART instead enforces a **hard, mutually exclusive** routing -- exactly one adapter per token -- which is what makes $x_{23} = 0$ achievable.",
+      "content_hash": "4a51afc94d0ee1ad20ea009f57fca4ebcb81069a4fc1c3da09211eeadfd07b12",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::claim_dart_distinct_from_moe",
+      "label": "claim_dart_distinct_from_moe",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_distinguishes_at_token",
+              "claim_multi_lora_cannot_disentangle"
+            ]
+          }
+        }
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART vs MoE: hard routing is what enforces disentanglement",
+      "type": "claim"
+    },
+    {
+      "content": "**2-Agent baseline (Appendix F, Fig. 8).** A reference architecture with **two independent full models**: $\\mathcal{M}_\\text{Reas}$ produces reasoning tokens, $\\mathcal{M}_\\text{Tool}$ executes tool calls. Models communicate via explicit handoffs orchestrated externally. This represents *full* parameter disentanglement and serves as an **upper bound** on what disentanglement can achieve.",
+      "content_hash": "3cbc9d2a5f48afd471cec43f3abc135b1887cbba933d78f98891b5b896c60f50",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_00994::setup_2agent_baseline",
+      "label": "setup_2agent_baseline",
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "2-Agent system: two full models, hard handoffs (Fig. 8)",
+      "type": "setting"
+    },
+    {
+      "content": "Let $P$ be the number of backbone parameters and $p$ the number of LoRA-adapter parameters, with $p \\ll P$ (typically $p < 0.005 P$). BF16 stores parameters and gradients (2 bytes/param), FP32 stores Adam optimizer states (8 bytes/param). Sequence length is $L$.",
+      "content_hash": "7f8bf79e3c73d81ea82cfb6e7488e092cebc31366bf8e0fa1766db2371771356",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_00994::setup_efficiency_setup",
+      "label": "setup_efficiency_setup",
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "Efficiency analysis assumptions",
+      "type": "setting"
+    },
+    {
+      "content": "**Theoretical training memory (Appendix F, Table 5).** Under the LoRA-augmented GRPO setup, the dominant static GPU memory cost of the 2-Agent baseline is $O(P_{\\text{2-agent}}) \\approx 2 \\times 4P = 8P$ (two trainable backbones, each storing weights + gradients + optimizer states). DART's cost is $O(P_\\text{DART}) \\approx P + O(p) \\approx P$. The empirically observed memory ratio is approximately $8\\times$.",
+      "content_hash": "39d1fee27c79a08f1f9d274eee9ef5625b260a25c4c230183d9b7a1a78d32556",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_00994::claim_2agent_memory_8x",
+      "label": "claim_2agent_memory_8x",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Standard memory-accounting under BF16 weights/grads + FP32 Adam states: each trainable backbone needs ~4P bytes; two backbones need ~8P. DART uses one frozen backbone + tiny adapters. The author also reports empirical 8x. Very high prior.",
+        "source_table": "artifacts/2602.00994.pdf, Appendix F Table 5"
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART uses ~8x less training-time GPU memory than 2-Agent",
+      "type": "claim"
+    },
+    {
+      "content": "**Inference latency (Appendix F).** When $\\mathcal{M}_\\text{Reas}$ in a 2-Agent system hands off to $\\mathcal{M}_\\text{Tool}$, the second model must **re-encode** the entire conversation history of length $L$ to populate its own KV-cache, costing $O(L^2)$ per context switch. DART, by contrast, operates on a single shared backbone, so the KV-cache remains valid across LoRA switches; swapping the active adapter ranks costs $O(1)$.",
+      "content_hash": "cfe473c24f87047ab31054b5767800006f39d4d5cceafc44b45ac321fdec9142",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_00994::claim_2agent_kv_recompute",
+      "label": "claim_2agent_kv_recompute",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Standard transformer-inference complexity: a fresh model must build its own KV-cache from scratch for the entire history, $O(L^2)$ in self-attention. DART's adapter swap leaves the shared backbone's KV-cache valid, $O(1)$ extra. Standard fact."
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART avoids $O(L^2)$ KV-cache recompute per context switch",
+      "type": "claim"
+    },
+    {
+      "content": "**Deployment.** A 2-Agent stack requires an **external orchestrator** to synchronize states and reformat prompts between the two models. DART internalizes the routing within a single inference pipeline, removing the orchestrator dependency.",
+      "content_hash": "9432ec60987dea444d5a29875bda6b5368efed338fb11abcaec9e488a1a89235",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_00994::claim_dart_simpler_stack",
+      "label": "claim_dart_simpler_stack",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Engineering observation: a 2-Agent system requires an external orchestrator to format prompts and synchronize state between models; DART's single inference pipeline does not. This is a factual property of the deployment topologies."
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART removes the multi-model orchestrator dependency",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Appendix F).** DART is strictly more efficient than the 2-Agent baseline along three independent axes: training-time GPU memory ($\\sim 8\\times$ smaller, @claim_2agent_memory_8x), inference latency ($O(1)$ adapter swap vs $O(L^2)$ KV-cache recompute, @claim_2agent_kv_recompute), and deployment complexity (no external orchestrator needed, @claim_dart_simpler_stack). The performance trade-off is small (DART within ~1 EM of 2-Agent, see Section 6.3).",
+      "content_hash": "3bdef7d87711b1118039d0d8ee19762c4803bdc31cbfcc2bf1745ea6423a514f",
+      "declaration_index": 11,
+      "exported": false,
+      "id": "github:2602_00994::claim_dart_more_efficient_than_2agent",
+      "label": "claim_dart_more_efficient_than_2agent",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_2agent_kv_recompute",
+              "claim_2agent_memory_8x",
+              "claim_dart_simpler_stack"
+            ]
+          }
+        }
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART is more efficient than 2-Agent across memory, latency, deployment",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Because reasoning and tool-use gradients are routed to disjoint parameter subsets ($\\theta_r$ vs $\\theta_a$) -- which is enforced by the hard router (@setup_dart_routing_rule), the frozen backbone (@claim_freeze_backbone_necessary), and the disjoint adapter design (@setup_dart_architecture) -- the gradient compromise identified by LEAS as the cause of interference (@claim_gradient_conflict_explains_interference) cannot occur. Each capability's gradient updates only its own adapter, eliminating the mechanistic source of $\\lambda_{23} < 0$.",
+      "content_hash": "4bfde8dab6821227d2a238385d32a214459c04fd2f0074dadf8a2fd09721b81c",
+      "declaration_index": 12,
+      "exported": true,
+      "id": "github:2602_00994::claim_dart_solves_gradient_conflict",
+      "label": "claim_dart_solves_gradient_conflict",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_zero_interaction",
+              "claim_freeze_backbone_necessary",
+              "claim_gradient_conflict_explains_interference",
+              "setup_dart_architecture",
+              "setup_dart_routing_rule"
+            ]
+          }
+        }
+      },
+      "module": "s5_dart",
+      "parameters": [],
+      "title": "DART eliminates the gradient compromise underlying LEAS interference",
+      "type": "claim"
+    },
+    {
+      "content": "**Seven evaluation benchmarks (Sec. 6).** Two task families are evaluated:\n\n- **General QA (single-step factual retrieval):** Natural Questions (NQ) [@Jin2025], TriviaQA, PopQA.\n- **Multi-Hop QA (multi-document reasoning):** HotpotQA [@Jin2025], 2WikiMultiHopQA, Musique, Bamboogle.\n\nNQ and HotpotQA serve as **in-domain** ($\\dagger$) datasets (their training splits are merged for fine-tuning); the remaining five are **out-of-domain** ($\\star$) and used only at evaluation. EM is the primary metric (@setup_em_reward).",
+      "content_hash": "48bbe252f583827b0cd5f90288e648ac77933b01aa390c08b7c9d608ecd97d84",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::setup_seven_benchmarks",
+      "label": "setup_seven_benchmarks",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Jin2025"
+            ],
+            "referenced_claims": [
+              "setup_em_reward"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Seven QA benchmarks: 2 in-domain + 5 out-of-domain",
+      "type": "setting"
+    },
+    {
+      "content": "**Evaluation protocol.** All baselines and DART use the same backbone (Qwen2.5-3B-Base/Instruct or Qwen2.5-7B-Base/Instruct), the same E5 retriever over the 2018 Wikipedia dump, and the same training pipeline (@setup_grpo_training). Differences in measured EM are therefore attributable to **parameterization and routing design**, not to data, tools, or hyperparameters. Evaluation is on the official test/validation split of each benchmark.",
+      "content_hash": "8fe1cc17eaa63fceb412d47b293a7c1849b0168b219c5c99c0a687e63d147ac9",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2602_00994::setup_eval_protocol",
+      "label": "setup_eval_protocol",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "setup_grpo_training"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Unified evaluation protocol for fair comparison",
+      "type": "setting"
+    },
+    {
+      "content": "**Baseline taxonomy (Sec. 6.1).**\n\n1. **Standard inference** (no tools): Direct Inference, Chain-of-Thought (CoT), Rejection Sampling.\n2. **Tool-augmented inference** (no RL): IRCoT, RAG, Search-o1, Search-R1.\n3. **Post-training**: SFT, R1-base, R1-instruct, Search-R1-PPO-Base, Search-R1-PPO-Ins, **Search-R1-GRPO** (the principal head-to-head competitor that uses the same GRPO objective and tool stack as DART).",
+      "content_hash": "47be3bbb57e2d23f499a09ef5b97cfb51318883cccf6f1bf2892afc2afcd8f41",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2602_00994::setup_baseline_taxonomy",
+      "label": "setup_baseline_taxonomy",
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Baseline categories: standard / tool-augmented / post-training",
+      "type": "setting"
+    },
+    {
+      "content": "**Table 1 -- Qwen2.5-3B (Base / Instruct) results.** EM scores on each of the seven QA benchmarks; in-domain marked $\\dagger$, out-of-domain marked $\\star$.\n\n| Method                        | NQ$\\dagger$ | TriviaQA$\\star$ | PopQA$\\star$ | Gen-Avg | HotpotQA$\\dagger$ | 2Wiki$\\star$ | Musique$\\star$ | Bamboogle$\\star$ | MH-Avg | Avg |\n|-------------------------------|------------:|-----------------:|--------------:|--------:|------------------:|--------------:|----------------:|-----------------:|-------:|----:|\n| Direct Inference              | 0.106 | 0.288 | 0.108 | 0.167 | 0.149 | 0.244 | 0.020 | 0.024 | 0.109 | 0.134 |\n| CoT                           | 0.023 | 0.032 | 0.005 | 0.020 | 0.021 | 0.021 | 0.002 | 0.000 | 0.011 | 0.015 |\n| IRCoT                         | 0.111 | 0.312 | 0.200 | 0.208 | 0.164 | 0.171 | 0.067 | 0.240 | 0.161 | 0.181 |\n| Search-o1                     | 0.238 | 0.472 | 0.262 | 0.324 | 0.221 | 0.218 | 0.054 | 0.320 | 0.203 | 0.255 |\n| RAG                           | 0.348 | 0.544 | 0.387 | 0.426 | 0.255 | 0.226 | 0.047 | 0.080 | 0.152 | 0.270 |\n| SFT                           | 0.249 | 0.292 | 0.104 | 0.215 | 0.186 | 0.248 | 0.044 | 0.112 | 0.147 | 0.176 |\n| R1-base                       | 0.226 | 0.455 | 0.173 | 0.285 | 0.201 | 0.268 | 0.055 | 0.224 | 0.187 | 0.229 |\n| R1-instruct                   | 0.210 | 0.449 | 0.171 | 0.277 | 0.208 | 0.275 | 0.060 | 0.192 | 0.184 | 0.224 |\n| Rejection Sampling            | 0.294 | 0.488 | 0.332 | 0.371 | 0.240 | 0.233 | 0.059 | 0.210 | 0.186 | 0.265 |\n| Search-R1-PPO-Base            | 0.406 | 0.587 | 0.435 | 0.476 | 0.284 | 0.273 | 0.049 | 0.088 | 0.174 | 0.303 |\n| Search-R1-PPO-Ins             | 0.341 | 0.545 | 0.378 | 0.421 | 0.324 | 0.319 | 0.103 | 0.264 | 0.253 | 0.325 |\n| Search-R1-GRPO (3B-Instruct)  | 0.397 | 0.565 | 0.391 | 0.451 | 0.331 | 0.310 | 0.124 | 0.232 | 0.249 | 0.336 |\n| **DART (3B-Instruct)**        | **0.451** | **0.602** | **0.476** | **0.510** | **0.392** | **0.376** | **0.143** | **0.352** | **0.316** | **0.399** |\n| Search-R1-GRPO (3B-Base)      | 0.440 | 0.582 | 0.413 | 0.478 | 0.265 | 0.244 | 0.061 | 0.113 | 0.171 | 0.303 |\n| **DART (3B-Base)**            | **0.457** | **0.605** | **0.478** | **0.513** | **0.399** | **0.389** | **0.155** | **0.352** | **0.324** | **0.405** |",
+      "content_hash": "6ae23b367e4bb0fdc1fd2fb67b77f6e5e59e27209dfb1bd11222ae839e12a12a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2602_00994::table1_qwen3b",
+      "label": "table1_qwen3b",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Per-cell EM scores transcribed verbatim from Table 1 of the paper [@Li2026]. The numbers themselves are reported (and reproducible from the released setup). Slight uncertainty (<5%) is allowed for transcription / single-seed-run variance (no error bars are reported in the table).",
+        "source_table": "artifacts/2602.00994.pdf, Table 1"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Table 1: Qwen2.5-3B EM scores across seven benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "**Table 2 -- Qwen2.5-7B (Base / Instruct) results.** EM scores on each of the seven QA benchmarks.\n\n| Method                        | NQ$\\dagger$ | TriviaQA$\\star$ | PopQA$\\star$ | Gen-Avg | HotpotQA$\\dagger$ | 2Wiki$\\star$ | Musique$\\star$ | Bamboogle$\\star$ | MH-Avg | Avg |\n|-------------------------------|------------:|-----------------:|--------------:|--------:|------------------:|--------------:|----------------:|-----------------:|-------:|----:|\n| Direct Inference              | 0.134 | 0.408 | 0.140 | 0.227 | 0.183 | 0.250 | 0.031 | 0.120 | 0.146 | 0.181 |\n| CoT                           | 0.048 | 0.185 | 0.054 | 0.096 | 0.092 | 0.111 | 0.022 | 0.232 | 0.114 | 0.106 |\n| IRCoT                         | 0.224 | 0.478 | 0.301 | 0.334 | 0.133 | 0.149 | 0.072 | 0.224 | 0.145 | 0.239 |\n| Search-o1                     | 0.151 | 0.443 | 0.131 | 0.242 | 0.187 | 0.176 | 0.062 | 0.296 | 0.180 | 0.206 |\n| RAG                           | 0.349 | 0.585 | 0.392 | 0.442 | 0.299 | 0.235 | 0.058 | 0.208 | 0.200 | 0.304 |\n| SFT                           | 0.318 | 0.354 | 0.121 | 0.264 | 0.217 | 0.259 | 0.066 | 0.112 | 0.164 | 0.207 |\n| R1-base                       | 0.297 | 0.539 | 0.199 | 0.345 | 0.242 | 0.273 | 0.083 | 0.203 | 0.200 | 0.262 |\n| R1-instruct                   | 0.270 | 0.537 | 0.199 | 0.335 | 0.237 | 0.292 | 0.072 | 0.293 | 0.224 | 0.271 |\n| Rejection Sampling            | 0.360 | 0.592 | 0.380 | 0.444 | 0.331 | 0.296 | 0.123 | 0.355 | 0.276 | 0.348 |\n| Search-R1-PPO-Base            | 0.480 | 0.638 | 0.457 | 0.525 | 0.433 | 0.382 | 0.196 | 0.432 | 0.361 | 0.431 |\n| Search-R1-PPO-Ins             | 0.393 | 0.610 | 0.397 | 0.467 | 0.370 | 0.414 | 0.146 | 0.368 | 0.325 | 0.385 |\n| Search-R1-GRPO (7B-Instruct)  | 0.429 | 0.623 | 0.427 | 0.493 | 0.386 | 0.346 | 0.162 | 0.400 | 0.324 | 0.396 |\n| **DART (7B-Instruct)**        | **0.467** | **0.642** | **0.505** | **0.538** | **0.431** | 0.349 | **0.163** | 0.386 | **0.330** | **0.420** |\n| Search-R1-GRPO (7B-Base)      | 0.395 | 0.560 | 0.388 | 0.448 | 0.326 | 0.297 | 0.125 | 0.360 | 0.277 | 0.350 |\n| **DART (7B-Base)**            | **0.472** | **0.639** | **0.507** | **0.539** | **0.425** | **0.338** | **0.155** | **0.376** | **0.323** | **0.416** |",
+      "content_hash": "90a094e5fa78a2e1489ee1ca1ae862995089f78c7964a158a033d6c0548f5c8f",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2602_00994::table2_qwen7b",
+      "label": "table2_qwen7b",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Per-cell EM scores transcribed verbatim from Table 2 [@Li2026]. Same reasoning as Table 1: directly read off, slight uncertainty for the lack of reported variance estimates.",
+        "source_table": "artifacts/2602.00994.pdf, Table 2"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Table 2: Qwen2.5-7B EM scores across seven benchmarks",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Table 1).** On Qwen2.5-3B-Instruct, DART achieves a 7-benchmark average EM of **0.399** vs Search-R1-GRPO's **0.336** -- an absolute gain of **+6.3 EM points (+18.8% relative)**. DART wins every cell in Table 1's 3B-Instruct comparison.",
+      "content_hash": "0bc26b78b9cbdb2fde91663f2d58ded35bb93af1a4f3c0a0d27cd01ebc773ff7",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+      "label": "obs_dart_beats_grpo_3b_inst",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_beats_grpo_universally",
+              "obs_dart_beats_grpo_3b_inst",
+              "table1_qwen3b"
+            ]
+          }
+        },
+        "source_table": "artifacts/2602.00994.pdf, Table 1"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART vs Search-R1-GRPO on Qwen2.5-3B-Instruct: +6.3 EM (avg)",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Table 1).** On Qwen2.5-3B-Base, DART averages **0.405** vs Search-R1-GRPO's **0.303** -- a **+10.2 EM point** gain (+33.7% relative). The largest improvements are on multi-hop datasets (HotpotQA: +13.4, Bamboogle: +23.9, Musique: +9.4), boosting MH-Avg from 0.171 to 0.324 (+15.3 EM).",
+      "content_hash": "77989677136d427b9bc33419ffd67feb1e24e4d0330379a8058784fe63bbb036",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_beats_grpo_3b_base",
+      "label": "obs_dart_beats_grpo_3b_base",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_dart_beats_grpo_3b_base",
+              "table1_qwen3b"
+            ]
+          }
+        },
+        "source_table": "artifacts/2602.00994.pdf, Table 1"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART vs Search-R1-GRPO on Qwen2.5-3B-Base: +10.2 EM (avg), +15.3 MH-Avg",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Table 2).** On Qwen2.5-7B-Instruct, DART averages **0.420** vs Search-R1-GRPO's **0.396** -- a **+2.4 EM point** gain. DART wins on 5 of 7 benchmarks; the two losses are 2Wiki (0.349 vs 0.346 -- DART slightly higher) and Bamboogle (0.386 vs 0.400, -1.4 EM).",
+      "content_hash": "6a8a9713c00b55db3b1d5e17620a30458ac1cd6219bcc6ffa6e7767074998f1b",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+      "label": "obs_dart_beats_grpo_7b_inst",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_dart_beats_grpo_7b_inst",
+              "table2_qwen7b"
+            ]
+          }
+        },
+        "source_table": "artifacts/2602.00994.pdf, Table 2"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART vs Search-R1-GRPO on Qwen2.5-7B-Instruct: +2.4 EM (avg)",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Table 2).** On Qwen2.5-7B-Base, DART averages **0.416** vs Search-R1-GRPO's **0.350** -- a **+6.6 EM point** gain (+18.9% relative). DART wins on every benchmark.",
+      "content_hash": "f2f5798de3f32f5317cae210b853d3a36e31e7cada9f96754ca79ae20c4dd54f",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_beats_grpo_7b_base",
+      "label": "obs_dart_beats_grpo_7b_base",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_dart_beats_grpo_7b_base",
+              "table2_qwen7b"
+            ]
+          }
+        },
+        "source_table": "artifacts/2602.00994.pdf, Table 2"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART vs Search-R1-GRPO on Qwen2.5-7B-Base: +6.6 EM (avg)",
+      "type": "claim"
+    },
+    {
+      "content": "**Headline figure.** Averaging across the four (model, init) combinations, DART's average EM gain over the matched Search-R1-GRPO baseline is approximately **+6.35 EM points** -- the **6.35%+** headline of the abstract. Gains are larger on Multi-Hop QA than on General QA, and larger on Base initializations than on Instruct.",
+      "content_hash": "3d6a50dd9b30b2008725ff7be714acf5d7410d368c779545ae823b6140ed983b",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_average_gain",
+      "label": "obs_dart_average_gain",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_dart_average_gain",
+              "obs_dart_beats_grpo_3b_base",
+              "obs_dart_beats_grpo_3b_inst",
+              "obs_dart_beats_grpo_7b_base",
+              "obs_dart_beats_grpo_7b_inst"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Average DART vs Search-R1-GRPO gain: +6.35 EM (headline)",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation.** DART's gains are *larger on Multi-Hop QA than on General QA*. For Qwen2.5-3B-Base, the multi-hop average jumps from 0.171 to 0.324 (+15.3 EM, +90% relative), much more than the general-QA average from 0.478 to 0.513 (+3.5 EM, +7% relative). Multi-hop questions require tighter coordination between tool-use and reasoning, so disentangling the two yields larger benefits.",
+      "content_hash": "5951acc5a77f33c21ec8986a011f9c803252a20a1cfad4bc6ad4641993847a36",
+      "declaration_index": 10,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_helps_more_on_multihop",
+      "label": "obs_dart_helps_more_on_multihop",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "obs_dart_beats_grpo_3b_base",
+              "table1_qwen3b",
+              "table2_qwen7b"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART's gains are concentrated on Multi-Hop QA",
+      "type": "claim"
+    },
+    {
+      "content": "**Universal law (induction over four backbones).** DART's average EM exceeds Search-R1-GRPO's average EM on every tested (model size, initialization) combination: Qwen2.5-3B-Instruct (+6.3), Qwen2.5-3B-Base (+10.2), Qwen2.5-7B-Instruct (+2.4), Qwen2.5-7B-Base (+6.6). The improvement is **systematic** -- not an artefact of one favourable cell.",
+      "content_hash": "cbd460e9a3586cc642efd1885ed5d3884995ce3cbf10100f9c5a6c3ad7e1a1f7",
+      "declaration_index": 11,
+      "exported": true,
+      "id": "github:2602_00994::claim_dart_beats_grpo_universally",
+      "label": "claim_dart_beats_grpo_universally",
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART > Search-R1-GRPO is systematic across all four backbones",
+      "type": "claim"
+    },
+    {
+      "content": "**Fixed-retrieval protocol (Sec. 6.2, Fig. 5).** DART is forced to produce the final answer using the **identical retrieval contexts** produced by the Search-R1 baseline -- i.e. the tool-use outputs are held constant. Any remaining EM gap therefore reflects the **pure reasoning** capability of the two models, controlled for retrieval quality.",
+      "content_hash": "3cf9d17f391e1ff4c2ee988d11e8d32fae45168d14086cdcc599f4cff341c50a",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:2602_00994::setup_fixed_retrieval_protocol",
+      "label": "setup_fixed_retrieval_protocol",
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Fixed-retrieval protocol holds tool-use outputs constant",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation (Fig. 5, left panel).** On Qwen2.5-3B-Base under fixed retrieval, DART achieves EM **44.0** on NQ vs Search-R1's **26.5** (+17.5 absolute), and EM **44.6** on HotpotQA vs **37.6** (+7.0 absolute). Reasoning is improved even with retrieval held identical.",
+      "content_hash": "9c7dbdd83ae48857456642719bfb52cb2ff214543d682a8a2dc3a1208cb209aa",
+      "declaration_index": 16,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_better_reasoning_3b",
+      "label": "obs_dart_better_reasoning_3b",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Fig. 5 left panel directly displays the four EM bars (44.0, 26.5, 44.6, 37.6) for Qwen2.5-3B-Base under fixed retrieval. Single-seed results, no variance reported.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 5 (left)"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART > Search-R1 under fixed retrieval, 3B-Base (NQ +17.5, HotpotQA +7.0)",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Fig. 5, right panel).** On Qwen2.5-7B-Base under fixed retrieval, DART achieves EM **39.5** on NQ vs Search-R1's **32.6** (+6.9 absolute), and EM **46.0** on HotpotQA vs **40.9** (+5.1 absolute).",
+      "content_hash": "d09f02d9faba7e964b8642efed0be63684b87b4a5a09e5cfcf4b8d44a6ad7139",
+      "declaration_index": 17,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_better_reasoning_7b",
+      "label": "obs_dart_better_reasoning_7b",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Fig. 5 right panel directly displays the four EM bars (39.5, 32.6, 46.0, 40.9) for Qwen2.5-7B-Base under fixed retrieval. Same reasoning as 3B case.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 5 (right)"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART > Search-R1 under fixed retrieval, 7B-Base (NQ +6.9, HotpotQA +5.1)",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** Because retrieval quality is held constant by the fixed-retrieval protocol (@setup_fixed_retrieval_protocol), the EM gap between DART and Search-R1 in Fig. 5 must come from **reasoning quality**. Therefore joint optimization in Search-R1 *degrades* the model's reasoning capability, while DART's training-time isolation preserves it.",
+      "content_hash": "91fdc0c3bd82a0f203b36b295314ec507d48f007c6068cffdf1d18f8012136ef",
+      "declaration_index": 18,
+      "exported": true,
+      "id": "github:2602_00994::claim_joint_degrades_reasoning",
+      "label": "claim_joint_degrades_reasoning",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_interference_dominates",
+              "obs_dart_better_reasoning_3b",
+              "obs_dart_better_reasoning_7b",
+              "setup_fixed_retrieval_protocol"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Joint ARL training degrades reasoning quality (controlled for retrieval)",
+      "type": "claim"
+    },
+    {
+      "content": "**Table 3 -- DART (single-ability) vs Hybrid Inference.** EM scores under isolated capability evaluation:\n\n| Method                            | Qwen2.5-3B NQ | Qwen2.5-3B HotpotQA | Qwen2.5-7B NQ | Qwen2.5-7B HotpotQA |\n|-----------------------------------|--------------:|--------------------:|--------------:|--------------------:|\n| $\\mathcal{H}_\\text{Reas}$       | 0.435 | 0.324 | 0.438 | 0.327 |\n| **DART$_\\text{Reas}$**           | **0.448** | **0.359** | **0.449** | **0.412** |\n| $\\mathcal{H}_\\text{Tool}$       | 0.248 | 0.212 | 0.305 | 0.255 |\n| **DART$_\\text{Tool}$**           | **0.372** | **0.283** | **0.378** | **0.332** |\n\nDART$_\\text{Reas}$ uses only the reasoning adapter; DART$_\\text{Tool}$ only the tool-use adapter. In every (model, dataset) cell, the single-ability DART variant outperforms the corresponding inference-time hybrid composition.",
+      "content_hash": "a74174aa6c0c114fb1265497cf48c49380b8e5877018b884ee322c4cd5098e3b",
+      "declaration_index": 19,
+      "exported": false,
+      "id": "github:2602_00994::table3_hybrid",
+      "label": "table3_hybrid",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Single-ability vs hybrid EM scores transcribed from Table 3 [@Li2026]. Lower than the main tables because Table 3 mixes two distinct evaluation regimes (DART_Reas / DART_Tool); the single-ability evaluation protocol is described less explicitly than the main protocol.",
+        "source_table": "artifacts/2602.00994.pdf, Table 3"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Table 3: DART (single-ability) vs hybrid inference",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis.** The single-ability DART variants substantially outperform the corresponding hybrid-inference baselines from Section 4.2 in every (model, dataset) cell of Table 3. This shows that the benefit of disentanglement is realized at **training time** -- the gradient-isolated training of DART produces stronger specialized adapters than the inference-time composition of separately specialized full models.",
+      "content_hash": "7d69bc4f9e19685ec499fc2a1f27bd4d3bee6869017f02457010fbacd942f39f",
+      "declaration_index": 20,
+      "exported": false,
+      "id": "github:2602_00994::claim_disentanglement_not_replicable_at_inference",
+      "label": "claim_disentanglement_not_replicable_at_inference",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "table3_hybrid"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Disentanglement benefit is training-time, not inference-time",
+      "type": "claim"
+    },
+    {
+      "content": "**Ablation 1 baselines (Sec. 6.3, Fig. 6).** Three baselines are compared with DART:\n\n1. **Search-R1**: standard joint optimization in the full backbone.\n2. **LoRA**: replace full fine-tuning with a single LoRA adapter (rank 16) that updates both reasoning and tool-use tokens.\n3. **2-Agent**: two independent full models (Fig. 8); represents the *full disentanglement upper bound*.\n\nDART itself uses two disjoint LoRA adapters of rank 8 each ($r=8 \\times 2$), matching LoRA's total adapter capacity.",
+      "content_hash": "4423e973d59b347236b08efab5a80b0e85b6ccdb222cb3cbdb785919f609deeb",
+      "declaration_index": 21,
+      "exported": false,
+      "id": "github:2602_00994::setup_ablation1_baselines",
+      "label": "setup_ablation1_baselines",
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Ablation 1 baselines: Search-R1, single-LoRA, 2-Agent (upper bound)",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation (Fig. 6).** Vanilla single-LoRA performs **nearly identically** to Search-R1 across all four backbones and 7 benchmarks. The difference is within noise on the radar-chart averages (e.g. 30.3 vs 31.6 on Qwen2.5-3B-Base; 33.6 vs 36.6 on Qwen2.5-3B-Instruct; 39.6 vs 38.9 on Qwen2.5-7B-Base / Instruct).",
+      "content_hash": "76e62521dc273023857abfc29e5a013751e3a05fdfa8e96b922e5dac4c71b83b",
+      "declaration_index": 22,
+      "exported": false,
+      "id": "github:2602_00994::obs_lora_equals_searchr1",
+      "label": "obs_lora_equals_searchr1",
+      "metadata": {
+        "prior": 0.88,
+        "prior_justification": "Fig. 6 radar plots show LoRA and Search-R1 traces nearly overlapping across all four backbones. The qualitative 'nearly identical' claim is supported but the figure reports only the radar averages (30.3 / 33.6 / 38.9 / 39.6 for LoRA vs 31.6 / 36.6 / 39.6 / 38.9 for Search-R1) -- per-benchmark deltas are not separately tabulated, so confidence is high but not maximal.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 6 (radar plots)"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Vanilla LoRA performs equivalently to Search-R1",
+      "type": "claim"
+    },
+    {
+      "content": "**Inference.** Because vanilla LoRA matches the full-model Search-R1 baseline (@obs_lora_equals_searchr1), the bottleneck of joint training is **not** parameter capacity. It must be the interference arising from mixing reasoning and tool-use updates in the same parameter subspace -- exactly the diagnosis given by LEAS.",
+      "content_hash": "fd3285da49459fd07db00072fbb6f796b1dcc85a9f3eb50ba62fff63b9da00fb",
+      "declaration_index": 23,
+      "exported": false,
+      "id": "github:2602_00994::claim_bottleneck_is_interference_not_capacity",
+      "label": "claim_bottleneck_is_interference_not_capacity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_interference_dominates",
+              "obs_lora_equals_searchr1"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "The bottleneck is interference, not parameter capacity",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Fig. 6).** The 2-Agent baseline achieves the **strongest or near-strongest** EM averages on all four backbones (40.6, 40.4, 41.9, 42.0). Full parameter disentanglement (two separate models) yields the highest scores -- consistent with the LEAS prediction that disentangling the capabilities removes interference.",
+      "content_hash": "bca00a4d4a5426c96caa169d064fd556ee50b087ca577284ebe0cae351454c83",
+      "declaration_index": 24,
+      "exported": false,
+      "id": "github:2602_00994::obs_2agent_strongest",
+      "label": "obs_2agent_strongest",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Fig. 6 shows 2-Agent achieving 40.6 / 40.4 / 41.9 / 42.0 -- the highest or near-highest on every backbone. Direct read-off.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 6"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "2-Agent achieves the strongest results (upper bound for disentanglement)",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Fig. 6).** DART's average EM (40.5 / 39.9 / 41.6 / 41.9) is **within 1 EM point** of the 2-Agent upper bound (40.6 / 40.4 / 41.9 / 42.0) on every backbone, while using only one shared backbone. DART recovers the bulk of the disentanglement benefit at single-model cost.",
+      "content_hash": "ea4fe5be26652aaba62baaa85773242014e342f390ed0c346a1968cc2cdf609b",
+      "declaration_index": 25,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_approaches_2agent",
+      "label": "obs_dart_approaches_2agent",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Fig. 6 shows DART (40.5 / 39.9 / 41.6 / 41.9) within ~1 EM of 2-Agent (40.6 / 40.4 / 41.9 / 42.0) on every backbone. Direct arithmetic comparison of the radar-average values reported in the figure.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 6"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART approaches 2-Agent within ~1 EM, using a single backbone",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Sec. 6.3 conclusion).** DART achieves near-2-Agent performance with a single backbone and lightweight LoRA adapters, while vanilla LoRA matches only the joint Search-R1 baseline. The combination implies that DART's *gradient-isolation design*, not *adapter capacity*, drives the gain. This is consistent with prior findings of [@Schulman2025].",
+      "content_hash": "ff27ef703ae4198be1f8e28703dab0197391acd1e1be86def6896248a52f3207",
+      "declaration_index": 26,
+      "exported": true,
+      "id": "github:2602_00994::claim_dart_efficient_disentanglement",
+      "label": "claim_dart_efficient_disentanglement",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "cited_refs": [
+              "Schulman2025"
+            ],
+            "referenced_claims": [
+              "claim_bottleneck_is_interference_not_capacity",
+              "obs_2agent_strongest",
+              "obs_dart_approaches_2agent"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART obtains 2-Agent-like performance via training-time gradient isolation",
+      "type": "claim"
+    },
+    {
+      "content": "**Observation (Appendix G, Fig. 9).** Varying DART's LoRA rank across $\\{8, 16, 32\\}$ produces only marginal EM changes on NQ and HotpotQA, and DART stays close to the 2-Agent reference at all ranks:\n\n| LoRA rank | Qwen2.5-3B-Base NQ | Qwen2.5-3B-Base HotpotQA | Qwen2.5-7B-Base NQ | Qwen2.5-7B-Base HotpotQA |\n|----------:|-------------------:|-------------------------:|-------------------:|-------------------------:|\n| 8         | 45.1               | 39.9                     | 47.2               | 42.2                     |\n| 16        | 45.9               | 40.1                     | 48.1               | 42.0                     |\n| 32        | 45.1               | 40.3                     | 47.4               | 42.4                     |\n| 2-Agent   | 45.8               | 40.8                     | 47.3               | 42.5                     |",
+      "content_hash": "39cdece942da5bc12025bead9d2a7a05e68e4d150c2b3786739cd1a904a266d6",
+      "declaration_index": 27,
+      "exported": false,
+      "id": "github:2602_00994::obs_rank_insensitive",
+      "label": "obs_rank_insensitive",
+      "metadata": {
+        "prior": 0.92,
+        "prior_justification": "Appendix G Fig. 9 directly tabulates EM at ranks 8/16/32 plus the 2-agent reference. The variation across ranks is <1 EM and DART stays close to 2-agent at every rank. Direct read.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 9 (Appendix G)"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Rank insensitivity: DART within 1 EM of 2-Agent for r in {8, 16, 32}",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Appendix G).** Performance is largely insensitive to LoRA rank in the range tested, and DART stays close to the 2-Agent baseline at every rank. Therefore the improvement is **not driven by extra adapter capacity**: even at rank 8 (smallest tested), DART captures most of the 2-Agent gain. Under the disentangled paradigm, a small parameter budget suffices.",
+      "content_hash": "be9efbb70225676b096ac5e5c3d0d1679184cf9fa1e2f514cabbbea255910822",
+      "declaration_index": 28,
+      "exported": false,
+      "id": "github:2602_00994::claim_gain_not_from_extra_capacity",
+      "label": "claim_gain_not_from_extra_capacity",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_dart_efficient_disentanglement",
+              "obs_rank_insensitive"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART's gain comes from disentanglement, not adapter capacity",
+      "type": "claim"
+    },
+    {
+      "content": "**Retrieval accuracy protocol (Appendix H, Fig. 10).** For each evaluation example $j$, the model retrieves a set of documents $D_j$; ground-truth answer set $G_j$. The retrieval correctness indicator $\\mathrm{RetCorrect}(D_j, G_j) = 1$ if at least one document in $D_j$ matches any element of $G_j$. Retrieval accuracy $= \\frac{1}{|S|} \\sum_j \\mathrm{RetCorrect}(D_j, G_j)$.",
+      "content_hash": "14813ecbeb20aea9eb5e68611d29b178f0635731d1342ae9f1b299bb02a27a87",
+      "declaration_index": 29,
+      "exported": false,
+      "id": "github:2602_00994::setup_retrieval_acc_protocol",
+      "label": "setup_retrieval_acc_protocol",
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "Retrieval-accuracy metric (Appendix H)",
+      "type": "setting"
+    },
+    {
+      "content": "**Observation (Fig. 10).** DART achieves higher retrieval accuracy than Search-R1 on both NQ and HotpotQA across both 3B and 7B backbones:\n\n| Method         | NQ    | HotpotQA |\n|----------------|------:|---------:|\n| Search-R1-3B   | 45.6  | 40.9     |\n| Search-R1-7B   | 45.0  | 45.0     |\n| **DART-3B**    | **64.1** | **52.5** |\n| **DART-7B**    | **63.3** | **47.9** |\n\nGains of +18.5 / +18.3 / +11.6 / +2.9 retrieval-accuracy points. An interesting open observation: 7B does not consistently beat 3B on retrieval accuracy under DART.",
+      "content_hash": "83bd7cce95e85b0f389f80bd2cd4f6c5414bab5588a73ec4557198880eaf58ef",
+      "declaration_index": 30,
+      "exported": false,
+      "id": "github:2602_00994::obs_dart_retrieval_acc",
+      "label": "obs_dart_retrieval_acc",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Fig. 10 (Appendix H) directly displays the eight retrieval accuracy bars (45.6, 64.1 on NQ-3B; 45.0, 63.3 on NQ-7B; 40.9, 52.5 on HotpotQA-3B; 45.0, 47.9 on HotpotQA-7B). DART beats Search-R1 in every cell.",
+        "source_figure": "artifacts/2602.00994.pdf, Figure 10 (Appendix H)"
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART > Search-R1 retrieval accuracy across all four (model, dataset) cells",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Appendix H).** DART improves not only reasoning (established by Fig. 5 / @claim_joint_degrades_reasoning) but also the *tool-use* capability itself, as measured by retrieval accuracy (@obs_dart_retrieval_acc). The gradient isolation thus benefits **both** capabilities, consistent with the LEAS interference diagnosis being symmetric.",
+      "content_hash": "e597ce4fb184c6ff04cde8d7960f8f258be34d1997cebceeb43d4457d1d6dbd9",
+      "declaration_index": 31,
+      "exported": true,
+      "id": "github:2602_00994::claim_dart_improves_tool_use",
+      "label": "claim_dart_improves_tool_use",
+      "metadata": {
+        "gaia": {
+          "provenance": {
+            "referenced_claims": [
+              "claim_joint_degrades_reasoning",
+              "obs_dart_retrieval_acc"
+            ]
+          }
+        }
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "title": "DART improves tool-use capability as well as reasoning",
+      "type": "claim"
+    },
+    {
+      "content": "not_both_true(A, B)",
+      "content_hash": "468923920550aff97ac2349f7d0a5b32e6560066b45861bf367db7f40e8649a7",
+      "declaration_index": 32,
+      "exported": false,
+      "id": "github:2602_00994::contra_joint_vs_interference",
+      "label": "contra_joint_vs_interference",
+      "metadata": {
+        "helper_kind": "contradiction_result",
+        "prior": 0.95
+      },
+      "module": "s6_experiments",
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_prior_arl_no_interference_study,github:2602_00994::claim_joint_assumption_unexamined)",
+      "content_hash": "ef551f501e09febba04e0ea0b1e335f24dc6d156465b9202bc0f7f1900eb127c",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_ffc12e08",
+      "label": "__implication_result_ffc12e08",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_prior_arl_no_interference_study,github:2602_00994::claim_joint_assumption_unexamined)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_556c2ad8a1837f93",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_multi_lora_cannot_disentangle,github:2602_00994::claim_task_lora_too_coarse)",
+      "content_hash": "58f0ef9fad63e02d01ea829cc1643df07acfc5fa9517dee9c86fa194d0598ca6",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_69af9646",
+      "label": "__conjunction_result_69af9646",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_multi_lora_cannot_disentangle,github:2602_00994::claim_task_lora_too_coarse)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_74ead3210db59886",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_69af9646,github:2602_00994::claim_dart_distinguishes_at_token)",
+      "content_hash": "dd0a4e08c660253f7849c038b1d089145d986ba9da35399212111de1d3055ffa",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_f4dd4d0e",
+      "label": "__implication_result_f4dd4d0e",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_69af9646,github:2602_00994::claim_dart_distinguishes_at_token)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_74ead3210db59886",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_design_matrix_invertible,github:2602_00994::claim_contrast_isolates_lambda23)",
+      "content_hash": "ae301d8317246b08da2bb7da330b5517b53c808dffb639afd5a3ae2966f648c8",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_0bb507d6",
+      "label": "__implication_result_0bb507d6",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_design_matrix_invertible,github:2602_00994::claim_contrast_isolates_lambda23)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e4dec7b57948d972",
+        "owning_strategy_type": "deduction",
+        "prior": 0.99,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_lambda23_distribution,github:2602_00994::obs_arl_succeeds_in_interference_region)",
+      "content_hash": "7cf2cd76e4bf4631656a568b702627bf9a4f6e6b81fc2233afd9e5eca3019abb",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_2c02e137",
+      "label": "__conjunction_result_2c02e137",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_lambda23_distribution,github:2602_00994::obs_arl_succeeds_in_interference_region)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f9d46d089164e4c0",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_2c02e137,github:2602_00994::claim_interference_dominates)",
+      "content_hash": "d23d613c15d030d39a0488aee8c324ecf348d29e46a74f6842952fb63680d8ac",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_65118385",
+      "label": "__implication_result_65118385",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_2c02e137,github:2602_00994::claim_interference_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f9d46d089164e4c0",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_interference_dominates,github:2602_00994::claim_seesaw_phenomenon)",
+      "content_hash": "be0f678068e7c6ac7c23a70aa603345d986bb9c940622f32801b85707a4a7360",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_b9ac6a62",
+      "label": "__implication_result_b9ac6a62",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_interference_dominates,github:2602_00994::claim_seesaw_phenomenon)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_cee20423fb83d00a",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::obs_gradient_angles,github:2602_00994::claim_capabilities_are_heterogeneous)",
+      "content_hash": "7953d088c990a58e7d16fd18acc16483514f66ec84f1de041bf86847d6b26594",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_09f05e24",
+      "label": "__implication_result_09f05e24",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::obs_gradient_angles,github:2602_00994::claim_capabilities_are_heterogeneous)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5db938b793ff6d5c",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_gradient_angles,github:2602_00994::claim_interference_dominates)",
+      "content_hash": "44827368815a8ba46b80c2c4a03fa43462a9f2c4901fa8e602bef5e6d6020189",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_acb4fdd2",
+      "label": "__conjunction_result_acb4fdd2",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_gradient_angles,github:2602_00994::claim_interference_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_52005cbf76264d06",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_acb4fdd2,github:2602_00994::claim_gradient_conflict_explains_interference)",
+      "content_hash": "1f19d298dd54f8565a475a03f0fc8758aad073a307b34919eb15dbce0cb442ab",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_e28656f7",
+      "label": "__implication_result_e28656f7",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_acb4fdd2,github:2602_00994::claim_gradient_conflict_explains_interference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_52005cbf76264d06",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_design_matrix_invertible,github:2602_00994::claim_hybrid_no_interaction,github:2602_00994::claim_contrast_isolates_lambda23,github:2602_00994::claim_interference_dominates,github:2602_00994::claim_gradient_conflict_explains_interference)",
+      "content_hash": "f2222a474a60a74a2462194ac5219548d90dfff2e0a2a8b79e8c22a7cfb5a1e0",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_6671a12c",
+      "label": "__conjunction_result_6671a12c",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_design_matrix_invertible,github:2602_00994::claim_hybrid_no_interaction,github:2602_00994::claim_contrast_isolates_lambda23,github:2602_00994::claim_interference_dominates,github:2602_00994::claim_gradient_conflict_explains_interference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_f9a8cba58926807b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_6671a12c,github:2602_00994::claim_contribution_leas)",
+      "content_hash": "60b2bddb387781d1cc320beda171475649182b6eb218691d5490df903a9313c4",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_68f5414a",
+      "label": "__implication_result_68f5414a",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_6671a12c,github:2602_00994::claim_contribution_leas)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f9a8cba58926807b",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_multi_lora_cannot_disentangle,github:2602_00994::claim_dart_distinguishes_at_token)",
+      "content_hash": "6962a05735eee7732e110ca909b23e6ae2bbc8460e312e65eb2f00391faf366f",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_67d13b8c",
+      "label": "__conjunction_result_67d13b8c",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_multi_lora_cannot_disentangle,github:2602_00994::claim_dart_distinguishes_at_token)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_65ff6c6c62a286da",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_67d13b8c,github:2602_00994::claim_dart_distinct_from_moe)",
+      "content_hash": "cb21abce0a9a2a87d026f38f2c7268fb8bf80e117303611bcc6d9498803c1c37",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_371db876",
+      "label": "__implication_result_371db876",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_67d13b8c,github:2602_00994::claim_dart_distinct_from_moe)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_65ff6c6c62a286da",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_2agent_memory_8x,github:2602_00994::claim_2agent_kv_recompute,github:2602_00994::claim_dart_simpler_stack)",
+      "content_hash": "59d8b2cdb2a0fb1948799abebabfdc4dc19cc5cf7c9b5d6471b4bc8abe4015ef",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_7942fa74",
+      "label": "__conjunction_result_7942fa74",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_2agent_memory_8x,github:2602_00994::claim_2agent_kv_recompute,github:2602_00994::claim_dart_simpler_stack)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a7a53f765d8753e2",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_7942fa74,github:2602_00994::claim_dart_more_efficient_than_2agent)",
+      "content_hash": "dd6bbd580c570204d7232f8a0b66a03245a8179b91161c69345a95886979a710",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_aa4b6001",
+      "label": "__implication_result_aa4b6001",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_7942fa74,github:2602_00994::claim_dart_more_efficient_than_2agent)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a7a53f765d8753e2",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_dart_zero_interaction,github:2602_00994::claim_freeze_backbone_necessary,github:2602_00994::claim_gradient_conflict_explains_interference)",
+      "content_hash": "7ea0a9719cfaf173bee063fa565735fe6fcf5c44ef7cf2d8e5020f932ecfd44b",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_4847d937",
+      "label": "__conjunction_result_4847d937",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_dart_zero_interaction,github:2602_00994::claim_freeze_backbone_necessary,github:2602_00994::claim_gradient_conflict_explains_interference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_183feda0bc246866",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_4847d937,github:2602_00994::claim_dart_solves_gradient_conflict)",
+      "content_hash": "79a91f2702cff581e529eb0da43c0c11fc7b9c2241dc5688e269fbf84bba17b4",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_94d5530d",
+      "label": "__implication_result_94d5530d",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_4847d937,github:2602_00994::claim_dart_solves_gradient_conflict)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_183feda0bc246866",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_dart_zero_interaction,github:2602_00994::claim_freeze_backbone_necessary,github:2602_00994::claim_freeze_no_performance_loss,github:2602_00994::claim_dart_distinct_from_moe)",
+      "content_hash": "5ffc91fb56e31ba9144f4af0f03a242c2203aaf45728808a564aebed214f0f5b",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_08f1e099",
+      "label": "__conjunction_result_08f1e099",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_dart_zero_interaction,github:2602_00994::claim_freeze_backbone_necessary,github:2602_00994::claim_freeze_no_performance_loss,github:2602_00994::claim_dart_distinct_from_moe)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_657dcd02ab9998fd",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_08f1e099,github:2602_00994::claim_contribution_dart)",
+      "content_hash": "a9728a8b3c125c68a7590eb473a541b79eb12270d83f34c56695e081f1ac4f51",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_597084d0",
+      "label": "__implication_result_597084d0",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_08f1e099,github:2602_00994::claim_contribution_dart)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_657dcd02ab9998fd",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::table1_qwen3b,github:2602_00994::obs_dart_beats_grpo_3b_inst)",
+      "content_hash": "935268c7dc1e6647d6e8ed47bcace5a6f402c474a91ec0c4869f8497bb77dea2",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_786fad5d",
+      "label": "__implication_result_786fad5d",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::table1_qwen3b,github:2602_00994::obs_dart_beats_grpo_3b_inst)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_746c78e231376c7e",
+        "owning_strategy_type": "support",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::table1_qwen3b,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+      "content_hash": "91dbc7adc261993ea3d9352edbcd075a435f70c65117849cfd22f6c954f56fee",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_859205e3",
+      "label": "__implication_result_859205e3",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::table1_qwen3b,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_10bace7d1274b12f",
+        "owning_strategy_type": "support",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_7b_inst)",
+      "content_hash": "c07d6dcaba45e97d2c4a36543a214a2a46b11bfc4c9b16972f73bcd8797bb65a",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_9c028aab",
+      "label": "__implication_result_9c028aab",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_7b_inst)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8310472068947d9b",
+        "owning_strategy_type": "support",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+      "content_hash": "0a11a21da3f22d727576321c65c42234131aa049c68cabd13541b3b4eeada08b",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_417a9456",
+      "label": "__implication_result_417a9456",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_f9c5a95cf533872f",
+        "owning_strategy_type": "support",
+        "prior": 0.98,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_dart_beats_grpo_3b_inst,github:2602_00994::obs_dart_beats_grpo_3b_base,github:2602_00994::obs_dart_beats_grpo_7b_inst,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+      "content_hash": "94bcee88b3494518fa754f6bad5cf429d7937166c1f18827114a60c92ab640e1",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_e01ffab2",
+      "label": "__conjunction_result_e01ffab2",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_dart_beats_grpo_3b_inst,github:2602_00994::obs_dart_beats_grpo_3b_base,github:2602_00994::obs_dart_beats_grpo_7b_inst,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_56f70bb1d1f4184c",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_e01ffab2,github:2602_00994::obs_dart_average_gain)",
+      "content_hash": "df72bceb87d40baf06b011afb1f97df2c0dd3eecfb85a7f776ee1a93d4dfb17a",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_e778ce56",
+      "label": "__implication_result_e778ce56",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_e01ffab2,github:2602_00994::obs_dart_average_gain)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_56f70bb1d1f4184c",
+        "owning_strategy_type": "support",
+        "prior": 0.97,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::table1_qwen3b,github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+      "content_hash": "18fceb515bbf4efc7212fecf015885060d2a07647fb982a9b140b7db360393ea",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_3df30e3c",
+      "label": "__conjunction_result_3df30e3c",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::table1_qwen3b,github:2602_00994::table2_qwen7b,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_765ee3b835626194",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_3df30e3c,github:2602_00994::obs_dart_helps_more_on_multihop)",
+      "content_hash": "e0cf644005419d8d57117b7b3db761cb328567b88b3c9cf246d6030e0251059d",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_1116cb32",
+      "label": "__implication_result_1116cb32",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_3df30e3c,github:2602_00994::obs_dart_helps_more_on_multihop)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_765ee3b835626194",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_3b_inst)",
+      "content_hash": "cce2dfb9ed7f69e063fe3225be9a6abed5f21958b1531e82cee5e68524f6c58a",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_0058994b",
+      "label": "__implication_result_0058994b",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_3b_inst)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d44bbc82ce8838a8",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+      "content_hash": "4a02e1b405d1dc64d875ae974e34f0f10c9e1645717b6c9a1f5279513260b169",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_5d3e8ac0",
+      "label": "__implication_result_5d3e8ac0",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_3b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_105ced5512dcdf50",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_7b_inst)",
+      "content_hash": "45dc6e333a7a55f9cf59f7f362257fc6d9a907d630484f785975446280b11d11",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_cade2abf",
+      "label": "__implication_result_cade2abf",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_7b_inst)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d03db0f366066a09",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+      "content_hash": "4bbeff175d4b09646c9dcbdb7d9b7f241400d2962ea31910e77ba4840253a928",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_1e7c8bc4",
+      "label": "__implication_result_1e7c8bc4",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_beats_grpo_7b_base)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e2c28527ab2e64c4",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_dart_better_reasoning_3b,github:2602_00994::obs_dart_better_reasoning_7b)",
+      "content_hash": "f3e7340586edc41c516ec0106540b42fa9f604081fbf7feb063333e207ad8b82",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_96a9f66f",
+      "label": "__conjunction_result_96a9f66f",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_dart_better_reasoning_3b,github:2602_00994::obs_dart_better_reasoning_7b)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_a393d85a175af924",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_96a9f66f,github:2602_00994::claim_joint_degrades_reasoning)",
+      "content_hash": "c12c5f9241b643873053ec78b92dc4197dcadfaec14c1e4608c7a45c5e0bb6e1",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_79a0f4a7",
+      "label": "__implication_result_79a0f4a7",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_96a9f66f,github:2602_00994::claim_joint_degrades_reasoning)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a393d85a175af924",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::table3_hybrid,github:2602_00994::claim_disentanglement_not_replicable_at_inference)",
+      "content_hash": "0ca3e2c1dcee4968473bfcdcf4b211600259538c5f8844343db09ccd433a8397",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_d852c957",
+      "label": "__implication_result_d852c957",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::table3_hybrid,github:2602_00994::claim_disentanglement_not_replicable_at_inference)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7d6c8f0cd16e8fa8",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_lora_equals_searchr1,github:2602_00994::claim_interference_dominates)",
+      "content_hash": "45fb3ae251a7211a7bdf68168761a4b25cca7f226d1657150197db5c72543be0",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_412f6cc7",
+      "label": "__conjunction_result_412f6cc7",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_lora_equals_searchr1,github:2602_00994::claim_interference_dominates)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_fb9f951d73e863c6",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_412f6cc7,github:2602_00994::claim_bottleneck_is_interference_not_capacity)",
+      "content_hash": "dcec3700dd14f45b3666fbc7d311e5653f5eecc6eb4b14394916e3ebb60abcdd",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_2c547d33",
+      "label": "__implication_result_2c547d33",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_412f6cc7,github:2602_00994::claim_bottleneck_is_interference_not_capacity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_fb9f951d73e863c6",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_lora_equals_searchr1,github:2602_00994::obs_2agent_strongest,github:2602_00994::obs_dart_approaches_2agent,github:2602_00994::claim_bottleneck_is_interference_not_capacity)",
+      "content_hash": "2ca1babcebca31e8a9d582652c145aa54f2f442587ebef7ee1f5b277e1613850",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_30160494",
+      "label": "__conjunction_result_30160494",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_lora_equals_searchr1,github:2602_00994::obs_2agent_strongest,github:2602_00994::obs_dart_approaches_2agent,github:2602_00994::claim_bottleneck_is_interference_not_capacity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_2fce983293589097",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_30160494,github:2602_00994::claim_dart_efficient_disentanglement)",
+      "content_hash": "8a0593d32510e99491434f2f81481302bffede7735c11a092f173d0d8075f323",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_eef593f7",
+      "label": "__implication_result_eef593f7",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_30160494,github:2602_00994::claim_dart_efficient_disentanglement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_2fce983293589097",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::obs_rank_insensitive,github:2602_00994::claim_dart_efficient_disentanglement)",
+      "content_hash": "d4ddbe820f9301719150e9999b3860210334678c9a57aef30a102382748c95aa",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_593772ef",
+      "label": "__conjunction_result_593772ef",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::obs_rank_insensitive,github:2602_00994::claim_dart_efficient_disentanglement)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_14448663f07d1517",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_593772ef,github:2602_00994::claim_gain_not_from_extra_capacity)",
+      "content_hash": "e43a7d8c8b76a4d8425d25084618756029c45f2a2ba18eb3e06e6f91245ab0e3",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_3bf6f90a",
+      "label": "__implication_result_3bf6f90a",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_593772ef,github:2602_00994::claim_gain_not_from_extra_capacity)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_14448663f07d1517",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::obs_dart_retrieval_acc,github:2602_00994::claim_dart_improves_tool_use)",
+      "content_hash": "9ed7f086e0e0beb74b50b6239a89c5e3717d5aae9e81fce88c4dce6dff30025c",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_2896c023",
+      "label": "__implication_result_2896c023",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::obs_dart_retrieval_acc,github:2602_00994::claim_dart_improves_tool_use)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8396a046d37fc063",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_average_gain,github:2602_00994::claim_disentanglement_not_replicable_at_inference,github:2602_00994::claim_dart_efficient_disentanglement,github:2602_00994::claim_dart_improves_tool_use)",
+      "content_hash": "f3e10628c9b2a46642c703501663d058bcb2006ab8f7f9caad10ca33ae00300d",
+      "exported": false,
+      "id": "github:2602_00994::__conjunction_result_0baedaee",
+      "label": "__conjunction_result_0baedaee",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::claim_dart_beats_grpo_universally,github:2602_00994::obs_dart_average_gain,github:2602_00994::claim_disentanglement_not_replicable_at_inference,github:2602_00994::claim_dart_efficient_disentanglement,github:2602_00994::claim_dart_improves_tool_use)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_176a24a60e52b8e1",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_0baedaee,github:2602_00994::claim_contribution_empirical)",
+      "content_hash": "b6e6aecd7ee8d2c0454718c49700a5b45be769ff3f3db5f15a9d2981660b3e81",
+      "exported": false,
+      "id": "github:2602_00994::__implication_result_8b66fc29",
+      "label": "__implication_result_8b66fc29",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_0baedaee,github:2602_00994::claim_contribution_empirical)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_176a24a60e52b8e1",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_related_work",
+    "s3_preliminaries",
+    "s4_leas",
+    "s5_dart",
+    "s6_experiments"
+  ],
+  "module_titles": {
+    "motivation": "Motivation: ARL jointly optimizes reasoning + tool-use under a single objective.",
+    "s2_related_work": "Section 2: Related Work.",
+    "s3_preliminaries": "Section 3: Preliminaries -- ARL formalism and LoRA.",
+    "s4_leas": "Section 4: Linear Effect Attribution System (LEAS).",
+    "s5_dart": "Section 5: Disentangled Action-Reasoning Tuning (DART).",
+    "s6_experiments": "Section 6: Main experiments."
+  },
+  "namespace": "github",
+  "operators": [
+    {
+      "conclusion": "github:2602_00994::contra_joint_vs_interference",
+      "metadata": {
+        "reason": "The implicit ARL assumption is that joint optimization of reasoning and tool-use over shared parameters improves overall agent performance (@claim_joint_training_helps_assumed). LEAS quantitatively shows the opposite: joint optimization induces systematic interference in the dominant question regime (@claim_interference_dominates). If interference dominates (net negative $\\lambda_{23}$ on the questions ARL solves), joint training cannot be a net improvement over independent training -- the two propositions are logically incompatible."
+      },
+      "operator": "contradiction",
+      "operator_id": "lco_4f8803bd6ac9f8ec",
+      "scope": "local",
+      "variables": [
+        "github:2602_00994::claim_joint_training_helps_assumed",
+        "github:2602_00994::claim_interference_dominates"
+      ]
+    }
+  ],
+  "package_name": "2602_00994",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2602_00994::claim_joint_assumption_unexamined",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_ffc12e08",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_prior_arl_no_interference_study",
+              "github:2602_00994::claim_joint_assumption_unexamined"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "If no prior ARL system has empirically tested whether reasoning and tool-use interfere under joint optimization (@claim_prior_arl_no_interference_study), then the implicit assumption underlying those systems -- that joint training improves overall performance -- has been adopted without empirical validation (@claim_joint_assumption_unexamined). The motivational claim is a direct consequence of the related-work gap."
+      },
+      "premises": [
+        "github:2602_00994::claim_prior_arl_no_interference_study"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_556c2ad8a1837f93",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_distinguishes_at_token",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_69af9646",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_multi_lora_cannot_disentangle",
+              "github:2602_00994::claim_task_lora_too_coarse"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_f4dd4d0e",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_69af9646",
+              "github:2602_00994::claim_dart_distinguishes_at_token"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Two independent gaps in prior Multi-LoRA work jointly motivate DART's token-level routing: soft expert mixing cannot disentangle interfering capabilities (@claim_multi_lora_cannot_disentangle), and per-task adapter selection still mixes reasoning and tool-use within a single task (@claim_task_lora_too_coarse). The only remaining axis at which to disentangle reasoning and tool-use within one ARL task is the token role -- which is what DART exploits (@claim_dart_distinguishes_at_token)."
+      },
+      "premises": [
+        "github:2602_00994::claim_multi_lora_cannot_disentangle",
+        "github:2602_00994::claim_task_lora_too_coarse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_74ead3210db59886",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_logit_model",
+        "github:2602_00994::setup_capability_vector",
+        "github:2602_00994::setup_contrast_formula",
+        "github:2602_00994::setup_base_model",
+        "github:2602_00994::setup_reas_model",
+        "github:2602_00994::setup_tool_model",
+        "github:2602_00994::setup_unified_model"
+      ],
+      "conclusion": "github:2602_00994::claim_contrast_isolates_lambda23",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_0bb507d6",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_design_matrix_invertible",
+              "github:2602_00994::claim_contrast_isolates_lambda23"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.99,
+        "reason": "Once the six capability vectors are linearly independent (@claim_design_matrix_invertible), $\\lambda^q$ is uniquely determined by $X^{-1} z^q$. Substituting $x_\\text{Uni}, x_\\text{Tool}, x_\\text{Reas}, x_\\text{Base}$ into Eq. 5 (@setup_logit_model) gives four logit values, each a specific linear combination of the six $\\lambda$ components with coefficients read from the capability vectors (@setup_capability_vector, @setup_base_model, @setup_reas_model, @setup_tool_model, @setup_unified_model). Forming the alternating sum $z^q_\\text{Uni} - z^q_\\text{Tool} - z^q_\\text{Reas} + z^q_\\text{Base}$ cancels every $\\lambda$ component except $\\lambda_{23}^q$, because only $x_{23}$ has the parity pattern $+1, 0, 0, 0$ across the four vectors. This is purely algebraic and exact: the derivation of Eq. 19 in Appendix C (@setup_contrast_formula)."
+      },
+      "premises": [
+        "github:2602_00994::claim_design_matrix_invertible"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e4dec7b57948d972",
+      "type": "deduction"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_leas_protocol"
+      ],
+      "conclusion": "github:2602_00994::claim_interference_dominates",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_2c02e137",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_lambda23_distribution",
+              "github:2602_00994::obs_arl_succeeds_in_interference_region"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_65118385",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_2c02e137",
+              "github:2602_00994::claim_interference_dominates"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The histogram measurement (@obs_lambda23_distribution) shows that $\\lambda_{23}^q < 0$ on the majority of questions in three of the four (model, dataset) cells (66.10%, 61.84%, 67.24%). The overlay accuracy curve (@obs_arl_succeeds_in_interference_region) shows that the questions where ARL is most successful are concentrated in the interference region. Together these two empirical observations directly substantiate the seesaw / competition hypothesis (@claim_seesaw_phenomenon) -- in the regime where ARL is operationally relevant, the two capabilities exhibit competition rather than synergy."
+      },
+      "premises": [
+        "github:2602_00994::obs_lambda23_distribution",
+        "github:2602_00994::obs_arl_succeeds_in_interference_region"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f9d46d089164e4c0",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_seesaw_phenomenon",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_b9ac6a62",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_interference_dominates",
+              "github:2602_00994::claim_seesaw_phenomenon"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The LEAS finding that joint training induces systematic $\\lambda_{23}^q < 0$ across most questions (@claim_interference_dominates) is the quantitative instantiation of the qualitative seesaw phenomenon (@claim_seesaw_phenomenon) -- improving one capability degrades the other [@Yu2020]. The empirical interference finding directly supports the seesaw description."
+      },
+      "premises": [
+        "github:2602_00994::claim_interference_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_cee20423fb83d00a",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_capabilities_are_heterogeneous",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_09f05e24",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::obs_gradient_angles",
+              "github:2602_00994::claim_capabilities_are_heterogeneous"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The near-orthogonality of reasoning vs tool-use gradients (@obs_gradient_angles) is direct optimization-geometric evidence that the two capabilities require qualitatively different parameter updates -- i.e. the conditional next-token distributions they target differ substantially (@claim_capabilities_are_heterogeneous)."
+      },
+      "premises": [
+        "github:2602_00994::obs_gradient_angles"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5db938b793ff6d5c",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_policy_gradient",
+        "github:2602_00994::setup_role_router"
+      ],
+      "conclusion": "github:2602_00994::claim_gradient_conflict_explains_interference",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_acb4fdd2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_gradient_angles",
+              "github:2602_00994::claim_interference_dominates"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_e28656f7",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_acb4fdd2",
+              "github:2602_00994::claim_gradient_conflict_explains_interference"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Gradient angles of $\\sim 90^\\circ$ between reasoning and tool-use components (@obs_gradient_angles) imply that, when both are summed in the unmasked policy gradient (Eq. 2, @setup_policy_gradient), the resulting update vector lies along a compromise direction whose projection onto either individual optimum is small. This geometric inefficiency is precisely what LEAS quantifies as a negative $\\lambda_{23}^q$ (@claim_interference_dominates). The two observations are consistent in sign and magnitude: same gradient pattern, consistent across both backbones and both datasets."
+      },
+      "premises": [
+        "github:2602_00994::obs_gradient_angles",
+        "github:2602_00994::claim_interference_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_52005cbf76264d06",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_contribution_leas",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_6671a12c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_design_matrix_invertible",
+              "github:2602_00994::claim_hybrid_no_interaction",
+              "github:2602_00994::claim_contrast_isolates_lambda23",
+              "github:2602_00994::claim_interference_dominates",
+              "github:2602_00994::claim_gradient_conflict_explains_interference"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_68f5414a",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_6671a12c",
+              "github:2602_00994::claim_contribution_leas"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The LEAS contribution rests on four pillars: (i) the design is **identifiable** (six linearly-independent capability vectors, @claim_design_matrix_invertible); (ii) hybrid inference **isolates** non-jointly-trained pairs (@claim_hybrid_no_interaction); (iii) the closed-form contrast (@claim_contrast_isolates_lambda23) shows that $\\lambda_{23}^q$ can be read directly from four model evaluations; (iv) the empirical instantiation reveals systematic interference (@claim_interference_dominates) with a concrete mechanistic explanation (@claim_gradient_conflict_explains_interference). Together they establish LEAS as a **quantitative diagnostic** for reasoning-tool interference in ARL [@Li2026]."
+      },
+      "premises": [
+        "github:2602_00994::claim_design_matrix_invertible",
+        "github:2602_00994::claim_hybrid_no_interaction",
+        "github:2602_00994::claim_contrast_isolates_lambda23",
+        "github:2602_00994::claim_interference_dominates",
+        "github:2602_00994::claim_gradient_conflict_explains_interference"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f9a8cba58926807b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_distinct_from_moe",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_67d13b8c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_multi_lora_cannot_disentangle",
+              "github:2602_00994::claim_dart_distinguishes_at_token"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_371db876",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_67d13b8c",
+              "github:2602_00994::claim_dart_distinct_from_moe"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Soft expert mixing in router-driven Multi-LoRA cannot remove capability-level interference because gradients still flow through every active adapter (@claim_multi_lora_cannot_disentangle). DART instead applies hard token-level routing within a single task (@claim_dart_distinguishes_at_token). The combination of these two facts -- soft mixing fails, DART uses hard routing -- is exactly what makes DART structurally distinct from MoE-style approaches."
+      },
+      "premises": [
+        "github:2602_00994::claim_multi_lora_cannot_disentangle",
+        "github:2602_00994::claim_dart_distinguishes_at_token"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_65ff6c6c62a286da",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_more_efficient_than_2agent",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_7942fa74",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_2agent_memory_8x",
+              "github:2602_00994::claim_2agent_kv_recompute",
+              "github:2602_00994::claim_dart_simpler_stack"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_aa4b6001",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_7942fa74",
+              "github:2602_00994::claim_dart_more_efficient_than_2agent"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "The three independent efficiency advantages -- $\\sim 8\\times$ less training-time memory (@claim_2agent_memory_8x), $O(1)$ vs $O(L^2)$ context-switch latency (@claim_2agent_kv_recompute), and removal of the external orchestrator (@claim_dart_simpler_stack) -- jointly establish DART as a strictly more efficient deployment of the disentangled-capability idea than 2-Agent."
+      },
+      "premises": [
+        "github:2602_00994::claim_2agent_memory_8x",
+        "github:2602_00994::claim_2agent_kv_recompute",
+        "github:2602_00994::claim_dart_simpler_stack"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a7a53f765d8753e2",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_dart_architecture",
+        "github:2602_00994::setup_dart_routing_rule"
+      ],
+      "conclusion": "github:2602_00994::claim_dart_solves_gradient_conflict",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_4847d937",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_dart_zero_interaction",
+              "github:2602_00994::claim_freeze_backbone_necessary",
+              "github:2602_00994::claim_gradient_conflict_explains_interference"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_94d5530d",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_4847d937",
+              "github:2602_00994::claim_dart_solves_gradient_conflict"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "LEAS attributes the negative $\\lambda_{23}$ to a gradient compromise in shared parameters (@claim_gradient_conflict_explains_interference). DART structurally guarantees $x_{23} = 0$ (@claim_dart_zero_interaction) by routing each token to a disjoint adapter and freezing the backbone (@claim_freeze_backbone_necessary). The same gradients still exist, but they are written into different parameter subsets, so the orthogonality observed in Fig. 3 cannot translate into destructive interference in the update."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_zero_interaction",
+        "github:2602_00994::claim_freeze_backbone_necessary",
+        "github:2602_00994::claim_gradient_conflict_explains_interference"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_183feda0bc246866",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_contribution_dart",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_08f1e099",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_dart_zero_interaction",
+              "github:2602_00994::claim_freeze_backbone_necessary",
+              "github:2602_00994::claim_freeze_no_performance_loss",
+              "github:2602_00994::claim_dart_distinct_from_moe"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_597084d0",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_08f1e099",
+              "github:2602_00994::claim_contribution_dart"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "DART's contribution is the *combination* of: (i) hard token-level routing to disjoint LoRA adapters yielding $x_{23} = 0$ (@claim_dart_zero_interaction); (ii) the structural necessity of freezing the backbone for the disentanglement to be meaningful (@claim_freeze_backbone_necessary); (iii) the absence of a performance penalty from freezing (@claim_freeze_no_performance_loss, citing [@Mukherjee2025; @Schulman2025]); and (iv) the distinction from soft Multi-LoRA / MoE methods (@claim_dart_distinct_from_moe). Together these make DART a *single-model* solution to the joint-training interference identified by LEAS [@Li2026]."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_zero_interaction",
+        "github:2602_00994::claim_freeze_backbone_necessary",
+        "github:2602_00994::claim_freeze_no_performance_loss",
+        "github:2602_00994::claim_dart_distinct_from_moe"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_657dcd02ab9998fd",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_786fad5d",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::table1_qwen3b",
+              "github:2602_00994::obs_dart_beats_grpo_3b_inst"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "The per-backbone average row for Qwen2.5-3B-Instruct in Table 1 (@table1_qwen3b) reads 0.399 (DART) vs 0.336 (Search-R1-GRPO). The +6.3 EM gap (@obs_dart_beats_grpo_3b_inst) is a direct arithmetic read-off."
+      },
+      "premises": [
+        "github:2602_00994::table1_qwen3b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_746c78e231376c7e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_3b_base",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_859205e3",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::table1_qwen3b",
+              "github:2602_00994::obs_dart_beats_grpo_3b_base"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "The Qwen2.5-3B-Base rows of Table 1 (@table1_qwen3b) read 0.405 (DART) vs 0.303 (Search-R1-GRPO). The +10.2 EM avg gain and the per-multi-hop deltas (@obs_dart_beats_grpo_3b_base) are direct arithmetic differences."
+      },
+      "premises": [
+        "github:2602_00994::table1_qwen3b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_10bace7d1274b12f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_9c028aab",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::table2_qwen7b",
+              "github:2602_00994::obs_dart_beats_grpo_7b_inst"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Table 2 (@table2_qwen7b) rows for Qwen2.5-7B-Instruct read 0.420 (DART) vs 0.396 (Search-R1-GRPO), a +2.4 EM gap (@obs_dart_beats_grpo_7b_inst)."
+      },
+      "premises": [
+        "github:2602_00994::table2_qwen7b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8310472068947d9b",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_7b_base",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_417a9456",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::table2_qwen7b",
+              "github:2602_00994::obs_dart_beats_grpo_7b_base"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.98,
+        "reason": "Table 2 (@table2_qwen7b) rows for Qwen2.5-7B-Base read 0.416 (DART) vs 0.350 (Search-R1-GRPO), a +6.6 EM gap (@obs_dart_beats_grpo_7b_base)."
+      },
+      "premises": [
+        "github:2602_00994::table2_qwen7b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_f9c5a95cf533872f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_average_gain",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_e01ffab2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+              "github:2602_00994::obs_dart_beats_grpo_3b_base",
+              "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+              "github:2602_00994::obs_dart_beats_grpo_7b_base"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_e778ce56",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_e01ffab2",
+              "github:2602_00994::obs_dart_average_gain"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.97,
+        "reason": "Averaging the four per-(model, init) gains (@obs_dart_beats_grpo_3b_inst +6.3, @obs_dart_beats_grpo_3b_base +10.2, @obs_dart_beats_grpo_7b_inst +2.4, @obs_dart_beats_grpo_7b_base +6.6) yields the headline $\\sim 6.4$ EM (the abstract reports 6.35%+) (@obs_dart_average_gain)."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_3b_base",
+        "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_7b_base"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_56f70bb1d1f4184c",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_helps_more_on_multihop",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_3df30e3c",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::table1_qwen3b",
+              "github:2602_00994::table2_qwen7b",
+              "github:2602_00994::obs_dart_beats_grpo_3b_base"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_1116cb32",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_3df30e3c",
+              "github:2602_00994::obs_dart_helps_more_on_multihop"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Tables 1 and 2 (@table1_qwen3b, @table2_qwen7b) both show that DART's MH-Avg improvement over Search-R1-GRPO exceeds its Gen-Avg improvement on the same backbone. The 3B-Base case is the most extreme example (@obs_dart_beats_grpo_3b_base), with MH-Avg jumping from 0.171 to 0.324 (+15.3) while Gen-Avg only increases from 0.478 to 0.513 (+3.5)."
+      },
+      "premises": [
+        "github:2602_00994::table1_qwen3b",
+        "github:2602_00994::table2_qwen7b",
+        "github:2602_00994::obs_dart_beats_grpo_3b_base"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_765ee3b835626194",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_0058994b",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_dart_beats_grpo_universally",
+              "github:2602_00994::obs_dart_beats_grpo_3b_inst"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If DART systematically improves over Search-R1-GRPO (@claim_dart_beats_grpo_universally), then on Qwen2.5-3B-Instruct we should observe a positive gap. The observed +6.3 EM (avg over 7 benchmarks) is consistent (@obs_dart_beats_grpo_3b_inst)."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d44bbc82ce8838a8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_3b_base",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_5d3e8ac0",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_dart_beats_grpo_universally",
+              "github:2602_00994::obs_dart_beats_grpo_3b_base"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If DART systematically improves over Search-R1-GRPO, the Qwen2.5-3B-Base setting should also show a positive gap. The observed +10.2 EM (avg) is consistent and in fact larger than average -- the Base initialization, which lacks instruction tuning, benefits more from clean disentanglement (@obs_dart_beats_grpo_3b_base)."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_105ced5512dcdf50",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_cade2abf",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_dart_beats_grpo_universally",
+              "github:2602_00994::obs_dart_beats_grpo_7b_inst"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If DART systematically improves over Search-R1-GRPO, the Qwen2.5-7B-Instruct setting should show a positive gap. The observed +2.4 EM is the smallest of the four cells but still positive (@obs_dart_beats_grpo_7b_inst); on a stronger backbone the headroom over the joint-training baseline is naturally narrower."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d03db0f366066a09",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::obs_dart_beats_grpo_7b_base",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_1e7c8bc4",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::claim_dart_beats_grpo_universally",
+              "github:2602_00994::obs_dart_beats_grpo_7b_base"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If DART systematically improves over Search-R1-GRPO, the Qwen2.5-7B-Base setting should also show a positive gap. The observed +6.6 EM is consistent (@obs_dart_beats_grpo_7b_base)."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_beats_grpo_universally"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e2c28527ab2e64c4",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_beats_grpo_universally",
+      "metadata": {
+        "reason": "Two independent (model, init) settings -- 3B-Instruct and 3B-Base -- both confirm DART > Search-R1-GRPO. Different initializations make these two observations independent evidence of the same universal trend."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_3b_base"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a71c4b12a1d85642",
+      "sub_strategies": [
+        "lcs_d44bbc82ce8838a8",
+        "lcs_105ced5512dcdf50"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_beats_grpo_universally",
+      "metadata": {
+        "reason": "Adding the 7B-Instruct setting (a different model **size** from the previous two) further confirms the law across backbone scales."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_3b_base",
+        "github:2602_00994::obs_dart_beats_grpo_7b_inst"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_22de4aa37ac70f11",
+      "sub_strategies": [
+        "lcs_a71c4b12a1d85642",
+        "lcs_d03db0f366066a09"
+      ],
+      "type": "induction"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_beats_grpo_universally",
+      "metadata": {
+        "reason": "The fourth setting, 7B-Base, adds a fully independent cell (largest size, untuned init). All four cells confirm the law, establishing systematic dominance of DART over Search-R1-GRPO across the entire 2x2 (size x init) grid."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_beats_grpo_3b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_3b_base",
+        "github:2602_00994::obs_dart_beats_grpo_7b_inst",
+        "github:2602_00994::obs_dart_beats_grpo_7b_base"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e60e4c5a31e560ad",
+      "sub_strategies": [
+        "lcs_22de4aa37ac70f11",
+        "lcs_e2c28527ab2e64c4"
+      ],
+      "type": "induction"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_fixed_retrieval_protocol"
+      ],
+      "conclusion": "github:2602_00994::claim_joint_degrades_reasoning",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_96a9f66f",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_dart_better_reasoning_3b",
+              "github:2602_00994::obs_dart_better_reasoning_7b"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_79a0f4a7",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_96a9f66f",
+              "github:2602_00994::claim_joint_degrades_reasoning"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Two independent backbones (3B-Base and 7B-Base) both show that DART outperforms Search-R1 even when both consume **identical** retrieved contexts. The only remaining axis of difference is reasoning ability, so the EM gap (@obs_dart_better_reasoning_3b, @obs_dart_better_reasoning_7b) localizes the deficit to Search-R1's reasoning, supporting the LEAS conclusion that joint optimization specifically harms the reasoning capability (@claim_interference_dominates)."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_better_reasoning_3b",
+        "github:2602_00994::obs_dart_better_reasoning_7b"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a393d85a175af924",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_disentanglement_not_replicable_at_inference",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_d852c957",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::table3_hybrid",
+              "github:2602_00994::claim_disentanglement_not_replicable_at_inference"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "Table 3 (@table3_hybrid) shows DART_Reas > H_Reas and DART_Tool > H_Tool on all 8 cells (4 cells each). The hybrid models compose two separately trained models at inference time -- so their advantage is a direct test of whether disentanglement **at training** matters beyond disentanglement only at inference. It does, by margins of 1.1-8.5 EM (Reas) and 4.6-12.4 EM (Tool)."
+      },
+      "premises": [
+        "github:2602_00994::table3_hybrid"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7d6c8f0cd16e8fa8",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_bottleneck_is_interference_not_capacity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_412f6cc7",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_lora_equals_searchr1",
+              "github:2602_00994::claim_interference_dominates"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_2c547d33",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_412f6cc7",
+              "github:2602_00994::claim_bottleneck_is_interference_not_capacity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If parameter capacity were the bottleneck of joint ARL, low-capacity LoRA should underperform full fine-tuning. The observation that LoRA $\\approx$ Search-R1 (@obs_lora_equals_searchr1) refutes the capacity hypothesis and is consistent only with the interference hypothesis (@claim_interference_dominates) -- both methods suffer the same shared-parameter conflict."
+      },
+      "premises": [
+        "github:2602_00994::obs_lora_equals_searchr1",
+        "github:2602_00994::claim_interference_dominates"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_fb9f951d73e863c6",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_dart_efficient_disentanglement",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_30160494",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_lora_equals_searchr1",
+              "github:2602_00994::obs_2agent_strongest",
+              "github:2602_00994::obs_dart_approaches_2agent",
+              "github:2602_00994::claim_bottleneck_is_interference_not_capacity"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_eef593f7",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_30160494",
+              "github:2602_00994::claim_dart_efficient_disentanglement"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Three observations together form the picture: (i) capacity is not the bottleneck (@claim_bottleneck_is_interference_not_capacity); (ii) full disentanglement (2-Agent) is the upper bound (@obs_2agent_strongest); (iii) DART recovers most of that upper bound with a single backbone (@obs_dart_approaches_2agent). The unique distinguishing feature of DART vs LoRA is the gradient-isolation routing, so this is what must be driving the gain. The conclusion is consistent with [@Schulman2025]'s finding that LoRA can match full fine-tuning."
+      },
+      "premises": [
+        "github:2602_00994::obs_lora_equals_searchr1",
+        "github:2602_00994::obs_2agent_strongest",
+        "github:2602_00994::obs_dart_approaches_2agent",
+        "github:2602_00994::claim_bottleneck_is_interference_not_capacity"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_2fce983293589097",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_gain_not_from_extra_capacity",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_593772ef",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::obs_rank_insensitive",
+              "github:2602_00994::claim_dart_efficient_disentanglement"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_3bf6f90a",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_593772ef",
+              "github:2602_00994::claim_gain_not_from_extra_capacity"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The rank scan (@obs_rank_insensitive) shows that EM changes $\\le 1$ point as $r$ varies over a 4x range. Combined with the earlier ablation showing DART$\\approx$2-Agent regardless of rank (@claim_dart_efficient_disentanglement), the source of DART's improvement is not adapter capacity but the training-time gradient routing."
+      },
+      "premises": [
+        "github:2602_00994::obs_rank_insensitive",
+        "github:2602_00994::claim_dart_efficient_disentanglement"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_14448663f07d1517",
+      "type": "support"
+    },
+    {
+      "background": [
+        "github:2602_00994::setup_retrieval_acc_protocol"
+      ],
+      "conclusion": "github:2602_00994::claim_dart_improves_tool_use",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_2896c023",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::obs_dart_retrieval_acc",
+              "github:2602_00994::claim_dart_improves_tool_use"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The +18.5 / +18.3 / +11.6 / +2.9 retrieval-accuracy gains reported in Fig. 10 (@obs_dart_retrieval_acc) directly measure tool-use quality (correct documents retrieved). All four cells favour DART, establishing tool-use improvement at scale and complementing the reasoning improvement of @claim_joint_degrades_reasoning."
+      },
+      "premises": [
+        "github:2602_00994::obs_dart_retrieval_acc"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8396a046d37fc063",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::claim_contribution_empirical",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_0baedaee",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::claim_dart_beats_grpo_universally",
+              "github:2602_00994::obs_dart_average_gain",
+              "github:2602_00994::claim_disentanglement_not_replicable_at_inference",
+              "github:2602_00994::claim_dart_efficient_disentanglement",
+              "github:2602_00994::claim_dart_improves_tool_use"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_8b66fc29",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_0baedaee",
+              "github:2602_00994::claim_contribution_empirical"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "The empirical headline (DART beats joint-training baselines by ~6.35% EM and approaches 2-Agent) is supported by: the induction across four (size, init) cells (@claim_dart_beats_grpo_universally), the per-cell deltas averaging +6.35 EM (@obs_dart_average_gain), the demonstration that hybrid inference cannot match DART (@claim_disentanglement_not_replicable_at_inference), the near-2-Agent quality at single-model cost (@claim_dart_efficient_disentanglement), and the parallel tool-use improvement (@claim_dart_improves_tool_use)."
+      },
+      "premises": [
+        "github:2602_00994::claim_dart_beats_grpo_universally",
+        "github:2602_00994::obs_dart_average_gain",
+        "github:2602_00994::claim_disentanglement_not_replicable_at_inference",
+        "github:2602_00994::claim_dart_efficient_disentanglement",
+        "github:2602_00994::claim_dart_improves_tool_use"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_176a24a60e52b8e1",
+      "type": "support"
+    }
+  ]
+}
