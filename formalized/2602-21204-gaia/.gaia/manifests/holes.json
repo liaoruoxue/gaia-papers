@@ -1,0 +1,191 @@
+{
+  "holes": [
+    {
+      "content": "**Assumption holds for studied architectures.** The bias-free linear-final-layer factorization $f(x) = \\phi(x; \\Theta) W$ (@setup_linear_final_layer_assumption) is satisfied by all TTT-KVB variants analyzed in this paper: LaCT [@Zhang2025] (the SwiGLU MLP ends with $W_1$), ViTTT [@Han2025] (the GLU output is fed to a linear projection), and Titans [@Behrouz2024]. Theorems 5.1-5.3 therefore *apply* to the architectures the paper studies. Outside this class (e.g. inner loops with non-linear final layers or biases) the analysis would not directly apply, as acknowledged in Section 7.",
+      "content_hash": "f4bb1fd5d6854ea20adea048c2b501b93eb8385d0400bb35749224e43981a779",
+      "interface_hash": "sha256:64584a2c548f6a9028847ce3af105b88637ed0d8074fbd4e13ab03ed2fa261bc",
+      "label": "claim_assumption_holds_for_studied_archs",
+      "qid": "github:2602_21204::claim_assumption_holds_for_studied_archs",
+      "required_by": [
+        "github:2602_21204::claim_anomalies_explained_by_la_view",
+        "github:2602_21204::claim_contribution_practical",
+        "github:2602_21204::claim_parallel_form_speedup",
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ]
+    },
+    {
+      "content": "**Existing equivalence (DeltaNet).** DeltaNet [@Schlag2021] and its variants are equivalent to TTT with a *single linear* inner-loop layer trained with MSE loss [@Yang2024a]. This is the simplest TTT-to-linear-attention reduction known prior to this paper, and it covers only the degenerate single-layer case.",
+      "content_hash": "de7a03fb0fd0b8d7f62deb45f9cd74fa5971432c07273b0d928487ac43c5ffe8",
+      "interface_hash": "sha256:0477528e4881e40049ac48feed231a3822376aae9e78cb473a3b8b8236e659de",
+      "label": "claim_deltanet_equals_linear_ttt",
+      "qid": "github:2602_21204::claim_deltanet_equals_linear_ttt",
+      "required_by": [
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ]
+    },
+    {
+      "content": "**The memorization hypothesis (the proposition the paper sets out to falsify).** Under the storage-and-retrieval interpretation (@setup_memorization_interpretation), TTT-with-KV-binding functions as a key-value memory: the inner-loop optimization *stores* associations $k_i \\mapsto v_i$ inside the fast-weight network $f_\\theta$, and the query $q$ *retrieves* the stored value at inference time. If true, this mechanism implies several testable consequences: (i) lower inner-loop loss should improve task performance (more accurate memorization), (ii) reversing the optimization sign (gradient ascent) should hurt performance (unmemorization), (iii) queries and keys must share a common semantic space (otherwise the query is out-of-distribution for the memorized function), and (iv) replacing $q$ with $k$ should change outputs because attention is similarity-based.",
+      "content_hash": "eb32d446198e4b1caef9c3b6ab71f627307e3a5b4e75bb6c01cabfaff349f380",
+      "interface_hash": "sha256:23d059c25dfdb1c9961cfcf0c8e63bc2cbe100277b7fc114397e5f3ed2bea530",
+      "label": "claim_memorization_hypothesis",
+      "qid": "github:2602_21204::claim_memorization_hypothesis",
+      "required_by": [
+        "github:2602_21204::claim_anomalies_explained_by_la_view"
+      ]
+    },
+    {
+      "content": "**Prior linear-attention reduction is restricted.** Sun et al. (2025) [@Sun2025] showed that *in the restricted setting of a single linear inner-loop layer with zero initialization*, TTT is exactly equivalent to linear attention. This restricted equivalence is the key prior result the present paper will *generalize* to multi-layer non-linear inner-loop functions and momentum-augmented updates (Section 5).",
+      "content_hash": "1906dfdff66975c842693b0b6c741425812920ac35cc6d952c8f8acd75ad0b8a",
+      "interface_hash": "sha256:039584a5fe2271409939302c876bbc4cbb1d306e5d2199dcc723d2accd2933fa",
+      "label": "claim_prior_la_equivalence_restricted",
+      "qid": "github:2602_21204::claim_prior_la_equivalence_restricted",
+      "required_by": [
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ]
+    },
+    {
+      "content": "**Shared computational profile.** Despite their architectural complexity, all current TTT-KVB variants share the two defining computational properties of linear attention (@setup_linear_attention): linear-time per-token compute and a constant-size state. This shared compute profile is one of the *clues* (alongside DeltaNet equivalence and the restricted prior reduction) that motivates the paper to seek a more general linear-attention reduction.",
+      "content_hash": "de67a77c6282105d897f0d87a08dc8f43695829a6ce554c5c5128b01641caa3d",
+      "interface_hash": "sha256:8fe541557478bcc9005670d24170a0a71ef836418f9262bae99f1f2cbf5d3c44",
+      "label": "claim_ttt_shares_la_compute_profile",
+      "qid": "github:2602_21204::claim_ttt_shares_la_compute_profile",
+      "required_by": [
+        "github:2602_21204::claim_ttt_is_linear_attention"
+      ]
+    },
+    {
+      "content": "**Observation (Table 2, ablation trajectory).** Ablation results across the three task families. Variant 1 (= Step 1, only update last layer) achieves the *best overall performance*. Variants 2-6 admit parallel implementations (column 'Parallel TPS'). $\\dagger$ marks ablations that do not apply -- in which case the metric matches the preceding variant. * indicates ViTTT does not use Muon, so ViTTT-Variant 6 ablates *gradient normalization* instead.\n\n| Alias    | Description                                       | Perplexity (LaCT-LLM) ↓ | PSNR dB (LaCT-NVS) ↑ | Top-1 % (ViTTT) ↑ | Recurrent TPS ↑ | Parallel TPS ↑ |\n|----------|---------------------------------------------------|-----------------------:|---------------------:|------------------:|----------------:|---------------:|\n| Baseline | LaCT / ViTTT                                       | 16.43                  | 25.94                | 79.34             | 4.30M           | N/A            |\n| Variant 1 | Update only last-layer parameters               | **15.93**              | **25.97**            | **79.63**         | 10.60M          | N/A            |\n| Variant 2 | + remove weight normalization                   | 16.31                  | 25.93                | 79.63 $\\dagger$  | 11.02M          | 30.18M         |\n| Variant 3 | + multi-layer MLP $\\to$ single linear           | 16.23                  | 25.71                | 79.39             | 12.95M          | 49.69M         |\n| Variant 4 | + remove per-token learnable lr                 | 16.12                  | 25.70                | 79.39 $\\dagger$  | 13.31M          | 53.99M         |\n| Variant 5 | + remove momentum in SGD                        | 15.97                  | 25.70 $\\dagger$     | 79.39 $\\dagger$  | 14.40M          | 57.28M         |\n| Variant 6 | + remove gradient orthogonalization (or grad-norm for ViTTT*) | 16.80    | 25.73                | 79.54*            | 89.67M          | **124.6M**     |",
+      "content_hash": "09535b7a205f4d3bcb65b2389d60a0fc99a036d805835f900332c249b37161a5",
+      "interface_hash": "sha256:d8ab551ab85e0724f1678f1e6c561f00f7dd5cc324c92dceabd6fa760379fd8a",
+      "label": "obs_ablation_table2",
+      "qid": "github:2602_21204::obs_ablation_table2",
+      "required_by": [
+        "github:2602_21204::claim_simplifications_preserve_performance"
+      ]
+    },
+    {
+      "content": "**Observation.** Gradient ascent in the inner loop *consistently increases* the inner-loop loss compared to standard gradient descent (by construction: the gradient sign is flipped, so the parameter update moves in the loss-increasing direction). The inner-loop fit $f_\\theta(k) \\approx v$ is therefore *demonstrably worse* than under the baseline.",
+      "content_hash": "b1c3be77463efdcc54c208bf7fd065821e235aab330b5f9e998022227ae14609",
+      "interface_hash": "sha256:8dffc339f9e12b583006c6d6996e07096edf23827c1ed40012b5e9d3c45736c4",
+      "label": "obs_grad_ascent_inner_loss_increases",
+      "qid": "github:2602_21204::obs_grad_ascent_inner_loss_increases",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Observation (Table 1, Gradient-Ascent row).** Despite the worsened inner-loop fit, downstream task performance under gradient ascent is *indistinguishable from* (and slightly better than) the baseline:\n\n| Model      | Metric                 | Baseline | Gradient Ascent |\n|------------|------------------------|---------:|----------------:|\n| LaCT-LLM   | Perplexity (lower=better) | 16.43 | **16.19** |\n| LaCT-NVS   | PSNR (higher=better) dB | 25.94 | 25.85 |\n| ViTTT      | Top-1 Acc (higher=better) % | 79.34 | **79.61** |\n\nOn two of three task families gradient ascent is *better* than the baseline; on the third (NVS) the gap is within noise (-0.09 dB).",
+      "content_hash": "58d19f06463cc9008152a05c3966a021368fbcafb2f5e9b8cf1acb0242b35feb",
+      "interface_hash": "sha256:296bc0b88675287c9632cbae1fde9c7ed86148d36c3ecdbb73710fe069306a0a",
+      "label": "obs_grad_ascent_table1",
+      "qid": "github:2602_21204::obs_grad_ascent_table1",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Observation (Fig. 1, inner-loss panels).** As inner-loop iterations are increased from 1 to 64 at inference, the *inner-loop loss* decreases monotonically -- from approximately $0$ down to $\\approx -60$ on the NVS task and from approximately $-0.8$ down to $\\approx -1.4$ on the LLM task (LaCT uses the Frobenius dot product, which is *more negative* when fitting is better). Inner-loop optimization is thus *successful* by its own metric.",
+      "content_hash": "4ca322e9cfad144bd5694319fdfeb6aa056685b45740180ea727464a5b07c13d",
+      "interface_hash": "sha256:931af6fd2c31f178708578c51d6a00c5aef7e07050edd0351ac96f9db9e264c4",
+      "label": "obs_inner_loss_decreases_with_steps",
+      "qid": "github:2602_21204::obs_inner_loss_decreases_with_steps",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Observation (Fig. 4).** Combining the parallel TTT layer with Steps 1 and 2 simplifications yields a **1.19x end-to-end training speedup** on LaCT-LLM (training loss vs wall-clock plot; the parallel form reaches the same training-loss target faster than the recurrent baseline) *while maintaining comparable convergence (visually overlapping loss curves)*. A further 1.06x speedup is obtained from a related optimization (per Fig. 4 annotation).",
+      "content_hash": "cb97cf11d9bb62cee604c06a0931c3bd20e9e7c3873dba6c62e60c8dc2fbc7bb",
+      "interface_hash": "sha256:f4fc0185149a37f36233d1d88b1fa691a4acf683a10c5a134f6eac9b734240a9",
+      "label": "obs_parallel_end_to_end_speedup",
+      "qid": "github:2602_21204::obs_parallel_end_to_end_speedup",
+      "required_by": [
+        "github:2602_21204::claim_parallel_form_speedup"
+      ]
+    },
+    {
+      "content": "**Observation (Table 2, Parallel TPS column).** Switching from the recurrent to the parallel implementation *for the TTT layer alone* improves inference throughput by up to **4.0x** (124.6M vs 30.18M tokens/sec on LLM, single batch -- comparing Variant 2's parallel vs recurrent for the cleanest comparison; or 124.6M vs 89.67M for Variant 6 alone). All Variants 2 through 6 admit parallel implementations.",
+      "content_hash": "5b66d08331b5d194140306fe1622b39bc0d3e8d0c3e1697eda40dff03eaa47cf",
+      "interface_hash": "sha256:7687d686bb1a7fa225ec271547789b184526179502c31d678e223ad3d9a04583",
+      "label": "obs_parallel_throughput",
+      "qid": "github:2602_21204::obs_parallel_throughput",
+      "required_by": [
+        "github:2602_21204::claim_parallel_form_speedup"
+      ]
+    },
+    {
+      "content": "**Observation (Fig. 1, performance panels).** Despite the inner-loop loss improving (@obs_inner_loss_decreases_with_steps), downstream task performance *degrades* as inner-loop iterations are increased from 1 to 64:\n\n| Task        | Metric             | At 1 step        | At 64 steps      |\n|-------------|--------------------|------------------|------------------|\n| LaCT-NVS    | PSNR (higher = better) | $\\approx 26$ dB | $\\approx 18$ dB (drop ~8 dB) |\n| LaCT-LLM    | Perplexity (lower = better) | $\\approx 15.2$ | $\\approx 15.6$ (rise ~0.4) |\n\nThe inverse relationship between inner-loop fit and task performance holds across both task families, with the NVS degradation being particularly large.",
+      "content_hash": "44ee11fdaa67baf53d2fdbc2ee5634bf157ebaac7f4dee6adc60de43fd1b2f0a",
+      "interface_hash": "sha256:e667b40d983a37023110bba0a6255561cdc991a57e19681e51dff8693c304d2a",
+      "label": "obs_perf_degrades_with_more_steps",
+      "qid": "github:2602_21204::obs_perf_degrades_with_more_steps",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Observation (Table 1, 'Replace Q with K' row).** Replacing $q$ with $k$ produces *negligible* changes in task performance:\n\n| Model      | Metric                 | Baseline | Replace Q with K |\n|------------|------------------------|---------:|-----------------:|\n| LaCT-LLM   | Perplexity (lower=better) | 16.43 | **16.18** |\n| LaCT-NVS   | PSNR (higher=better) dB | 25.94 | **25.95** |\n| ViTTT      | Top-1 Acc (higher=better) % | 79.34 | 79.18 |\n\nOn LaCT-LLM and LaCT-NVS the substitution is in fact mildly *better* than baseline; on ViTTT the gap is within noise (-0.16%). The magnitude of the change (max 0.16% absolute on accuracy, 0.25 on perplexity) is far below what a similarity-based retrieval mechanism would tolerate.",
+      "content_hash": "45ec1ef0cd9219da07b44fc9472dc855df3cd593f6675c2fad9d076e6aa58ad4",
+      "interface_hash": "sha256:27291b5b44e7d3afc2436e1cad15d0a06202c9aff02310ce6dd2463a12204f26",
+      "label": "obs_q_replacement_table1",
+      "qid": "github:2602_21204::obs_q_replacement_table1",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Observation (Fig. 2, Q-K panel).** The t-SNE visualization of $Q$ and $K$ vectors collected across all tokens and layers (blocks 1, 4, 7) of a pretrained LaCT-NVS model shows a *pronounced and consistent mismatch* between the $Q$ and $K$ point clouds at every layer examined. The two distributions form visually disjoint or weakly overlapping clusters, indicating that $Q$ samples lie *outside* the support of $K$ samples on which $f_\\theta$ was trained.",
+      "content_hash": "78baa3c4f33d0c3a1028ff770c1cbb219c272bdc7f8b3269c4004cfe5965b174",
+      "interface_hash": "sha256:0a76f3f91df9c4f84221d95f6f911d47dd35507e3aca9c6b36d2c62a383132a3",
+      "label": "obs_qk_distributions_disjoint",
+      "qid": "github:2602_21204::obs_qk_distributions_disjoint",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    },
+    {
+      "content": "**Sub-observation (Table 2 narrative).** Most TTT design components contribute only marginally to performance, with two notable exceptions: (i) **deeper MLPs** (Step 3) help on the NVS task (25.93 -> 25.71 dB PSNR loss when collapsed); (ii) **gradient orthogonalization** (Step 6) helps on the LLM task (15.97 -> 16.80 perplexity loss when removed). The other components (per-token learning rate, momentum) leave performance essentially unchanged when removed.",
+      "content_hash": "c10f61bd7a29a8fd1ff33c20dcb3ba70d901c2e477706f8b3d294c91c452f425",
+      "interface_hash": "sha256:730b1364dc0d07d5ea567b1172aa6136d70014a408f09ecc1bd4d5acb8431802",
+      "label": "obs_remaining_components_marginal",
+      "qid": "github:2602_21204::obs_remaining_components_marginal",
+      "required_by": [
+        "github:2602_21204::claim_simplifications_preserve_performance"
+      ]
+    },
+    {
+      "content": "**Sub-observation (Table 2, Variant 1).** Variant 1 -- which differs from the baseline *only* in restricting the inner-loop update to the final MLP layer -- achieves the best performance on *all three* task families: 15.93 vs 16.43 perplexity (LaCT-LLM), 25.97 vs 25.94 dB PSNR (LaCT-NVS), 79.63% vs 79.34% Top-1 accuracy (ViTTT). It also more than doubles inference throughput on the LLM task (10.60M vs 4.30M tokens/sec).",
+      "content_hash": "67d09726f68b3c3d6686c83b2d4b8d87d360a44d72a3db6f7ad4f58fd75eefbd",
+      "interface_hash": "sha256:2a25d9aa46a2df1edf494dd5473aa8c032efb66e6eacafe199a92b99204c8145",
+      "label": "obs_variant1_best",
+      "qid": "github:2602_21204::obs_variant1_best",
+      "required_by": [
+        "github:2602_21204::claim_simplifications_preserve_performance"
+      ]
+    },
+    {
+      "content": "**Sub-observation (Table 2, Variant 6).** Even after applying *all* six simplifications -- collapsing TTT to standard linear attention $o = q(W + \\sum k_i^\\top v_i)$ -- the performance degradation relative to baseline is *minor*: +0.4 perplexity on LLM (16.80 vs 16.43), -0.2 dB PSNR on NVS (25.73 vs 25.94), and +0.2% Top-1 on image recognition (79.54 vs 79.34). At the same time, throughput improves dramatically: 89.67M (recurrent) and 124.6M (parallel) vs 4.30M baseline tokens/sec.",
+      "content_hash": "efca8728801c5bd31015f5e3029f239b64f5676e710d3a38e17c4de04565f23a",
+      "interface_hash": "sha256:fa9e8cbc1a643abdbb0265760b890d98168ff3251f7a32a837f358223d717180",
+      "label": "obs_variant6_minor_degradation",
+      "qid": "github:2602_21204::obs_variant6_minor_degradation",
+      "required_by": [
+        "github:2602_21204::claim_simplifications_preserve_performance"
+      ]
+    },
+    {
+      "content": "**Observation (Fig. 2, V-O panel).** A similar mismatch is observed between value $V$ and output $O$ point clouds: $O$ does *not* lie on the manifold of $V$ targets at any layer. This corroborates the Q-K mismatch as a systemic property rather than an isolated artefact of one layer or one feature set.",
+      "content_hash": "bedfb5d2193398e1a84c04548c7113f1c0f65679cd2a19f724fdd610b4d69ca5",
+      "interface_hash": "sha256:633a5febd3083e977aead5708749e7cf8c048b6d4d2e23ff1c28f5b51375ad0b",
+      "label": "obs_vo_distributions_also_disjoint",
+      "qid": "github:2602_21204::obs_vo_distributions_also_disjoint",
+      "required_by": [
+        "github:2602_21204::claim_memorization_view_falsified"
+      ]
+    }
+  ],
+  "ir_hash": "sha256:3b796a5b086e9919e9048bb524059def12783a79a3af05d15e9f274bad56da72",
+  "manifest_schema_version": 1,
+  "package": "2602-21204",
+  "version": "0.1.0"
+}

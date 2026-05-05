@@ -1,0 +1,64 @@
+{
+  "exports": [
+    {
+      "content": "**Synthesis (Sec. 5.2).** Viewed through the lens of linear attention (@claim_ttt_is_linear_attention), all four empirical anomalies of Section 4 follow naturally from representation-learning and train-test consistency considerations:\n\n* Anomaly 1 (@claim_la_explains_anomaly_qk_asymmetry) -- $q$ and $k$ play different operator roles and need not share a distribution.\n* Anomaly 2 (@claim_la_explains_anomaly_replace_q) -- $\\phi_{t+1}(k) \\neq \\phi_t(k)$ keeps the operator non-degenerate.\n* Anomaly 3 (@claim_la_explains_anomaly_inner_vs_outer) -- changing inner steps changes the operator and induces train-test mismatch.\n* Anomaly 4 (@claim_la_explains_anomaly_grad_ascent) -- gradient sign is absorbed by the learnable value projection.\n\nThis is the explanatory payoff of the linear-attention re-framing: what looks like a paradox under memorization becomes a transparent property of a learned mixer.",
+      "content_hash": "dd3894bd256daf999b93955ae285466a8cd081ec4049275a8b9336ba5ad3c3c6",
+      "label": "claim_anomalies_explained_by_la_view",
+      "qid": "github:2602_21204::claim_anomalies_explained_by_la_view",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 1 (Empirical anomalies).** The paper identifies four systematic anomalies (@claim_anomaly_distributional_asymmetry_preview, @claim_anomaly_replace_q_with_k_preview, @claim_anomaly_inner_vs_outer_preview, @claim_anomaly_gradient_ascent_preview) in the empirical behavior of TTT-with-KV-binding models that are jointly *incompatible* with the storage-and-retrieval interpretation. Each anomaly is demonstrated on at least two of the three task families (language modeling on LaCT-LLM, novel-view synthesis on LaCT-NVS, image classification on ViTTT-B).",
+      "content_hash": "61ae065969dbad6809f3013262787a9dc7280d555ff18c7b4efc2c89bd93c4e5",
+      "label": "claim_contribution_anomalies",
+      "qid": "github:2602_21204::claim_contribution_anomalies",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 2 (Theoretical equivalence).** The paper proves (Theorems 5.1-5.3) that a broad class of TTT-with-KV-binding architectures -- including those with multi-layer MLP inner loops and momentum-augmented gradient updates -- can be analytically rewritten as a *learned linear attention operator* of the form $o_t = \\hat{q}_t \\bigl(S_0 + \\sum_{i \\le t} \\hat{k}_i^\\top \\hat{v}_i\\bigr)$, where the effective query, key, and value vectors are functions of the inner-loop hidden representation. Under this view the inner loop performs *structured history-dependent mixing* of $q$, $k$, $v$ rather than meta-learning a key-value memory. The required structural condition is that the inner-loop final layer is linear and bias-free.",
+      "content_hash": "fc40dfdf86a4380da43cfd771c63e8e8e214a4d54785a0fefbf95691004c5752",
+      "label": "claim_contribution_equivalence",
+      "qid": "github:2602_21204::claim_contribution_equivalence",
+      "type": "claim"
+    },
+    {
+      "content": "**Contribution 3 (Practical consequences).** Three concrete benefits follow from the equivalence:\n\n* **Simplify.** Six-step ablation trajectory (only update last layer; remove weight normalization; collapse multi-layer MLP to single linear layer; remove per-token learning rates; remove momentum; remove gradient orthogonalization) reduces complex TTT formulations (LaCT, ViTTT) to standard linear attention with only minor performance degradation (+0.4 perplexity / -0.2 dB PSNR / +0.2% Top-1 accuracy compared to baseline).\n* **Parallelize.** Variants 2-6 admit a fully parallel implementation via prefix-scan that achieves up to 4.0x TTT-layer throughput (124.6M vs 30.18M tokens/sec on LLM) and a 1.19x end-to-end training speedup, while preserving model quality.\n* **Generalize.** Two representative TTT variants (LaCT, ViTTT GLU + depthwise convolution) are explicitly cast in linear-attention form, establishing TTT-KVB as a *flexible learned linear attention* mechanism whose enhanced representational capacity comes from the learnable kernel function $\\phi$ rather than from memorization.",
+      "content_hash": "6a613ec60927b51770e761b02b90ca90f18d5e35b90e0bc914ff7718b6cc1348",
+      "label": "claim_contribution_practical",
+      "qid": "github:2602_21204::claim_contribution_practical",
+      "type": "claim"
+    },
+    {
+      "content": "**Summary of Section 4.** The four anomalies (@claim_anomaly_inner_vs_outer, @claim_anomaly_gradient_ascent, @claim_anomaly_distributional_asymmetry, @claim_anomaly_replace_q_with_k) jointly establish that TTT-with-KV-binding does *not* operate as test-time memorization. Downstream behavior is largely insensitive to (a) the *quality* of inner-loop optimization, (b) the *direction* of inner-loop optimization, (c) whether the mechanism even has access to a meaningful query signal, and (d) the in-distribution vs out-of-distribution status of the queries fed to the trained fast-weight function. Each of (a)-(d) is necessary for a storage-and-retrieval interpretation; the conjunction of their failures falsifies that interpretation.",
+      "content_hash": "df29ef5e827ec2af9192335c554596f20f419b608dc59224246d9f9f2a306d05",
+      "label": "claim_memorization_view_falsified",
+      "qid": "github:2602_21204::claim_memorization_view_falsified",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Sec. 6.2).** The fully parallel TTT formulation is (i) *exact* (theorem-proven equivalent to sequential recurrence, @claim_parallel_equivalent_to_recurrent), (ii) *fast* (up to 4.0x TTT-layer throughput, @obs_parallel_throughput), and (iii) *quality-preserving* (1.19x end-to-end training speedup with no convergence loss, @obs_parallel_end_to_end_speedup). It is enabled by exactly the same conditions (static kernel + no weight-norm) under which TTT reduces to standard linear attention, providing a unified explanation for both the simplification and parallelization benefits.",
+      "content_hash": "5990749a0997d4ce964973c996dccd0b263b7ed95172fd265873d8af6350361e",
+      "label": "claim_parallel_form_speedup",
+      "qid": "github:2602_21204::claim_parallel_form_speedup",
+      "type": "claim"
+    },
+    {
+      "content": "**Synthesis (Sec. 6.1).** The six-step ablation trajectory demonstrates that complex TTT formulations (LaCT, ViTTT) can be reduced to standard linear attention with only *minor* performance degradation, and that *most* of the components introduced under the memorization-fidelity rationale (@claim_complexity_drift_under_memorization) -- weight normalization, multi-layer MLP depth, per-token learning rates, momentum, gradient orthogonalization -- are either *redundant* or *marginal* to final task performance. By contrast, restricting the inner-loop to update only the final layer (Step 1) actually *improves* performance across all three task families. This is a concrete practical payoff of the linear-attention re-framing.",
+      "content_hash": "aff817092a41b1b587340de5aa7e08cdc28b57f64ed6c3186f9a66540cff4bf5",
+      "label": "claim_simplifications_preserve_performance",
+      "qid": "github:2602_21204::claim_simplifications_preserve_performance",
+      "type": "claim"
+    },
+    {
+      "content": "**Theoretical headline.** A broad class of TTT-with-KV-binding architectures -- specifically, those whose fast-weight network has a *linear bias-free final layer* (@setup_linear_final_layer_assumption) -- is *analytically equivalent* to a learned linear attention operator. The class includes single-step and unrolled GD updates (Theorems 5.1, 5.2 -- @claim_thm_5_1, @claim_thm_5_2), as well as momentum-augmented updates (Theorem 5.3 -- @claim_thm_5_3). The inner loop does *not* perform meta-learning in the conventional sense; instead it parameterizes a *structured history-dependent mixing* of $q$, $k$, $v$ vectors via the learnable kernel $\\phi$ and the effective value $\\hat{v}_i$. This generalizes the single-linear-layer reduction of Sun et al. (2025) (@claim_prior_la_equivalence_restricted) to multi-layer non-linear MLPs and momentum.",
+      "content_hash": "a1d83c35e9950c572ab7049fe9bec9cf1cfd22bafd4b9751db6d8d56ca309232",
+      "label": "claim_ttt_is_linear_attention",
+      "qid": "github:2602_21204::claim_ttt_is_linear_attention",
+      "type": "claim"
+    }
+  ],
+  "ir_hash": "sha256:3b796a5b086e9919e9048bb524059def12783a79a3af05d15e9f274bad56da72",
+  "manifest_schema_version": 1,
+  "package": "2602-21204",
+  "version": "0.1.0"
+}
