@@ -1,0 +1,26 @@
+# 2601-08129-gaia
+
+Gaia formalization of Rodriguez (2026) 'Emergent Coordination in Multi-Agent Systems via Pressure Fields and Temporal Decay' (arXiv 2601.08129v3).
+
+<!-- badges:start -->
+<!-- badges:end -->
+
+## Overview
+
+```mermaid
+---
+config:
+  flowchart:
+    rankSpacing: 80
+    nodeSpacing: 30
+---
+graph TB
+
+    classDef premise fill:#ddeeff,stroke:#4488bb,color:#333
+    classDef exported fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#333
+    classDef weak fill:#fff9c4,stroke:#f9a825,stroke-dasharray: 5 5,color:#333
+    classDef contra fill:#ffebee,stroke:#c62828,color:#333
+```
+
+<!-- content:start -->
+<!-- content:end -->
