@@ -1,0 +1,82 @@
+{
+  "code": 0,
+  "data": {
+    "claim": {
+      "content": "In multi-objective question-answering experiments with long 300-word observations and extreme-horizon generalization, training ABBEL with a belief-length penalty (ABBEL-LP) yielded higher task performance (measured by Exact Match count, EM, defined as the number of per-object answers that exactly match the correct answer text) than contemporaneous memory-oriented agents based on MEM1 for settings with more than two objectives, while producing substantially shorter internal states and lower Peak Token Usage (the maximum sequence length of input+output tokens encountered in a trajectory); ABBEL and ABBEL-LP obtained higher EM scores in multi-objective settings than MEM1 variants, and ABBEL-LP in particular reduced Peak Tokens markedly relative to MEM1 while only slightly decreasing EM relative to ABBEL without the penalty, demonstrating an effective performance–memory tradeoff when beliefs are isolated from reasoning traces.",
+      "content_hash": "dc92a4ad0b0ba87d30c3dfc8b4591b5ef097fd403e3c6c13b17cf7812fa940cf",
+      "id": "gcn_ad89e9a84a684d20",
+      "type": "claim"
+    },
+    "evidence_chains": [
+      {
+        "factors": [
+          {
+            "conclusion": {
+              "content": "In multi-objective question-answering experiments with long 300-word observations and extreme-horizon generalization, training ABBEL with a belief-length penalty (ABBEL-LP) yielded higher task performance (measured by Exact Match count, EM, defined as the number of per-object answers that exactly match the correct answer text) than contemporaneous memory-oriented agents based on MEM1 for settings with more than two objectives, while producing substantially shorter internal states and lower Peak Token Usage (the maximum sequence length of input+output tokens encountered in a trajectory); ABBEL and ABBEL-LP obtained higher EM scores in multi-objective settings than MEM1 variants, and ABBEL-LP in particular reduced Peak Tokens markedly relative to MEM1 while only slightly decreasing EM relative to ABBEL without the penalty, demonstrating an effective performance–memory tradeoff when beliefs are isolated from reasoning traces.",
+              "id": "gcn_ad89e9a84a684d20"
+            },
+            "factor_type": "strategy",
+            "id": "gfac_ae0863c3ac6646b0",
+            "premises": [
+              {
+                "content": "Let the belief-length penalty for a trajectory be computed as\n      $$\n      -\\lambda\\Bigl(\\max_t |b_t| - \\overline{|b|}_{\\text{batch}}\\Bigr)\n      $$\n      with \\(\\lambda=0.01\\) and where \\(\\overline{|b|}_{\\text{batch}}\\) denotes the batch mean of longest-belief lengths, and apply this penalty after advantage normalization in policy updates; the proposition is that this particular design choice (a small \\(\\lambda\\), penalizing only the longest belief in the trajectory, and applying the penalty after advantage normalization) prevents the agent from learning degenerate, over-compressed beliefs that omit essential information and thereby preserves downstream reasoning capacity while encouraging more concise beliefs, assuming the chosen scale and normalization behave as intended across the reported training regimes.",
+                "id": "gcn_3abbd19fc5ea4859"
+              }
+            ],
+            "steps": [
+              {
+                "reasoning": "Begin from the upstream design choice of a belief-length penalty (conclusion 4) and the ABBEL protocol; treat the length-penalty reward as an available training intervention.",
+                "step_id": "1"
+              },
+              {
+                "reasoning": "Describe the multi-objective question-answering (QA) benchmark and metrics used to evaluate memory/performance trade-offs: each task requires answering a set of objectives by iteratively querying an external knowledge base that returns three documents trimmed to 100 words each; training used 2-objective tasks and horizon 6 while evaluation tests up to 16 objectives and horizon 20; task performance is measured by Exact Match Count (EM), defined as the number of answers that exactly match the correct answer text, and memory efficiency is measured by Peak Token Usage, defined as the maximum sequence length (input and output, excluding system prompt) over all steps in a trajectory.\nZhou et al. (2025b)",
+                "step_id": "2"
+              },
+              {
+                "reasoning": "State the comparative experimental setup: authors trained ABBEL with and without the belief-length penalty (ABBEL-LP and ABBEL), evaluated a zero-RL ABBEL Zero, and compared to contemporaneous memory-oriented approaches including MEM1 variants (MEM1 Base from prior work and a re-implemented MEM1 Instruct trained with the same base model) and full-context VANILLA baselines; MEM1 uses an internal state that entangles reasoning and memory, preventing application of a belief-length penalty without also penalizing reasoning.",
+                "step_id": "3"
+              },
+              {
+                "reasoning": "Report the empirical outcomes showing ABBEL-LP's performance/memory tradeoff: ABBEL and ABBEL-LP achieved higher EM scores than MEM1 variants for multi-objective settings with more than two objectives (e.g., at 8 and 16 objectives ABBEL-family EM exceeds MEM1 Instruct and MEM1 Base), and ABBEL-LP produced markedly lower Peak Token Usage than MEM1 while only slightly reducing EM relative to ABBEL without the penalty; concretely, for the 16-objective setting the table reports ABBEL EM $=3.57$ with Tokens $=10.12\\times 10^{2}$, ABBEL-LP EM $=3.43$ with Tokens $=7.64\\times 10^{2}$, and MEM1 Instruct EM $=2.50$ with Tokens $=10.58\\times 10^{2}$, demonstrating ABBEL-LP's better EM and lower Peak Tokens than MEM1 Instruct.\nFig. 5a\nTable 1",
+                "step_id": "4"
+              },
+              {
+                "reasoning": "Explain the authors' interpretation: the belief-length penalty leverages ABBEL's isolated belief state to encourage concise internal states without directly penalizing reasoning traces (which remain available for action selection), allowing ABBEL-LP to trade a small amount of EM for substantial reductions in Peak Token Usage and thus attain an effective performance/memory tradeoff superior to contemporaneous memory methods that cannot decouple belief length and reasoning length.\nFig. 5c",
+                "step_id": "5"
+              }
+            ],
+            "subtype": "noisy_and"
+          }
+        ],
+        "motivating_questions": [
+          {
+            "content": "Multi-objective QA with long retrieved document contexts produces very large per-step observations; prior memory approaches either carry forward long mixed traces of reasoning and memory or use dense, non-interpretable representations, making it hard to control memory usage without degrading reasoning. In particular, MEM1’s internal state entangles beliefs and reasoning traces, preventing application of a penalty that targets only the carry-forward belief. A method that isolates a concise natural-language belief and provides a length penalty that only affects the belief is necessary to steer models toward lower inference-time memory while preserving the reasoning needed to answer many objectives.",
+            "id": "paper:1210600246501965844::conclusion_6_subproblem",
+            "source_package": "paper:1210600246501965844"
+          }
+        ],
+        "source_package": "paper:1210600246501965844"
+      }
+    ],
+    "papers": {
+      "paper:1210600246501965844": {
+        "area": "arXiv-Computer Science",
+        "authors": "Aly Lidayan | Jakob Bjorner | Satvik Golechha | Kartik Goyal | Alane Suhr",
+        "available_online": "",
+        "cover_date_start": "2025-12-23",
+        "created_at": "2025-12-24T06:53:10+08:00",
+        "doi": "10.48550/arXiv.2512.20111",
+        "en_title": "ABBEL: LLM Agents Acting through Belief Bottlenecks Expressed in Language",
+        "id": "1210600246501965844",
+        "keywords": "",
+        "publication_date": "",
+        "publication_id": "108592",
+        "publication_name": "Computation and Language",
+        "research_categories": "",
+        "zh_title": "阿贝尔：通过语言中表达的信念瓶颈来行动的语言模型智能体"
+      }
+    },
+    "total_chains": 1
+  },
+  "trace_id": "29c94ea1ff8d419c829521a915a928ca"
+}

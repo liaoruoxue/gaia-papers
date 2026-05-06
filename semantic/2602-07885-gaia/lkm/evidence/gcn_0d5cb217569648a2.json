@@ -1,0 +1,90 @@
+{
+  "code": 0,
+  "data": {
+    "claim": {
+      "content": "Agentic long-term memory construction is formalized as an online Information Bottleneck optimization as follows: let X_{1:t} = \\{x_1,\\dots,x_t\\} denote the agent's interaction history up to time t, let M_t denote the agent's memory state at time t, let I(A;B) denote the mutual information between random variables A and B, let Y denote a latent variable representing future reasoning tasks, and let \\beta>0 be a scalar trade-off parameter. The memory construction policy \\pi maps histories to memory states M_t and is obtained by minimizing the Lagrangian\n      $$\n      \\min_{\\pi}\\mathcal{L}_{\\mathrm{IB}}(M_t)=I(X_{1:t};M_t)-\\beta I(M_t;Y),\n      $$\n      where the first term measures representational complexity and the second term measures task relevance. For streaming (online) operation the incremental, stepwise objective for the transition from time t to t+1 is the change in this Lagrangian:\n      $$\n      \\Delta\\mathcal{L}=\\bigl[I(X_{1:t+1};M_{t+1})-I(X_{1:t};M_t)\\bigr]-\\beta\\bigl[I(M_{t+1};Y)-I(M_t;Y)\\bigr],\n      $$\n      which quantifies the compression cost and the change in relevance induced by an ingestion decision. Framed in this way, memory construction becomes an online Information Bottleneck control problem where local, greedy updates that reduce \\Delta\\mathcal{L} at each step can be used as tractable approximations to the full offline IB optimization.",
+      "content_hash": "d7601ece93e66e76a4f181063303a9fb7993399e1fad6d59568a9cf0a02b1736",
+      "id": "gcn_0d5cb217569648a2",
+      "type": "claim"
+    },
+    "evidence_chains": [
+      {
+        "factors": [
+          {
+            "conclusion": {
+              "content": "Agentic long-term memory construction is formalized as an online Information Bottleneck optimization as follows: let X_{1:t} = \\{x_1,\\dots,x_t\\} denote the agent's interaction history up to time t, let M_t denote the agent's memory state at time t, let I(A;B) denote the mutual information between random variables A and B, let Y denote a latent variable representing future reasoning tasks, and let \\beta>0 be a scalar trade-off parameter. The memory construction policy \\pi maps histories to memory states M_t and is obtained by minimizing the Lagrangian\n      $$\n      \\min_{\\pi}\\mathcal{L}_{\\mathrm{IB}}(M_t)=I(X_{1:t};M_t)-\\beta I(M_t;Y),\n      $$\n      where the first term measures representational complexity and the second term measures task relevance. For streaming (online) operation the incremental, stepwise objective for the transition from time t to t+1 is the change in this Lagrangian:\n      $$\n      \\Delta\\mathcal{L}=\\bigl[I(X_{1:t+1};M_{t+1})-I(X_{1:t};M_t)\\bigr]-\\beta\\bigl[I(M_{t+1};Y)-I(M_t;Y)\\bigr],\n      $$\n      which quantifies the compression cost and the change in relevance induced by an ingestion decision. Framed in this way, memory construction becomes an online Information Bottleneck control problem where local, greedy updates that reduce \\Delta\\mathcal{L} at each step can be used as tractable approximations to the full offline IB optimization.",
+              "id": "gcn_0d5cb217569648a2"
+            },
+            "factor_type": "strategy",
+            "id": "gfac_d969af51265044ae",
+            "premises": [
+              {
+                "content": "Consider a streaming-data setting where the observed interaction history up to time t is X_{1:t}=\\{x_1,\\dots,x_t\\} and the agent's memory state at time t is the random variable M_t. Define the Information Bottleneck Lagrangian for a memory construction policy as \\mathcal{L}_{\\mathrm{IB}}(M_t)=I(X_{1:t};M_t)-\\beta I(M_t;Y), where I(\\cdot;\\cdot) denotes mutual information, Y denotes latent future tasks, and \\beta>0 controls the compression–relevance trade-off. Because the combinatorial space of possible memory configurations across a long horizon is intractably large, a practical online strategy is to make locally greedy, time-step decisions that minimize the incremental cost\n      $$\n      \\Delta\\mathcal{L}=\\bigl[I(X_{1:t+1};M_{t+1})-I(X_{1:t};M_t)\\bigr]-\\beta\\bigl[I(M_{t+1};Y)-I(M_t;Y)\\bigr],\n      $$\n      i.e., to select merges/links/appends at each ingestion step that locally reduce \\Delta\\mathcal{L}. The proposition is that this greedy, stepwise minimization yields a tractable approximation whose resulting memory trajectory attains substantially lower overall \\mathcal{L}_{\\mathrm{IB}} than naive baselines in practice and therefore serves as an acceptable proxy for the intractable global optimization over the full sequence of memory states M_{1:T}, under the additional modeling assumption that early local consolidation decisions rarely induce large, adversarial long-range negative interactions (formally, that large negative second-order effects from early merges are uncommon).",
+                "id": "gcn_524bac1b258d4fa3"
+              }
+            ],
+            "steps": [
+              {
+                "reasoning": "Define the input stream and memory variables used in the formalization: let $X_{1:t}=\\{x_1,\\dots,x_t\\}$ denote the continuous sequence of observations where each $x_t$ is an interaction datum (a string or conversational turn), and let $M_t$ denote the agent's memory state at time $t$, which the paper instantiates as a dynamic graph $\\mathcal{G}_t=(\\mathcal{V}_t,\\mathcal{E}_t,\\Phi_t)$ where $\\mathcal{V}_t$ is the set of memory nodes, $\\mathcal{E}_t$ the associative edges, and $\\Phi_t$ maps nodes to dense embeddings and textual content; these symbols are used throughout the objective below.",
+                "step_id": "1"
+              },
+              {
+                "reasoning": "Introduce mutual-information terms and the memory construction policy: define $I(\\cdot;\\cdot)$ as the mutual information between two random variables, define $\\pi$ as the memory construction policy mapping histories $X_{1:t}$ to memory states $M_t$, and introduce the Lagrangian objective that trades compression against relevance via a positive scalar $\\beta>0$.",
+                "step_id": "2"
+              },
+              {
+                "reasoning": "Write the Information Bottleneck Lagrangian used for memory construction as the optimization problem minimized by the policy $\\pi$:\n$$\n\\min_{\\pi}\\mathcal{L}_{\\mathrm{IB}}(M_t)=I(X_{1:t};M_t)-\\beta I(M_t;Y),\n$$\nwhere $Y$ denotes the (latent) random variable capturing future reasoning tasks; here $I(X_{1:t};M_t)$ is the compression term measuring representational complexity and $I(M_t;Y)$ is the relevance term measuring retained task information.",
+                "step_id": "3"
+              },
+              {
+                "reasoning": "Explain the role of $\\beta$ and $Y$: $\\beta>0$ controls the compression-relevance trade-off (larger $\\beta$ favors preserving information relevant to $Y$), and $Y$ is treated as an abstract latent capturing future tasks that are unknown at memory-construction time; because $Y$ is not observed, the paper motivates proxy surrogates for relevance (e.g., Keyword co-occurrence and Topic navigability) but the formal objective retains $I(M_t;Y)$ as the target of relevance preservation.",
+                "step_id": "4"
+              },
+              {
+                "reasoning": "Derive the incremental (online) objective used for streaming operation by expressing the stepwise change in the Lagrangian when ingesting a new observation $x_{t+1}$ and transitioning from $M_t$ to $M_{t+1}$:\n$$\n\\Delta\\mathcal{L}=\\bigl[I(X_{1:t+1};M_{t+1})-I(X_{1:t};M_t)\\bigr]-\\beta\\bigl[I(M_{t+1};Y)-I(M_t;Y)\\bigr].\n$$\nThis $\\Delta\\mathcal{L}$ separates the instantaneous compression increment $\\Delta I_{\\text{compress}}=I(X_{1:t+1};M_{t+1})-I(X_{1:t};M_t)$ and the instantaneous relevance increment $\\Delta I_{\\text{relevance}}=I(M_{t+1};Y)-I(M_t;Y)$, enabling local decision-making per incoming datum.",
+                "step_id": "5"
+              },
+              {
+                "reasoning": "Justify recasting memory construction as an online control problem: since direct global optimization of the IB Lagrangian over the entire history is intractable (combinatorial), model the memory evolution as a sequence of local decisions $M_{t+1}\\leftarrow\\mathcal{T}(M_t,x_t)$ under policy $\\pi$, and use the stepwise cost $\\Delta\\mathcal{L}$ as the operational objective guiding greedy, local updates (Merge/Link/Append) at ingestion time; this recasting yields a control-style objective suitable for streaming agents.\nFig. 1",
+                "step_id": "6"
+              },
+              {
+                "reasoning": "State the central methodological need that this formalization addresses: the single unified objective $\\mathcal{L}_{\\mathrm{IB}}$ and its incremental form $\\Delta\\mathcal{L}$ simultaneously quantify (a) compression pressure to avoid monotonic entropy growth from verbatim storage via $I(X_{1:t};M_t)$, and (b) fidelity preservation for unknown downstream tasks via $I(M_t;Y)$, thereby operationalizing the compression–fidelity trade-off for streaming agentic memory.",
+                "step_id": "7"
+              }
+            ],
+            "subtype": "noisy_and"
+          }
+        ],
+        "motivating_questions": [
+          {
+            "content": "In agentic settings the central need is a principled objective that unifies the two failure modes of prior systems: uncontrolled entropy growth from verbatim storage and fidelity loss from summary-based compression. Existing treatments either optimize retrieval at inference time (vulnerable to vector dilution and multi-hop failures) or apply ad-hoc summarization without an explicit information-theoretic target. Classical IB provides a conceptual solution but is defined for offline clustering with access to $p(Y\\mid\\cdot)$; it does not directly yield an online decision policy for streaming observations. Thus researchers require an online, operational IB objective that (a) quantifies the trade-off between representational complexity and task relevance in streaming contexts, and (b) yields tractable incremental costs that can guide local Merge/Link/Append decisions as new observations arrive. The formalization above supplies that objective by explicitly writing the stepwise Lagrangian $\\Delta\\mathcal{L}$ for online consolidation.",
+            "id": "paper:1227972489137619008::conclusion_1_subproblem",
+            "source_package": "paper:1227972489137619008"
+          }
+        ],
+        "source_package": "paper:1227972489137619008"
+      }
+    ],
+    "papers": {
+      "paper:1227972489137619008": {
+        "area": "arXiv-Computer Science",
+        "authors": "Zhenyuan Zhang | Xianzhang Jia | Zhiqin Yang | Zhenbo Song | Wei Xue | Sirui Han | Yike Guo",
+        "available_online": "",
+        "cover_date_start": "2026-02-08",
+        "created_at": "2026-02-10T05:24:16+08:00",
+        "doi": "10.48550/arXiv.2602.07885",
+        "en_title": "MemFly: On-the-Fly Memory Optimization via Information Bottleneck",
+        "id": "1227972489137619008",
+        "keywords": "",
+        "publication_date": "",
+        "publication_id": "108591",
+        "publication_name": "Artificial Intelligence",
+        "research_categories": "",
+        "zh_title": "MemFly：通过信息瓶颈实现即时内存优化"
+      }
+    },
+    "total_chains": 1
+  },
+  "trace_id": "ffcdebf799fb163550e495efa1354033"
+}
