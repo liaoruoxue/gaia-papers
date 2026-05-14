@@ -1,0 +1,1103 @@
+{
+  "composes": [],
+  "ir_hash": "sha256:f6a43725a6b294b23a78fbb08017a42777788042002a659784f7a853c60123bf",
+  "knowledges": [
+    {
+      "content": "7-worker pool: Gemini 2.5 Pro, Claude Sonnet 4, GPT-5, DeepSeek-R1-Distill-Qwen-32B, Gemma3-27B-it, Qwen3-32B (thinking + direct). 3 closed-source + 4 open-source frontier models.",
+      "content_hash": "faff49b0273f05bf02e6af00fbcb83b999a28920c22c1f0c432142d23476804d",
+      "declaration_index": 0,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::setup_7_worker_pool",
+      "label": "setup_7_worker_pool",
+      "metadata": {
+        "legacy_kind": "setting"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Setup: 7-worker heterogeneous pool (3 closed + 4 open)",
+      "type": "note"
+    },
+    {
+      "content": "Base Conductor: Qwen2.5-7B, trained 200 GRPO iterations, 960 problems from MATH500/MMLU/RLPR/LiveCodeBench V1, no KL penalty, no ref-model sync.",
+      "content_hash": "dac43327802149e813dd91926f0d7772aef714967a7d827470f76dde496a10f1",
+      "declaration_index": 1,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::setup_base_7b",
+      "label": "setup_base_7b",
+      "metadata": {
+        "legacy_kind": "setting"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Setup: Qwen2.5-7B trained 200 GRPO iters with no KL regularization",
+      "type": "note"
+    },
+    {
+      "content": "Evaluation: 4 in-domain (MATH500/MMLU/RLPR/LCBv6) + 3 OOD (GPQA-Diamond/BigCodeBench/AIME25), 16 repeats each.",
+      "content_hash": "528f41dee5037bb256209398de64cf1e516d241f8c24cf7d8f8f2351a4aa5041",
+      "declaration_index": 2,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::setup_in_dist_ood_eval",
+      "label": "setup_in_dist_ood_eval",
+      "metadata": {
+        "legacy_kind": "setting"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Setup: 7-benchmark evaluation (4 in-dist + 3 OOD)",
+      "type": "note"
+    },
+    {
+      "content": "A 7B language model trained end-to-end with GRPO on verifiable task rewards — without supervised coordination demonstrations, hand-engineered scaffolds, or pre-specified topology vocabularies — learns two emergent coordination skills: (a) targeted communication topology design (chain / tree / independent-then-aggregate / abdication modes), and (b) focused prompt engineering (worker-tailored subtask instructions). The agent-selection skill converges at 3B scale; prompt-engineering quality scales with Conductor size. Training converges in only 200 iterations without KL regularization — the powerful worker pool sidesteps the exploration bottleneck that plagues small-model RL.",
+      "content_hash": "fc1d67844f2413b9343b608c236ee3f23f1a86559bf27d781a4250629172b3e0",
+      "declaration_index": 3,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::conductor_rl_emergent_coordination",
+      "label": "conductor_rl_emergent_coordination",
+      "metadata": {
+        "aggregated_from": [
+          "claim_conductor_two_emergent_skills",
+          "claim_emergent_prompt_engineering",
+          "claim_emergent_topology_design",
+          "claim_emergent_task_adaptivity",
+          "claim_exploration_sidestep",
+          "claim_3b_same_agent_dist",
+          "claim_7b_better_prompt_engineering",
+          "claim_scale_thesis"
+        ],
+        "prior": 0.88,
+        "prior_justification": "Two skills documented across multiple figures (3, 7, 8, 19-28). Agent-selection replicable at 3B. Prompt-engineering scales with Conductor size. Penalty -0.07: no >7B data; -0.05: emergent claims are qualitative (no metric for 'emergence')."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Conductor RL produces emergent prompt-engineering + topology-design skills",
+      "type": "claim"
+    },
+    {
+      "content": "The 7B Conductor attains state-of-the-art on all 7 evaluated benchmarks (avg 77.27 unconstrained, +2.49 pp over GPT-5), outperforms 5x-self-reflection, 5x-context, and 4 prior multi-agent baselines (MASRouter/MoA/RouterDC/Smoothie) in the controlled setting (avg 72.35 vs best worker 64.14, +8.21 pp), with strictly better cost-vs-accuracy Pareto position: 3 average workflow steps, 1,820 tokens/sample, ~$0.024 cost — 1.56x the cost-adjusted performance of the best 5x-consensus baseline. Gains are generational in magnitude (+2.5 pp AIME25 ≈ o3→GPT-5 jump, +2.7 pp GPQA-D), not incremental.",
+      "content_hash": "0b17d00b815ee23e347e11597aa1713360193f30a6d2a85b4f3ee605272a802f",
+      "declaration_index": 4,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::conductor_sota_cost_efficient",
+      "label": "conductor_sota_cost_efficient",
+      "metadata": {
+        "aggregated_from": [
+          "claim_headline_sota",
+          "claim_headline_beats_baselines",
+          "claim_table1_full",
+          "claim_avg_unconstrained",
+          "claim_table7_full",
+          "claim_conductor_avg_controlled",
+          "claim_controlled_summary",
+          "claim_table5_efficiency_consensus",
+          "claim_table6_efficiency_baselines",
+          "claim_avg_workflow_steps",
+          "claim_long_tail_difficulty",
+          "claim_aime25_unconstrained",
+          "claim_gpqa_unconstrained"
+        ],
+        "prior": 0.9,
+        "prior_justification": "Table 1 (unconstrained) + Table 7 (controlled) both show Conductor first on all columns. Efficiency is solid (Table 5: 1.56x cost-adjusted vs best baseline). Penalty -0.05: no SE on Tables 1/2/10; -0.05: close-margin deltas (MATH500 +0.4, MMLU +0.6) may not be statistically significant."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Conductor achieves SOTA on 7 benchmarks with better cost-efficiency than all baselines",
+      "type": "claim"
+    },
+    {
+      "content": "A short randomized-pool finetuning phase (k-of-n random subsets, no new data) makes the Conductor generalize to arbitrary user-specified worker subsets. Open-source-only pool: outperforms Claude Sonnet 4 by ~10%. Closed-source-only pool: matches original pretrained SOTA (no compromise). The gain is larger when the worker pool has more headroom — the Conductor amplifies complementary capabilities rather than free-riding on a single dominant worker. This enables cost-preferred or API-constrained deployment without expensive paid-API calls.",
+      "content_hash": "042a5f17d316f4f2e305a11c29a9bdca6912b0f75d960f93b8efb6849e469321",
+      "declaration_index": 5,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::conductor_cross_pool_generalization",
+      "label": "conductor_cross_pool_generalization",
+      "metadata": {
+        "aggregated_from": [
+          "claim_headline_pool_generality",
+          "claim_open_pool_finetuned",
+          "claim_closed_pool_finetuned",
+          "claim_pool_generalization_thesis",
+          "claim_extension_dynamic_pool",
+          "claim_dynamic_pool_design_aim"
+        ],
+        "prior": 0.85,
+        "prior_justification": "Open-pool (+10% vs Claude) + closed-pool (matches pretrained SOTA) both positive. Randomized-pool finetuning protocol is clean (no new data). Penalty -0.05: pool sizes fixed at k=7; -0.05: only one round of finetuning tested; -0.05: extreme k=2 or k=15+ unmeasured."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Randomized-pool finetuning generalizes Conductor to arbitrary worker subsets",
+      "type": "claim"
+    },
+    {
+      "content": "A second short finetuning phase (20 iters, 350 samples) enables the Conductor to specify itself as a worker, creating recursive topologies. In recursive calls, the Conductor receives its parent output + previous agent response, then decides to (a) instantiate a revision workflow or (b) pass through unchanged. Recursive Conductor adds +1.07 pp avg on OOD tasks (63.00 vs 61.93), with the largest gain on BigCodeBench (+2.2 pp) where GPT-5 underperforms — the Conductor adaptively redistributes from GPT-5 to Claude/Gemini. On AIME25 gain = 0 (correct pass-through when initial strategy is already optimal). Recursion depth is a tunable test-time hyperparameter, creating a new test-time scaling axis distinct from open-ended chain-of-thought.",
+      "content_hash": "8bd9d3f8b18a00bd56f6a4cec85d9d6b341982a98a0b219235f06418a98b92d4",
+      "declaration_index": 6,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::conductor_recursive_scaling",
+      "label": "conductor_recursive_scaling",
+      "metadata": {
+        "aggregated_from": [
+          "claim_headline_recursive_scaling",
+          "claim_table2_recursion_full",
+          "claim_recursion_bcb",
+          "claim_recursion_gpqa",
+          "claim_recursion_aime25",
+          "claim_recursion_bcb_redistribution",
+          "claim_recursion_dynamic_scaling_thesis",
+          "claim_extension_recursive",
+          "claim_recursive_scaling_aim",
+          "claim_recursion_decision_protocol"
+        ],
+        "prior": 0.83,
+        "prior_justification": "Table 2: +1.07 pp avg, +2.2 pp on BCB (largest gain). AIME25 pass-through is a clean negative control. Redistribution mechanism (Fig. 10) is documented. Penalty -0.05: <2x budget cap; -0.05: deeper recursion unmeasured; -0.07: only 3 OOD tasks tested."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Recursive self-referential topology enables dynamic test-time scaling",
+      "type": "claim"
+    },
+    {
+      "content": "The Conductor is among the early demonstrations that end-to-end RL on verifiable rewards alone is sufficient to discover sophisticated multi-agent prompt-engineering and coordination behaviors in language models — without supervised coordination demonstrations. The RL-trained 7B Conductor beats untrained frontier LLMs (GPT-5, Gemini 2.5 Pro) as conductors by +4 to +16 pp: untrained LLMs rely on prior biases about which model is best for which task, while RL provides the empirical feedback mechanism to correct these biases. The Conductor establishes a new meta-agent design point: a small learned coordinator that lifts much larger frontier workers past their individual ceilings.",
+      "content_hash": "d0c11ab8ef5b9b2e416d7e2332f8e752b5b209db65e77497d0fd9a24c5a52cde",
+      "declaration_index": 7,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::conductor_broader_thesis_rl_sufficient",
+      "label": "conductor_broader_thesis_rl_sufficient",
+      "metadata": {
+        "aggregated_from": [
+          "claim_broader_thesis",
+          "claim_meta_orchestrator_thesis",
+          "claim_table11_conductor_replacement",
+          "claim_frontier_orchestrator_evidence",
+          "claim_conductor_training_essential",
+          "claim_subtask_alone_matters",
+          "claim_three_contributions",
+          "claim_foil_7b_cannot_beat_frontier",
+          "claim_foil_manual_best"
+        ],
+        "prior": 0.78,
+        "prior_justification": "The five semantic claims converge: SOTA + emergent skills + cross-pool + recursion + frontier-replacement all point to RL sufficiency. Penalty -0.07: all on Qwen2.5-7B base (one architecture); -0.05: reasoning-only domains; -0.05: single paper (no independent replication); -0.05: verifiable-reward assumption may not transfer."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Broader thesis: end-to-end RL on verifiable rewards alone unlocks emergent LLM coordination",
+      "type": "claim"
+    },
+    {
+      "content": "OOD few-shot examples produce better Conductor performance than in-distribution examples. All-OOD few-shot yields +5.97 pp on LiveCodeBench vs all-in-distribution. The posited mechanism: OOD examples prevent exploitation of provided strategies and incentivize exploration of the coordination strategy space — an anti-reward-hacking effect from the conditioning distribution.",
+      "content_hash": "a7344b2653b086712e5226d5f8fafed7c5f5d50a9087c50ed96d97d3ab9318a2",
+      "declaration_index": 0,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::surprise_ood_few_shot_better",
+      "label": "surprise_ood_few_shot_better",
+      "metadata": {
+        "aggregated_from": [
+          "claim_ood_few_shot_finding",
+          "claim_ood_few_shot_explanation"
+        ],
+        "kb_anchor": "chunks/rl-training.md",
+        "novelty_vs_kb": "new",
+        "prior": 0.78,
+        "prior_justification": "Table 4 shows clear OOD > mixed > in-dist ordering. Proposed mechanism (prevent exploitation, incentivize exploration) is plausible but not directly tested. Penalty -0.07: could be selection effect; -0.05: alternative exemplar sources not tested; -0.10: single-paper finding.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: OOD few-shot outperforms in-distribution (anti-reward-hacking via conditioning)",
+      "type": "claim"
+    },
+    {
+      "content": "A 3B Conductor converges to the same agent-selection distribution as the 7B Conductor, yet the 7B substantially outperforms via better prompt engineering. Agent selection (picking which model) is learnable at small scale; prompt engineering (what to tell each model) needs larger models. The two emergent skills have different scaling laws.",
+      "content_hash": "c6931c74b5af6c855422438fadf37e1d99408db324794e0fe68c4cb28481d65c",
+      "declaration_index": 1,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::surprise_3b_same_agent_but_worse",
+      "label": "surprise_3b_same_agent_but_worse",
+      "metadata": {
+        "aggregated_from": [
+          "claim_3b_same_agent_dist",
+          "claim_7b_better_prompt_engineering"
+        ],
+        "kb_anchor": "chunks/multi-agent.md",
+        "novelty_vs_kb": "new",
+        "prior": 0.85,
+        "prior_justification": "Fig. 7 shows clear convergence of agent distribution. Fig. 15 provides concrete example of 3B producing inferior subtask. Penalty -0.05: only 3B/7B comparison; -0.05: agent-distribution metric is coarse (bin counts); -0.05: qualitative assessment of subtask quality.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: agent-selection and prompt-engineering have different scaling laws (3B vs 7B)",
+      "type": "claim"
+    },
+    {
+      "content": "A 7B coordinator lifts frontier workers (GPT-5, Gemini 2.5 Pro, Claude Sonnet 4) past their individual ceilings — overturning the intuition that a small model cannot outperform much larger models. The key is reframing: the Conductor doesn't solve tasks itself; it orchestrates workers that are individually 5-50x larger. The untrained frontier-LLM-as-Conductor fails to match the 7B RL-trained Conductor by 4-16 pp.",
+      "content_hash": "99ba737d74e509df87db45619ed85fa95129525d247fb92547655bc993f7470f",
+      "declaration_index": 2,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::surprise_small_coordinator_beats_frontier",
+      "label": "surprise_small_coordinator_beats_frontier",
+      "metadata": {
+        "aggregated_from": [
+          "claim_headline_sota",
+          "claim_table11_conductor_replacement",
+          "claim_conductor_training_essential",
+          "claim_foil_7b_cannot_beat_frontier"
+        ],
+        "kb_anchor": "chunks/multi-agent.md",
+        "novelty_vs_kb": "refine",
+        "prior": 0.88,
+        "prior_justification": "Table 11: 7B Conductor beats GPT-5/Gemini as conductors by +4 to +16 pp. Frontier-LLM-as-Conductor beats individuals (partial suitability confirmed). Penalty -0.05: frontier LLMs use 0-shot prompting vs Conductor's few-shot; -0.07: GPT-5/Gemini may improve with few-shot conditioning.",
+        "semantic_refs": [
+          "conductor_broader_thesis_rl_sufficient"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: 7B coordinator lifts frontier workers past individual ceilings",
+      "type": "claim"
+    },
+    {
+      "content": "The Conductor's core design choice — natural language as the workflow specification medium — gives it an unrestricted instruction surface over workers. Unlike prior routing frameworks constrained to fixed topology vocabularies or pre-specified role templates, natural-language subtask specification removes the expressivity bottleneck. This single design choice unifies what were previously separate systems: router, subtask decomposer, and prompt engineer.",
+      "content_hash": "741df84aba85c160c76e33cbc921dc27599f49fd4cb8eb4dca4e4dbbb6f6623d",
+      "declaration_index": 3,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::elegant_nl_workflow_medium",
+      "label": "elegant_nl_workflow_medium",
+      "metadata": {
+        "aggregated_from": [
+          "claim_conductor_proposal",
+          "claim_prior_routing_inexpressive"
+        ],
+        "portability": "high",
+        "prior": 0.8,
+        "prior_justification": "Design choice is central to the framework's expressivity. Prior routing frameworks' fixed-vocabulary limitation is well-documented (MASRouter/RouterDC/Smoothie). Penalty -0.10: elegance is subjective; -0.10: no ablation directly comparing NL vs structured workflow spec.",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: natural-language workflow as unrestricted instruction surface",
+      "type": "claim"
+    },
+    {
+      "content": "Workers are presented to the Conductor as ordinal numbers (Model 0..k) rather than by name. This eliminates prior-association bias — the Conductor cannot fall back on 'GPT-5 is good at math' from pretraining and must learn per-worker capabilities from empirical feedback. A simple anti-bias mechanism with zero additional cost.",
+      "content_hash": "82e120e1532e8d919afe1572eabe3d32008879bcc22e0ffcf5e2357eaabed633",
+      "declaration_index": 4,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::elegant_ordinal_naming",
+      "label": "elegant_ordinal_naming",
+      "metadata": {
+        "aggregated_from": [
+          "setup_ordinal_model_names"
+        ],
+        "portability": "high",
+        "prior": 0.85,
+        "prior_justification": "Simple, zero-cost anti-bias mechanism. The logic is sound: removing model names forces empirical learning. Penalty -0.10: no ablation comparing ordinal vs named models; -0.05: effect size unknown.",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: ordinal model naming eliminates prior-association bias",
+      "type": "claim"
+    },
+    {
+      "content": "The recursive Conductor's pass-through decision (emit three empty lists to return the previous response unchanged) elegantly handles the 'already optimal' case. On AIME25 the Conductor correctly passes through with 0 gain — recursion doesn't waste compute on already-good strategies. The decision is made by the Conductor itself, not by an external budget heuristic.",
+      "content_hash": "e0c50e114f847bea97e44bb349874e76ed3c64df103422de3d763f9f32312c5f",
+      "declaration_index": 5,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::elegant_recursion_pass_through",
+      "label": "elegant_recursion_pass_through",
+      "metadata": {
+        "aggregated_from": [
+          "claim_recursion_aime25",
+          "claim_recursion_decision_protocol"
+        ],
+        "portability": "medium",
+        "prior": 0.88,
+        "prior_justification": "AIME25 pass-through (0 gain) is a clean demonstration. The three-empty-lists protocol is simple and elegant. Penalty -0.07: only one benchmark shows pass-through; -0.05: decision quality not directly evaluated.",
+        "reusable_primitive": false,
+        "semantic_refs": [
+          "conductor_recursive_scaling"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: recursion pass-through decision avoids wasting compute on already-optimal strategies",
+      "type": "claim"
+    },
+    {
+      "content": "Standard error is reported only for Table 7. Tables 1, 2, and 10 report point estimates without error bars. Close-margin deltas — MATH500 +0.4, MMLU +0.6, BCB +0.35 — lack statistical separation quantification. The headline 'won every column' claim on close margins may not survive proper confidence intervals.",
+      "content_hash": "f20300a263c298713e0cf2b87518f37138614237718a53464a1bcb1823f67ac1",
+      "declaration_index": 6,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::weak_no_standard_error_tables_1_2_10",
+      "label": "weak_no_standard_error_tables_1_2_10",
+      "metadata": {
+        "aggregated_from": [
+          "claim_table1_full",
+          "claim_table2_recursion_full",
+          "claim_table10_agent_selection_ablation"
+        ],
+        "issue_type": "weak_evidence",
+        "prior": 0.85,
+        "prior_justification": "Table 7 does report SE; Tables 1/2/10 don't. Close-margin deltas (MATH500 +0.4, MMLU +0.6) without error bars are genuinely weak evidence for 'won every column'. Penalty -0.15: standard practice to report SE; omission is notable.",
+        "semantic_refs": [
+          "conductor_sota_cost_efficient"
+        ],
+        "what_would_falsify": "Compute 95% CI on MATH500/MMLU/BCB deltas; if any CI crosses zero, the 'all-columns-won' claim is overstated for that benchmark."
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: no standard error on Tables 1/2/10 — close-margin deltas unquantified",
+      "type": "claim"
+    },
+    {
+      "content": "Only 3B and 7B Conductor sizes tested. The marginal benefit curve at 13B/30B/70B is unmeasured. The frontier-LLM-as-Conductor ablation (Table 11) is a proxy but uses no Conductor-specific training — it doesn't answer how a trained 13B+ Conductor would perform. If prompt-engineering quality scales with Conductor size (as 3B→7B suggests), the optimal Conductor size is unknown.",
+      "content_hash": "39ac02ecb22438cb8d8a3d9dfc5a47a290ccde4388ecd52f703c1860a7dc35c6",
+      "declaration_index": 7,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::weak_only_7b_conductor_tested",
+      "label": "weak_only_7b_conductor_tested",
+      "metadata": {
+        "aggregated_from": [
+          "claim_7b_better_prompt_engineering",
+          "claim_scale_thesis"
+        ],
+        "issue_type": "scope_limit",
+        "prior": 0.9,
+        "prior_justification": "Only 3B/7B tested. Marginal benefit curve unknown. Frontier-LLM-as-Conductor is a proxy but doesn't answer the scaling question. Penalty -0.10: acknowledged limitation (Section 6).",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ],
+        "what_would_falsify": "Train 13B/30B/70B Conductors; if gains plateau at 7B, the scaling thesis is falsified."
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: only 3B/7B Conductor sizes tested; optimal scale unknown",
+      "type": "claim"
+    },
+    {
+      "content": "All 7 benchmarks are reasoning-heavy (math/code/science/multi-task knowledge). Whether the Conductor framework benefits long-form generation, retrieval-heavy QA, vision-language tasks, or tool-use scenarios is unmeasured. The framework assumes a 'verifiable answer' reward structure — tasks without clear correctness signals may not admit the same RL training protocol.",
+      "content_hash": "d9f986aaec82d3382efe7ee212a78bcff26a2a034ef59dc68e4bbf6015cd43f0",
+      "declaration_index": 8,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::weak_reasoning_only_domains",
+      "label": "weak_reasoning_only_domains",
+      "metadata": {
+        "aggregated_from": [
+          "setup_eval_benchmarks",
+          "setup_training_data"
+        ],
+        "issue_type": "scope_limit",
+        "prior": 0.92,
+        "prior_justification": "All 7 benchmarks are reasoning-heavy. This is a legitimate scope limit. Penalty -0.05: training data also reasoning-only; -0.03: paper acknowledges this in Section 6.",
+        "semantic_refs": [
+          "conductor_broader_thesis_rl_sufficient"
+        ],
+        "what_would_falsify": "Test on long-form generation or retrieval QA; if gains disappear outside reasoning, the Conductor framework is reasoning-specific."
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: only reasoning benchmarks tested; non-reasoning domains unmeasured",
+      "type": "claim"
+    },
+    {
+      "content": "The few-shot examples are real Conductor completions from cold-start training runs. The ablation shows removing them costs -7 to -9 pp, but doesn't test whether any exemplar workflow (human-curated, random-baseline) yields the same effect. The OOD-better-than-ID finding could be a selection effect — the OOD examples happen to be qualitatively superior — rather than a causal anti-exploitation mechanism.",
+      "content_hash": "ffbdae95cbaf236fb6df58e24fc52a22c0f4841cb2f8c5342dedcb25c15fab72",
+      "declaration_index": 9,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::weak_few_shot_are_real_completions",
+      "label": "weak_few_shot_are_real_completions",
+      "metadata": {
+        "aggregated_from": [
+          "claim_few_shot_ablation",
+          "claim_ood_few_shot_explanation"
+        ],
+        "issue_type": "alt_not_excluded",
+        "prior": 0.8,
+        "prior_justification": "Few-shot examples are real Conductor completions. No test of alternative exemplar sources. OOD-better-than-ID could be selection effect. Penalty -0.15: this is a genuine alt-not-excluded gap; -0.05: the proposed mechanism is plausible but untested.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ],
+        "what_would_falsify": "Replace Conductor few-shots with human-curated workflows; if performance matches, the few-shot content matters more than the OOD property."
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: few-shot requirement untested against alternative exemplar sources",
+      "type": "claim"
+    },
+    {
+      "content": "All experiments use Qwen2.5-7B as the Conductor base model. No Llama, Mistral, DeepSeek, or other architecture tested as Conductor base. Qwen2.5 may have specific properties (instruction-following, reasoning pretraining) that make it particularly suitable for the Conductor role.",
+      "content_hash": "b05538e482b01e56b2e98e08ff350d1f7075d3ab47bd96c9743a65f15e5bc6b1",
+      "declaration_index": 10,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::bdry_qwen_base_only",
+      "label": "bdry_qwen_base_only",
+      "metadata": {
+        "aggregated_from": [
+          "setup_base_model"
+        ],
+        "boundary_type": "scope",
+        "prior": 0.95,
+        "prior_justification": "All experiments use Qwen2.5-7B base. No cross-architecture validation. This is a stated experimental choice, not a hidden assumption. Penalty -0.05: Qwen2.5 may have specific properties favoring the Conductor role.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: Qwen2.5-7B base only — no cross-architecture Conductor validation",
+      "type": "claim"
+    },
+    {
+      "content": "The Conductor is trained with a maximum of 5 workflow steps. The impact of longer workflows (6+ steps) on task success and cost is unmeasured. The Conductor learns to average 3 steps — whether it would benefit from a higher cap on harder problems is unknown.",
+      "content_hash": "5c8661037fdb7a5c32adae1e6df3e88770950ba6c9abedee548f0ebfdfc1bcd9",
+      "declaration_index": 11,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::bdry_max_5_steps",
+      "label": "bdry_max_5_steps",
+      "metadata": {
+        "aggregated_from": [
+          "claim_conductor_proposal",
+          "claim_avg_workflow_steps"
+        ],
+        "boundary_type": "implementation",
+        "prior": 0.9,
+        "prior_justification": "Max 5 workflow steps during training. Conductor averages 3 steps in practice, so the cap may not bind. Penalty -0.10: whether longer workflows help on harder problems is unknown.",
+        "semantic_refs": [
+          "conductor_sota_cost_efficient"
+        ],
+        "stated_explicitly": true
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: max 5 workflow steps — longer workflows unmeasured",
+      "type": "claim"
+    },
+    {
+      "content": "Recursion experiments cap at <2x the original agentic-call budget. Deeper recursion (3x, 5x, 10x) is unmeasured. The paper acknowledges this leaves room for further improvement — whether gains compound with recursion depth (analogous to CoT scaling) or saturate quickly is unknown.",
+      "content_hash": "2c049c8bbd03d287a074b5872ef283e39b67ae0109c3ea69f89b9f77b3fc8504",
+      "declaration_index": 12,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::bdry_recursion_2x_budget_cap",
+      "label": "bdry_recursion_2x_budget_cap",
+      "metadata": {
+        "aggregated_from": [
+          "claim_recursion_cost_cap"
+        ],
+        "boundary_type": "scope",
+        "prior": 0.95,
+        "prior_justification": "Explicitly stated in paper. Room for further improvement acknowledged. Penalty -0.05: deeper recursion scaling behavior is unknown but not hidden.",
+        "semantic_refs": [
+          "conductor_recursive_scaling"
+        ],
+        "stated_explicitly": true
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: recursion capped at <2x budget — deeper recursion unmeasured",
+      "type": "claim"
+    },
+    {
+      "content": "The GRPO training protocol requires a verifiable end-task reward (correct/incorrect answer). Tasks without clear binary or scalar correctness signals — creative writing, open-ended analysis, multi-turn dialogue — are outside the current framework's training scope. The 'RL alone is sufficient' thesis is conditioned on the existence of a verifiable reward signal.",
+      "content_hash": "cad2f4fd958c8acc0011ac0656996cbdb0dbc477aa1a0c40452d233d55591a06",
+      "declaration_index": 13,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::bdry_verifiable_reward_assumption",
+      "label": "bdry_verifiable_reward_assumption",
+      "metadata": {
+        "aggregated_from": [
+          "setup_training_data",
+          "claim_broader_thesis"
+        ],
+        "boundary_type": "simplification",
+        "prior": 0.9,
+        "prior_justification": "GRPO requires verifiable reward. This is a fundamental boundary of the framework. Penalty -0.05: creative/open-ended tasks may admit learned reward models; -0.05: not discussed in paper.",
+        "semantic_refs": [
+          "conductor_broader_thesis_rl_sufficient"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: requires verifiable reward signal — open-ended tasks outside scope",
+      "type": "claim"
+    },
+    {
+      "content": "Fine-grained topology specification (per-position access lists instead of binary all/none) produces no significant gain at 7B scale. The Conductor learns to use the more complex scheme effectively but performance is comparable or slightly worse (LCB -3.05 pp). The paper correctly opts for the simpler binary version. This negative result is useful: more complex topology control doesn't automatically help — the bottleneck at 7B is prompt engineering quality, not topology granularity.",
+      "content_hash": "09ebc843883d934cc62dcd565e291f65e085befe702aa77d891728097387e28d",
+      "declaration_index": 14,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::neg_fine_grained_topology_no_gain",
+      "label": "neg_fine_grained_topology_no_gain",
+      "metadata": {
+        "aggregated_from": [
+          "claim_fine_grained_topology_ablation",
+          "claim_table9_ablations"
+        ],
+        "prior": 0.88,
+        "prior_justification": "Table 9 shows fine-grained topology comparable or slightly worse. The finding is clean: more complex topology control doesn't help at 7B. Penalty -0.07: only tested at 7B; -0.05: might matter at larger Conductor scale.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative: fine-grained topology specification yields no significant gain at 7B",
+      "type": "claim"
+    },
+    {
+      "content": "Recursive Conductor yields exactly 0 gain on AIME25 (66.67 = 66.67). This is a correct negative result — the Conductor's pretrained strategy on AIME25 is already optimal, and recursion correctly passes through. The zero gain is a stronger test of the recursion mechanism than a positive gain: it demonstrates selectivity rather than unconditional re-planning.",
+      "content_hash": "f54b99919fa165adea8a8fe5ca515e1538481945d1943367bcbca07bf3448fb7",
+      "declaration_index": 15,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::neg_recursion_zero_gain_aime25",
+      "label": "neg_recursion_zero_gain_aime25",
+      "metadata": {
+        "aggregated_from": [
+          "claim_recursion_aime25"
+        ],
+        "prior": 0.9,
+        "prior_justification": "Table 2 shows 66.67 = 66.67 on AIME25. Clean negative result. Penalty -0.10: only one benchmark shows pass-through; the decision mechanism is inferred, not directly verified.",
+        "semantic_refs": [
+          "conductor_recursive_scaling"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative: recursion zero gain on AIME25 — correct pass-through on already-optimal strategy",
+      "type": "claim"
+    },
+    {
+      "content": "The 3B Conductor sometimes produces subtasks that impair workers — e.g., instructing a model to hide its reasoning in XML tags due to a formatting constraint, degrading collaboration quality. The 7B Conductor avoids this. This negative result bounds the minimum viable Conductor scale: at 3B, prompt engineering is unreliable enough to occasionally harm performance.",
+      "content_hash": "bcde89d8ea80f97ec8d96e1d8aea9c90c722b108f5b98ce7c20ed0dbf7675065",
+      "declaration_index": 16,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::neg_3b_worker_impairing_subtask",
+      "label": "neg_3b_worker_impairing_subtask",
+      "metadata": {
+        "aggregated_from": [
+          "claim_7b_better_prompt_engineering"
+        ],
+        "prior": 0.85,
+        "prior_justification": "Fig. 15 provides a concrete example. Bounds minimum viable Conductor scale. Penalty -0.10: single example, may not be representative of all 3B failures; -0.05: qualitative assessment.",
+        "semantic_refs": [
+          "conductor_rl_emergent_coordination"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative: 3B Conductor produces worker-impairing subtasks (hiding reasoning in tags)",
+      "type": "claim"
+    },
+    {
+      "content": "The two emergent skills (topology design + prompt engineering) are consistently observed across training and documented in Figs. 3, 7, 8, 19-28. The agent-selection skill is replicable at 3B; the prompt-engineering skill improves with Conductor size (3B→7B).",
+      "content_hash": "e523d483b8a7318120dbfac14a324069a8bf616f2791baee58416c8bf41858ee",
+      "declaration_index": 17,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::premise_skills_well_documented",
+      "label": "premise_skills_well_documented",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Figs. 3, 7, 8, 19-28 document emergent behaviors across training and evaluation. Agent-selection replicable at 3B. Penalty -0.05: 'emergence' is qualitative, no formal metric; -0.05: examples are cherry-picked for illustration."
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Premise: emergent skills are well-documented across multiple figures and scales",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_04388::conductor_sota_cost_efficient,github:2512_04388::conductor_rl_emergent_coordination,github:2512_04388::conductor_cross_pool_generalization,github:2512_04388::conductor_recursive_scaling)",
+      "content_hash": "a3caad7d1d3c43abb3891e11baa3fb01cad82686f1cbe541b32a97882c22f5c1",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__conjunction_result_d7834273",
+      "label": "__conjunction_result_d7834273",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_04388::conductor_sota_cost_efficient,github:2512_04388::conductor_rl_emergent_coordination,github:2512_04388::conductor_cross_pool_generalization,github:2512_04388::conductor_recursive_scaling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_1e222ce7ea688ac8",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::__conjunction_result_d7834273,github:2512_04388::conductor_broader_thesis_rl_sufficient)",
+      "content_hash": "ad823b3ec9b5deb8ecfca7d64ece45273a7dcaaf4c7374660a4d1bff657f6d9e",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_9d21ab09",
+      "label": "__implication_result_9d21ab09",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::__conjunction_result_d7834273,github:2512_04388::conductor_broader_thesis_rl_sufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_1e222ce7ea688ac8",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::surprise_ood_few_shot_better,github:2512_04388::conductor_rl_emergent_coordination)",
+      "content_hash": "efae6c37863dfd5dbf67479bf373ab0b0544b058f4b849d3a0ac13a3b88ac358",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_d3e45c5b",
+      "label": "__implication_result_d3e45c5b",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::surprise_ood_few_shot_better,github:2512_04388::conductor_rl_emergent_coordination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c3fb989528fb644f",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::surprise_3b_same_agent_but_worse,github:2512_04388::conductor_rl_emergent_coordination)",
+      "content_hash": "14efe54d6ea91523a340b35166ed3d79b02576b9c79070c3dc0d4bd00a814430",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_55868d3a",
+      "label": "__implication_result_55868d3a",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::surprise_3b_same_agent_but_worse,github:2512_04388::conductor_rl_emergent_coordination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_3d2d7f4ccc903e24",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::surprise_small_coordinator_beats_frontier,github:2512_04388::conductor_sota_cost_efficient)",
+      "content_hash": "f0aee22ce3a1de0ee8ad589cdf53a590456bf4e64d2b79592151f9417a8c6eb5",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_e8a3f5ee",
+      "label": "__implication_result_e8a3f5ee",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::surprise_small_coordinator_beats_frontier,github:2512_04388::conductor_sota_cost_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e747a6d74453c7db",
+        "owning_strategy_type": "support",
+        "prior": 0.84,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_04388::premise_skills_well_documented,github:2512_04388::weak_only_7b_conductor_tested,github:2512_04388::weak_reasoning_only_domains,github:2512_04388::weak_few_shot_are_real_completions,github:2512_04388::bdry_qwen_base_only,github:2512_04388::bdry_max_5_steps,github:2512_04388::bdry_verifiable_reward_assumption)",
+      "content_hash": "3ee20b89bc85a23d563eb37e9c34cea0795ddb52af62d3706b9f1da5c4937ada",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__conjunction_result_41c45cca",
+      "label": "__conjunction_result_41c45cca",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_04388::premise_skills_well_documented,github:2512_04388::weak_only_7b_conductor_tested,github:2512_04388::weak_reasoning_only_domains,github:2512_04388::weak_few_shot_are_real_completions,github:2512_04388::bdry_qwen_base_only,github:2512_04388::bdry_max_5_steps,github:2512_04388::bdry_verifiable_reward_assumption)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_51c6cab32ef8f7b9",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::__conjunction_result_41c45cca,github:2512_04388::conductor_rl_emergent_coordination)",
+      "content_hash": "387f484fe76e6507b170004a7903a484744f04aaa93298b973276f30fdb19b93",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_de7f0f37",
+      "label": "__implication_result_de7f0f37",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::__conjunction_result_41c45cca,github:2512_04388::conductor_rl_emergent_coordination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_51c6cab32ef8f7b9",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2512_04388::weak_no_standard_error_tables_1_2_10,github:2512_04388::bdry_max_5_steps)",
+      "content_hash": "7ca87f949cb416e501c750fbd0eb33de90148e14f25c46cdd27b101b9735ea90",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__conjunction_result_92e6dca9",
+      "label": "__conjunction_result_92e6dca9",
+      "metadata": {
+        "canonical_name": "all_true(github:2512_04388::weak_no_standard_error_tables_1_2_10,github:2512_04388::bdry_max_5_steps)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aa4ec171bc50854f",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::__conjunction_result_92e6dca9,github:2512_04388::conductor_sota_cost_efficient)",
+      "content_hash": "df8c4a942bee1768181ff4d3e298c5a25e5e024039669966d0218175ac5479d4",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_70e0e516",
+      "label": "__implication_result_70e0e516",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::__conjunction_result_92e6dca9,github:2512_04388::conductor_sota_cost_efficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aa4ec171bc50854f",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2512_04388::bdry_recursion_2x_budget_cap,github:2512_04388::conductor_recursive_scaling)",
+      "content_hash": "9dddf49822ad308dfa17733e89c5cb1662090ddfab77b47acf1517461b01a37f",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2512_04388::__implication_result_ce46f9aa",
+      "label": "__implication_result_ce46f9aa",
+      "metadata": {
+        "canonical_name": "implies(github:2512_04388::bdry_recursion_2x_budget_cap,github:2512_04388::conductor_recursive_scaling)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b5f0142569c253db",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_strategies"
+  ],
+  "module_titles": {
+    "motivation": "Layer 2 semantic claims for Nielsen et al. 2026 — Conductor.",
+    "s2_strategies": "Layer 2 strategies and judgment nodes for Conductor (2512.04388)."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2512_04388",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2512_04388::conductor_broader_thesis_rl_sufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__conjunction_result_d7834273",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_04388::conductor_sota_cost_efficient",
+              "github:2512_04388::conductor_rl_emergent_coordination",
+              "github:2512_04388::conductor_cross_pool_generalization",
+              "github:2512_04388::conductor_recursive_scaling"
+            ]
+          },
+          {
+            "conclusion": "github:2512_04388::__implication_result_9d21ab09",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::__conjunction_result_d7834273",
+              "github:2512_04388::conductor_broader_thesis_rl_sufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Four independent lines of evidence converge: (1) SOTA on 7 benchmarks at lower cost — empirical anchor; (2) two emergent RL-discovered skills (topology design + prompt engineering) — mechanistic account; (3) cross-pool generalization (open-only beats Claude ~10%, closed-only matches pretrained SOTA) — rules out free-riding on GPT-5; (4) recursive self-referential topology as new test-time scaling axis (+2.2 pp on BCB via adaptive redistribution). If any premise weakens, BP back-propagates penalty to that premise."
+      },
+      "premises": [
+        "github:2512_04388::conductor_sota_cost_efficient",
+        "github:2512_04388::conductor_rl_emergent_coordination",
+        "github:2512_04388::conductor_cross_pool_generalization",
+        "github:2512_04388::conductor_recursive_scaling"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_1e222ce7ea688ac8",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_rl_emergent_coordination",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__implication_result_d3e45c5b",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::surprise_ood_few_shot_better",
+              "github:2512_04388::conductor_rl_emergent_coordination"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "OOD few-shot effect is direct evidence that the emergent coordination is genuine exploration, not lazy pattern reuse."
+      },
+      "premises": [
+        "github:2512_04388::surprise_ood_few_shot_better"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c3fb989528fb644f",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_rl_emergent_coordination",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__implication_result_55868d3a",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::surprise_3b_same_agent_but_worse",
+              "github:2512_04388::conductor_rl_emergent_coordination"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Differential scaling of the two emergent skills reveals that prompt engineering is the harder capability, supporting the natural-language-medium design choice."
+      },
+      "premises": [
+        "github:2512_04388::surprise_3b_same_agent_but_worse"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_3d2d7f4ccc903e24",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_sota_cost_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__implication_result_e8a3f5ee",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::surprise_small_coordinator_beats_frontier",
+              "github:2512_04388::conductor_sota_cost_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.84,
+        "reason": "The meta-agent design point (small coordinator + large workers) is validated by the frontier-LLM replacement ablation showing trained 7B beats untrained frontier LLM orchestrators."
+      },
+      "premises": [
+        "github:2512_04388::surprise_small_coordinator_beats_frontier"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e747a6d74453c7db",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_rl_emergent_coordination",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__conjunction_result_41c45cca",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_04388::premise_skills_well_documented",
+              "github:2512_04388::weak_only_7b_conductor_tested",
+              "github:2512_04388::weak_reasoning_only_domains",
+              "github:2512_04388::weak_few_shot_are_real_completions",
+              "github:2512_04388::bdry_qwen_base_only",
+              "github:2512_04388::bdry_max_5_steps",
+              "github:2512_04388::bdry_verifiable_reward_assumption"
+            ]
+          },
+          {
+            "conclusion": "github:2512_04388::__implication_result_de7f0f37",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::__conjunction_result_41c45cca",
+              "github:2512_04388::conductor_rl_emergent_coordination"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "The emergent coordination claim holds under the documented conditions (Qwen2.5-7B, reasoning tasks, verifiable reward, ≤5 steps). Three weakness flags (scale limit, domain limit, few-shot dependency) and three boundary conditions (Qwen base, step cap, reward type) bound the claim's scope. BP will back-propagate if the conclusion is weakened by other evidence."
+      },
+      "premises": [
+        "github:2512_04388::premise_skills_well_documented",
+        "github:2512_04388::weak_only_7b_conductor_tested",
+        "github:2512_04388::weak_reasoning_only_domains",
+        "github:2512_04388::weak_few_shot_are_real_completions",
+        "github:2512_04388::bdry_qwen_base_only",
+        "github:2512_04388::bdry_max_5_steps",
+        "github:2512_04388::bdry_verifiable_reward_assumption"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_51c6cab32ef8f7b9",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_sota_cost_efficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__conjunction_result_92e6dca9",
+            "operator": "conjunction",
+            "variables": [
+              "github:2512_04388::weak_no_standard_error_tables_1_2_10",
+              "github:2512_04388::bdry_max_5_steps"
+            ]
+          },
+          {
+            "conclusion": "github:2512_04388::__implication_result_70e0e516",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::__conjunction_result_92e6dca9",
+              "github:2512_04388::conductor_sota_cost_efficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "The SOTA claim is empirically strong (Table 1, Table 7 both show Conductor first on all columns) but the close-margin deltas lack statistical separation. The 5-step cap bounds the efficiency claim."
+      },
+      "premises": [
+        "github:2512_04388::weak_no_standard_error_tables_1_2_10",
+        "github:2512_04388::bdry_max_5_steps"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aa4ec171bc50854f",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2512_04388::conductor_recursive_scaling",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2512_04388::__implication_result_ce46f9aa",
+            "operator": "implication",
+            "variables": [
+              "github:2512_04388::bdry_recursion_2x_budget_cap",
+              "github:2512_04388::conductor_recursive_scaling"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.83,
+        "reason": "The recursion claim is supported by Table 2 and the redistribution mechanism (Fig. 10), but the <2x budget cap bounds the scaling extrapolation."
+      },
+      "premises": [
+        "github:2512_04388::bdry_recursion_2x_budget_cap"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b5f0142569c253db",
+      "type": "deduction"
+    }
+  ]
+}
