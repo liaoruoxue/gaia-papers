@@ -1,0 +1,511 @@
+{
+  "ir_hash": "sha256:207656d3e29f4b93c736ad73d37f5093852a853fc2b68540f12d19e383f2d91b",
+  "knowledges": [
+    {
+      "content": "TPO decouples RL-based agent optimization into two independent steps: (1) build a target distribution q from environment feedback (solving Q1: what should the agent do?), (2) cross-entropy-fit the policy to q (solving Q2: how to update the agent?). This eliminates the critic, value function, and off-policy correction that make PPO/GRPO/DG fragile.",
+      "content_hash": "7a5535d923a7978fe33071b70dbc29848a853557f40f6d7f1c57c6699c381539",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06159::tpo_decouples_rl",
+      "label": "tpo_decouples_rl",
+      "metadata": {
+        "aggregated_from": [
+          "claim_tpo_decouples",
+          "claim_pg_entangles_two_questions",
+          "claim_entanglement_makes_pg_fragile"
+        ],
+        "prior": 0.9,
+        "prior_justification": "Closed-form target distribution + supervised cross-entropy fit; mathematically precise. -0.05: η is a hyperparameter; -0.05: scalar feedback assumption."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TPO decouples Q1 (target) from Q2 (update) — no critic needed",
+      "type": "claim"
+    },
+    {
+      "content": "PG/PPO/GRPO/DG fail to learn on sparse-reward tasks because the policy gradient vanishes when most trajectories earn zero reward. TPO's decoupled design avoids this: the target distribution is built from all available feedback (including zeros), and the cross-entropy fit provides a dense learning signal regardless of reward sparsity. On token reversal (sparse reward), TPO solves the task while GRPO/DG fail to leave random baseline. This is a 'solve vs not-learn' gap, not a small delta.",
+      "content_hash": "69a0c65d52492830996447a86cbe23631c4da2217e3e8294cb4c64c20c8c0bf4",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06159::tpo_excels_on_sparse_reward",
+      "label": "tpo_excels_on_sparse_reward",
+      "metadata": {
+        "aggregated_from": [
+          "claim_fig1_sparse_outperform",
+          "claim_fig1_sparse_qualitative_gap",
+          "claim_fig1_dense_match",
+          "claim_entanglement_makes_pg_fragile"
+        ],
+        "prior": 0.85,
+        "prior_justification": "Token reversal qualitative 'solve vs not-learn' gap; replicated on neural bandit and sequence tasks. -0.08: PG baselines may be undertuned; -0.07: single-step only."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TPO excels where PG methods fail: sparse-reward tasks",
+      "type": "claim"
+    },
+    {
+      "content": "On dense-reward tasks (MNIST bandit, WebArena-Turbo), TPO matches or slightly exceeds PG-based methods (PPO, GRPO, DG). It achieves 59.2% on WebArena-Turbo (+16.2pp over prompt engineering SPA's 43%). The key insight is that TPO's design loses nothing on easy tasks while gaining decisively on hard ones.",
+      "content_hash": "d7796932fbc78f17e68c7a1728290f0f78b01eff79d429ac5e39e906e5aedd29",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06159::tpo_matches_on_dense_reward",
+      "label": "tpo_matches_on_dense_reward",
+      "metadata": {
+        "aggregated_from": [
+          "claim_fig1_dense_match",
+          "claim_tpo_webarena_result",
+          "claim_headline_contribution"
+        ],
+        "prior": 0.82,
+        "prior_justification": "MNIST bandit + WebArena-Turbo show TPO ≈ PG on dense tasks. -0.10: WebArena-Turbo is a simplified split; -0.08: 7B scale only."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TPO matches PG methods on dense reward, dominates on sparse",
+      "type": "claim"
+    },
+    {
+      "content": "TPO requires no critic network, no value function, no GAE, no off-policy correction, and no KL penalty tuning. The core loop is: sample trajectories → score with environment → build target q → cross-entropy step. This simplicity eliminates multiple hyperparameters and failure modes that make PG-based agent training brittle in practice.",
+      "content_hash": "1256f85568b76f7e5de058563fb0d66d2110d54c3d13b93911e5879b1cf871c4",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06159::tpo_simplicity_advantage",
+      "label": "tpo_simplicity_advantage",
+      "metadata": {
+        "aggregated_from": [
+          "claim_tpo_decouples",
+          "claim_pg_entangles_two_questions"
+        ],
+        "prior": 0.88,
+        "prior_justification": "No critic / value / GAE / off-policy correction follows from the decoupled formulation — an engineering fact, not an empirical claim."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TPO eliminates critic, GAE, KL penalty — simpler and more robust",
+      "type": "claim"
+    },
+    {
+      "content": "TPO experiments span tabular bandits, neural bandits, sequence tasks, and WebArena-Turbo. However, it has not been tested on multi-turn, multi-step agent tasks (e.g., SWE-bench, multi-hop web navigation) where the action space is compositional and the credit assignment problem is harder.",
+      "content_hash": "e0b3e6fa846df2f9c0f520d1941415f3f092f943d71dc3e18cc71ef273f93595",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_06159::bandit_and_single_task",
+      "label": "bandit_and_single_task",
+      "metadata": {
+        "prior": 0.93,
+        "prior_justification": "Documented experimental scope; factual."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Limitation: single-step or simple multi-step tasks only",
+      "type": "claim"
+    },
+    {
+      "content": "TPO compares against PPO, GRPO, DG, and prompt engineering baselines but not against RLHF/DPO-based methods that use preference data. This is appropriate for the paper's scope (online RL for agents) but limits claims about TPO vs the broader RL optimization landscape.",
+      "content_hash": "cc72987f1d46157909e298eedc59755f0726596d3524ffd45f7d49230fe96810",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_06159::no_rlhf_comparison",
+      "label": "no_rlhf_comparison",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Paper's explicit scoping choice."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Limitation: no comparison with preference-based methods",
+      "type": "claim"
+    },
+    {
+      "content": "PG baselines used default hyperparameters; a dedicated PG tuning study on sparse-reward tasks has not been done. Critic-based methods with better exploration (RND, curiosity) might close the gap.",
+      "content_hash": "bffda66c71f2d9bdfa1478b1d7921a38e23196d73efb3643e0fa27c9a7e138ba",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_06159::weak_pg_baselines_undertuned",
+      "label": "weak_pg_baselines_undertuned",
+      "metadata": {
+        "aggregated_from": [
+          "claim_fig1_sparse_outperform"
+        ],
+        "issue_type": "alt_not_excluded",
+        "prior": 0.85,
+        "prior_justification": "A factual observation about the baselines' tuning state.",
+        "semantic_refs": [
+          "tpo_excels_on_sparse_reward"
+        ],
+        "what_would_falsify": "dedicated PG hyperparameter sweep on sparse-reward tasks"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: PG baselines may be undertuned",
+      "type": "claim"
+    },
+    {
+      "content": "Experiments cover bandit / single-task / sequence tasks but not multi-step multi-turn agent tasks (SWE-bench, WebArena-full, multi-hop web navigation).",
+      "content_hash": "3d40df65f053c25e969abca95a4ce1ffeb48a4cc7a568c29232bf64b620b8382",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06159::weak_no_multistep",
+      "label": "weak_no_multistep",
+      "metadata": {
+        "aggregated_from": [
+          "bandit_and_single_task"
+        ],
+        "issue_type": "scope_limit",
+        "prior": 0.95,
+        "prior_justification": "Documented scope limit.",
+        "semantic_refs": [
+          "tpo_excels_on_sparse_reward",
+          "tpo_matches_on_dense_reward"
+        ],
+        "what_would_falsify": "multi-step agent benchmark; if PG methods catch up under long-horizon tasks, TPO advantage is task-bound"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak: no multi-step agent task validation",
+      "type": "claim"
+    },
+    {
+      "content": "TPO is positioned in online RL for agents. It does not compare against RLHF/DPO-based methods that use preference data.",
+      "content_hash": "57a12b3d8f6032b95cfcdb8079b00489c3817d5ddd02ec6efa34c7a13fbaa2c7",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_06159::bdry_online_rl_only",
+      "label": "bdry_online_rl_only",
+      "metadata": {
+        "aggregated_from": [],
+        "boundary_type": "scope",
+        "prior": 0.97,
+        "prior_justification": "Stated explicitly in the paper.",
+        "semantic_refs": [
+          "tpo_decouples_rl"
+        ],
+        "stated_explicitly": true
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: online RL only, no preference-data comparison",
+      "type": "claim"
+    },
+    {
+      "content": "WebArena-Turbo results are on a 7B base model; large-scale (70B+) behavior is unverified.",
+      "content_hash": "1d0350cb1101f14f1e0d5945e2164a869daa56d2f7d771adc099bf56d6dac62b",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_06159::bdry_7b_scale",
+      "label": "bdry_7b_scale",
+      "metadata": {
+        "aggregated_from": [],
+        "boundary_type": "scope",
+        "prior": 0.95,
+        "prior_justification": "Direct reading of the experimental setup.",
+        "semantic_refs": [
+          "tpo_matches_on_dense_reward"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: 7B scale only",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06159::tpo_decouples_rl,github:2604_06159::tpo_excels_on_sparse_reward)",
+      "content_hash": "42a44e314e829fa22428aa6f4d518ee0b04508d11c8308427af0adb5f6b85dc2",
+      "exported": false,
+      "id": "github:2604_06159::__implication_result_63adb5ce",
+      "label": "__implication_result_63adb5ce",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06159::tpo_decouples_rl,github:2604_06159::tpo_excels_on_sparse_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_8048655ce70a602d",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::bdry_7b_scale,github:2604_06159::weak_no_multistep)",
+      "content_hash": "b01e8b8de3d677f9f87992739ffa29355a349e41779efb3bbab6f797e0d6d49d",
+      "exported": false,
+      "id": "github:2604_06159::__conjunction_result_5975e0a8",
+      "label": "__conjunction_result_5975e0a8",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::bdry_7b_scale,github:2604_06159::weak_no_multistep)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_07f4e6803dd8e8ed",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06159::__conjunction_result_5975e0a8,github:2604_06159::tpo_matches_on_dense_reward)",
+      "content_hash": "945180867f28f9391b1451433f0dc506083330ef5e162b1e2181ee70d6a938c5",
+      "exported": false,
+      "id": "github:2604_06159::__implication_result_fc47d395",
+      "label": "__implication_result_fc47d395",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06159::__conjunction_result_5975e0a8,github:2604_06159::tpo_matches_on_dense_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_07f4e6803dd8e8ed",
+        "owning_strategy_type": "deduction",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::bdry_online_rl_only)",
+      "content_hash": "f37381f1c1977082a363c5ea3c8cc5c40e27395f24bf4cd51740d91ccb7c1d6c",
+      "exported": false,
+      "id": "github:2604_06159::__conjunction_result_1ef5fe76",
+      "label": "__conjunction_result_1ef5fe76",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::bdry_online_rl_only)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_6c176406d6b38791",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06159::__conjunction_result_1ef5fe76,github:2604_06159::tpo_simplicity_advantage)",
+      "content_hash": "346852c02339b3ee65c1b56512d55655b82d9933644d12799b9e111e01f937ac",
+      "exported": false,
+      "id": "github:2604_06159::__implication_result_90983b23",
+      "label": "__implication_result_90983b23",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06159::__conjunction_result_1ef5fe76,github:2604_06159::tpo_simplicity_advantage)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_6c176406d6b38791",
+        "owning_strategy_type": "deduction",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::weak_pg_baselines_undertuned,github:2604_06159::weak_no_multistep)",
+      "content_hash": "c1116f88868b1c83f8927230d587bd802006b664bb521e238f083aae1f3db6ef",
+      "exported": false,
+      "id": "github:2604_06159::__conjunction_result_beca02db",
+      "label": "__conjunction_result_beca02db",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_06159::tpo_decouples_rl,github:2604_06159::weak_pg_baselines_undertuned,github:2604_06159::weak_no_multistep)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_d8d77da90234519e",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_06159::__conjunction_result_beca02db,github:2604_06159::tpo_excels_on_sparse_reward)",
+      "content_hash": "7a5ac90e9837477899501e676026ec69cbdec8efef29aa950eeee48af3dade79",
+      "exported": false,
+      "id": "github:2604_06159::__implication_result_146b4218",
+      "label": "__implication_result_146b4218",
+      "metadata": {
+        "canonical_name": "implies(github:2604_06159::__conjunction_result_beca02db,github:2604_06159::tpo_excels_on_sparse_reward)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_d8d77da90234519e",
+        "owning_strategy_type": "deduction",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_strategies"
+  ],
+  "module_titles": {
+    "motivation": "Layer 2 — Target Policy Optimization (2604.06159)",
+    "s2_strategies": "Layer 2 strategies — TPO (2604.06159)."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_06159",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_06159::tpo_excels_on_sparse_reward",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06159::__implication_result_63adb5ce",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06159::tpo_decouples_rl",
+              "github:2604_06159::tpo_excels_on_sparse_reward"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Decoupling breaks the reward-density / learning-signal dependency. Target distribution q incorporates zero-reward trajectories; cross-entropy fit gives a dense signal regardless of reward sparsity."
+      },
+      "premises": [
+        "github:2604_06159::tpo_decouples_rl"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_8048655ce70a602d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2604_06159::tpo_matches_on_dense_reward",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06159::__conjunction_result_5975e0a8",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06159::tpo_decouples_rl",
+              "github:2604_06159::bdry_7b_scale",
+              "github:2604_06159::weak_no_multistep"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06159::__implication_result_fc47d395",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06159::__conjunction_result_5975e0a8",
+              "github:2604_06159::tpo_matches_on_dense_reward"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If decoupling yields unbiased gradient estimates and the 7B + bandit scope is respected, TPO matches PG methods on dense reward. If this fails at larger scale or longer horizon, BP flags bdry_7b_scale / weak_no_multistep as the premises to revisit."
+      },
+      "premises": [
+        "github:2604_06159::tpo_decouples_rl",
+        "github:2604_06159::bdry_7b_scale",
+        "github:2604_06159::weak_no_multistep"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_07f4e6803dd8e8ed",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_06159::tpo_simplicity_advantage",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06159::__conjunction_result_1ef5fe76",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06159::tpo_decouples_rl",
+              "github:2604_06159::bdry_online_rl_only"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06159::__implication_result_90983b23",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06159::__conjunction_result_1ef5fe76",
+              "github:2604_06159::tpo_simplicity_advantage"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "The simpler training loop follows from decoupling (no critic, value, GAE, off-policy correction). Scoped to online RL — the simplicity claim is not asserted vs preference-data methods."
+      },
+      "premises": [
+        "github:2604_06159::tpo_decouples_rl",
+        "github:2604_06159::bdry_online_rl_only"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_6c176406d6b38791",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_06159::tpo_excels_on_sparse_reward",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_06159::__conjunction_result_beca02db",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_06159::tpo_decouples_rl",
+              "github:2604_06159::weak_pg_baselines_undertuned",
+              "github:2604_06159::weak_no_multistep"
+            ]
+          },
+          {
+            "conclusion": "github:2604_06159::__implication_result_146b4218",
+            "operator": "implication",
+            "variables": [
+              "github:2604_06159::__conjunction_result_beca02db",
+              "github:2604_06159::tpo_excels_on_sparse_reward"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "The sparse-reward advantage follows from decoupling, conditional on (a) the gap surviving dedicated PG tuning and (b) the result generalising to multi-step tasks. If PG catches up under dedicated tuning, BP flags weak_pg_baselines_undertuned."
+      },
+      "premises": [
+        "github:2604_06159::tpo_decouples_rl",
+        "github:2604_06159::weak_pg_baselines_undertuned",
+        "github:2604_06159::weak_no_multistep"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_d8d77da90234519e",
+      "type": "deduction"
+    }
+  ]
+}

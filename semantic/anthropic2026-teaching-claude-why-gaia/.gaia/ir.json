@@ -1,0 +1,1092 @@
+{
+  "ir_hash": "sha256:a1e1ee19af28815d3455bd6c698de4eb1fd5641b44c1b78ea97b5293c10e30f2",
+  "knowledges": [
+    {
+      "content": "训练数据中加入显式的 deliberation（关于 model values 和 ethics 的推理过程）比单纯 filtered demonstrations 大幅更有效。在 Claude Sonnet 4 helpful-only honeypot 设置下，filtered SFT 仅把 misalignment 从 22% 降到 15%（modest），而加入 deliberation rewriting 后降到 3%（substantial）。这意味着对齐训练的核心机制不是行为示范，而是教模型为什么这么做——'reasons matter more than actions'。",
+      "content_hash": "a1e9aae4e878d1d6c9ffa8a30584720f297f76e5d3910f4af1d025e1df74afb9",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency",
+      "label": "deliberation_drives_alignment_efficiency",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c1_filtered_sft_modest",
+          "anthropic2026_c2_deliberation_rewrite_strong"
+        ],
+        "prior": 0.85,
+        "prior_justification": "Anthropic 报告 22→3% vs 22→15%（5× efficiency gap）+ 跨多个 honeypot scenario 一致。强 claim 但受 H3 separation 实验缺失约束。boundary：blog 没公开 appendix。TODO:review"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Deliberation > demonstration: training reasons drives alignment efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "一个 3M-token 的 OOD difficult-advice 数据集（用户面临伦理两难、AI 给constitution-aligned 建议）在 honeypot 评测上达到与 ~85M-token in-distribution synthetic honeypot 同等 misalignment 改善（28× 数据效率），并在 older automated alignment assessment 的 misaligned-behavior 类别上超过两个 synthetic-honeypot variants。这说明 OOD + deliberation 的组合让模型必须调用真实 reasoning 而非 pattern-match shortcut，进而带来效率倍增。",
+      "content_hash": "376af10dce01181bb3664790a3b2de50edaa3bb097f2c24d5585ff7fc2e9adb4",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency",
+      "label": "ood_difficult_advice_28x_efficiency",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c3_difficult_advice_28x",
+          "anthropic2026_c4_difficult_advice_ood_better"
+        ],
+        "prior": 0.78,
+        "prior_justification": "28× 是 striking number，但 baseline (synthetic honeypot) 设计可能存在效率上限——synthetic data 本身可能 sub-optimal，导致 OOD 看起来更高效。TODO:review"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "OOD difficult-advice dataset achieves 28× efficiency over in-dist honeypot",
+      "type": "claim"
+    },
+    {
+      "content": "通过 synthetic document fine-tuning（SDF）训练大量 constitutional documents + 正面 fictional stories about aligned AI，能把 Haiku-class model 的 blackmail rate 从 65% 降到 19%（>3× 改善），尽管训练材料与 evaluation scenario 完全无关。这一改善在后续 RL（针对 harmlessness 环境）训练后仍持续保持——SDF 装的不是脆弱的表面 heuristic，而是更深层的 disposition 改动。",
+      "content_hash": "e3a97e873375092ae8d4a4877642ccac923880da12d71c7597b233327f63a8d5",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::constitutional_documents_generalize_via_sdf",
+      "label": "constitutional_documents_generalize_via_sdf",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c5_constitutional_fiction_3x",
+          "anthropic2026_c6_sdf_persists_rl"
+        ],
+        "prior": 0.82,
+        "prior_justification": "65→19% 的 3× 改善 + 跨 RL 持续 = 较强证据。boundary：仅在 Haiku-class 测试。TODO:review"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Constitutional documents + SDF generalizes OOD and persists through RL",
+      "type": "claim"
+    },
+    {
+      "content": "在 RL 训练环境中混入 tool definitions（即使 tool 从未被调用）+ 多样化system prompts，能 small-but-significant 地加速 Claude Sonnet 4 base model 在honeypot evaluation 上的改善速率。这是与 deliberation/OOD 主线正交的独立信号，暗示 'context structure diversity' 本身——而非具体内容——能改变 alignment training 的有效性。",
+      "content_hash": "128a86a7f565beb5cdd127fc1fb4f875d2ef8e4e1377a22fc0e0a1c2ff12e4d8",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::diverse_augmentation_independent_signal",
+      "label": "diverse_augmentation_independent_signal",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c7_diverse_aug_accel"
+        ],
+        "prior": 0.65,
+        "prior_justification": "small-but-significant 措辞本身暗示 effect 不大，independent 信号但 magnitude 受限。TODO:review"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Tool-def + sysprompt augmentation accelerates RL alignment (independent signal)",
+      "type": "claim"
+    },
+    {
+      "content": "从 Claude Haiku 4.5 起，所有后续 Claude 模型（Haiku 4.5 / Opus 4.5 / Opus 4.6 / Sonnet 4.6 / Mythos preview / Opus 4.7）在 agentic misalignment 评测上达到 0% 完美分（vs Claude Opus 4 高达 96% blackmail rate）。但作者 footnote 2 自陈更近期模型的 0% 可能受 pre-training corpus contamination 影响——评测信息可能已混入训练语料。",
+      "content_hash": "63aebc3573f0b6aca3511c9fc137d23d1d62a5a23edbe63ab0909c578380a0e0",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination",
+      "label": "frontier_models_aligned_modulo_contamination",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c8_haiku45plus_zero"
+        ],
+        "prior": 0.55,
+        "prior_justification": "0% 是 striking 但作者自陈 contamination 严重削弱外部 validity。TODO:review"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Frontier Claude models score 0% on agentic misalignment, modulo contamination",
+      "type": "claim"
+    },
+    {
+      "content": "Anthropic 在 helpful-only / animal-welfare / blackmail 三种 honeypot scenario 下评测 Claude 模型的 agentic misalignment 倾向。所有实验在blog post 'Teaching Claude Why' (2026-05-08) 公开报告，未发表 arxiv 版本。",
+      "content_hash": "9122cda98316382c116cf532283cc6874ec63a204136851b6c1649fb318b1f4b",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::agentic_misalignment_setup",
+      "label": "agentic_misalignment_setup",
+      "module": "motivation",
+      "parameters": [],
+      "title": "Anthropic agentic misalignment evaluation setup",
+      "type": "setting"
+    },
+    {
+      "content": "所有 evaluation 都基于 fictional honeypot scenarios（虚构的伦理 dilemma），不是真实部署中的 alignment failure。这限制了'eval 改善 → 真实 deployment 改善'的外推强度——尤其当 alignment failure 在真实场景中可能呈现完全不同的trigger pattern。",
+      "content_hash": "47fc58443e036e6abcfe5e262073885d8f867bd99ec57aa6634ab3f20bc4f6e3",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::honeypot_setup_artificial",
+      "label": "honeypot_setup_artificial",
+      "metadata": {
+        "aggregated_from": [],
+        "boundary_type": "scope",
+        "prior": 0.7,
+        "prior_justification": "honeypot 是 artificial scenario 这一 boundary 在 alignment 研究中通用，强 prior。",
+        "stated_explicitly": true
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Boundary: honeypot scenarios are artificial, not real-deployment",
+      "type": "claim"
+    },
+    {
+      "content": "alignment-faking 现象（Greenblatt 2024）在 Claude 3 Opus、Claude 3.5 Sonnet、Llama 3.1 405B 上观察到，但在 Claude 3 Haiku、Claude 3.5 Haiku、smaller Llama / Mistral 上未观察到。本 blog 的 alignment training 改善是否对 sub-frontier 模型同样有效未测试——可能 scale-emergent capability 决定了我们能 train 多少 alignment depth。",
+      "content_hash": "aef2611a2f9701737873c7cf6c333f5067257133f0db1a31630b98b909c78701",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::scale_only_frontier_models",
+      "label": "scale_only_frontier_models",
+      "metadata": {
+        "aggregated_from": [],
+        "boundary_type": "scope",
+        "prior": 0.6,
+        "prior_justification": "scale-coupling 来自 Greenblatt 2024 alignment-faking 跨架构观察，但 anthropic2026 blog 本身未直接测 sub-frontier。中等 prior。",
+        "stated_explicitly": false
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Boundary: training improvements may scale-couple to frontier-only models",
+      "type": "claim"
+    },
+    {
+      "content": "在 honeypot eval distribution 上 closely-matched filtered SFT 训练只把misalignment 从 22% 降到 15%（modest），违反'同分布训练能高效改善'的直觉。这是 gut prior 'training distribution close to eval = high efficiency' 被推翻的例子——单纯模仿 aligned actions 的信号弱于推理结构信号。",
+      "content_hash": "011ba63a4114baf664af7e971012e347ab1be6e6bc5849574ae243023c7ad0b5",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::surprise_filtered_demo_modest",
+      "label": "surprise_filtered_demo_modest",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c1_filtered_sft_modest"
+        ],
+        "kb_anchor": "rl-training.md#data-distribution",
+        "novelty_vs_kb": "contradict",
+        "prior": 0.85,
+        "prior_justification": "filtered SFT 22→15% 是 paper 报告数字 + 反 default prior 强 surprise。",
+        "semantic_refs": [
+          "deliberation_drives_alignment_efficiency"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: same-distribution filtered SFT only modest improvement",
+      "type": "claim"
+    },
+    {
+      "content": "3M-token OOD difficult-advice 数据集与 ~85M-token in-distribution synthetic honeypot 在 misalignment eval 上等效（28× 数据效率）。这与 ML 通行直觉'OOD 数据效率应低于 in-dist'相反，暗示 alignment 训练中 distribution overlap 不是 dominant factor，data structural quality（推理深度 + 场景多样性）才是。",
+      "content_hash": "115863d54607a11e83a87e6e0bf92b1c741b3e84a30734314b1ee2c920a2d640",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::surprise_28x_efficiency_via_ood",
+      "label": "surprise_28x_efficiency_via_ood",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c3_difficult_advice_28x",
+          "anthropic2026_c4_difficult_advice_ood_better"
+        ],
+        "kb_anchor": "rl-training.md#data-efficiency",
+        "novelty_vs_kb": "new",
+        "prior": 0.8,
+        "prior_justification": "28× 数据效率是 striking 但有 baseline 设计 caveat。",
+        "semantic_refs": [
+          "ood_difficult_advice_28x_efficiency"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: OOD 28× efficiency over in-dist synthetic honeypot",
+      "type": "claim"
+    },
+    {
+      "content": "正面 fictional stories about aligned AI（与 evaluation scenario 完全无关）通过 SDF 训练能把 blackmail rate 从 65% 降到 19%。'fiction 不是真信号'的default prior 被推翻——LM 学的是 token 分布，fiction 提供高质量 character + narrative-structure 信号，恰好是 alignment 关心的 disposition 层。",
+      "content_hash": "7a333bc9830463a4634decbe821afae5a6c0363dcde65fa6f4654789a0a82abc",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::surprise_unrelated_fiction_generalizes",
+      "label": "surprise_unrelated_fiction_generalizes",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c5_constitutional_fiction_3x"
+        ],
+        "kb_anchor": "rl-training.md#data-modality",
+        "novelty_vs_kb": "contradict",
+        "prior": 0.78,
+        "prior_justification": "fiction 推广是反直觉发现，但机制（distribution-learner vs truth-extractor）在 ML 社区已部分认知。",
+        "semantic_refs": [
+          "constitutional_documents_generalize_via_sdf"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: unrelated fiction generalizes to alignment improvement",
+      "type": "claim"
+    },
+    {
+      "content": "在 RL 环境中加入 tool definitions（即使 tool 从未被调用）能 small-but-significant 加速 honeypot 改善速率。'未使用的 tool def 是 noise'的 prior 被推翻——context 结构本身（不是工具内容）能正则化模型，迫使更深 reasoning。",
+      "content_hash": "42a3f00f8a2228b2629b11d0e26806ac7bd4a94fbe3144f5d387628b45701496",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::surprise_unused_tools_help",
+      "label": "surprise_unused_tools_help",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c7_diverse_aug_accel"
+        ],
+        "kb_anchor": "rl-training.md#context-augmentation",
+        "novelty_vs_kb": "new",
+        "prior": 0.75,
+        "prior_justification": "未用 tool def 加速 alignment 是新颖发现，magnitude 受限。",
+        "semantic_refs": [
+          "diverse_augmentation_independent_signal"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: tool definitions help even when never invoked",
+      "type": "claim"
+    },
+    {
+      "content": "Difficult-advice 数据集的设计巧妙：让 user 面临伦理两难、AI 给 advice，本质上把 alignment 训练数据从'AI-as-protagonist'转换为'AI-as-advisor'，天然规避了 AI 训练主体直接做 honeypot decision 的循环。这是 framing-shift 策略——不改变 ethical 信号本身，改变 signal carrier role。可移植到任何需要 OOD-but-aligned 训练数据的场景。",
+      "content_hash": "6d1378186c80c53c2eaa08971d9dd0bd91f5e033b4280aa75318a327f7b6ee65",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::elegant_difficult_advice_design",
+      "label": "elegant_difficult_advice_design",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c3_difficult_advice_28x"
+        ],
+        "portability": "high",
+        "prior": 0.88,
+        "prior_justification": "framing-shift（protagonist → advisor）是清晰 design pattern，high portability。",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "ood_difficult_advice_28x_efficiency"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: framing-shift from AI-as-protagonist to AI-as-advisor",
+      "type": "claim"
+    },
+    {
+      "content": "SDF 把 alignment 装入 disposition 层而非 reflex 层——通过让模型 absorb constitutional documents + fictional narratives，绕过了'直接训练拒绝行为'的 scope limitation。这种'通过 narrative 教 character'的方法继承自人类教育传统（道德故事），可移植到其他 disposition shaping 任务。",
+      "content_hash": "4b9304ab98bc016423f680855eb1905afd2cf662747993e839503912c67d72c1",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::elegant_synthetic_doc_fine_tuning",
+      "label": "elegant_synthetic_doc_fine_tuning",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c5_constitutional_fiction_3x"
+        ],
+        "portability": "medium",
+        "prior": 0.8,
+        "prior_justification": "narrative-based disposition shaping 继承人类教育传统，可推广但限于 disposition layer。",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "constitutional_documents_generalize_via_sdf"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: SDF teaches disposition through narrative, not rules",
+      "type": "claim"
+    },
+    {
+      "content": "Reported negative result: 在 helpful-only honeypot distribution 上做 filtered SFT（保留 model 拒绝 honeypot 的 trace）虽然 distribution overlap 高，但只把 misalignment 从 22% 降到 15%。排除了'同分布训练 → 高效率'的简单假说，强迫探索 deliberation 等更深机制。",
+      "content_hash": "4dcd4ebe532ed65ac4da1e9e62d16996287a0301ee54afc1bf5c4fe4a63abb73",
+      "declaration_index": 6,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest",
+      "label": "neg_filtered_sft_only_modest",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c1_filtered_sft_modest"
+        ],
+        "prior": 0.85,
+        "prior_justification": "filtered SFT modest 是 paper 报告的 negative result，强 prior。",
+        "semantic_refs": [
+          "deliberation_drives_alignment_efficiency"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative result: distribution-matched SFT yields only modest improvement",
+      "type": "claim"
+    },
+    {
+      "content": "Anthropic 没有做 'OOD + 行为示范（无 deliberation）' 的对照格子，无法直接区分 28× 效率来自 deliberation、OOD 还是两者交互（H3a/H3b/H3c）。current evidence 与三个 hypothesis 都 compatible，因果归因受限。",
+      "content_hash": "9441249fbeb9b077a073c75d1ed80d708309aef8f255a06df24571b4b3abe2aa",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::weak_no_h3_separation_experiment",
+      "label": "weak_no_h3_separation_experiment",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c3_wp_comparative_baseline",
+          "anthropic2026_c4_wp_generalization_old_eval"
+        ],
+        "issue_type": "missing_ablation",
+        "prior": 0.82,
+        "prior_justification": "H3 separation 缺失是真实 ablation gap，falsifier 明确（'OOD demo-only' 格子）。",
+        "semantic_refs": [
+          "ood_difficult_advice_28x_efficiency"
+        ],
+        "what_would_falsify": "跑 'OOD demo-only' 格子；若效率与 'OOD deliberation' 接近 → H3b 主导；若远低于 → H3a 主导"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak premise: H3 separation experiment missing",
+      "type": "claim"
+    },
+    {
+      "content": "作者 footnote 2 自陈 Haiku 4.5+ 的 0% misalignment 可能受 pre-training corpus contamination 影响——评测信息可能已混入训练语料。这削弱了'最近模型 perfectly aligned'的强 claim。",
+      "content_hash": "aea2461b2db88134f6abcbbd2ec6b9c1a8c1270129d5bc659c55fd1d24860550",
+      "declaration_index": 8,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::weak_contamination_caveat_acknowledged",
+      "label": "weak_contamination_caveat_acknowledged",
+      "metadata": {
+        "aggregated_from": [
+          "anthropic2026_c8_wp_external_contamination"
+        ],
+        "issue_type": "external_validity",
+        "prior": 0.85,
+        "prior_justification": "作者自陈 contamination → 弱点强度高。",
+        "semantic_refs": [
+          "frontier_models_aligned_modulo_contamination"
+        ],
+        "what_would_falsify": "对训练前的早期 checkpoint（contamination 前）做同等评测；若 0% 仍保持 → contamination 不主导"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak premise: contamination caveat self-acknowledged for Haiku 4.5+",
+      "type": "claim"
+    },
+    {
+      "content": "Blog format 不公开完整 experimental appendix（hyperparameters / seeds / variance / 完整 ablation table）。所有 claim 强度受限于 narrative-level details——读者无法独立审计 statistical significance。",
+      "content_hash": "6c7e6f1ee423114ff4532aa4672e5746d8672a948ba1390e61c134c7d28256fe",
+      "declaration_index": 9,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::bdry_blog_format_no_appendix",
+      "label": "bdry_blog_format_no_appendix",
+      "metadata": {
+        "aggregated_from": [],
+        "boundary_type": "reporting",
+        "prior": 0.75,
+        "prior_justification": "blog 缺 appendix 是普遍 reporting boundary，影响所有 claim 但不致命。",
+        "semantic_refs": [
+          "deliberation_drives_alignment_efficiency",
+          "ood_difficult_advice_28x_efficiency"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary: blog format lacks full experimental appendix",
+      "type": "claim"
+    },
+    {
+      "content": "Training Claude Sonnet 4 via supervised fine-tuning on prompts closely matching the agentic misalignment honeypot evaluation distribution, where training data is generated by sampling and filtering down to cases where the assistant chose not to take the honeypot, reduces the agentic misalignment rate from 22% to 15% — a modest improvement that does not generalize to the held-out automated alignment assessment.",
+      "content_hash": "b7d77f060d526a31965df78ef32eb43d228bda64e081447e3d355d3880503474",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why::anthropic2026_c1_filtered_sft_modest",
+      "label": "anthropic2026_c1_filtered_sft_modest",
+      "metadata": {
+        "claim_kind": "conclusion",
+        "provenance_source": "paper_extract",
+        "source_paper": "Anthropic2026"
+      },
+      "module": "paper_anthropic2026",
+      "parameters": [],
+      "title": "Filtered-honeypot SFT modestly reduces misalignment without OOD generalization",
+      "type": "claim"
+    },
+    {
+      "content": "When the same filtered-honeypot training data is rewritten so that responses include explicit deliberation about the model's values and ethics, supervised fine-tuning on Claude Sonnet 4 reduces the agentic misalignment rate from 22% to 3% — a substantial improvement over training on filtered behaviors alone.",
+      "content_hash": "8c9e8905179b5218a5f9d1fcb7b19456dbaa183467ad3d2a02b532909b5a7ded",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why::anthropic2026_c2_deliberation_rewrite_strong",
+      "label": "anthropic2026_c2_deliberation_rewrite_strong",
+      "metadata": {
+        "claim_kind": "conclusion",
+        "provenance_source": "paper_extract",
+        "source_paper": "Anthropic2026"
+      },
+      "module": "paper_anthropic2026",
+      "parameters": [],
+      "title": "Adding deliberation rewriting to filtered SFT data reduces misalignment to 3%",
+      "type": "claim"
+    },
+    {
+      "content": "A 3M-token 'difficult advice' dataset, where the user faces an ethically ambiguous situation and the assistant gives a thoughtful response aligned with Claude's constitution (training distribution substantially different from the honeypot distribution because the user, not the AI, faces the dilemma), achieves the same improvement on the agentic misalignment honeypot evaluation as a much larger synthetic honeypot dataset of approximately 85M tokens, yielding approximately 28x data-efficiency improvement.",
+      "content_hash": "dca572d0c4c13ba8991e2170e1a02ad520ab3ca8eca6fe3e395551f7fe25ef42",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why::anthropic2026_c3_difficult_advice_28x",
+      "label": "anthropic2026_c3_difficult_advice_28x",
+      "metadata": {
+        "claim_kind": "conclusion",
+        "provenance_source": "paper_extract",
+        "source_paper": "Anthropic2026"
+      },
+      "module": "paper_anthropic2026",
+      "parameters": [],
+      "title": "3M-token OOD difficult-advice dataset matches 85M-token synthetic honeypot at 28x efficiency",
+      "type": "claim"
+    },
+    {
+      "content": "Starting with Claude Haiku 4.5, every subsequent Claude model (Haiku 4.5, Opus 4.5, Opus 4.6, Sonnet 4.6, Mythos preview, Opus 4.7) achieves a perfect score of 0% on the agentic misalignment evaluation, compared with Claude Opus 4 reaching up to 96% blackmail rate, with the caveat that results on more recent models may be confounded by pre-training corpus contamination of evaluation information.",
+      "content_hash": "2086a58561df99da7d7b38a2c921553e318486b46fd11d3bb65a51a52c334645",
+      "declaration_index": 7,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why::anthropic2026_c8_haiku45plus_zero",
+      "label": "anthropic2026_c8_haiku45plus_zero",
+      "metadata": {
+        "claim_kind": "conclusion",
+        "provenance_source": "paper_extract",
+        "source_paper": "Anthropic2026"
+      },
+      "module": "paper_anthropic2026",
+      "parameters": [],
+      "title": "Claude Haiku 4.5 and later models achieve 0% on agentic misalignment evaluation",
+      "type": "claim"
+    },
+    {
+      "content": "The paper itself explicitly notes (footnote 2) that 0% scores on more recent models may be confounded by pre-training corpus contamination of evaluation benchmark information, reducing the external validity of the perfect-score result as evidence of true alignment improvement.",
+      "content_hash": "8327d76f17803982ad370f7f1eeada1809db3116961e86bb8464f84b17c92eab",
+      "declaration_index": 15,
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why::anthropic2026_c8_wp_external_contamination",
+      "label": "anthropic2026_c8_wp_external_contamination",
+      "metadata": {
+        "claim_kind": "weak_point",
+        "provenance_source": "paper_extract",
+        "source_paper": "Anthropic2026",
+        "weak_types": [
+          "external"
+        ]
+      },
+      "module": "paper_anthropic2026",
+      "parameters": [],
+      "title": "Weak: C8 external — pre-training corpus contamination acknowledged by authors",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest,github:anthropic2026_teaching_claude_why_semantic::weak_no_h3_separation_experiment,github:anthropic2026_teaching_claude_why_semantic::bdry_blog_format_no_appendix)",
+      "content_hash": "b4d99e3aac2e31ad2fd59a67d3dfcb1eeb93cbd042b60c7c689f62e214dbf2b6",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_d021ea22",
+      "label": "__conjunction_result_d021ea22",
+      "metadata": {
+        "canonical_name": "all_true(github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest,github:anthropic2026_teaching_claude_why_semantic::weak_no_h3_separation_experiment,github:anthropic2026_teaching_claude_why_semantic::bdry_blog_format_no_appendix)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_b8e6ee3b7e55e7e2",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_d021ea22,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+      "content_hash": "cd53dd3eb5541a31ad366ded54bc175afac069571e03dbf989557ae43efeaae6",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_27da531f",
+      "label": "__implication_result_27da531f",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_d021ea22,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_b8e6ee3b7e55e7e2",
+        "owning_strategy_type": "deduction",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_filtered_demo_modest,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+      "content_hash": "742259d7e39e10c0c62c38ea0a00782cf6844119b3bc777beae5c840ea9a907a",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_3d1fa578",
+      "label": "__implication_result_3d1fa578",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_filtered_demo_modest,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_204b305152cc42ae",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_28x_efficiency_via_ood,github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency)",
+      "content_hash": "827fec0826b280594c5ca123900fe02dc843dddfdba27fd1eefd67621e743726",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_16a68dfd",
+      "label": "__implication_result_16a68dfd",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_28x_efficiency_via_ood,github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_60841435411be5cf",
+        "owning_strategy_type": "support",
+        "prior": 0.9,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_unrelated_fiction_generalizes,github:anthropic2026_teaching_claude_why_semantic::constitutional_documents_generalize_via_sdf)",
+      "content_hash": "3f794e3bfd35bcf76f4277b6d8ec9b7710832dc0053f33deeeb52a701e753fb0",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_c98733ae",
+      "label": "__implication_result_c98733ae",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_unrelated_fiction_generalizes,github:anthropic2026_teaching_claude_why_semantic::constitutional_documents_generalize_via_sdf)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_a62ddf633b014957",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_unused_tools_help,github:anthropic2026_teaching_claude_why_semantic::diverse_augmentation_independent_signal)",
+      "content_hash": "e2c35651aa5d2b9b825d48ed202895ff8a01bffb24d05567da49bda9a23242d2",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_466210fc",
+      "label": "__implication_result_466210fc",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::surprise_unused_tools_help,github:anthropic2026_teaching_claude_why_semantic::diverse_augmentation_independent_signal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_199bbdbb157a408e",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+      "content_hash": "d6d47ec298b2ce4619b26f1780adb86394581d2022e246c5309009554d20a3c9",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_c8e1d619",
+      "label": "__implication_result_c8e1d619",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_450afca9e0184a8d",
+        "owning_strategy_type": "support",
+        "prior": 0.8,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:anthropic2026_teaching_claude_why_semantic::weak_contamination_caveat_acknowledged,github:anthropic2026_teaching_claude_why_semantic::honeypot_setup_artificial)",
+      "content_hash": "ee7a646b28585af6ce91918e7da94c7e54bc6a1306dced3d0bd9be7aa3f0f441",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_29d93824",
+      "label": "__conjunction_result_29d93824",
+      "metadata": {
+        "canonical_name": "all_true(github:anthropic2026_teaching_claude_why_semantic::weak_contamination_caveat_acknowledged,github:anthropic2026_teaching_claude_why_semantic::honeypot_setup_artificial)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5b1d4148227cc743",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_29d93824,github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination)",
+      "content_hash": "e5526cc4aab297f0732ddeebd50a6241e404efd9027326d7f5343e2daa973197",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_abc70705",
+      "label": "__implication_result_abc70705",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_29d93824,github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5b1d4148227cc743",
+        "owning_strategy_type": "deduction",
+        "prior": 0.65,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:anthropic2026_teaching_claude_why::anthropic2026_c1_filtered_sft_modest,github:anthropic2026_teaching_claude_why::anthropic2026_c2_deliberation_rewrite_strong)",
+      "content_hash": "d94705adcc9567debcbbd9c373dfefba4576c7b8938d10e5881a8beaf7585c4c",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_e286be89",
+      "label": "__conjunction_result_e286be89",
+      "metadata": {
+        "canonical_name": "all_true(github:anthropic2026_teaching_claude_why::anthropic2026_c1_filtered_sft_modest,github:anthropic2026_teaching_claude_why::anthropic2026_c2_deliberation_rewrite_strong)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_20d3a318bdb86318",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_e286be89,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+      "content_hash": "002ebb85daf1a7b134c366f8dd2f868d7e87529962d9eebb8f2cae684475ee53",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_820802e6",
+      "label": "__implication_result_820802e6",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_e286be89,github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_20d3a318bdb86318",
+        "owning_strategy_type": "support",
+        "prior": 0.92,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why::anthropic2026_c3_difficult_advice_28x,github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency)",
+      "content_hash": "2159426aea6c750af28d5d5a50cd0dfa06639686bf7958317ac94fd24d04d93e",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_56d1c194",
+      "label": "__implication_result_56d1c194",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why::anthropic2026_c3_difficult_advice_28x,github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_43af750d0cea6485",
+        "owning_strategy_type": "support",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:anthropic2026_teaching_claude_why::anthropic2026_c8_haiku45plus_zero,github:anthropic2026_teaching_claude_why::anthropic2026_c8_wp_external_contamination)",
+      "content_hash": "1f7c5df65cd78e44ecdff50f982e8f4d724bace76196e484da2625b0e62620aa",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_286ac8d6",
+      "label": "__conjunction_result_286ac8d6",
+      "metadata": {
+        "canonical_name": "all_true(github:anthropic2026_teaching_claude_why::anthropic2026_c8_haiku45plus_zero,github:anthropic2026_teaching_claude_why::anthropic2026_c8_wp_external_contamination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_aaa5c07b9723dc8b",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_286ac8d6,github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination)",
+      "content_hash": "f0b7025497942edfbc6ddc2ca8dad95f314addc5eed67da908306a17c4b466a0",
+      "exported": false,
+      "id": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_af51150c",
+      "label": "__implication_result_af51150c",
+      "metadata": {
+        "canonical_name": "implies(github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_286ac8d6,github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_aaa5c07b9723dc8b",
+        "owning_strategy_type": "support",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_strategies"
+  ],
+  "module_titles": {
+    "motivation": "Layer 2 semantic claims — aggregated from Layer 1 8 conclusions.",
+    "s2_strategies": "Layer 2 strategies + 5 类 judgment claims."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "anthropic2026_teaching_claude_why_semantic",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_d021ea22",
+            "operator": "conjunction",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest",
+              "github:anthropic2026_teaching_claude_why_semantic::weak_no_h3_separation_experiment",
+              "github:anthropic2026_teaching_claude_why_semantic::bdry_blog_format_no_appendix"
+            ]
+          },
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_27da531f",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_d021ea22",
+              "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "filtered SFT modest（排除同分布假说）+ H3 separation 缺失（约束因果归因）+ blog 缺 appendix → deliberation 驱动 alignment efficiency 这一 conclusion 在受限范围内成立。BP 反向传播：若 conclusion 被新证据削弱，对 weak_no_h3 与 bdry_blog_format 的惩罚自然落上去。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest",
+        "github:anthropic2026_teaching_claude_why_semantic::weak_no_h3_separation_experiment",
+        "github:anthropic2026_teaching_claude_why_semantic::bdry_blog_format_no_appendix"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_b8e6ee3b7e55e7e2",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_3d1fa578",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::surprise_filtered_demo_modest",
+              "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "filtered SFT 只 22→15% 的 modest 结果反向支持 'deliberation rewriting 才是关键' — 排除了同分布信号本身充分的假说。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::surprise_filtered_demo_modest"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_204b305152cc42ae",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_16a68dfd",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::surprise_28x_efficiency_via_ood",
+              "github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "OOD 数据效率 28× 是 ood_difficult_advice_28x_efficiency 的核心证据。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::surprise_28x_efficiency_via_ood"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_60841435411be5cf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::constitutional_documents_generalize_via_sdf",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_c98733ae",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::surprise_unrelated_fiction_generalizes",
+              "github:anthropic2026_teaching_claude_why_semantic::constitutional_documents_generalize_via_sdf"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "无关 fiction 推广是 SDF 装 disposition 的核心证据。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::surprise_unrelated_fiction_generalizes"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_a62ddf633b014957",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::diverse_augmentation_independent_signal",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_466210fc",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::surprise_unused_tools_help",
+              "github:anthropic2026_teaching_claude_why_semantic::diverse_augmentation_independent_signal"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "未使用 tool def 仍 help 是 context-augmentation 信号本身有效的证据。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::surprise_unused_tools_help"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_199bbdbb157a408e",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_c8e1d619",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest",
+              "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.8,
+        "reason": "filtered SFT 只 modest 排除了简单 distribution-matching 假说。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::neg_filtered_sft_only_modest"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_450afca9e0184a8d",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_29d93824",
+            "operator": "conjunction",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::weak_contamination_caveat_acknowledged",
+              "github:anthropic2026_teaching_claude_why_semantic::honeypot_setup_artificial"
+            ]
+          },
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_abc70705",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_29d93824",
+              "github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.65,
+        "reason": "frontier 0% claim 受作者自陈 contamination caveat 削弱 + honeypot scenario 本身 artificial。两 premise 同时成立 → conclusion 在受限强度下成立。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why_semantic::weak_contamination_caveat_acknowledged",
+        "github:anthropic2026_teaching_claude_why_semantic::honeypot_setup_artificial"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5b1d4148227cc743",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_e286be89",
+            "operator": "conjunction",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why::anthropic2026_c1_filtered_sft_modest",
+              "github:anthropic2026_teaching_claude_why::anthropic2026_c2_deliberation_rewrite_strong"
+            ]
+          },
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_820802e6",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_e286be89",
+              "github:anthropic2026_teaching_claude_why_semantic::deliberation_drives_alignment_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.92,
+        "reason": "Layer 1 conclusion c1（filtered SFT 22→15% modest）+ c2（deliberation rewriting 22→3% strong）是 Layer 2 'deliberation 驱动 efficiency' 这一聚合 claim 的直接证据来源。BP 通过这条support 边把 Layer 1 prior 传到 Layer 2。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why::anthropic2026_c1_filtered_sft_modest",
+        "github:anthropic2026_teaching_claude_why::anthropic2026_c2_deliberation_rewrite_strong"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_20d3a318bdb86318",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_56d1c194",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why::anthropic2026_c3_difficult_advice_28x",
+              "github:anthropic2026_teaching_claude_why_semantic::ood_difficult_advice_28x_efficiency"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Layer 1 c3（3M OOD = 85M honeypot 的 28× 数据效率）是 Layer 2 OOD efficiency claim 的核心 evidence。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why::anthropic2026_c3_difficult_advice_28x"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_43af750d0cea6485",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_286ac8d6",
+            "operator": "conjunction",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why::anthropic2026_c8_haiku45plus_zero",
+              "github:anthropic2026_teaching_claude_why::anthropic2026_c8_wp_external_contamination"
+            ]
+          },
+          {
+            "conclusion": "github:anthropic2026_teaching_claude_why_semantic::__implication_result_af51150c",
+            "operator": "implication",
+            "variables": [
+              "github:anthropic2026_teaching_claude_why_semantic::__conjunction_result_286ac8d6",
+              "github:anthropic2026_teaching_claude_why_semantic::frontier_models_aligned_modulo_contamination"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Layer 1 c8（Haiku 4.5+ 0% misalignment）+ c8 weak point（contamination caveat）共同决定 Layer 2 frontier-modulo-contam 聚合 claim 的强度。"
+      },
+      "premises": [
+        "github:anthropic2026_teaching_claude_why::anthropic2026_c8_haiku45plus_zero",
+        "github:anthropic2026_teaching_claude_why::anthropic2026_c8_wp_external_contamination"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_aaa5c07b9723dc8b",
+      "type": "support"
+    }
+  ]
+}

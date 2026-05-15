@@ -1,74 +1,107 @@
-"""Layer 2 strategies — TPO (2604.06159)"""
+"""Layer 2 strategies — TPO (2604.06159)."""
 
-from gaia.lang import support, induction, abduction, contradiction
-from 2604_06159.motivation import (
-    tpo_decouples_rl, tpo_excels_on_sparse_reward,
-    tpo_matches_on_dense_reward, tpo_simplicity_advantage,
+from gaia.lang import claim, support, deduction
+from .motivation import (
+    tpo_decouples_rl,
+    tpo_excels_on_sparse_reward,
+    tpo_matches_on_dense_reward,
+    tpo_simplicity_advantage,
     bandit_and_single_task,
 )
 
+
+# ── Weak / Boundary premises (enter deduction, not support) ──
+
+weak_pg_baselines_undertuned = claim(
+    "PG baselines used default hyperparameters; a dedicated PG tuning study "
+    "on sparse-reward tasks has not been done. Critic-based methods with "
+    "better exploration (RND, curiosity) might close the gap.",
+    title="Weak: PG baselines may be undertuned",
+    aggregated_from=["claim_fig1_sparse_outperform"],
+    semantic_refs=["tpo_excels_on_sparse_reward"],
+    issue_type="alt_not_excluded",
+    what_would_falsify="dedicated PG hyperparameter sweep on sparse-reward tasks",
+)
+
+weak_no_multistep = claim(
+    "Experiments cover bandit / single-task / sequence tasks but not "
+    "multi-step multi-turn agent tasks (SWE-bench, WebArena-full, "
+    "multi-hop web navigation).",
+    title="Weak: no multi-step agent task validation",
+    aggregated_from=["bandit_and_single_task"],
+    semantic_refs=["tpo_excels_on_sparse_reward", "tpo_matches_on_dense_reward"],
+    issue_type="scope_limit",
+    what_would_falsify="multi-step agent benchmark; if PG methods catch up under long-horizon tasks, TPO advantage is task-bound",
+)
+
+bdry_online_rl_only = claim(
+    "TPO is positioned in online RL for agents. It does not compare "
+    "against RLHF/DPO-based methods that use preference data.",
+    title="Boundary: online RL only, no preference-data comparison",
+    aggregated_from=[],
+    semantic_refs=["tpo_decouples_rl"],
+    boundary_type="scope",
+    stated_explicitly=True,
+)
+
+bdry_7b_scale = claim(
+    "WebArena-Turbo results are on a 7B base model; large-scale (70B+) "
+    "behavior is unverified.",
+    title="Boundary: 7B scale only",
+    aggregated_from=[],
+    semantic_refs=["tpo_matches_on_dense_reward"],
+    boundary_type="scope",
+    stated_explicitly=False,
+)
+
+
+# ── Strategies ──
+
+# Soft diagnostic: decoupling mechanism → sparse-reward advantage
 strat_decouple_enables_sparse = support(
     [tpo_decouples_rl],
     tpo_excels_on_sparse_reward,
     reason=(
-        "The decoupling is the mechanism: PG methods fail on sparse reward "
-        "because the gradient is a product of policy gradient and reward — "
-        "zero reward → zero gradient. TPO's target distribution q incorporates "
-        "all feedback (including zero-reward trajectories) and the cross-entropy "
-        "fit provides a dense learning signal. Decoupling breaks the dependency "
-        "between reward density and learning signal. The sparse-reward result "
-        "is not just empirical — it follows from the architecture."
+        "Decoupling breaks the reward-density / learning-signal dependency. "
+        "Target distribution q incorporates zero-reward trajectories; "
+        "cross-entropy fit gives a dense signal regardless of reward sparsity."
     ),
     prior=0.88,
 )
 
-strat_sparse_generalization = induction(
-    [
-        "claim_fig1_sparse_outperform",  # token reversal
-        "claim_neural_bandit_sparse",    # neural bandit
-        "claim_sequence_sparse",         # sequence task
-    ],
-    tpo_excels_on_sparse_reward,
-    reason=(
-        "TPO's sparse-reward advantage generalizes across three task types: "
-        "token reversal (symbolic), neural bandit (statistical), and sequence "
-        "tasks (temporal). This covers the main sparse-reward regimes. "
-        "Gap: no compositional multi-step tasks tested."
-    ),
-    prior=0.82,
-)
-
-alt_critic_could_work = claim(
-    "Critic-based methods with better exploration (e.g., RND, curiosity) "
-    "might match TPO on sparse rewards if the critic can learn a dense "
-    "pseudo-reward. TPO's advantage may reflect under-tuned PG baselines "
-    "rather than a fundamental architectural superiority.",
-    title="Alternative: better PG tuning may close the gap",
-)
-
-strat_tpo_abduction = abduction(
-    tpo_excels_on_sparse_reward,
-    [tpo_decouples_rl, alt_critic_could_work],
-    reason=(
-        "TPO's mechanism-based explanation (decoupling → dense learning signal) "
-        "is more parsimonious than the alternative (PG methods need better "
-        "tuning) because: (1) the gap is solve-vs-not-learn, not a small delta, "
-        "(2) the same PG methods work well on dense tasks (Fig 1a), confirming "
-        "implementations are correct, (3) TPO has fewer hyperparameters to tune. "
-        "However, the PG baselines used default hyperparameters — a dedicated "
-        "PG tuning study on sparse tasks hasn't been done."
-    ),
-    prior=0.75,
-)
-
-strat_dense_match = support(
-    [tpo_decouples_rl],
+# Rigid method claim: TPO's dense-reward parity is a method-level deduction
+strat_tpo_dense_validity = deduction(
+    [tpo_decouples_rl, bdry_7b_scale, weak_no_multistep],
     tpo_matches_on_dense_reward,
     reason=(
-        "The dense-reward result is the complement to the sparse-reward result: "
-        "TPO doesn't sacrifice anything to gain sparse-reward robustness. "
-        "This is a 'no-regret' property — TPO is at least as good as PG methods "
-        "everywhere, and decisively better in the sparse regime."
+        "If decoupling yields unbiased gradient estimates and the 7B + bandit "
+        "scope is respected, TPO matches PG methods on dense reward. If this "
+        "fails at larger scale or longer horizon, BP flags bdry_7b_scale / "
+        "weak_no_multistep as the premises to revisit."
     ),
-    prior=0.85,
+    prior=0.90,
+)
+
+strat_tpo_simplicity_validity = deduction(
+    [tpo_decouples_rl, bdry_online_rl_only],
+    tpo_simplicity_advantage,
+    reason=(
+        "The simpler training loop follows from decoupling (no critic, value, "
+        "GAE, off-policy correction). Scoped to online RL — the simplicity "
+        "claim is not asserted vs preference-data methods."
+    ),
+    prior=0.92,
+)
+
+# Sparse-reward validity includes the alt-tuning caveat as deduction premise
+strat_tpo_sparse_validity = deduction(
+    [tpo_decouples_rl, weak_pg_baselines_undertuned, weak_no_multistep],
+    tpo_excels_on_sparse_reward,
+    reason=(
+        "The sparse-reward advantage follows from decoupling, conditional on "
+        "(a) the gap surviving dedicated PG tuning and (b) the result "
+        "generalising to multi-step tasks. If PG catches up under dedicated "
+        "tuning, BP flags weak_pg_baselines_undertuned."
+    ),
+    prior=0.80,
 )

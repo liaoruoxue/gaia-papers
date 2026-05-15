@@ -1,0 +1,803 @@
+{
+  "composes": [],
+  "ir_hash": "sha256:fb20983535e63ec591eab94d201b8ae9268123051d59a5e7c51d0e27cf8b827f",
+  "knowledges": [
+    {
+      "content": "Under joint Agentic RL optimization, reasoning and tool-use capabilities exhibit a seesaw phenomenon: improving one consistently degrades the other. This is observed across Qwen2.5-7B, Qwen3-8B, Qwen3-7B, and Llama3.1-8B, and persists at multiple training checkpoints.",
+      "content_hash": "c5971e493e07a74c0daadc02c6ff61caee06c0774ce4a50427ab336edc0b704c",
+      "declaration_index": 0,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::seesaw_phenomenon",
+      "label": "seesaw_phenomenon",
+      "metadata": {
+        "aggregated_from": [
+          "claim_seesaw_phenomenon",
+          "claim_capabilities_are_heterogeneous",
+          "claim_data_mixture_ineffective"
+        ],
+        "prior": 0.92,
+        "prior_justification": "Observed across 4 model families (Qwen2.5-7B, Qwen3-8B, Qwen3-7B, Llama3.1-8B) at multiple checkpoints. Joint training degrades both capabilities vs single-capability training. -0.05: 7-8B only; -0.03: single RL framework (veRL)."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Seesaw phenomenon: reasoning-tool-use trade-off in ARL",
+      "type": "claim"
+    },
+    {
+      "content": "The seesaw phenomenon is caused by gradient-level conflict between reasoning and tool-use capabilities, not by data imbalance. Evidence: (1) adjusting the data mixture ratio fails to resolve interference, (2) LEAS gradient analysis shows consistently negative interaction coefficients λ23 (mean ≈ -0.3 across checkpoints), (3) the interaction component dominates over capability-isolation components when they interfere.",
+      "content_hash": "024a1c5bbf99fb7530c499a168b835026e997e930d3a5168d54ad89f03582fea",
+      "declaration_index": 1,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::gradient_conflict_is_root_cause",
+      "label": "gradient_conflict_is_root_cause",
+      "metadata": {
+        "aggregated_from": [
+          "claim_data_mixture_ineffective",
+          "obs_lambda23_distribution",
+          "claim_interference_dominates",
+          "obs_gradient_angles"
+        ],
+        "prior": 0.85,
+        "prior_justification": "Three convergent lines: (1) data mixture sweep fails, (2) LEAS lambda23 < 0 across checkpoints, (3) interaction component dominates. -0.08: LEAS is linear approximation; -0.07: no intervention experiment."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Gradient conflict is the root cause of capability interference",
+      "type": "claim"
+    },
+    {
+      "content": "DART (Disentangled Agentic RL Tuning) resolves the gradient conflict by applying hard token-level routing through separate LoRA adapters with frozen backbone. It achieves: (1) +4.91 on Qwen3-8B MATH with tool-use intact, (2) consistent improvement across three backbones and two model sizes, (3) robustness to LoRA rank choice, (4) simpler infrastructure than 2-agent alternatives. The key mechanism is structural gradient isolation — DART guarantees zero interaction term between the two capabilities' gradients.",
+      "content_hash": "0f863c969af0bc82be9a4fd1de29a00dcf00632ef320e308ce5477ca738157a4",
+      "declaration_index": 2,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::dart_solves_gradient_conflict",
+      "label": "dart_solves_gradient_conflict",
+      "metadata": {
+        "aggregated_from": [
+          "claim_dart_zero_interaction",
+          "obs_dart_better_reasoning_3b",
+          "obs_dart_better_reasoning_7b",
+          "obs_rank_insensitive",
+          "claim_dart_simpler_stack",
+          "claim_dart_solves_gradient_conflict",
+          "obs_dart_approaches_2agent",
+          "claim_contribution_dart"
+        ],
+        "prior": 0.88,
+        "prior_justification": "Structural zero-interaction guarantee + consistent +3.15 to +4.91 across 3 backbones + rank insensitivity. -0.07: no Llama; -0.05: max 7B."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "DART structurally eliminates gradient conflict between capabilities",
+      "type": "claim"
+    },
+    {
+      "content": "DART outperforms or matches all tested alternatives: (1) standard GRPO (+6.35% avg EM across benchmarks), (2) task-specific LoRA (which cannot disentangle interference), (3) 2-agent systems (DART approaches their performance while using ~1/8 memory and simpler infrastructure). The 2-agent comparison is the closest — DART is within 1.2pp on most benchmarks.",
+      "content_hash": "217604618fa17fb785178dd8125d1101fdb7d97edcf91694d0f816015d8ae303",
+      "declaration_index": 3,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::dart_vs_alternatives",
+      "label": "dart_vs_alternatives",
+      "metadata": {
+        "aggregated_from": [
+          "claim_dart_more_efficient_than_2agent",
+          "claim_2agent_memory_8x",
+          "claim_2agent_kv_recompute",
+          "claim_multi_lora_cannot_disentangle",
+          "obs_2agent_strongest",
+          "obs_dart_approaches_2agent",
+          "claim_contribution_empirical"
+        ],
+        "prior": 0.75,
+        "prior_justification": "Beats GRPO (+6.35%) and task-LoRA, approaches 2-agent (~1.2pp). -0.10: 1.2pp may be within benchmark variance; -0.10: no GPT-4o; -0.05: Qwen-only."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "DART vs alternatives: better or comparable with simpler infrastructure",
+      "type": "claim"
+    },
+    {
+      "content": "LEAS (Linear Effect Attribution System) provides a quantitative framework for measuring capability-level interference in ARL. It decomposes the model's output into reasoning-isolated, tool-use-isolated, and interaction components via logit-level linear attribution, enabling per-checkpoint tracking of how capabilities evolve and interfere during training.",
+      "content_hash": "61f11fbdb21e30cba990bca3b109405f2e80a0276ccd087258b91d56b23065ac",
+      "declaration_index": 4,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::leas_diagnostic_framework",
+      "label": "leas_diagnostic_framework",
+      "metadata": {
+        "aggregated_from": [
+          "claim_contribution_leas",
+          "claim_design_matrix_invertible",
+          "claim_contrast_isolates_lambda23"
+        ],
+        "prior": 0.82,
+        "prior_justification": "Identifiability satisfied when design matrix invertible. -0.10: linearity; -0.08: logit-level may not represent decoded behavior."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "LEAS quantitatively measures capability-level interference",
+      "type": "claim"
+    },
+    {
+      "content": "Agentic RL (ARL) trains LLMs to interleave reasoning with tool calls (search, code execution) under a single RL objective over shared parameters. Prior work (Toolformer, Search-R1, DeepSeekMath) applies one RL update per complete trajectory.",
+      "content_hash": "a56f49818846c6b48ecc04286d91d958e71e6971eaf7d7aedd63a086ff059ac2",
+      "declaration_index": 5,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::arl_training_setup",
+      "label": "arl_training_setup",
+      "metadata": {
+        "legacy_kind": "setting"
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "ARL training paradigm",
+      "type": "note"
+    },
+    {
+      "content": "No experimental validation on Llama-series models or models > 7B. All main experiments use Qwen-series 7-8B. This limits confidence in cross-architecture generalization.",
+      "content_hash": "40f638802d24c8f09bbe092269b4c14e5b1c87799cd51792a615ce5a8d926d96",
+      "declaration_index": 6,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::no_llama_validation",
+      "label": "no_llama_validation",
+      "metadata": {
+        "aggregated_from": [
+          "table1_qwen3b",
+          "table2_qwen7b"
+        ],
+        "prior": 0.95,
+        "prior_justification": "Documented limitation, not a contested claim."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Limitation: no Llama or >7B validation",
+      "type": "claim"
+    },
+    {
+      "content": "Experiments are limited to single-turn agent tasks. Multi-turn interactions may introduce additional interference patterns not captured by the current LEAS framework.",
+      "content_hash": "cb48271010f3d3955683ec35303ec2a771ba3cc18e18d3abb93bbf73be011ae9",
+      "declaration_index": 7,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::single_turn_scope",
+      "label": "single_turn_scope",
+      "metadata": {
+        "prior": 0.9,
+        "prior_justification": "Single-turn agent tasks only; multi-turn may add interference."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Limitation: single-turn scope",
+      "type": "claim"
+    },
+    {
+      "content": "Adjusting the reasoning vs tool-use data mixture ratio fails to eliminate capability interference. λ23 stays negative across mixture sweeps, indicating a gradient-level rather than data-level source.",
+      "content_hash": "5140e2107b41c0bdca4be6181327e0b9bb4bb4b2404b550458afef3073058052",
+      "declaration_index": 0,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::surprise_data_mix_useless",
+      "label": "surprise_data_mix_useless",
+      "metadata": {
+        "aggregated_from": [
+          "claim_interference_dominates",
+          "obs_lambda23_distribution"
+        ],
+        "kb_anchor": "rl-training.md#data-mixing",
+        "novelty_vs_kb": "contradict",
+        "prior": 0.9,
+        "prior_justification": "Direct experimental observation: lambda23 stays negative across data-mix sweeps.",
+        "semantic_refs": [
+          "gradient_conflict_is_root_cause"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: data mixture tuning is ineffective",
+      "type": "claim"
+    },
+    {
+      "content": "DART's improvement is robust to LoRA rank choice. Performance is nearly flat across a wide rank sweep, indicating the routing mechanism (not adapter capacity) drives the gain.",
+      "content_hash": "16dbc47e282ede7de3347cadcf90baaa2f58155eaf0e00e33515ca657dece1e7",
+      "declaration_index": 1,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::surprise_dart_rank_insensitive",
+      "label": "surprise_dart_rank_insensitive",
+      "metadata": {
+        "aggregated_from": [
+          "obs_rank_insensitive",
+          "claim_gain_not_from_extra_capacity",
+          "claim_bottleneck_is_interference_not_capacity"
+        ],
+        "kb_anchor": "rl-training.md#lora-tuning",
+        "novelty_vs_kb": "refine",
+        "prior": 0.88,
+        "prior_justification": "Direct ablation reading from Fig 5 — performance flat across rank values.",
+        "semantic_refs": [
+          "dart_solves_gradient_conflict"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Surprising: DART improvement is rank-insensitive",
+      "type": "claim"
+    },
+    {
+      "content": "Reported negative result: sweeping data-mixture ratios within ARL training does not eliminate the seesaw pattern. Excludes data imbalance as the dominant cause.",
+      "content_hash": "e58ab6bf1d28fa8ca88b4ce108aca9c656eeea0b0ec7bda44af363a9dd4581a7",
+      "declaration_index": 2,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::neg_data_mix_fails",
+      "label": "neg_data_mix_fails",
+      "metadata": {
+        "aggregated_from": [
+          "claim_interference_dominates"
+        ],
+        "prior": 0.9,
+        "prior_justification": "Reported negative result from ablation experiments.",
+        "semantic_refs": [
+          "gradient_conflict_is_root_cause"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative result: data mixture sweep fails to remove seesaw",
+      "type": "claim"
+    },
+    {
+      "content": "Reported negative result: task-level LoRA switching performs comparably to vanilla SearchR1. Modular adapters alone are insufficient; token-level routing is required.",
+      "content_hash": "e3db52f477c6bd7c8dee6914ef3695b4dc8ee88a008defcb87e77975f717899a",
+      "declaration_index": 3,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::neg_task_lora_fails",
+      "label": "neg_task_lora_fails",
+      "metadata": {
+        "aggregated_from": [
+          "claim_multi_lora_cannot_disentangle",
+          "claim_task_lora_too_coarse",
+          "obs_lora_equals_searchr1"
+        ],
+        "prior": 0.88,
+        "prior_justification": "Reported in ablation: task-level LoRA ≈ vanilla SearchR1.",
+        "semantic_refs": [
+          "dart_solves_gradient_conflict"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative result: task-level LoRA does not disentangle",
+      "type": "claim"
+    },
+    {
+      "content": "Reported negative result: hybrid models built by composing reasoning-isolated and tool-use-isolated subnetworks at inference underperform the linear-decomposition prediction.",
+      "content_hash": "8146df6e62cb9a63f72de4f6830139460768e360dc0c2de6adc261e912cce574",
+      "declaration_index": 4,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::neg_inference_hybrid_fails",
+      "label": "neg_inference_hybrid_fails",
+      "metadata": {
+        "aggregated_from": [
+          "claim_disentanglement_not_replicable_at_inference",
+          "table3_hybrid"
+        ],
+        "prior": 0.88,
+        "prior_justification": "Reported in Table 3: hybrid composition does not match linear-decomposition prediction.",
+        "semantic_refs": [
+          "leas_diagnostic_framework"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Negative result: inference-time hybrid is not replicable",
+      "type": "claim"
+    },
+    {
+      "content": "DART's gap to the 2-agent baseline is only ~1.2pp — within typical LLM benchmark variance. Without multi-seed CI the equivalence claim is not statistically established.",
+      "content_hash": "eb752aa7d1aa36be13be2189ddefc9d55ddeba088029ea52a718b2d16230233a",
+      "declaration_index": 5,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::weak_dart_vs_2agent_marginal",
+      "label": "weak_dart_vs_2agent_marginal",
+      "metadata": {
+        "aggregated_from": [
+          "obs_dart_approaches_2agent",
+          "obs_2agent_strongest"
+        ],
+        "issue_type": "weak_evidence",
+        "prior": 0.85,
+        "prior_justification": "The 1.2pp gap is a fact; whether within statistical noise is the open question (no CI reported).",
+        "semantic_refs": [
+          "dart_vs_alternatives"
+        ],
+        "what_would_falsify": "multi-seed (>=5) reruns with 95% CI; CI straddling 0 falsifies equivalence"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak premise: DART vs 2-agent equivalence not statistically established",
+      "type": "claim"
+    },
+    {
+      "content": "No intervention experiment verifying gradient conflict causes seesaw. Evidence is correlational.",
+      "content_hash": "d772c0ec059698eb1c4b7c776c6d4fbf45fcfb20f019b9865edf4d55a0cf0a7e",
+      "declaration_index": 6,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::weak_correlation_not_causation",
+      "label": "weak_correlation_not_causation",
+      "metadata": {
+        "aggregated_from": [
+          "obs_gradient_angles",
+          "obs_lambda23_distribution",
+          "claim_gradient_conflict_explains_interference"
+        ],
+        "issue_type": "alt_not_excluded",
+        "prior": 0.9,
+        "prior_justification": "Methodological fact: paper does not run an intervention experiment.",
+        "semantic_refs": [
+          "gradient_conflict_is_root_cause"
+        ],
+        "what_would_falsify": "inject synthetic gradient conflict; project away to see seesaw vanish"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak premise: no causal intervention, only correlation",
+      "type": "claim"
+    },
+    {
+      "content": "LEAS decomposition is defined at the logit level with linear identifiability. Non-linear interactions below the logit layer may remain invisible.",
+      "content_hash": "348e4c07b1e6de4cc6ef3f65a027890945e4f041bde960e2c41254ee094e8eb6",
+      "declaration_index": 7,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::weak_leas_logit_only",
+      "label": "weak_leas_logit_only",
+      "metadata": {
+        "aggregated_from": [
+          "setup_logit_model",
+          "setup_identifiability_condition",
+          "claim_design_matrix_invertible"
+        ],
+        "issue_type": "hidden_assumption",
+        "prior": 0.92,
+        "prior_justification": "LEAS construction is explicitly logit-level and linear by definition.",
+        "semantic_refs": [
+          "leas_diagnostic_framework"
+        ],
+        "what_would_falsify": "behavioural A/B on λ23≈0 checkpoints showing residual interference"
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Weak premise: LEAS limited to linear logit-level decomposition",
+      "type": "claim"
+    },
+    {
+      "content": "All main DART experiments use Qwen-series 7-8B models. Llama, Mistral, and >8B scales are untested.",
+      "content_hash": "053875d1aff59b7ecc93149c72da234084eca2977fa113950f70baada6218464",
+      "declaration_index": 8,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::bdry_qwen_only",
+      "label": "bdry_qwen_only",
+      "metadata": {
+        "aggregated_from": [
+          "table1_qwen3b",
+          "table2_qwen7b"
+        ],
+        "boundary_type": "scope",
+        "prior": 0.97,
+        "prior_justification": "Direct fact: experiments table lists only Qwen-series 7-8B.",
+        "semantic_refs": [
+          "dart_solves_gradient_conflict",
+          "seesaw_phenomenon"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary premise: Qwen 7-8B scope",
+      "type": "claim"
+    },
+    {
+      "content": "DART's zero-interaction guarantee is derived under the LoRA+frozen backbone setup; full-parameter fine-tuning is not covered.",
+      "content_hash": "68bff8ac700cfbce67b683b7a0aa17fad9f5012e4df403576d8904fd4c78fa84",
+      "declaration_index": 9,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::bdry_lora_only",
+      "label": "bdry_lora_only",
+      "metadata": {
+        "aggregated_from": [
+          "setup_lora",
+          "setup_dart_architecture",
+          "claim_dart_zero_interaction",
+          "claim_freeze_backbone_necessary"
+        ],
+        "boundary_type": "simplification",
+        "prior": 0.95,
+        "prior_justification": "Direct mathematical fact: zero-interaction theorem is stated for the LoRA path with frozen backbone.",
+        "semantic_refs": [
+          "dart_solves_gradient_conflict"
+        ],
+        "stated_explicitly": true
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Boundary premise: LoRA + frozen backbone only",
+      "type": "claim"
+    },
+    {
+      "content": "DART unifies four ad-hoc techniques with a single structural change: token-level hard routing plus frozen backbone, yielding a provable zero-interaction property.",
+      "content_hash": "6f92aa75380fd6d0b7a54c1f2fcc2899752d277cf37e6834d6fff64c73b9841c",
+      "declaration_index": 10,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::elegant_dart_token_routing",
+      "label": "elegant_dart_token_routing",
+      "metadata": {
+        "aggregated_from": [
+          "claim_dart_zero_interaction",
+          "claim_freeze_backbone_necessary",
+          "claim_dart_distinguishes_at_token"
+        ],
+        "portability": "high",
+        "prior": 0.85,
+        "prior_justification": "Methodological quality assessment; prior reflects clear structural proof plus empirical confirmation.",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "dart_solves_gradient_conflict"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: DART's token-level routing unifies prior ad-hoc methods",
+      "type": "claim"
+    },
+    {
+      "content": "LEAS decomposes multi-capability logits into capability + interaction components via six contrast models and a linear identifiability condition — compact and non-invasive to training.",
+      "content_hash": "bee8fed4637f320cc9c80cc31d3e71c5b8acfa7a690ba18d6e80272450458856",
+      "declaration_index": 11,
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::elegant_leas_decomposition",
+      "label": "elegant_leas_decomposition",
+      "metadata": {
+        "aggregated_from": [
+          "claim_design_matrix_invertible",
+          "claim_contrast_isolates_lambda23",
+          "claim_hybrid_no_interaction",
+          "setup_leas_protocol"
+        ],
+        "portability": "medium",
+        "prior": 0.8,
+        "prior_justification": "Linear-decomposition method is well-defined; prior reflects identifiability condition being explicit and verifiable.",
+        "reusable_primitive": true,
+        "semantic_refs": [
+          "leas_diagnostic_framework"
+        ]
+      },
+      "module": "s2_strategies",
+      "parameters": [],
+      "title": "Elegant: LEAS's 6-contrast linear decomposition",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::seesaw_phenomenon,github:2602_00994::neg_data_mix_fails)",
+      "content_hash": "068c53d78eab142612d8685962922fa09c8f8d9697e1f2449cf0f765c39405a8",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__conjunction_result_39f8a938",
+      "label": "__conjunction_result_39f8a938",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::seesaw_phenomenon,github:2602_00994::neg_data_mix_fails)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_7ab392f8d74f50bf",
+        "owning_strategy_type": "support",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_39f8a938,github:2602_00994::gradient_conflict_is_root_cause)",
+      "content_hash": "62ed3b02706c1fde3fe2886f520385c3d940b11ed0dd92b4ff91d5e29229019f",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__implication_result_6c722679",
+      "label": "__implication_result_6c722679",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_39f8a938,github:2602_00994::gradient_conflict_is_root_cause)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_7ab392f8d74f50bf",
+        "owning_strategy_type": "support",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::surprise_data_mix_useless,github:2602_00994::gradient_conflict_is_root_cause)",
+      "content_hash": "c8034a669542b5041befdb7c177ecf75534d41a88d437a9e01187aa77eb6b78f",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__implication_result_2359657e",
+      "label": "__implication_result_2359657e",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::surprise_data_mix_useless,github:2602_00994::gradient_conflict_is_root_cause)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_742e4ef4669758a5",
+        "owning_strategy_type": "support",
+        "prior": 0.75,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::gradient_conflict_is_root_cause,github:2602_00994::leas_diagnostic_framework,github:2602_00994::neg_task_lora_fails,github:2602_00994::neg_inference_hybrid_fails,github:2602_00994::surprise_dart_rank_insensitive,github:2602_00994::bdry_lora_only,github:2602_00994::bdry_qwen_only)",
+      "content_hash": "adf30d8ee3851e0e2396ade30d7afaa0926267980c566ffa37d9311bac80dc52",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__conjunction_result_8697b26b",
+      "label": "__conjunction_result_8697b26b",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::gradient_conflict_is_root_cause,github:2602_00994::leas_diagnostic_framework,github:2602_00994::neg_task_lora_fails,github:2602_00994::neg_inference_hybrid_fails,github:2602_00994::surprise_dart_rank_insensitive,github:2602_00994::bdry_lora_only,github:2602_00994::bdry_qwen_only)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_5312f9e414515a4f",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_8697b26b,github:2602_00994::dart_solves_gradient_conflict)",
+      "content_hash": "92fdfdd99dac9375e70e9d3c2400206414ea3d2bff305ea04dc8af85b4f7c3bc",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__implication_result_3c949842",
+      "label": "__implication_result_3c949842",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_8697b26b,github:2602_00994::dart_solves_gradient_conflict)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_5312f9e414515a4f",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::dart_solves_gradient_conflict,github:2602_00994::weak_dart_vs_2agent_marginal)",
+      "content_hash": "f0516f4ef7463efd10c8b7ca4904464ba354d0717fde4ca9d273d2612818c9b3",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__conjunction_result_60c9a81e",
+      "label": "__conjunction_result_60c9a81e",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::dart_solves_gradient_conflict,github:2602_00994::weak_dart_vs_2agent_marginal)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_c951d5de41d7b8af",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2602_00994::__conjunction_result_60c9a81e,github:2602_00994::dart_vs_alternatives)",
+      "content_hash": "bfc899b00f54aac1f2cc6a2e3f4d949c48c2afba53f1c520e159199a34ba5028",
+      "exported": false,
+      "format": "markdown",
+      "id": "github:2602_00994::__implication_result_5e9cdd0f",
+      "label": "__implication_result_5e9cdd0f",
+      "metadata": {
+        "canonical_name": "implies(github:2602_00994::__conjunction_result_60c9a81e,github:2602_00994::dart_vs_alternatives)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_c951d5de41d7b8af",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation",
+    "s2_strategies"
+  ],
+  "module_titles": {
+    "motivation": "Layer 2 semantic claims — aggregated from Layer 1 96 claims.",
+    "s2_strategies": "Layer 2 strategies + judgment claims."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2602_00994",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2602_00994::gradient_conflict_is_root_cause",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_39f8a938",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::seesaw_phenomenon",
+              "github:2602_00994::neg_data_mix_fails"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_6c722679",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_39f8a938",
+              "github:2602_00994::gradient_conflict_is_root_cause"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Seesaw exists and data-mixture sweep fails to remove it. Together these narrow the mechanism to gradient-level interference."
+      },
+      "premises": [
+        "github:2602_00994::seesaw_phenomenon",
+        "github:2602_00994::neg_data_mix_fails"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_7ab392f8d74f50bf",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::gradient_conflict_is_root_cause",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__implication_result_2359657e",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::surprise_data_mix_useless",
+              "github:2602_00994::gradient_conflict_is_root_cause"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.75,
+        "reason": "Direct positive evidence for a non-data mechanism."
+      },
+      "premises": [
+        "github:2602_00994::surprise_data_mix_useless"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_742e4ef4669758a5",
+      "type": "support"
+    },
+    {
+      "conclusion": "github:2602_00994::dart_solves_gradient_conflict",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_8697b26b",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::gradient_conflict_is_root_cause",
+              "github:2602_00994::leas_diagnostic_framework",
+              "github:2602_00994::neg_task_lora_fails",
+              "github:2602_00994::neg_inference_hybrid_fails",
+              "github:2602_00994::surprise_dart_rank_insensitive",
+              "github:2602_00994::bdry_lora_only",
+              "github:2602_00994::bdry_qwen_only"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_3c949842",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_8697b26b",
+              "github:2602_00994::dart_solves_gradient_conflict"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.9,
+        "reason": "If (a) gradient conflict is the root cause, (b) LEAS provides a valid measurement framework, (c) task-level LoRA alone fails, (d) post-hoc composition fails, (e) DART is rank-insensitive, AND the claim is scoped to (f) LoRA+frozen-backbone and (g) Qwen 7-8B — then DART structurally resolves the interference within its stated scope. If empirical contradictions appear (e.g., Llama failures), BP will assign penalty to the relevant premises."
+      },
+      "premises": [
+        "github:2602_00994::gradient_conflict_is_root_cause",
+        "github:2602_00994::leas_diagnostic_framework",
+        "github:2602_00994::neg_task_lora_fails",
+        "github:2602_00994::neg_inference_hybrid_fails",
+        "github:2602_00994::surprise_dart_rank_insensitive",
+        "github:2602_00994::bdry_lora_only",
+        "github:2602_00994::bdry_qwen_only"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_5312f9e414515a4f",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2602_00994::dart_vs_alternatives",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2602_00994::__conjunction_result_60c9a81e",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::dart_solves_gradient_conflict",
+              "github:2602_00994::weak_dart_vs_2agent_marginal"
+            ]
+          },
+          {
+            "conclusion": "github:2602_00994::__implication_result_5e9cdd0f",
+            "operator": "implication",
+            "variables": [
+              "github:2602_00994::__conjunction_result_60c9a81e",
+              "github:2602_00994::dart_vs_alternatives"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "If DART structurally resolves the interference, its efficiency and performance edge over alternatives follows — but the 2-agent equivalence claim depends on the statistical significance premise. If future multi-seed evidence shows the 1.2pp gap is real, BP penalises weak_dart_vs_2agent_marginal."
+      },
+      "premises": [
+        "github:2602_00994::dart_solves_gradient_conflict",
+        "github:2602_00994::weak_dart_vs_2agent_marginal"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_c951d5de41d7b8af",
+      "type": "deduction"
+    }
+  ]
+}

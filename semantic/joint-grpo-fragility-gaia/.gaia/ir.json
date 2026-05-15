@@ -1,0 +1,224 @@
+{
+  "ir_hash": "sha256:979ee14043aa1a0f278da5b87e577572fe9ed203638aeb1692b7de70d0e0500c",
+  "knowledges": [
+    {
+      "content": "On standard math reasoning at 7-8B with framework bugs corrected, simple SFT-then-RL using GRPO matches or beats all mixed-policy methods. So the GRPO-fragility claim does not extend to this domain.",
+      "content_hash": "cd198f7cf422a9d67d64b2fd62e094b71be380a830293e11461993528273d4ad",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:joint_grpo_fragility::bdry_grpo_fine_on_corrected_math",
+      "label": "bdry_grpo_fine_on_corrected_math",
+      "metadata": {
+        "aggregated_from": [
+          "2604_23747::mixed_policy_gains_are_artifact",
+          "2604_23747::sft_then_rl_sufficient"
+        ],
+        "boundary_type": "scope",
+        "prior": 0.92,
+        "prior_justification": "Strong direct evidence from 2604.23747 — empirical demonstration on Qwen2.5-Math-7B with framework bugs fixed.",
+        "semantic_refs": [
+          "grpo_has_systemic_weakness"
+        ],
+        "stated_explicitly": false
+      },
+      "module": "claims",
+      "parameters": [],
+      "title": "Boundary: GRPO is sufficient on math + corrected baselines",
+      "type": "claim"
+    },
+    {
+      "content": "GRPO-based agent RL exhibits structural failures on multi-capability training (seesaw) and sparse-reward tasks (policy-gradient vanishing). These are independent failure modes on different axes, so the fragility is not bug-induced. However, on standard math reasoning at 7-8B with corrected baselines, GRPO is sufficient — so the systemic weakness is *axis-specific*, not universal.",
+      "content_hash": "137f1daa2658bf1e5c039b6ba8fae96e086fbe9f6a48f4ef93b5f2aad6859b11",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:joint_grpo_fragility::grpo_has_systemic_weakness",
+      "label": "grpo_has_systemic_weakness",
+      "metadata": {
+        "aggregated_from": [
+          "2602_00994::seesaw_phenomenon",
+          "2604_06159::tpo_excels_on_sparse_reward",
+          "2604_23747::mixed_policy_gains_are_artifact"
+        ],
+        "prior": 0.55,
+        "prior_justification": "Joint claim across 3 papers. Lower prior than 2-paper version because the addition of SFT-then-RL counter-evidence narrows the claim's scope (axis-specific rather than universal)."
+      },
+      "module": "claims",
+      "parameters": [],
+      "title": "Joint: GRPO has axis-specific systemic weakness",
+      "type": "claim"
+    },
+    {
+      "content": "Under joint Agentic RL optimization, reasoning and tool-use capabilities exhibit a seesaw phenomenon: improving one consistently degrades the other. This is observed across Qwen2.5-7B, Qwen3-8B, Qwen3-7B, and Llama3.1-8B, and persists at multiple training checkpoints.",
+      "content_hash": "5143e1e1f278303761f65d8509bfc70c0cee9b35bd70c4a957e97a008088df76",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2602_00994::seesaw_phenomenon",
+      "label": "seesaw_phenomenon",
+      "metadata": {
+        "aggregated_from": [
+          "claim_seesaw_phenomenon",
+          "claim_capabilities_are_heterogeneous",
+          "claim_data_mixture_ineffective"
+        ]
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Seesaw phenomenon: reasoning-tool-use trade-off in ARL",
+      "type": "claim"
+    },
+    {
+      "content": "PG/PPO/GRPO/DG fail to learn on sparse-reward tasks because the policy gradient vanishes when most trajectories earn zero reward. TPO's decoupled design avoids this: the target distribution is built from all available feedback (including zeros), and the cross-entropy fit provides a dense learning signal regardless of reward sparsity. On token reversal (sparse reward), TPO solves the task while GRPO/DG fail to leave random baseline. This is a 'solve vs not-learn' gap, not a small delta.",
+      "content_hash": "69a0c65d52492830996447a86cbe23631c4da2217e3e8294cb4c64c20c8c0bf4",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_06159::tpo_excels_on_sparse_reward",
+      "label": "tpo_excels_on_sparse_reward",
+      "metadata": {
+        "aggregated_from": [
+          "claim_fig1_sparse_outperform",
+          "claim_fig1_sparse_qualitative_gap",
+          "claim_fig1_dense_match",
+          "claim_entanglement_makes_pg_fragile"
+        ]
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "TPO excels where PG methods fail: sparse-reward tasks",
+      "type": "claim"
+    },
+    {
+      "content": "Published mixed-policy methods (SPIN, LUFFY, ReLIFT, ReFT, RLPF) report SOTA over SFT baselines. After fixing both bugs, the corrected SFT baseline on Qwen2.5-Math-7B matches or exceeds all reported mixed-policy ID results. On Llama-3.1-8B, SFT-then-RL beats the best mixed-policy method by +4.0pp. The gains attributed to policy mixing were actually artifacts of buggy baselines.",
+      "content_hash": "4c796cdb23b7d3c01d191aaa867eabc41d97cecb129fc1b9c0a5a0ce5c4dcc32",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_23747::mixed_policy_gains_are_artifact",
+      "label": "mixed_policy_gains_are_artifact",
+      "metadata": {
+        "aggregated_from": [
+          "claim_qwen_headline",
+          "claim_llama_headline",
+          "claim_qwen_sft_corrected",
+          "claim_qwen_plus_3p8"
+        ]
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reported mixed-policy gains are artifacts of buggy SFT baselines",
+      "type": "claim"
+    },
+    {
+      "content": "Simple SFT-then-RL (corrected SFT baseline → standard online RL) achieves 57.0 ID / 59.9 OOD on Qwen2.5-Math-7B, beating the best mixed-policy method (SRFT: 53.2 ID). On Llama-3.1-8B, SFT-then-RL beats mixed-policy by +4.0pp. Moreover, 50-step SFT-then-RL outperforms mixed-policy methods at fewer total training steps, demonstrating compute efficiency in addition to accuracy.",
+      "content_hash": "dda3afee97ed8e4665f097d71a8e8742fc87a1fa3bcc11e6166af2ac91f8f12f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_23747::sft_then_rl_sufficient",
+      "label": "sft_then_rl_sufficient",
+      "metadata": {
+        "aggregated_from": [
+          "claim_qwen_sft_then_rl",
+          "claim_compute_efficiency_headline",
+          "claim_llama_headline"
+        ]
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Simple SFT-then-RL beats all mixed-policy methods",
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2602_00994::seesaw_phenomenon,github:2604_06159::tpo_excels_on_sparse_reward,github:joint_grpo_fragility::bdry_grpo_fine_on_corrected_math,github:2604_23747::mixed_policy_gains_are_artifact,github:2604_23747::sft_then_rl_sufficient)",
+      "content_hash": "2c665af771d9fb4b2e4c060b6d75ec83e19690c230257fb154003d2d139d4ce2",
+      "exported": false,
+      "id": "github:joint_grpo_fragility::__conjunction_result_9f5f4304",
+      "label": "__conjunction_result_9f5f4304",
+      "metadata": {
+        "canonical_name": "all_true(github:2602_00994::seesaw_phenomenon,github:2604_06159::tpo_excels_on_sparse_reward,github:joint_grpo_fragility::bdry_grpo_fine_on_corrected_math,github:2604_23747::mixed_policy_gains_are_artifact,github:2604_23747::sft_then_rl_sufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_efd96afa3fc31aba",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:joint_grpo_fragility::__conjunction_result_9f5f4304,github:joint_grpo_fragility::grpo_has_systemic_weakness)",
+      "content_hash": "1cc7bef94b498156924c3a086ea9b4dddab011a596b0819a525c2ae50a6dbae5",
+      "exported": false,
+      "id": "github:joint_grpo_fragility::__implication_result_741bc617",
+      "label": "__implication_result_741bc617",
+      "metadata": {
+        "canonical_name": "implies(github:joint_grpo_fragility::__conjunction_result_9f5f4304,github:joint_grpo_fragility::grpo_has_systemic_weakness)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_efd96afa3fc31aba",
+        "owning_strategy_type": "deduction",
+        "prior": 0.82,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "claims"
+  ],
+  "module_titles": {
+    "claims": "Joint claims across 3 RL papers — GRPO fragility + counter-evidence."
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "joint_grpo_fragility",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:joint_grpo_fragility::grpo_has_systemic_weakness",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:joint_grpo_fragility::__conjunction_result_9f5f4304",
+            "operator": "conjunction",
+            "variables": [
+              "github:2602_00994::seesaw_phenomenon",
+              "github:2604_06159::tpo_excels_on_sparse_reward",
+              "github:joint_grpo_fragility::bdry_grpo_fine_on_corrected_math",
+              "github:2604_23747::mixed_policy_gains_are_artifact",
+              "github:2604_23747::sft_then_rl_sufficient"
+            ]
+          },
+          {
+            "conclusion": "github:joint_grpo_fragility::__implication_result_741bc617",
+            "operator": "implication",
+            "variables": [
+              "github:joint_grpo_fragility::__conjunction_result_9f5f4304",
+              "github:joint_grpo_fragility::grpo_has_systemic_weakness"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.82,
+        "reason": "Two independent failure modes (capability axis + reward axis) support a systemic-weakness reading; the SFT-then-RL boundary premise + the actual SFT findings (mixed_policy_gains_are_artifact, sft_then_rl_sufficient) scope that weakness to 'not on standard math'. If a fourth paper extended the failure to math (e.g., corrected SFT+GRPO breaking on a new math benchmark), BP would reverse-pressure the boundary premise."
+      },
+      "premises": [
+        "github:2602_00994::seesaw_phenomenon",
+        "github:2604_06159::tpo_excels_on_sparse_reward",
+        "github:joint_grpo_fragility::bdry_grpo_fine_on_corrected_math",
+        "github:2604_23747::mixed_policy_gains_are_artifact",
+        "github:2604_23747::sft_then_rl_sufficient"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_efd96afa3fc31aba",
+      "type": "deduction"
+    }
+  ]
+}

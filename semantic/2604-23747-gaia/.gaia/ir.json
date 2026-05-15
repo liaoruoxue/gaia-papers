@@ -1,0 +1,310 @@
+{
+  "ir_hash": "sha256:104d00418a3ca7cd65c218645450fc56965b843b2de438dbe5caa58c41a98338",
+  "knowledges": [
+    {
+      "content": "Two bugs in widely-used RL training frameworks systematically suppress SFT baselines: (1) DeepSpeed CPU-offload gradient accumulation bug (only first micro-batch gradients reach optimizer, introduced in PR #6550 Sept 2024), (2) loss aggregation bug in OpenRLHF/Llama-Factory/early verl (per-mini-batch mean instead of per-token mean, distorting total loss). Combined, these bugs reduce the SFT baseline by ~5.7 points on Qwen2.5-Math-7B. The bug affects TRL, OpenRLHF, and Llama-Factory — any framework using DeepSpeed ZeRO-1/2 with CPU-offloaded optimizer.",
+      "content_hash": "88c7bdfca2595997c41c5ecb29b0ea1513407195978bbdcff0b5d5aa18e62a42",
+      "declaration_index": 0,
+      "exported": false,
+      "id": "github:2604_23747::two_bugs_suppress_sft_baseline",
+      "label": "two_bugs_suppress_sft_baseline",
+      "metadata": {
+        "aggregated_from": [
+          "claim_optimizer_bug",
+          "claim_bug_introduced_in_pr",
+          "claim_bug_propagation",
+          "claim_loss_aggregation_bug",
+          "claim_optimizer_fix"
+        ],
+        "prior": 0.96,
+        "prior_justification": "Both bugs unambiguously confirmed: DeepSpeed PR #6550 is the commit; loss aggregation bug independently verifiable from OpenRLHF source. 5.7 point impact measured on Qwen2.5-Math-7B."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Two framework bugs suppress SFT baselines by ~5.7 points",
+      "type": "claim"
+    },
+    {
+      "content": "Published mixed-policy methods (SPIN, LUFFY, ReLIFT, ReFT, RLPF) report SOTA over SFT baselines. After fixing both bugs, the corrected SFT baseline on Qwen2.5-Math-7B matches or exceeds all reported mixed-policy ID results. On Llama-3.1-8B, SFT-then-RL beats the best mixed-policy method by +4.0pp. The gains attributed to policy mixing were actually artifacts of buggy baselines.",
+      "content_hash": "4c796cdb23b7d3c01d191aaa867eabc41d97cecb129fc1b9c0a5a0ce5c4dcc32",
+      "declaration_index": 1,
+      "exported": false,
+      "id": "github:2604_23747::mixed_policy_gains_are_artifact",
+      "label": "mixed_policy_gains_are_artifact",
+      "metadata": {
+        "aggregated_from": [
+          "claim_qwen_headline",
+          "claim_llama_headline",
+          "claim_qwen_sft_corrected",
+          "claim_qwen_plus_3p8"
+        ],
+        "prior": 0.93,
+        "prior_justification": "Simple accounting: gains 3-5 pt over baseline that's suppressed 5.7 pt → fully explained by baseline suppression. Corrected SFT (54.0) ≥ best mixed-policy (53.2). -0.05: math only."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Reported mixed-policy gains are artifacts of buggy SFT baselines",
+      "type": "claim"
+    },
+    {
+      "content": "Simple SFT-then-RL (corrected SFT baseline → standard online RL) achieves 57.0 ID / 59.9 OOD on Qwen2.5-Math-7B, beating the best mixed-policy method (SRFT: 53.2 ID). On Llama-3.1-8B, SFT-then-RL beats mixed-policy by +4.0pp. Moreover, 50-step SFT-then-RL outperforms mixed-policy methods at fewer total training steps, demonstrating compute efficiency in addition to accuracy.",
+      "content_hash": "dda3afee97ed8e4665f097d71a8e8742fc87a1fa3bcc11e6166af2ac91f8f12f",
+      "declaration_index": 2,
+      "exported": false,
+      "id": "github:2604_23747::sft_then_rl_sufficient",
+      "label": "sft_then_rl_sufficient",
+      "metadata": {
+        "aggregated_from": [
+          "claim_qwen_sft_then_rl",
+          "claim_compute_efficiency_headline",
+          "claim_llama_headline"
+        ],
+        "prior": 0.85,
+        "prior_justification": "57.0 ID / 59.9 OOD on Qwen2.5-Math-7B beats best mixed-policy. -0.10: 7-8B math only; -0.05: no coding/agent validation."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Simple SFT-then-RL beats all mixed-policy methods",
+      "type": "claim"
+    },
+    {
+      "content": "Two bugs spanning three frameworks went undetected for months because no one compared SFT baselines across independent implementations. The bugs were discovered by comparing OpenRLHF vs verl SFT baselines and finding a discrepancy. Cross-framework validation is not a nice-to-have — it is a necessary diagnostic for catching infrastructure-level errors that distort research conclusions.",
+      "content_hash": "3cb12aa3ffcd900fb8d31e777eb395ed37f0eea9b0e117e8e95c3ce1d1ee9c3a",
+      "declaration_index": 3,
+      "exported": false,
+      "id": "github:2604_23747::cross_framework_validation_essential",
+      "label": "cross_framework_validation_essential",
+      "metadata": {
+        "aggregated_from": [
+          "claim_implications",
+          "claim_optimizer_fix_validated"
+        ],
+        "prior": 0.92,
+        "prior_justification": "Methodological claim supported by the case study. -0.08: a single case is not yet decisive evidence."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Cross-framework validation is essential for research integrity",
+      "type": "claim"
+    },
+    {
+      "content": "All experiments use math reasoning benchmarks (MATH, GSM8K). Whether the same bugs affect other domains (coding, agent tasks) is not tested. The bugs are framework-level, so they likely affect all domains — but the magnitude may differ.",
+      "content_hash": "e5b53beed10ee2028b37ecc10e1ed482800040d87cc202b59083832ebe9f282b",
+      "declaration_index": 4,
+      "exported": false,
+      "id": "github:2604_23747::math_domain_only",
+      "label": "math_domain_only",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Documented experimental scope."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Domain limitation: math only",
+      "type": "claim"
+    },
+    {
+      "content": "All experiments use 7-8B models. Whether the bug effect scales with model size (larger models might be more or less sensitive to gradient dropping) is unknown.",
+      "content_hash": "4870903fb814b13c6c757d95329dede652ff73eb4a18c9962f98ec4f14ce53fb",
+      "declaration_index": 5,
+      "exported": false,
+      "id": "github:2604_23747::scale_limited",
+      "label": "scale_limited",
+      "metadata": {
+        "prior": 0.95,
+        "prior_justification": "Documented experimental scope."
+      },
+      "module": "motivation",
+      "parameters": [],
+      "title": "Scale limitation: 7-8B only",
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_23747::two_bugs_suppress_sft_baseline,github:2604_23747::mixed_policy_gains_are_artifact)",
+      "content_hash": "638fd68b27ec7adfa7a9a32406fe15333dd91ddb9b082e3fd0feda1a41953263",
+      "exported": false,
+      "id": "github:2604_23747::__implication_result_cc0cd02e",
+      "label": "__implication_result_cc0cd02e",
+      "metadata": {
+        "canonical_name": "implies(github:2604_23747::two_bugs_suppress_sft_baseline,github:2604_23747::mixed_policy_gains_are_artifact)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_732e84de2fe8105f",
+        "owning_strategy_type": "deduction",
+        "prior": 0.95,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "all_true(github:2604_23747::mixed_policy_gains_are_artifact,github:2604_23747::math_domain_only,github:2604_23747::scale_limited)",
+      "content_hash": "4d8d6c999d855eea93e92c94214479b7b7fe7c62ae4918f413d98fd95458dc67",
+      "exported": false,
+      "id": "github:2604_23747::__conjunction_result_f3a017e2",
+      "label": "__conjunction_result_f3a017e2",
+      "metadata": {
+        "canonical_name": "all_true(github:2604_23747::mixed_policy_gains_are_artifact,github:2604_23747::math_domain_only,github:2604_23747::scale_limited)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "conjunction_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "conjunction_result",
+        "owning_strategy_id": "lcs_e1cf6bfa22f6a84e",
+        "owning_strategy_type": "deduction",
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_23747::__conjunction_result_f3a017e2,github:2604_23747::sft_then_rl_sufficient)",
+      "content_hash": "5ddbcf559a2ef1829d786bec25b16d0dac57d8a06772d43fd7958a0111afc4a7",
+      "exported": false,
+      "id": "github:2604_23747::__implication_result_672d3813",
+      "label": "__implication_result_672d3813",
+      "metadata": {
+        "canonical_name": "implies(github:2604_23747::__conjunction_result_f3a017e2,github:2604_23747::sft_then_rl_sufficient)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_e1cf6bfa22f6a84e",
+        "owning_strategy_type": "deduction",
+        "prior": 0.85,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    },
+    {
+      "content": "implies(github:2604_23747::two_bugs_suppress_sft_baseline,github:2604_23747::cross_framework_validation_essential)",
+      "content_hash": "b26c4c72366f5c20af8f5b9bc273198d29884ee093a0e8b29b23c68d32f90090",
+      "exported": false,
+      "id": "github:2604_23747::__implication_result_7cbbd87d",
+      "label": "__implication_result_7cbbd87d",
+      "metadata": {
+        "canonical_name": "implies(github:2604_23747::two_bugs_suppress_sft_baseline,github:2604_23747::cross_framework_validation_essential)",
+        "generated": true,
+        "generated_kind": "helper_claim",
+        "helper_kind": "implication_result",
+        "helper_visibility": "formal_internal",
+        "intermediate_role": "implication_result",
+        "owning_strategy_id": "lcs_0fb91e046bbf4c81",
+        "owning_strategy_type": "support",
+        "prior": 0.88,
+        "visibility": "formal_internal"
+      },
+      "parameters": [],
+      "type": "claim"
+    }
+  ],
+  "module_order": [
+    "motivation"
+  ],
+  "module_titles": {
+    "motivation": "Layer 2 — SFT-then-RL Beats Mixed-Policy (2604.23747)"
+  },
+  "namespace": "github",
+  "operators": [],
+  "package_name": "2604_23747",
+  "scope": "local",
+  "strategies": [
+    {
+      "conclusion": "github:2604_23747::mixed_policy_gains_are_artifact",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_23747::__implication_result_cc0cd02e",
+            "operator": "implication",
+            "variables": [
+              "github:2604_23747::two_bugs_suppress_sft_baseline",
+              "github:2604_23747::mixed_policy_gains_are_artifact"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.95,
+        "reason": "Two bugs suppress SFT baseline by ~5.7 points. Published mixed-policy gains over that buggy baseline are 3-5 points. Corrected SFT (54.0) already exceeds best mixed-policy (53.2). Simple accounting: gains attributed to algorithm are gains from baseline correction."
+      },
+      "premises": [
+        "github:2604_23747::two_bugs_suppress_sft_baseline"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_732e84de2fe8105f",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_23747::sft_then_rl_sufficient",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_23747::__conjunction_result_f3a017e2",
+            "operator": "conjunction",
+            "variables": [
+              "github:2604_23747::mixed_policy_gains_are_artifact",
+              "github:2604_23747::math_domain_only",
+              "github:2604_23747::scale_limited"
+            ]
+          },
+          {
+            "conclusion": "github:2604_23747::__implication_result_672d3813",
+            "operator": "implication",
+            "variables": [
+              "github:2604_23747::__conjunction_result_f3a017e2",
+              "github:2604_23747::sft_then_rl_sufficient"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "deduction",
+        "generated_formal_expr": true,
+        "prior": 0.85,
+        "reason": "Once mixed-policy gains are shown to be baseline artifacts, simple SFT-then-RL becomes the natural baseline. Empirically it wins. Claim is scoped to math reasoning + 7-8B per the boundary premises; if other domains or larger scales falsify it, BP flags math_domain_only or scale_limited as the premise to revisit."
+      },
+      "premises": [
+        "github:2604_23747::mixed_policy_gains_are_artifact",
+        "github:2604_23747::math_domain_only",
+        "github:2604_23747::scale_limited"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_e1cf6bfa22f6a84e",
+      "type": "deduction"
+    },
+    {
+      "conclusion": "github:2604_23747::cross_framework_validation_essential",
+      "formal_expr": {
+        "operators": [
+          {
+            "conclusion": "github:2604_23747::__implication_result_7cbbd87d",
+            "operator": "implication",
+            "variables": [
+              "github:2604_23747::two_bugs_suppress_sft_baseline",
+              "github:2604_23747::cross_framework_validation_essential"
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "formalization_template": "support",
+        "generated_formal_expr": true,
+        "prior": 0.88,
+        "reason": "Two bugs spanning three frameworks went undetected for months because no one compared SFT baselines across independent implementations. Discovery came from comparing OpenRLHF vs verl. This is the strongest empirical case so far for cross-framework validation as mandatory."
+      },
+      "premises": [
+        "github:2604_23747::two_bugs_suppress_sft_baseline"
+      ],
+      "scope": "local",
+      "strategy_id": "lcs_0fb91e046bbf4c81",
+      "type": "support"
+    }
+  ]
+}
