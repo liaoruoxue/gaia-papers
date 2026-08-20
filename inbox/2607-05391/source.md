@@ -1,0 +1,7 @@
+# 2607.05391
+
+- ArXiv: https://arxiv.org/abs/2607.05391
+- Title: LLM-as-a-Verifier: A General-Purpose Verification Framework
+- Requested by: paper-deep-read, 2026-08-20
+- Source SHA-256: `3e15c670bf3a190a7417ba7ea2e8e1f2b5c573e548bbab0fb1d15ed9c00d4960`
+- Local analysis: `/Users/dp/Documents/Codex/2026-07-09/du/research/LLM-as-a-Verifier/README.md`
